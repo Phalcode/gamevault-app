@@ -1,0 +1,91 @@
+﻿<UserControl x:Class="crackpipe.UserControls.AdminConsoleUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:crackpipe.UserControls"
+             xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Border Background="{StaticResource DarkBackground2}" Grid.Row="0">
+            <Grid>
+                <TextBlock Text="Admin Console" FontSize="35" Margin="20,0,0,0" Foreground="White"/>
+                <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Version,StringFormat='{}V {0}'}" Margin="0,0,5,0"/>
+            </Grid>
+        </Border>
+        <Grid Grid.RowSpan="2">
+            <Viewbox>
+                <Grid Height="700" Width="700">
+                    <Popup x:Name="uiUserEditPopup" IsOpen="False" Placement="Center" StaysOpen="False" AllowsTransparency="True"/>
+                </Grid>
+            </Viewbox>
+        </Grid>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <Viewbox VerticalAlignment="Top">
+                <ItemsControl ItemsSource="{Binding Path=Users}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Height="6" Width="100" Margin="1,1,0,0">
+                                <Grid.Style>
+                                    <Style TargetType="{x:Type Grid}">
+                                        <Setter Property="Background" Value="#26FF0000"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=DeletedAt}" Value="{x:Null}">
+                                                <Setter Property="Background" Value="{x:Null}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Grid.Style>
+
+                                <local:CacheImage ImageCacheType="UserIcon" Data="{Binding}" Width="6" HorizontalAlignment="Left">
+                                    <local:CacheImage.Clip>
+                                        <EllipseGeometry RadiusX="3" RadiusY="3" Center="3,3"/>
+                                    </local:CacheImage.Clip>
+                                </local:CacheImage>
+
+                                <TextBlock FontSize="2" Margin="8,0,0,0" Text="{Binding Path=Username}" VerticalAlignment="Center"/>
+
+                                <Viewbox Width="8" Margin="0,0,20,0" HorizontalAlignment="Right" >
+                                    <mah:ToggleSwitch Header="Activated" IsOn="{Binding Path=Activated}" Toggled="Activated_Toggled"/>
+                                </Viewbox>
+
+                                <Viewbox Width="11" Margin="0,0,10,0" HorizontalAlignment="Right">
+                                    <ComboBox ItemsSource="{Binding Path=DataContext.PermissionRoleEnumTypes,RelativeSource={RelativeSource AncestorType=UserControl}}" SelectedItem="{Binding Path=Role}" SelectionChanged="PermissionRole_SelectionChanged"/>
+                                </Viewbox>
+
+                                <TextBlock FontSize="2" Margin="0,0,5,0" Text="✏️" HorizontalAlignment="Right" VerticalAlignment="Center" Cursor="Hand" ToolTip="Edit user" MouseLeftButtonUp="EditUser_Clicked"/>
+
+                                <TextBlock FontSize="2" Margin="0,0,1,0" HorizontalAlignment="Right" VerticalAlignment="Center" Cursor="Hand" MouseLeftButtonUp="DeleteUser_Clicked">
+                                    <TextBlock.Style>
+                                        <Style TargetType="{x:Type TextBlock}">
+                                            <Setter Property="Text" Value="↩ "/>
+                                            <Setter Property="Foreground" Value="LightBlue"/>
+                                            <Setter Property="ToolTip" Value="Recover user"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=DeletedAt}" Value="{x:Null}">
+                                                    <Setter Property="Text" Value="🗑️"/>
+                                                    <Setter Property="Foreground" Value="Red"/>
+                                                    <Setter Property="ToolTip" Value="Delete user"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Viewbox>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
