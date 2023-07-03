@@ -5,8 +5,6 @@ VisualStudioVersion = 17.4.32804.182
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "crackpipe", "crackpipe\crackpipe.csproj", "{4B99B996-4FBE-400C-B905-73ECA8BC2E7C}"
 EndProject
-Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "Package", "Package\Package.wapproj", "{05A7509E-9A80-46A2-9A78-8740255C4407}"
-EndProject
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "DeveloperEditionPackage", "DeveloperEditionPackage\DeveloperEditionPackage.wapproj", "{EDB8E9A6-3F7B-45C3-B149-97B6A6D93B95}"
 EndProject
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "ReleasePackage", "ReleasePackage\ReleasePackage.wapproj", "{954AE526-06C6-4B94-B4F7-826564DF5A80}"
