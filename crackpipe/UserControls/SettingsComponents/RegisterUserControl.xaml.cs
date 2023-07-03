@@ -73,7 +73,7 @@ namespace crackpipe.UserControls.SettingsComponents
             var properties = SettingsViewModel.Instance.RegistrationUser.GetType().GetProperties();
             foreach (var property in properties)
             {
-                if (property.Name != "DeletedAt" && property.Name != "Progresses" && property.Name != "ProfilePicture")
+                if (property.Name != "DeletedAt" && property.Name != "Progresses" && property.Name != "ProfilePicture" && property.Name != "Role")
                 {
                     if (property.GetValue(SettingsViewModel.Instance.RegistrationUser) == null || property.GetValue(SettingsViewModel.Instance.RegistrationUser).ToString() == string.Empty)
                     {
