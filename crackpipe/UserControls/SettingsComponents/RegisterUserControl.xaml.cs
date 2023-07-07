@@ -70,16 +70,12 @@ namespace crackpipe.UserControls.SettingsComponents
         }
         private bool HasEmptyFields()
         {
-            var properties = SettingsViewModel.Instance.RegistrationUser.GetType().GetProperties();
-            foreach (var property in properties)
+            if (string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.Username) || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.FirstName)
+                || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.LastName) || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.EMail)
+                || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.Password) || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.RepeatPassword)
+                || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.ProfilePictureUrl) || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.BackgroundImageUrl))
             {
-                if (property.Name != "DeletedAt" && property.Name != "Progresses" && property.Name != "ProfilePicture" && property.Name != "Role")
-                {
-                    if (property.GetValue(SettingsViewModel.Instance.RegistrationUser) == null || property.GetValue(SettingsViewModel.Instance.RegistrationUser).ToString() == string.Empty)
-                    {
-                        return true;
-                    }
-                }
+                return true;
             }
             return false;
         }
