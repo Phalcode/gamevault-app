@@ -75,8 +75,7 @@ namespace crackpipe.UserControls.SettingsComponents
 
             if (string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.Username) || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.FirstName)
                 || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.LastName) || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.EMail)
-                || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.Password) || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.RepeatPassword)
-                || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.ProfilePictureUrl) || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.BackgroundImageUrl))
+                || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.Password) || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.RepeatPassword))
             {
                 return true;
             }
