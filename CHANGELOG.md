@@ -13,3 +13,5 @@
 - Show asterisks in registration password fields instead of clear text
 
 - Notify user, when app is still running in the system tray
+
+- Show mapped RAWG Game Title as Tooltip when you hover over game name on game view

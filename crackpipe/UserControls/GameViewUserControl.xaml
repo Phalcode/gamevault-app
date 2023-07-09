@@ -81,11 +81,12 @@
                 <StackPanel  Orientation="Vertical" Margin="10">
                     <Viewbox HorizontalAlignment="Stretch" VerticalAlignment="Top">
                         <TextBlock>
+                            <TextBlock.ToolTip>
+                                <TextBlock Text="{Binding Path=Game.RawgTitle,StringFormat='{}RAWG Title: {0}'}"/>
+                            </TextBlock.ToolTip>
                             <TextBlock.Text>
                                 <MultiBinding StringFormat="{}{0} ({1})">
                                     <Binding Path="Game.Title" />
-                                    <!--<Binding Path="Game.ReleaseDate.Day" />
-                                    <Binding Path="Game.ReleaseDate.Month" />-->
                                     <Binding Path="Game.ReleaseDate.Year" />
                                 </MultiBinding>
                             </TextBlock.Text>
