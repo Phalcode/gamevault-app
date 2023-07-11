@@ -40,3 +40,11 @@ jobs:
         upload_url: ${{steps.release.outputs.upload_url}}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Send Discord Notification
+      id: discord
+      uses: Ilshidur/action-discord@master
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_RELEASE_BOT_WEBHOOK }}
+      with:
+        args: '@everyone New Release: {{ EVENT_PAYLOAD.repository.full_name }} v${{steps.release.outputs.version}} has been deployed. Here are the changes: https://github.com/{{EVENT_PAYLOAD.repository.full_name}}/releases/latest'
