@@ -1,0 +1,42 @@
+name: Deployment Pipeline for master branch
+on:
+  push:
+    branches:
+      - master
+jobs:
+  deploy:
+    permissions: write-all
+    runs-on: windows-latest
+    steps:
+    - name: Checkout repository
+      id: checkout
+      uses: actions/checkout@v2
+      
+    - name: Set up .NET
+      id: setup
+      uses: actions/setup-dotnet@v3.2.0
+      with:
+        dotnet-version: '6.x'
+        
+    - name: Build .NET solution
+      id: build
+      run: |
+        dotnet build crackpipe.sln --configuration Release
+        7z a Crackpipe.zip crackpipe/bin
+      
+    - name: Create Github Tag & Release
+      id: release
+      uses: CupOfTea696/gh-action-auto-release@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Upload Release Artifact
+      id: upload
+      uses: actions/upload-release-asset@v1
+      with:
+        asset_path: Crackpipe.zip
+        asset_name: Crackpipe.zip
+        asset_content_type: application/zip
+        upload_url: ${{steps.release.outputs.upload_url}}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
