@@ -49,7 +49,17 @@ namespace crackpipe.ViewModels
             RootPath = Preferences.Get(AppConfigKey.RootPath, AppFilePath.UserFile);
             ServerUrl = Preferences.Get(AppConfigKey.ServerUrl, AppFilePath.UserFile, true);
             m_BackgroundStart = (Preferences.Get(AppConfigKey.BackgroundStart, AppFilePath.UserFile) == "1"); OnPropertyChanged(nameof(BackgroundStart));
-            m_LibStartup = (Preferences.Get(AppConfigKey.LibStartup, AppFilePath.UserFile) == "1"); OnPropertyChanged(nameof(LibStartup));
+
+            string libstartup = Preferences.Get(AppConfigKey.LibStartup, AppFilePath.UserFile);
+            if (libstartup == string.Empty)
+            {
+                LibStartup = true;
+            }
+            else
+            {
+                m_LibStartup = (libstartup == "1"); OnPropertyChanged(nameof(LibStartup));
+            }
+
             m_AppAutostart = RegistryHelper.AutoStartKeyExists(); OnPropertyChanged(nameof(AppAutostart));
         }
 
@@ -62,7 +72,7 @@ namespace crackpipe.ViewModels
         {
             get { return m_RootPath; }
             set { m_RootPath = value; OnPropertyChanged(); }
-        }      
+        }
         public bool IsOnIdle
         {
             get { return m_IsOnIdle; }
@@ -141,7 +151,7 @@ namespace crackpipe.ViewModels
         }
         public bool SetupCompleted()
         {
-            return !((m_RootPath == string.Empty) || (m_ServerUrl == string.Empty) || (m_UserName == string.Empty));           
+            return !((m_RootPath == string.Empty) || (m_ServerUrl == string.Empty) || (m_UserName == string.Empty));
         }
         public string Version
         {

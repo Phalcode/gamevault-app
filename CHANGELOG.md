@@ -19,3 +19,5 @@
 - Make Images optional for registration
 
 - Rework Playtime UI in Game View
+
+- Auto load library as default in the settings
