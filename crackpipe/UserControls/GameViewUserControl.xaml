@@ -81,11 +81,12 @@
                 <StackPanel  Orientation="Vertical" Margin="10">
                     <Viewbox HorizontalAlignment="Stretch" VerticalAlignment="Top">
                         <TextBlock>
+                            <TextBlock.ToolTip>
+                                <TextBlock Text="{Binding Path=Game.RawgTitle,StringFormat='{}RAWG Title: {0}'}"/>
+                            </TextBlock.ToolTip>
                             <TextBlock.Text>
                                 <MultiBinding StringFormat="{}{0} ({1})">
                                     <Binding Path="Game.Title" />
-                                    <!--<Binding Path="Game.ReleaseDate.Day" />
-                                    <Binding Path="Game.ReleaseDate.Month" />-->
                                     <Binding Path="Game.ReleaseDate.Year" />
                                 </MultiBinding>
                             </TextBlock.Text>
@@ -255,28 +256,19 @@
                 </Grid>
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="3.4*"/>
+                        <ColumnDefinition Width="166*"/>
+                        <ColumnDefinition Width="155*"/>
                     </Grid.ColumnDefinitions>
                     <Viewbox Grid.Column="1" Margin="0,10,0,0" Stretch="Uniform" IsEnabled="{Binding IsLoggedIn}">
-                        <ItemsControl HorizontalAlignment="Stretch">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal"/>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <StackPanel Margin="0,0,-90,0">
-                                <TextBlock Text="{Binding Path=Game.AveragePlaytime, StringFormat={}ØPlaytime {0},Converter={StaticResource timeConv}}" FontSize="10"/>
-                                <TextBlock Text="{Binding Path=Progress.MinutesPlayed, StringFormat={}YourPlaytime: {0},Converter={StaticResource timeConv}}" FontSize="10" MinWidth="200" ClipToBounds="False"/>
-                                <TextBlock FontSize="10" MinWidth="200" ClipToBounds="False">
-                                    <TextBlock.Text>
-                                        <MultiBinding StringFormat="{}Last played: {0}.{1}.{2}">
-                                            <Binding Path="Progress.LastPlayedAt.Day"/>
-                                            <Binding Path="Progress.LastPlayedAt.Month"/>
-                                            <Binding Path="Progress.LastPlayedAt.Year"/>
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                    <TextBlock.ToolTip>
+                        <Grid>
+                            <ComboBox Margin="0,0,0,0" Width="230" VerticalAlignment="Top" SelectedItem="{Binding Path=Progress.State}" ItemsSource="{Binding States}" SelectionChanged="State_SelectionChanged"/>
+                            <Grid Margin="0,60,0,0">
+                                <StackPanel HorizontalAlignment="Left">
+                                    <TextBlock Text="PLAY TIME" FontWeight="Bold" FontSize="10" />
+                                    <TextBlock Text="{Binding Path=Progress.MinutesPlayed,Converter={StaticResource timeConv}}" FontSize="8" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel HorizontalAlignment="Center" Margin="-9,0,0,0">
+                                    <StackPanel.ToolTip>
                                         <TextBlock>
                                             <TextBlock.Text>
                                                 <MultiBinding StringFormat="{}{0}:{1} h">
@@ -285,12 +277,24 @@
                                                 </MultiBinding>
                                             </TextBlock.Text>
                                         </TextBlock>
-                                    </TextBlock.ToolTip>
-                                </TextBlock>
-                            </StackPanel>
-
-                            <ComboBox Margin="0,0,0,0" Width="185" Height="1" SelectedItem="{Binding Path=Progress.State}" ItemsSource="{Binding States}" SelectionChanged="State_SelectionChanged"/>
-                        </ItemsControl>
+                                    </StackPanel.ToolTip>
+                                    <TextBlock Text="LAST PLAYED" FontWeight="Bold" FontSize="10"/>
+                                    <TextBlock FontSize="8" HorizontalAlignment="Center">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{}{0}.{1}.{2}">
+                                                <Binding Path="Progress.LastPlayedAt.Day"/>
+                                                <Binding Path="Progress.LastPlayedAt.Month"/>
+                                                <Binding Path="Progress.LastPlayedAt.Year"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </StackPanel>
+                                <StackPanel HorizontalAlignment="Right">
+                                    <TextBlock Text="Ø PLAY TIME" FontWeight="Bold" FontSize="10"/>
+                                    <TextBlock Text="{Binding Path=Game.AveragePlaytime,Converter={StaticResource timeConv}}" FontSize="8" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
                     </Viewbox>
                 </Grid>
             </StackPanel>
