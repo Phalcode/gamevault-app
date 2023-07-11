@@ -17,3 +17,5 @@
 - Show mapped RAWG Game Title as Tooltip when you hover over game name on game view
 
 - Make Images optional for registration
+
+- Rework Playtime UI in Game View
