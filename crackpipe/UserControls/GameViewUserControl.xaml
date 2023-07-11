@@ -261,11 +261,11 @@
                     </Grid.ColumnDefinitions>
                     <Viewbox Grid.Column="1" Margin="0,10,0,0" Stretch="Uniform" IsEnabled="{Binding IsLoggedIn}">
                         <Grid>
-                            <ComboBox Margin="0,0,0,0" Width="230"  VerticalAlignment="Top" SelectedItem="{Binding Path=Progress.State}" ItemsSource="{Binding States}" SelectionChanged="State_SelectionChanged"/>
+                            <ComboBox Margin="0,0,0,0" Width="230" VerticalAlignment="Top" SelectedItem="{Binding Path=Progress.State}" ItemsSource="{Binding States}" SelectionChanged="State_SelectionChanged"/>
                             <Grid Margin="0,60,0,0">
                                 <StackPanel HorizontalAlignment="Left">
                                     <TextBlock Text="PLAY TIME" FontWeight="Bold" FontSize="10" />
-                                    <TextBlock Text="{Binding Path=Progress.MinutesPlayed, StringFormat={}{0},Converter={StaticResource timeConv}}" FontSize="8" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Path=Progress.MinutesPlayed,Converter={StaticResource timeConv}}" FontSize="8" HorizontalAlignment="Center"/>
                                 </StackPanel>
                                 <StackPanel HorizontalAlignment="Center" Margin="-9,0,0,0">
                                     <StackPanel.ToolTip>
@@ -291,7 +291,7 @@
                                 </StackPanel>
                                 <StackPanel HorizontalAlignment="Right">
                                     <TextBlock Text="Ø PLAY TIME" FontWeight="Bold" FontSize="10"/>
-                                    <TextBlock Text="{Binding Path=Game.AveragePlaytime, StringFormat={}{0},Converter={StaticResource timeConv}}" FontSize="8" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Path=Game.AveragePlaytime,Converter={StaticResource timeConv}}" FontSize="8" HorizontalAlignment="Center"/>
                                 </StackPanel>
                             </Grid>
                         </Grid>
