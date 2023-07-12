@@ -1,6 +1,6 @@
 # Crackpipe App Changelog
 
-## 1.0.2
+## 1.1.0
 ### Changes
 - Show asterisks in registration password fields instead of clear text
 - Notify user, when app is still running in the system tray
