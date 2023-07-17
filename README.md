@@ -1,5 +1,6 @@
-# gamevault-app
-[You can find the official Website/Documentation here](https://gamevau.lt)
+# crackpipe-app
+![logo](https://gamevau.lt/img/logo-text-and-image-sbs.png)
+[You can find the official Website/Documentation here](https://crackpipe.de)
 
 ## Library Technical Decision Matrix
 
