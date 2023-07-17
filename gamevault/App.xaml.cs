@@ -34,9 +34,17 @@ namespace gamevault
         private GameTimeTracker m_gameTimeTracker;
         private async void Application_Startup(object sender, StartupEventArgs e)
         {
-            NewNameMigrationHelper.MigrateIfNeeded();
-            Application.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(AppDispatcherUnhandledException);
 
+            Application.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(AppDispatcherUnhandledException);
+            try
+            {
+                NewNameMigrationHelper.MigrateIfNeeded();
+            }
+            catch (Exception ex)
+            {
+                LogUnhandledException(ex);
+                //m_StoreHelper.NoInternetException();              
+            }
 
 #if DEBUG
             AppFilePath.InitDebugPaths();

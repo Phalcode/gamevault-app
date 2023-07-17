@@ -1,13 +1,6 @@
 ﻿using gamevault.Helper;
 using gamevault.Models;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace gamevault.ViewModels
 {
@@ -157,7 +150,7 @@ namespace gamevault.ViewModels
         {
             get
             {
-                return "1.1.0";
+                return "1.2.0";
             }
         }
 
