@@ -1,4 +1,4 @@
-# Crackpipe App Changelog
+# Gamevault App Changelog
 
 ## 1.1.0
 ### Changes
