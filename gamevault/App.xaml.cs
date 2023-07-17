@@ -29,6 +29,8 @@ namespace gamevault
     /// </summary>
     public partial class App : Application
     {
+        public static bool ShowToastMessage = true;
+
         private NotifyIcon m_Icon;
 
         private GameTimeTracker m_gameTimeTracker;
@@ -68,7 +70,7 @@ namespace gamevault
                 StreamWriter writer = new StreamWriter(client);
                 writer.WriteLine("ShowMainWindow");
                 writer.Flush();
-                Shutdown();
+                ShutdownApp();
             }
             else
             {
@@ -122,7 +124,7 @@ namespace gamevault
             e.Handled = true;
             LogUnhandledException(e.Exception);
             System.Windows.MessageBox.Show("Something went wrong. View error log for more details", "Unhandled Exception", MessageBoxButton.OK, MessageBoxImage.Warning);
-            Shutdown();
+            ShutdownApp();
         }
         private void StartServer()
         {
@@ -201,14 +203,18 @@ namespace gamevault
                 if (result == MessageDialogResult.Affirmative)
                 {
                     MainWindowViewModel.Instance.Downloads.CancelAllDownloads();
-                    Shutdown();
+                    ShutdownApp();
                 }
             }
             else
             {
-                Shutdown();
+                ShutdownApp();
             }
         }
-
+        private void ShutdownApp()
+        {
+            ShowToastMessage = false;
+            Shutdown();
+        }
     }
 }

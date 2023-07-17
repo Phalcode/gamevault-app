@@ -9,6 +9,7 @@ using System.IO;
 using System.Diagnostics;
 using System;
 using Microsoft.Toolkit.Uwp.Notifications;
+using System.Windows.Forms;
 
 namespace gamevault.Windows
 {
@@ -100,9 +101,12 @@ namespace gamevault.Windows
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            e.Cancel = true;
-            this.Hide();
-            new ToastContentBuilder().AddText("Notification").AddText("App is still running in the system tray").Show();
+            if (App.ShowToastMessage)
+            {
+                e.Cancel = true;
+                this.Hide();
+                new ToastContentBuilder().AddText("Notification").AddText("App is still running in the system tray").Show();
+            }
         }
 
         private void UserIcon_Clicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
