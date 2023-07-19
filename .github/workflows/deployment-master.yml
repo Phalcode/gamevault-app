@@ -54,4 +54,4 @@ jobs:
       env:
         DISCORD_WEBHOOK: ${{ secrets.DISCORD_RELEASE_BOT_WEBHOOK }}
       with:
-        args: '<@&1128857090090340382> New Release: ${{ github.event.repository.full_name }} v${{ needs.deploy.outputs.version }} has been deployed. Here are the changes: https://github.com/${{ github.event.repository.full_name }}/releases/latest'
+        args: '<@&1128857090090340382> New Release: ${{ github.event.repository.full_name }} v${{ needs.deploy.outputs.version }} has been deployed. Here are the changes: https://github.com/${{ github.event.repository.full_name }}/releases/tag/${{needs.deploy.outputs.version}}'
