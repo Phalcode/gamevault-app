@@ -7,7 +7,7 @@
              xmlns:local="clr-namespace:gamevault.UserControls"
              xmlns:settingsComponents="clr-namespace:gamevault.UserControls.SettingsComponents"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
@@ -24,7 +24,7 @@
                 <StackPanel Margin="25,0,0,0">
                     <mah:ToggleSwitch Header="Start app in background" VerticalAlignment="Top" IsOn="{Binding BackgroundStart}"/>
                     <mah:ToggleSwitch Header="Load Library on startup" VerticalAlignment="Top" IsOn="{Binding LibStartup}"/>
-                    <mah:ToggleSwitch Header="App autostart" VerticalAlignment="Top" IsOn="{Binding AppAutostart}"/>
+                    <mah:ToggleSwitch x:Name="uiAutostartToggle" Header="App autostart" VerticalAlignment="Top"/>
                     <settingsComponents:ServerUrlUserControl Margin="0,20,0,0" HorizontalAlignment="Left"/>
                 </StackPanel>
             </TabItem>

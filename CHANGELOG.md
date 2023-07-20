@@ -4,6 +4,7 @@
 ### Changes
 - Renaming
 - Automatic migration of existing data
+- Autostart fix (For self build and Microsoft Store)
 
 ## 1.1.0
 ### Changes

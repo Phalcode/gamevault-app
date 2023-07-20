@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -29,18 +30,23 @@ namespace gamevault.Windows
         private async void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
             try
-            {
+            {               
                 m_StoreHelper = new StoreHelper();
                 if (true == await m_StoreHelper.UpdatesAvailable())
                 {
                     await m_StoreHelper.DownloadAndInstallAllUpdatesAsync(this);
                 }
+                App.IsWindowsPackage = true;
                 uiTxtStatus.Text = "Optimizing cache...";              
                 await CacheHelper.OptimizeCache();
             }
+            catch(COMException comEx)
+            {
+                //Is no MSIX package
+            }
             catch (Exception ex)
             {
-                //No error log, because it would trigger every time, if the user is offline
+                //rest of the cases
             }
             this.Close();
         }

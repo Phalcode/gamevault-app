@@ -10,17 +10,12 @@ using System.Windows.Forms;
 using Application = System.Windows.Application;
 using System.Linq;
 using gamevault.Helper;
-using System.Drawing;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
-using System.Threading;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.IO.Pipes;
-using ControlzEx.Standard;
 using System.Windows.Threading;
-using Windows.ApplicationModel.Background;
-using Windows.ApplicationModel;
+using System.Diagnostics;
 
 namespace gamevault
 {
@@ -30,6 +25,7 @@ namespace gamevault
     public partial class App : Application
     {
         public static bool ShowToastMessage = true;
+        public static bool IsWindowsPackage = false;
 
         private NotifyIcon m_Icon;
 
@@ -38,6 +34,7 @@ namespace gamevault
         {
 
             Application.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(AppDispatcherUnhandledException);
+            System.Windows.MessageBox.Show(System.Reflection.Assembly.GetExecutingAssembly().Location);
             try
             {
                 NewNameMigrationHelper.MigrateIfNeeded();

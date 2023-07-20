@@ -30,8 +30,7 @@ namespace gamevault.ViewModels
         private string m_RootPath { get; set; }
         private bool m_IsOnIdle = true;
         private bool m_BackgroundStart { get; set; }
-        private bool m_LibStartup { get; set; }
-        private bool m_AppAutostart { get; set; }
+        private bool m_LibStartup { get; set; }       
         private string m_ServerUrl { get; set; }
         private User m_RegistrationUser = new User() { ProfilePicture = new Image(), BackgroundImage = new Image() };
         #endregion
@@ -51,9 +50,7 @@ namespace gamevault.ViewModels
             else
             {
                 m_LibStartup = (libstartup == "1"); OnPropertyChanged(nameof(LibStartup));
-            }
-
-            m_AppAutostart = RegistryHelper.AutoStartKeyExists(); OnPropertyChanged(nameof(AppAutostart));
+            }           
         }
 
         public string UserName
@@ -100,24 +97,7 @@ namespace gamevault.ViewModels
                 }
                 Preferences.Set(AppConfigKey.LibStartup, stringValue, AppFilePath.UserFile);
             }
-        }
-        public bool AppAutostart
-        {
-            get { return m_AppAutostart; }
-            set
-            {
-                m_AppAutostart = value;
-                if (m_AppAutostart == true)
-                {
-                    RegistryHelper.CreateAutostartKey();
-                }
-                else
-                {
-                    RegistryHelper.DeleteAutostartKey();
-                }
-                OnPropertyChanged();
-            }
-        }
+        }      
         public string ServerUrl
         {
             get { return m_ServerUrl; }

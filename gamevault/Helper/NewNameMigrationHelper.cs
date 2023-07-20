@@ -14,15 +14,7 @@ namespace gamevault.Helper
     {
         private static string OldAppDataDir;
         private static string OldConfigFilePath;
-        private static void ReplaceRegOldEntryIfExists()
-        {
-            RegistryKey? rk = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-            if (rk.GetValue("Crackpipe") != null)
-            {
-                rk.DeleteValue("Crackpipe");
-                RegistryHelper.CreateAutostartKey();
-            }
-        }
+
         private static void RenameAppDataDir()
         {
             if (Directory.Exists(OldAppDataDir))
@@ -49,7 +41,6 @@ namespace gamevault.Helper
             {
                 ReplaceOldRootPathName();
                 RenameAppDataDir();
-                ReplaceRegOldEntryIfExists();
             }
         }
     }

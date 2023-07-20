@@ -1,21 +1,11 @@
-﻿using gamevault.Helper;
-using gamevault.Models;
+﻿using gamevault.Models;
 using gamevault.ViewModels;
-using ImageMagick;
 using System.IO;
-using System;
 using System.Windows.Controls;
-using static System.Net.Mime.MediaTypeNames;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using System.Windows.Shapes;
 using System.Windows;
-using System.Text.Json;
-using System.Net;
-using System.Text.Json.Serialization;
-using System.Net.Http.Json;
-using System.Text.Json.Nodes;
-using System.Linq;
+using Windows.ApplicationModel;
+using System;
+using gamevault.Helper;
 
 namespace gamevault.UserControls
 {
@@ -52,14 +42,14 @@ namespace gamevault.UserControls
             ViewModel.IsOnIdle = false;
             try
             {
-                if(File.Exists(AppFilePath.IgnoreList))
+                if (File.Exists(AppFilePath.IgnoreList))
                 {
                     File.Delete(AppFilePath.IgnoreList);
                 }
                 if (File.Exists(AppFilePath.OfflineCache))
                 {
                     File.Delete(AppFilePath.OfflineCache);
-                }               
+                }
                 MainWindowViewModel.Instance.AppBarText = "Offline cache cleared";
             }
             catch
@@ -67,6 +57,36 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.AppBarText = "Something went wrong while the offline cache was cleared";
             }
             ViewModel.IsOnIdle = true;
+        }
+        private async void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (App.IsWindowsPackage)
+            {
+                uiAutostartToggle.IsOn = await AutostartHelper.IsWindowsPackageAutostartEnabled();
+            }
+            else
+            {
+                uiAutostartToggle.IsOn = AutostartHelper.RegistryAutoStartKeyExists();
+            }
+            uiAutostartToggle.Toggled += AppAutostart_Toggled;
+        }
+        private async void AppAutostart_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (App.IsWindowsPackage)
+            {
+                await AutostartHelper.HandleWindowsPackageAutostart();
+            }
+            else
+            {
+                if (AutostartHelper.RegistryAutoStartKeyExists())
+                {
+                    AutostartHelper.RegistryDeleteAutostartKey();
+                }
+                else
+                {
+                    AutostartHelper.RegistryCreateAutostartKey();
+                }
+            }
         }
     }
 }
