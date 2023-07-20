@@ -1,9 +1,7 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
-title: ''
-labels: enhancement
-assignees: ''
+name: 🔧 Request a Feature
+about: Do you have a Feature Request?
+labels: ["💻 client", "🪲 bug"]
 projects: "Phalcode/3"
 ---
 
