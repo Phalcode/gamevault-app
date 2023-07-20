@@ -2,7 +2,7 @@
 
 ## 1.2.1
 ### Changes
-- gamevault-app/#145 Autostart fix (For self build and Microsoft Store)
+- Autostart fix (For self build and Microsoft Store)
 
 ## 1.2.0
 ### Changes
