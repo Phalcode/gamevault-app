@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using gamevault.ViewModels;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,21 +42,19 @@ namespace gamevault.Helper
             switch (startupTask.State)
             {
                 case StartupTaskState.Disabled:
-                    //Enable autostart
                     StartupTaskState newState = await startupTask.RequestEnableAsync();
                     if (newState != StartupTaskState.Enabled)
                     {
-                        //Alert: Geht nicht
+                        MainWindowViewModel.Instance.AppBarText = "Unable to activate autostart.";
                     }
                     break;
                 case StartupTaskState.DisabledByUser:
-                    //Alert: option was disabled by taskmanager, so the app cant reset this
+                    MainWindowViewModel.Instance.AppBarText = "Autostart was disabled manually. Please access task manager to reactivate it.";
                     break;
                 case StartupTaskState.DisabledByPolicy:
-                    //Alert: option was disabled by policy or not supportet by device
+                    MainWindowViewModel.Instance.AppBarText = "Autostart is either disabled due to policy or not supported on your device.";
                     break;
                 case StartupTaskState.Enabled:
-                    //Disable autostart
                     startupTask.Disable();
                     break;
             }

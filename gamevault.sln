@@ -5,8 +5,8 @@ VisualStudioVersion = 17.4.32804.182
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "gamevault", "gamevault\gamevault.csproj", "{4B99B996-4FBE-400C-B905-73ECA8BC2E7C}"
 EndProject
-Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "DeveloperEditionPackage", "DeveloperEditionPackage\DeveloperEditionPackage.wapproj", "{B17D6950-2AB2-424E-BCE9-86D987E2B71A}"
-EndProject
+# Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "DeveloperEditionPackage", "DeveloperEditionPackage\DeveloperEditionPackage.wapproj", "{B17D6950-2AB2-424E-BCE9-86D987E2B71A}"
+# EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
