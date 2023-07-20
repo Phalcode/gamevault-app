@@ -1,7 +1,7 @@
 ---
 name: 🔧 Request a Feature
 about: Do you have a Feature Request?
-labels: ["💻 client", "🪲 bug"]
+labels: ["💻 client", "🔧 feature"]
 projects: "Phalcode/3"
 ---
 
