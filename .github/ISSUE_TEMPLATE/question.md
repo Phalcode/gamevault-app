@@ -4,7 +4,6 @@ about: Ask a question or seek clarification
 title: "[QUESTION]"
 labels: question
 assignees: ''
-
 ---
 
 **Your Question**

@@ -4,7 +4,7 @@ about: Create a report to help us improve
 title: "[BUG]"
 labels: bug
 assignees: ''
-
+projects: "Phalcode/3"
 ---
 
 **Describe the bug**
