@@ -1,7 +1,7 @@
 ---
 name: ❓ Question
 about: Do you have a Question?
-labels: ["❓ question", "💻 client"]
+labels: ["💻 client","❓ question"]
 projects: "Phalcode/3"
 ---
 
