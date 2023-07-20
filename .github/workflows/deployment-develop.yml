@@ -1,0 +1,23 @@
+name: Deployment Pipeline for develop branch
+on:
+  push:
+    branches:
+      - develop
+jobs:
+  deploy:
+    permissions: write-all
+    runs-on: windows-latest
+    steps:
+    - name: Checkout repository
+      id: checkout
+      uses: actions/checkout@v2
+      
+    - name: Set up .NET
+      id: setup
+      uses: actions/setup-dotnet@v3.2.0
+      with:
+        dotnet-version: '6.x'
+        
+    - name: Build .NET Solution
+      id: build
+      run: dotnet build gamevault.sln --configuration Release

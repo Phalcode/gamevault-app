@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="gamevault.UserControls.GameDownloadUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:conv="clr-namespace:gamevault.Converter"
+             xmlns:local="clr-namespace:gamevault.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <conv:GameSizeConverter x:Key="sizeConv"/>
+        <conv:InverseVisibilityConverter x:Key="visConv"/>
+    </UserControl.Resources>
+    <Grid Height="100" Margin="15" HorizontalAlignment="Stretch">
+        <local:CacheImage ImageCacheType="BoxArt" Data="{Binding Path=Game}" Width="100" HorizontalAlignment="Left" Cursor="Hand" MouseLeftButtonUp="GameImage_MouseLeftButtonUp"/>
+        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="110,-10,0,0" Text="{Binding Path=Game.Title}" FontSize="35" FontWeight="Bold"/>
+        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Margin="110,0,0,0" Text="{Binding State,StringFormat={}State: {0}}" FontSize="20"/>
+        <TextBlock Visibility="{Binding DownloadUIVisibility}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20">
+            <TextBlock.Text>
+                <MultiBinding StringFormat="{}{0}  -  {1} of {2} | Time left: {3}">
+                    <Binding Path="DownloadRate"/>
+                    <Binding Path="TotalBytesDownloaded" Converter="{StaticResource sizeConv}"/>
+                    <Binding Path="Game.Size" Converter="{StaticResource sizeConv}"/>
+                    <Binding Path="TimeLeft"/>
+                </MultiBinding>
+            </TextBlock.Text>
+        </TextBlock>
+        <Button Visibility="{Binding DownloadUIVisibility}" Background="IndianRed" Content="Cancel" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0" Click="CancelDownload_Click"/>
+        <ProgressBar Visibility="{Binding DownloadUIVisibility}" VerticalAlignment="Bottom" Margin="110,0,0,0" Height="20" Minimum="0" Maximum="100" Value="{Binding GameDownloadProgress}"/>
+        <TextBlock Visibility="{Binding DownloadUIVisibility, Converter={StaticResource visConv}}" Text="🗑️" FontSize="30" Foreground="IndianRed" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0" Cursor="Hand" ToolTip="Delete File" MouseLeftButtonUp="DeleteFile_MouseLeftButtonUp"/>
+        <TextBlock Visibility="{Binding DownloadUIVisibility, Converter={StaticResource visConv}}" Text="📁" FontSize="30" Foreground="LightBlue" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,70,0" Cursor="Hand" ToolTip="Open Directory" MouseLeftButtonUp="OpenDirectory_MouseLeftButtonUp"/>
+
+    </Grid>
+</UserControl>

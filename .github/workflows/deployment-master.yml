@@ -1,0 +1,57 @@
+name: Deployment Pipeline for master branch
+on:
+  push:
+    branches:
+      - master
+jobs:
+  deploy:
+    permissions: write-all
+    runs-on: windows-latest
+    outputs:
+      version: ${{ steps.release.outputs.version }}
+    
+    steps:
+    - name: Checkout repository
+      id: checkout
+      uses: actions/checkout@v2
+      
+    - name: Set up .NET
+      id: setup
+      uses: actions/setup-dotnet@v3.2.0
+      with:
+        dotnet-version: '6.x'
+        
+    - name: Build .NET solution
+      id: build
+      run: |
+        dotnet build gamevault.sln --configuration Release
+        7z a GameVault.zip gamevault/bin
+      
+    - name: Create Github Tag & Release
+      id: release
+      uses: CupOfTea696/gh-action-auto-release@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Upload Release Artifact
+      id: upload
+      uses: actions/upload-release-asset@v1
+      with:
+        asset_path: GameVault.zip
+        asset_name: GameVault.zip
+        asset_content_type: application/zip
+        upload_url: ${{steps.release.outputs.upload_url}}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+  notify_discord:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Send Discord Notification
+      id: discord
+      uses: Ilshidur/action-discord@master
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_RELEASE_BOT_WEBHOOK }}
+      with:
+        args: '<@&1128857090090340382> New Release: ${{ github.event.repository.full_name }} v${{ needs.deploy.outputs.version }} has been deployed. Here are the changes: https://github.com/${{ github.event.repository.full_name }}/releases/tag/${{ needs.deploy.outputs.version }}'

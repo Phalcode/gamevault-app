@@ -1,18 +1,19 @@
 # crackpipe-app
+![logo](https://gamevau.lt/img/logo-text-and-image-sbs.png)
 [You can find the official Website/Documentation here](https://crackpipe.de)
 
 ## Library Technical Decision Matrix
 
 > This is probably irrelevant to you if you are not a developer.
-> Crackpipe internally needs to behave different in each of the following scenarios.
+> GameVault internally needs to behave different in each of the following scenarios.
 
 <details>
 <summary>Scenario 1: No paths exist</summary>  
 
 | Path        | State           |
 | :------------- |:-------------:|
-| ``D:/Crackpipe/Downloads/(74) Assassin's Creed Unity/`` | ``empty or non-existent`` |
-| ``D:/Crackpipe/Installations/(74) Assassin's Creed Unity/`` | ``empty or non-existent`` |
+| ``D:/GameVault/Downloads/(74) Assassin's Creed Unity/`` | ``empty or non-existent`` |
+| ``D:/GameVault/Installations/(74) Assassin's Creed Unity/`` | ``empty or non-existent`` |
 
 **When does this happen**
 
@@ -32,8 +33,8 @@
   
 | Path        | State           |
 | :------------- |:-------------:|
-| ``D:/Crackpipe/Downloads/(74) Assassin's Creed Unity/`` | ``contains the (partial) game.zip`` |
-| ``D:/Crackpipe/Installations/(74) Assassin's Creed Unity/`` | ``empty or non-existent`` |
+| ``D:/GameVault/Downloads/(74) Assassin's Creed Unity/`` | ``contains the (partial) game.zip`` |
+| ``D:/GameVault/Installations/(74) Assassin's Creed Unity/`` | ``empty or non-existent`` |
 
 **When does this happen**
 
@@ -45,7 +46,7 @@
 
 - Identify the game using the id
 - Show the Game as "Downloaded" in the Downloaded Tab
-- Show the Game in the library but grey out the play button, inform the user that they **need to install** the game into the folder `D:/Crackpipe/Installations/(74) Assassin's Creed Unity/` to play and track it using crackpipe.
+- Show the Game in the library but grey out the play button, inform the user that they **need to install** the game into the folder `D:/GameVault/Installations/(74) Assassin's Creed Unity/` to play and track it using gamevault.
 - Change Download button to play button in Library View -> Game Details, link it to the Installations -> Game entry with greyed out play button.
 
 ---
@@ -57,8 +58,8 @@
   
 | Path        | State           |
 | :------------- |:-------------:|
-| ``D:/Crackpipe/Downloads/(74) Assassin's Creed Unity/`` | ``contains the game.zip`` |
-| ``D:/Crackpipe/Installations/(74) Assassin's Creed Unity/`` | ``contains game files (.exe)`` |
+| ``D:/GameVault/Downloads/(74) Assassin's Creed Unity/`` | ``contains the game.zip`` |
+| ``D:/GameVault/Installations/(74) Assassin's Creed Unity/`` | ``contains game files (.exe)`` |
 
 **When does this happen**
 
@@ -82,8 +83,8 @@
   
 | Path        | State           |
 | :------------- |:-------------:|
-| ``D:/Crackpipe/Downloads/(74) Assassin's Creed Unity/`` | ``empty or non-existent`` |
-| ``D:/Crackpipe/Installations/(74) Assassin's Creed Unity/`` | ``contains game files (.exe)`` |
+| ``D:/GameVault/Downloads/(74) Assassin's Creed Unity/`` | ``empty or non-existent`` |
+| ``D:/GameVault/Installations/(74) Assassin's Creed Unity/`` | ``contains game files (.exe)`` |
 
 **When does this happen**
 
