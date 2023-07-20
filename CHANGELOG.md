@@ -1,10 +1,13 @@
 # GameVault App Changelog
 
+## 1.2.1
+### Changes
+- Autostart fix (For self build and Microsoft Store)
+
 ## 1.2.0
 ### Changes
 - Renaming
 - Automatic migration of existing data
-- Autostart fix (For self build and Microsoft Store)
 
 ## 1.1.0
 ### Changes

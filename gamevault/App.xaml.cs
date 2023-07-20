@@ -34,7 +34,6 @@ namespace gamevault
         {
 
             Application.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(AppDispatcherUnhandledException);
-            System.Windows.MessageBox.Show(System.Reflection.Assembly.GetExecutingAssembly().Location);
             try
             {
                 NewNameMigrationHelper.MigrateIfNeeded();
