@@ -2,11 +2,11 @@
 
 ## 1.2.1
 ### Changes
-- Autostart fix (For self build and Microsoft Store)
+- #145 Autostart fix (For self build and Microsoft Store)
 
 ## 1.2.0
 ### Changes
-- Renaming
+- Renamed Crackpipe to Gamevault
 - Automatic migration of existing data
 
 ## 1.1.0
