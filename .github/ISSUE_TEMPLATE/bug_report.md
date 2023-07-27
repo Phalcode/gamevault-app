@@ -2,7 +2,7 @@
 name: 🪲 Report a Bug
 about: Does something not work correctly?
 labels: ["💻 client", "🪲 bug"]
-projects: "Phalcode/3"
+projects: "Phalcode/4"
 ---
 
 **Describe the bug**
