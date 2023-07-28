@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using System.IO.Pipes;
 using System.Windows.Threading;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace gamevault
 {
@@ -98,6 +99,7 @@ namespace gamevault
 
         private void AppDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
+            ProcessShepherd.KillAllChildProcesses();
 #if DEBUG
             e.Handled = false;
 #else
@@ -210,6 +212,7 @@ namespace gamevault
         private void ShutdownApp()
         {
             ShowToastMessage = false;
+            ProcessShepherd.KillAllChildProcesses();
             Shutdown();
         }
     }

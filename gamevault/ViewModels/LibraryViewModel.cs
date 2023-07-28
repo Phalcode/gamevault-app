@@ -1,12 +1,18 @@
-﻿using gamevault.Models;
+﻿using gamevault.Converter;
+using gamevault.Models;
 using gamevault.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Configuration;
+using System.Globalization;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace gamevault.ViewModels
 {
@@ -19,7 +25,7 @@ namespace gamevault.ViewModels
         private ObservableCollection<Game> m_GameCards { get; set; }
         private bool m_IsSearchEnabled = true;
         private bool m_EarlyAccessOnly = false;
-        private int m_YearFilterUpper { get; set; } 
+        private int m_YearFilterUpper { get; set; }
         private int m_YearFilterLower { get; set; }
         private int m_TotalGamesCount = -1;
 
@@ -64,6 +70,26 @@ namespace gamevault.ViewModels
                 {
                     {"Ascending","ASC"},
                     {"Descending","DESC" }
+                };
+                return dict;
+            }
+        }
+        public KeyValuePair<string, string> SelectedGameFilterGameType
+        {
+            get { return m_SelectedGameFilterOrderBy; }
+            set { m_SelectedGameFilterOrderBy = value; }
+        }
+        public Dictionary<string, string> GameFilterGameTypeValues
+        {
+            get
+            {
+                EnumDescriptionConverter conv = new EnumDescriptionConverter();
+                var dict = new Dictionary<string, string>
+                {
+                    {"All","" },
+                    { conv.Convert(GameType.WINDOWS_SETUP,null,null,null).ToString(),"WINDOWS_SETUP"},
+                    { conv.Convert(GameType.WINDOWS_PORTABLE,null,null,null).ToString(),"WINDOWS_PORTABLE" },
+                    {"Other","UNDETECTABLE" }
                 };
                 return dict;
             }

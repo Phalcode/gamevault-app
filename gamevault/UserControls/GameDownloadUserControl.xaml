@@ -29,6 +29,7 @@
         <ProgressBar Visibility="{Binding DownloadUIVisibility}" VerticalAlignment="Bottom" Margin="110,0,0,0" Height="20" Minimum="0" Maximum="100" Value="{Binding GameDownloadProgress}"/>
         <TextBlock Visibility="{Binding DownloadUIVisibility, Converter={StaticResource visConv}}" Text="🗑️" FontSize="30" Foreground="IndianRed" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0" Cursor="Hand" ToolTip="Delete File" MouseLeftButtonUp="DeleteFile_MouseLeftButtonUp"/>
         <TextBlock Visibility="{Binding DownloadUIVisibility, Converter={StaticResource visConv}}" Text="📁" FontSize="30" Foreground="LightBlue" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,70,0" Cursor="Hand" ToolTip="Open Directory" MouseLeftButtonUp="OpenDirectory_MouseLeftButtonUp"/>
+        <TextBlock Visibility="{Binding DownloadUIVisibility, Converter={StaticResource visConv}}" Text="📤" FontSize="30" Foreground="LightBlue" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,130,7" Cursor="Hand" ToolTip="Open Directory" MouseLeftButtonUp="Extract_MouseLeftButtonUp"/>
 
     </Grid>
 </UserControl>

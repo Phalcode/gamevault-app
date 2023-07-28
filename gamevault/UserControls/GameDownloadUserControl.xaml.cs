@@ -4,16 +4,9 @@ using gamevault.ViewModels;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Security.Policy;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace gamevault.UserControls
@@ -28,8 +21,9 @@ namespace gamevault.UserControls
         private string m_DownloadPath { get; set; }
         string m_InstallPath { get; set; }
         private HttpClientDownloadWithProgress client { get; set; }
-        DateTime startTime;
-        long lastBytes = 0;
+        private DateTime startTime;
+
+        private SevenZipHelper sevenZipHelper { get; set; }
         public GameDownloadUserControl(Game game, bool download)
         {
             InitializeComponent();
@@ -40,6 +34,7 @@ namespace gamevault.UserControls
             m_DownloadPath = $"{SettingsViewModel.Instance.RootPath}\\GameVault\\Downloads\\({ViewModel.Game.ID}){ViewModel.Game.Title}";
             m_DownloadPath = m_DownloadPath.Replace(@"\\", @"\");
             m_InstallPath = $"{SettingsViewModel.Instance.RootPath}\\GameVault\\Installations\\({ViewModel.Game.ID}){ViewModel.Game.Title}";
+            sevenZipHelper = new SevenZipHelper();
             if (download)
             {
                 Task.Run(async () =>
@@ -53,7 +48,14 @@ namespace gamevault.UserControls
             }
             else
             {
-                ViewModel.State = "Downloaded";
+                if (File.Exists($"{m_DownloadPath}\\Extract\\gamevault-metadata") && Preferences.Get(AppConfigKey.ExtractionFinished, $"{m_DownloadPath}\\Extract\\gamevault-metadata") == "1")
+                {
+                    ViewModel.State = "Extracted";
+                }
+                else
+                {
+                    ViewModel.State = "Downloaded";
+                }
             }
         }
         public bool IsDownloading()
@@ -112,7 +114,7 @@ namespace gamevault.UserControls
             App.Current.Dispatcher.Invoke((Action)delegate
             {
                 ViewModel.TotalBytesDownloaded = totalBytesDownloaded;
-                ViewModel.DownloadRate = CalculateDownloadSpeed(totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds);
+                ViewModel.DownloadRate = $"Download Speed: {CalculateSpeed(totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds)}";
                 ViewModel.TimeLeft = CalculateTimeLeft(totalFileSize, totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds);
                 if (ViewModel.GameDownloadProgress != (int)progressPercentage)
                 {
@@ -140,11 +142,18 @@ namespace gamevault.UserControls
 
         private void CancelDownload_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            CancelDownload();
+            if (IsDownloadActive == true)
+            {
+                CancelDownload();
+            }
+            else
+            {
+                sevenZipHelper.Cancel();
+            }
         }
-        private string CalculateDownloadSpeed(double size, double tspan)
+        private string CalculateSpeed(double size, double tspan)
         {
-            string message = "Download Speed:";
+            string message = string.Empty;
             if (size / tspan > 1024 * 1024) // MB
             {
                 return $"{message} {Math.Round(size / (1024 * 1204) / tspan, 2)} MB/s"; //string.Format(message, size / (1024 * 1204) / tspan, "MB/s");
@@ -163,7 +172,11 @@ namespace gamevault.UserControls
         {
             var averagespeed = totalBytesDownloaded / tspan;
             var timeleft = (totalFileSize / averagespeed) - (tspan);
-            var t = TimeSpan.FromSeconds(Convert.ToInt32(timeleft));
+            TimeSpan t = TimeSpan.FromSeconds(0);
+            if (!double.IsInfinity(Convert.ToDouble(timeleft)))
+            {
+                t = TimeSpan.FromSeconds(Convert.ToInt32(timeleft));
+            }
             return string.Format("{0:00}:{1:00}:{2:00}", ((int)t.TotalHours), t.Minutes, t.Seconds);
         }
 
@@ -187,6 +200,45 @@ namespace gamevault.UserControls
         private void GameImage_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(ViewModel.Game, LoginManager.Instance.IsLoggedIn()));
+        }
+
+        private async void Extract_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ViewModel.State = "Extracting...";
+            ViewModel.DownloadUIVisibility = System.Windows.Visibility.Visible;
+
+
+            sevenZipHelper.Process += ExtractionProgress;
+            startTime = DateTime.Now;
+            int result = await sevenZipHelper.ExtractArchive($"{m_DownloadPath}\\{Path.GetFileName(ViewModel.Game.FilePath)}", $"{m_DownloadPath}\\Extract");
+            if (result == 0)
+            {
+                if (!File.Exists($"{m_DownloadPath}\\Extract\\gamevault-metadata"))
+                {
+                    File.Create($"{m_DownloadPath}\\Extract\\gamevault-metadata").Close();
+                }
+                Preferences.Set(AppConfigKey.ExtractionFinished, "1", $"{m_DownloadPath}\\Extract\\gamevault-metadata");
+                ViewModel.State = "Extracted";
+                ViewModel.DownloadUIVisibility = System.Windows.Visibility.Hidden;
+            }
+            else
+            {
+                if (Directory.Exists($"{m_DownloadPath}\\Extract"))
+                {
+                    Directory.Delete($"{m_DownloadPath}\\Extract", true);
+                }
+                ViewModel.State = "Something went wrong during extraction";
+                ViewModel.DownloadUIVisibility = System.Windows.Visibility.Hidden;
+            }
+        }
+
+        private void ExtractionProgress(object sender, SevenZipProgressEventArgs e)
+        {
+            long totalBytesDownloaded = (Convert.ToInt64(ViewModel.Game.Size) / 100) * e.PercentageDone;
+            ViewModel.DownloadRate = $"Extraction Speed: {CalculateSpeed(totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds)}";
+            ViewModel.TotalBytesDownloaded = totalBytesDownloaded;
+            ViewModel.TimeLeft = CalculateTimeLeft(Convert.ToInt64(ViewModel.Game.Size), totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds);
+            ViewModel.GameDownloadProgress = e.PercentageDone;
         }
     }
 }

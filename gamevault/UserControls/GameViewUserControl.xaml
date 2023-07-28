@@ -13,6 +13,7 @@
     <UserControl.Resources>
         <conv:GameSizeConverter x:Key="sizeConv"/>
         <conv:GameTimeConverter x:Key="timeConv"/>
+        <conv:EnumDescriptionConverter x:Key="enumDescConv"/>
     </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Key="Esc">
@@ -92,20 +93,35 @@
                             </TextBlock.Text>
                         </TextBlock>
                     </Viewbox>
-                    <ItemsControl HorizontalAlignment="Left" VerticalAlignment="Top" ItemsSource="{Binding Path=Game.Genres}"  Margin="0,10,0,10">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border CornerRadius="20" Background="{StaticResource MahApps.Brushes.Accent}" Padding="0" Margin="0,0,10,0">
-                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="15,8,15,8" FontSize="15" FontWeight="Bold"/>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                    <StackPanel Orientation="Horizontal">
+                        <Border CornerRadius="20" Background="Gainsboro" Padding="0" Margin="0,10,10,10">
+                            <Border.Style>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=Game.Type}" Value="UNDETECTABLE">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <TextBlock Text="{Binding Path=Game.Type,Converter={StaticResource enumDescConv}}" VerticalAlignment="Center" Margin="15,8,15,8" FontSize="15" FontWeight="Bold" Foreground="#FF424242"/>
+                        </Border>
+                        <ItemsControl HorizontalAlignment="Left" VerticalAlignment="Top" ItemsSource="{Binding Path=Game.Genres}"  Margin="0,10,0,10">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border CornerRadius="20" Background="{StaticResource MahApps.Brushes.Accent}" Padding="0" Margin="0,0,10,0">
+                                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="15,8,15,8" FontSize="15" FontWeight="Bold"/>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
                     <ScrollViewer  VerticalScrollBarVisibility="Auto" Height="400">
                         <TextBlock  Text="{Binding Path=Game.Description}" TextWrapping="Wrap" FontSize="17"/>
                     </ScrollViewer>
