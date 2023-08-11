@@ -22,6 +22,7 @@ namespace gamevault.ViewModels
         private string m_SearchQuery = "";
         private KeyValuePair<string, string> m_SelectedGameFilterSortBy { get; set; }
         private KeyValuePair<string, string> m_SelectedGameFilterOrderBy { get; set; }
+        private KeyValuePair<string, string> m_SelectedGameFilterGameType { get; set; }
         private ObservableCollection<Game> m_GameCards { get; set; }
         private bool m_IsSearchEnabled = true;
         private bool m_EarlyAccessOnly = false;
@@ -76,8 +77,8 @@ namespace gamevault.ViewModels
         }
         public KeyValuePair<string, string> SelectedGameFilterGameType
         {
-            get { return m_SelectedGameFilterOrderBy; }
-            set { m_SelectedGameFilterOrderBy = value; }
+            get { return m_SelectedGameFilterGameType; }
+            set { m_SelectedGameFilterGameType = value; }
         }
         public Dictionary<string, string> GameFilterGameTypeValues
         {

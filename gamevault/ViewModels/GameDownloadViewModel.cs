@@ -16,10 +16,13 @@ namespace gamevault.ViewModels
         private Game m_Game { get; set; }
         private string m_State { get; set; }
         private int m_GameDownloadProgress { get; set; }
+        private int m_GameExtractionProgress { get; set; }    
+        private string m_DownloadInfo { get; set; }
+        private string m_ExtractionInfo { get; set; }
+        private string m_InstallPath { get; set; }
         private Visibility m_DownloadUIVisibility { get; set; }
-        private string m_DownloadRate { get; set; }
-        private string m_TimeLeft { get; set; }
-        private long? m_TotalBytesDownloaded { get; set; } = 0;
+        private Visibility m_ExtractionUIVisibility { get; set; }
+
         #endregion
 
         public Game Game
@@ -37,25 +40,36 @@ namespace gamevault.ViewModels
             get { return m_GameDownloadProgress; }
             set { m_GameDownloadProgress = value; OnPropertyChanged(); }
         }
+        public int GameExtractionProgress
+        {
+            get { return m_GameExtractionProgress; }
+            set { m_GameExtractionProgress = value; OnPropertyChanged(); }
+        }
+        public string DownloadInfo
+        {
+            get { return m_DownloadInfo; }
+            set { m_DownloadInfo = value; OnPropertyChanged(); }
+        }
+        public string ExtractionInfo
+        {
+            get { return m_ExtractionInfo; }
+            set { m_ExtractionInfo = value; OnPropertyChanged(); }
+        }
+
         public Visibility DownloadUIVisibility
         {
             get { return m_DownloadUIVisibility; }
             set { m_DownloadUIVisibility = value; OnPropertyChanged(); }
         }
-        public string DownloadRate
+        public Visibility ExtractionUIVisibility
         {
-            get { return m_DownloadRate; }
-            set { m_DownloadRate = value; OnPropertyChanged(); }
+            get { return m_ExtractionUIVisibility; }
+            set { m_ExtractionUIVisibility = value; OnPropertyChanged(); }
         }
-        public string TimeLeft
+        public string InstallPath
         {
-            get { return m_TimeLeft; }
-            set { m_TimeLeft = value; OnPropertyChanged(); }
-        }
-        public long? TotalBytesDownloaded
-        {
-            get { return m_TotalBytesDownloaded; }
-            set { m_TotalBytesDownloaded = value; OnPropertyChanged(); }
+            get { return m_InstallPath; }
+            set { m_InstallPath = value; OnPropertyChanged(); }
         }
     }
 }

@@ -13,7 +13,7 @@
         <conv:InverseVisibilityConverter x:Key="visConv"/>
     </UserControl.Resources>
     <Grid Height="100" Margin="15" HorizontalAlignment="Stretch">
-        <local:CacheImage ImageCacheType="BoxArt" Data="{Binding Path=Game}" Width="100" HorizontalAlignment="Left" Cursor="Hand" MouseLeftButtonUp="GameImage_MouseLeftButtonUp" Panel.ZIndex="1"/>
+        <local:CacheImage ImageCacheType="BoxArt" Data="{Binding Path=Game}" CornerRadius="8" Width="100" HorizontalAlignment="Left" Cursor="Hand" MouseLeftButtonUp="GameImage_MouseLeftButtonUp" Panel.ZIndex="1"/>
         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="110,-10,0,0" Text="{Binding Path=Game.Title}" FontSize="35" FontWeight="Bold"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0">
             <StackPanel Margin="5">

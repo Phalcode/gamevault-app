@@ -94,14 +94,14 @@ namespace gamevault.UserControls
             {
                 try
                 {
-                    StartApp(m_SavedExecutable);
+                    ProcessHelper.StartApp(m_SavedExecutable);
                 }
                 catch
                 {
 
                     try
                     {
-                        StartApp(m_SavedExecutable, true);
+                        ProcessHelper.StartApp(m_SavedExecutable, true);
                     }
                     catch
                     {
@@ -113,19 +113,7 @@ namespace gamevault.UserControls
             {
                 MainWindowViewModel.Instance.AppBarText = $"Could not find executable '{m_SavedExecutable}'";
             }
-        }
-        private void StartApp(string fileName, bool asAdmin = false)
-        {
-            ProcessStartInfo app = new ProcessStartInfo();
-            app.FileName = fileName;
-            app.WorkingDirectory = Path.GetDirectoryName(fileName);
-            app.UseShellExecute = true;
-            if (asAdmin)
-            {
-                app.Verb = "runas";
-            }
-            Process.Start(app);
-        }
+        }       
 
         private void GameImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {

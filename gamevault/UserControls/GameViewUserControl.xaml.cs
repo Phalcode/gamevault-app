@@ -108,7 +108,7 @@ namespace gamevault.UserControls
             }
             if (IsEnoughDriveSpaceAvailable(SettingsViewModel.Instance.RootPath, Convert.ToInt64(ViewModel.Game.Size)))
             {
-                DownloadsViewModel.Instance.DownloadedGames.Add(new GameDownloadUserControl(ViewModel.Game, true));
+                DownloadsViewModel.Instance.DownloadedGames.Insert(0, new GameDownloadUserControl(ViewModel.Game, true));
                 MainWindowViewModel.Instance.AppBarText = $"'{ViewModel.Game.Title}' has been added to the download queue";
             }
             else

@@ -6,5 +6,16 @@
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Image x:Name="uiImg" Stretch="UniformToFill"/>
+    <WrapPanel Name ="container">
+        <Image x:Name="uiImg" Stretch="UniformToFill"/>
+        <WrapPanel.OpacityMask>
+            <VisualBrush >
+                <VisualBrush.Visual>
+                    <Border x:Name="uiBorder" Height="{Binding ElementName=container, Path=ActualHeight}" 
+             Width="{Binding ElementName=container, Path=ActualWidth}"
+             Background="White" CornerRadius="0" />
+                </VisualBrush.Visual>
+            </VisualBrush>
+        </WrapPanel.OpacityMask>
+    </WrapPanel>
 </UserControl>

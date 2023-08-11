@@ -82,7 +82,7 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <DockPanel LastChildFill="True" Height="18" Margin="0,0,0,0" >
-                                        <local:CacheImage ImageCacheType="BoxArt" Data="{Binding}" Width="15" Height="15" Cursor="Hand" MouseLeftButtonUp="GameImage_MouseLeftButtonUp"/>
+                                        <local:CacheImage ImageCacheType="BoxArt" Data="{Binding}" CornerRadius="2" Width="15" Height="15" Cursor="Hand" MouseLeftButtonUp="GameImage_MouseLeftButtonUp"/>
                                         <Grid>
                                             <TextBlock Margin="1,3,0,0" FontSize="3" Width="60">
                                                 <TextBlock.Style>

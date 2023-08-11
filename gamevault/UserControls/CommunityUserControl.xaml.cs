@@ -131,6 +131,7 @@ namespace gamevault.UserControls
                 });
             }
             catch (Exception ex) { }
+            SortBy_SelectionChanged(null, new SelectionChangedEventArgs(System.Windows.Controls.Primitives.Selector.SelectionChangedEvent, new List<string>(), new List<string> { uiSortBy.SelectedValue.ToString() }));
             ((TextBlock)sender).IsEnabled = true;
         }
         private void UserEdit_Clicked(object sender, RoutedEventArgs e)

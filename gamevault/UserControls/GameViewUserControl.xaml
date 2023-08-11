@@ -223,7 +223,7 @@
                                 </Hyperlink>
                             </TextBlock>
 
-                            <Border CornerRadius="3" Cursor="Hand" Margin="5,0,0,0" MouseLeftButtonUp="Download_Click">
+                            <Border CornerRadius="1" Cursor="Hand" Margin="5.1,0,0,0" MouseLeftButtonUp="Download_Click">
                                 <Border.Style>
                                     <Style TargetType="{x:Type Border}">
                                         <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Accent}"/>

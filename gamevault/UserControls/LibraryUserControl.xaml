@@ -64,14 +64,14 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Grid Cursor="Hand" Style="{StaticResource GameCardAnimation}" Name="ParentGrid" MaxHeight="250" MaxWidth="200" Margin="5,10,5,10" MouseLeftButtonUp="GameCard_Clicked">
+                                <Grid Cursor="Hand" Style="{StaticResource GameCardAnimation}" Name="ParentGrid" MaxHeight="250" MaxWidth="167" Margin="5,10,5,10" MouseLeftButtonUp="GameCard_Clicked">
                                     <Grid.RenderTransform>
                                         <ScaleTransform/>
                                     </Grid.RenderTransform>
-                                    <Border Background="{StaticResource DarkBackground3}">
-                                        <local:CacheImage ImageCacheType="BoxArt" Data="{Binding}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <Border Background="{StaticResource DarkBackground3}" CornerRadius="8">
+                                        <local:CacheImage Stretch="Fill" ImageCacheType="BoxArt" Data="{Binding}" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
-                                    <Border Name="banner" VerticalAlignment="Stretch" Background="#B2000000">
+                                    <Border Name="banner" VerticalAlignment="Stretch" Background="#B2000000" CornerRadius="8">
                                         <Border.Style>
                                             <Style TargetType="{x:Type Border}">
                                                 <Style.Triggers>
@@ -81,9 +81,7 @@
                                                 </Style.Triggers>
                                             </Style>
                                         </Border.Style>
-                                        <Viewbox Stretch="Uniform" Height="45" Margin="10,0,5,0">
-                                            <TextBlock Text="{Binding Title}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" TextAlignment="Center"/>
-                                        </Viewbox>
+                                        <TextBlock Text="{Binding Title}" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" TextAlignment="Center" TextWrapping="Wrap"/>
                                     </Border>
                                 </Grid>
                             </DataTemplate>
