@@ -22,6 +22,7 @@ namespace gamevault.ViewModels
         private string m_InstallPath { get; set; }
         private Visibility m_DownloadUIVisibility { get; set; }
         private Visibility m_ExtractionUIVisibility { get; set; }
+        private Visibility m_DownloadFailedVisibility { get; set; }
 
         #endregion
 
@@ -65,6 +66,11 @@ namespace gamevault.ViewModels
         {
             get { return m_ExtractionUIVisibility; }
             set { m_ExtractionUIVisibility = value; OnPropertyChanged(); }
+        }
+        public Visibility DownloadFailedVisibility
+        {
+            get { return m_DownloadFailedVisibility; }
+            set { m_DownloadFailedVisibility = value; OnPropertyChanged(); }
         }
         public string InstallPath
         {

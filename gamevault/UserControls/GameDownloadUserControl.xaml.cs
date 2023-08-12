@@ -34,21 +34,16 @@ namespace gamevault.UserControls
             ViewModel.Game = game;
             ViewModel.DownloadUIVisibility = System.Windows.Visibility.Hidden;
             ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
+            ViewModel.DownloadFailedVisibility = System.Windows.Visibility.Hidden;
 
             m_DownloadPath = $"{SettingsViewModel.Instance.RootPath}\\GameVault\\Downloads\\({ViewModel.Game.ID}){ViewModel.Game.Title}";
             m_DownloadPath = m_DownloadPath.Replace(@"\\", @"\");
             ViewModel.InstallPath = $"{SettingsViewModel.Instance.RootPath}\\GameVault\\Installations\\({ViewModel.Game.ID}){ViewModel.Game.Title}";
+            ViewModel.InstallPath = ViewModel.InstallPath.Replace(@"\\", @"\");
             sevenZipHelper = new SevenZipHelper();
             if (download)
             {
-                Task.Run(async () =>
-                {
-                    IsDownloadActive = true;
-                    ViewModel.State = "Downloading...";
-                    ViewModel.DownloadUIVisibility = System.Windows.Visibility.Visible;
-                    await DownloadGame();
-                    await CacheHelper.CreateOfflineCacheAsync(ViewModel.Game);
-                });
+                DownloadGame();
             }
             else
             {
@@ -96,26 +91,42 @@ namespace gamevault.UserControls
             IsDownloadActive = false;
             ViewModel.State = "Download Cancelled";
             ViewModel.DownloadUIVisibility = System.Windows.Visibility.Hidden;
+            ViewModel.DownloadFailedVisibility = System.Windows.Visibility.Visible;
         }
-        private async Task DownloadGame()
+        private void DownloadGame()
         {
-
-            if (!Directory.Exists(m_DownloadPath)) { Directory.CreateDirectory(m_DownloadPath); }
-            client = new HttpClientDownloadWithProgress($"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/{ViewModel.Game.ID}/download", $"{m_DownloadPath}\\{Path.GetFileName(ViewModel.Game.FilePath)}");
-            client.ProgressChanged += DownloadProgress;
-            startTime = DateTime.Now;
-
-            try
+            Task.Run(async () =>
             {
-                await client.StartDownload();
-            }
-            catch (Exception ex)
-            {
-                client.Dispose();
-                IsDownloadActive = false;
-                ViewModel.State = $"Error: '{ex.Message}'";
-                ViewModel.DownloadUIVisibility = System.Windows.Visibility.Hidden;
-            }
+                IsDownloadActive = true;
+                ViewModel.State = "Downloading...";
+                ViewModel.DownloadUIVisibility = System.Windows.Visibility.Visible;
+                ViewModel.DownloadFailedVisibility = System.Windows.Visibility.Hidden;
+
+                if (!Directory.Exists(m_DownloadPath)) { Directory.CreateDirectory(m_DownloadPath); }
+                client = new HttpClientDownloadWithProgress($"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/{ViewModel.Game.ID}/download", $"{m_DownloadPath}\\{Path.GetFileName(ViewModel.Game.FilePath)}");
+                client.ProgressChanged += DownloadProgress;
+                startTime = DateTime.Now;
+
+                try
+                {
+                    await client.StartDownload();
+                    await CacheHelper.CreateOfflineCacheAsync(ViewModel.Game);
+                }
+                catch (Exception ex)
+                {
+                    client.Dispose();
+                    IsDownloadActive = false;
+                    ViewModel.State = $"Error: '{ex.Message}'";
+                    ViewModel.DownloadUIVisibility = System.Windows.Visibility.Hidden;
+                    ViewModel.DownloadFailedVisibility = System.Windows.Visibility.Visible;
+                }
+            });
+        }
+        private void RetryDownload_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ViewModel.DownloadInfo = string.Empty;
+            ViewModel.GameDownloadProgress = 0;
+            DownloadGame();
         }
         private void DownloadProgress(long? totalFileSize, long totalBytesDownloaded, double? progressPercentage)
         {
@@ -324,14 +335,13 @@ namespace gamevault.UserControls
                 uiProgressRingInstall.IsActive = true;
                 await Task.Run(async () =>
                 {
-                    await Task.Delay(5000);
                     try
                     {
-                        if (Directory.Exists($"{ViewModel.InstallPath}\\Copy"))
+                        if (Directory.Exists($"{ViewModel.InstallPath}\\Files"))
                         {
-                            Directory.Delete($"{ViewModel.InstallPath}\\Copy", true);
+                            Directory.Delete($"{ViewModel.InstallPath}\\Files", true);
                         }
-                        Directory.Move($"{m_DownloadPath}\\Extract", $"{ViewModel.InstallPath}\\Copy");
+                        Directory.Move($"{m_DownloadPath}\\Extract", $"{ViewModel.InstallPath}\\Files");
                     }
                     catch { error = true; }
                 });
@@ -385,7 +395,7 @@ namespace gamevault.UserControls
                     }
                     if (setupProcess != null)
                     {
-                        await setupProcess.WaitForExitAsync();                      
+                        await setupProcess.WaitForExitAsync();
                         ((FrameworkElement)sender).IsEnabled = true;
                     }
                 }

@@ -24,6 +24,9 @@
             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="56,10,0,0" Text="{Binding State,StringFormat={}State: {0}}" FontSize="4"/>
 
             <TextBlock Text="📥" FontSize="9" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="55,17,0,0"/>
+            <Border Visibility="{Binding DownloadFailedVisibility}" Background="{StaticResource MahApps.Brushes.Accent}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="70,21,2,0" CornerRadius="2" Padding="1" Cursor="Hand" ToolTip="Download Game" MouseLeftButtonUp="RetryDownload_Click">
+                <TextBlock Text="Retry" FontSize="5" Width="23" TextAlignment="Center"/>
+            </Border>
             <TextBlock Visibility="{Binding DownloadUIVisibility}" Text="{Binding DownloadInfo}" FontSize="4" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="68,19,0,0" Width="115"/>
             <Border Visibility="{Binding DownloadUIVisibility}" Background="IndianRed" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,24,2,0" CornerRadius="2" Padding="1" Cursor="Hand" ToolTip="Cancel Download" MouseLeftButtonUp="CancelDownload_Click">
                 <TextBlock Text="Cancel" FontSize="3"/>
@@ -129,7 +132,7 @@
                     </Border>
                     <TextBlock Text="To install this game, please follow the steps below:" FontWeight="Bold" Margin="0,10,0,0" FontSize="4"/>
 
-                    <TextBlock FontSize="4" TextWrapping="Wrap" Text="This is a Portable Game, so there's no need for any setup. Once you click 'Install', the files will be automatically moved to the installation folder." Margin="0,18,0,0"/>
+                    <TextBlock FontSize="4" TextWrapping="Wrap" Text="This is a Portable Game, so there's no need for any setup. Once you click 'Install', the files will be automatically moved to the installation folder." MaxWidth="126" Margin="0,18,0,0"/>
                     <Border VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,1,0" CornerRadius="2" Padding="6,1,6,1" Cursor="Hand" MouseLeftButtonUp="Install_Click">
                         <Border.Style>
                             <Style TargetType="{x:Type Border}">
