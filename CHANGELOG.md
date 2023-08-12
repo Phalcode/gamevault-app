@@ -4,7 +4,7 @@
 ### Changes
 - Installation pipeline implemented. The UI for the download tab has been completely overhauled. GameVault is now able to extract downloaded game archives and perform the installation process depending on the game type.
 - Added new game types filter in the library
-- Bug fix: The box images were cut off in the Library tab. The format has now been changed to 4:3, so that you can always see the whole image.
+- Bug fix: The box images were cut off in the Library tab. The format has now been changed to 2:3, so that you can always see the whole image.
 - Bug fix: The box image titles in the library tab now have a wrap, so that even longer titles are readable
 - The "App is still running in the system tray" message will now only be displayed once per installation
 - Other UI changes especially in terms of spacing and round corners
