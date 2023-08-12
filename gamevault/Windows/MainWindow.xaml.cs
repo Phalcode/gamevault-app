@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System;
 using Microsoft.Toolkit.Uwp.Notifications;
 using System.Windows.Forms;
+using gamevault.Models;
 
 namespace gamevault.Windows
 {
@@ -105,7 +106,11 @@ namespace gamevault.Windows
             {
                 e.Cancel = true;
                 this.Hide();
-                new ToastContentBuilder().AddText("Notification").AddText("App is still running in the system tray").Show();
+                if (Preferences.Get(AppConfigKey.RunningInTrayMessage, AppFilePath.UserFile) != "1")
+                {
+                    Preferences.Set(AppConfigKey.RunningInTrayMessage, "1", AppFilePath.UserFile);
+                    new ToastContentBuilder().AddText("Notification").AddText("App is still running in the system tray").Show();
+                }
             }
         }
 

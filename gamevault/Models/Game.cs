@@ -1,8 +1,17 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Text.Json.Serialization;
 
 namespace gamevault.Models
 {
+    public enum GameType
+    {
+        UNDETECTABLE,
+        [Description("🖥⚙️ Windows Setup")]
+        WINDOWS_SETUP,
+        [Description("🖥🎮 Windows Portable")]
+        WINDOWS_PORTABLE
+    }
     public class Game
     {
         [JsonPropertyName("id")]
@@ -30,6 +39,9 @@ namespace gamevault.Models
         public string Description { get; set; }
         [JsonPropertyName("website_url")]
         public string WebsiteUrl { get; set; }
+        [JsonPropertyName("type")]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public GameType Type { get; set; }
         [JsonPropertyName("metacritic_rating")]
         public int? Rating { get; set; }
         [JsonPropertyName("average_playtime")]

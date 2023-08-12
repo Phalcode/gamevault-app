@@ -15,7 +15,9 @@ namespace gamevault.Models
         Executable,
         BackgroundStart,
         ServerUrl,
-        LibStartup
+        LibStartup,
+        ExtractionFinished,
+        RunningInTrayMessage
     }
     public static class AppFilePath
     {

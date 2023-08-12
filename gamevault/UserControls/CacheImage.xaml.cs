@@ -42,6 +42,32 @@ namespace gamevault.UserControls
         {
             await ((CacheImage)sender).DataChanged(e.NewValue);
         }
+
+        public static readonly DependencyProperty StretchProperty = DependencyProperty.Register("Stretch", typeof(Stretch), typeof(CacheImage), new PropertyMetadata(OnStretchChangedCallBack));
+
+        public Stretch Stretch
+        {
+            get { return (Stretch)GetValue(StretchProperty); }
+            set { SetValue(StretchProperty, value); }
+        }
+        private static void OnStretchChangedCallBack(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            if ((Stretch)e.NewValue != Stretch.None)
+            {
+                ((CacheImage)sender).uiImg.Stretch = (Stretch)e.NewValue;
+            }
+        }
+        public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register("CornerRadius", typeof(CornerRadius), typeof(CacheImage), new PropertyMetadata(OnCornerRadiusChangedCallBack));
+
+        public CornerRadius CornerRadius
+        {
+            get { return (CornerRadius)GetValue(CornerRadiusProperty); }
+            set { SetValue(CornerRadiusProperty, value); }
+        }
+        private static void OnCornerRadiusChangedCallBack(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            ((CacheImage)sender).uiBorder.CornerRadius = (CornerRadius)e.NewValue;
+        }
         #endregion
 
         public CacheImage()

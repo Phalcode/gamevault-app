@@ -4,14 +4,8 @@ using gamevault.ViewModels;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Security.Policy;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,11 +19,13 @@ namespace gamevault.UserControls
     {
         private GameDownloadViewModel ViewModel { get; set; }
         private bool IsDownloadActive = false;
+
         private string m_DownloadPath { get; set; }
-        string m_InstallPath { get; set; }
+        private bool extractionCancelled = false;
         private HttpClientDownloadWithProgress client { get; set; }
-        DateTime startTime;
-        long lastBytes = 0;
+        private DateTime startTime;
+
+        private SevenZipHelper sevenZipHelper { get; set; }
         public GameDownloadUserControl(Game game, bool download)
         {
             InitializeComponent();
@@ -37,23 +33,32 @@ namespace gamevault.UserControls
             this.DataContext = ViewModel;
             ViewModel.Game = game;
             ViewModel.DownloadUIVisibility = System.Windows.Visibility.Hidden;
+            ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
+            ViewModel.DownloadFailedVisibility = System.Windows.Visibility.Hidden;
+
             m_DownloadPath = $"{SettingsViewModel.Instance.RootPath}\\GameVault\\Downloads\\({ViewModel.Game.ID}){ViewModel.Game.Title}";
             m_DownloadPath = m_DownloadPath.Replace(@"\\", @"\");
-            m_InstallPath = $"{SettingsViewModel.Instance.RootPath}\\GameVault\\Installations\\({ViewModel.Game.ID}){ViewModel.Game.Title}";
+            ViewModel.InstallPath = $"{SettingsViewModel.Instance.RootPath}\\GameVault\\Installations\\({ViewModel.Game.ID}){ViewModel.Game.Title}";
+            ViewModel.InstallPath = ViewModel.InstallPath.Replace(@"\\", @"\");
+            sevenZipHelper = new SevenZipHelper();
             if (download)
             {
-                Task.Run(async () =>
-                {
-                    IsDownloadActive = true;
-                    ViewModel.State = "Downloading...";
-                    ViewModel.DownloadUIVisibility = System.Windows.Visibility.Visible;
-                    await DownloadGame();
-                    await CacheHelper.CreateOfflineCacheAsync(ViewModel.Game);
-                });
+                DownloadGame();
             }
             else
             {
-                ViewModel.State = "Downloaded";
+                if (File.Exists($"{m_DownloadPath}\\Extract\\gamevault-metadata") && Preferences.Get(AppConfigKey.ExtractionFinished, $"{m_DownloadPath}\\Extract\\gamevault-metadata") == "1")
+                {
+                    ViewModel.State = "Extracted";
+                    uiBtnExtract.IsEnabled = true;
+                    uiBtnInstall.IsEnabled = true;
+                    ((TextBlock)uiBtnExtract.Child).Text = "Re-Extract";
+                }
+                else
+                {
+                    ViewModel.State = "Downloaded";
+                    uiBtnExtract.IsEnabled = true;
+                }
             }
         }
         public bool IsDownloading()
@@ -84,36 +89,51 @@ namespace gamevault.UserControls
             client.Cancel();
             client.Dispose();
             IsDownloadActive = false;
-            ViewModel.State = "Cancelled";
+            ViewModel.State = "Download Cancelled";
             ViewModel.DownloadUIVisibility = System.Windows.Visibility.Hidden;
+            ViewModel.DownloadFailedVisibility = System.Windows.Visibility.Visible;
         }
-        private async Task DownloadGame()
+        private void DownloadGame()
         {
-
-            if (!Directory.Exists(m_DownloadPath)) { Directory.CreateDirectory(m_DownloadPath); }
-            client = new HttpClientDownloadWithProgress($"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/{ViewModel.Game.ID}/download", $"{m_DownloadPath}\\{Path.GetFileName(ViewModel.Game.FilePath)}");
-            client.ProgressChanged += DownloadProgress;
-            startTime = DateTime.Now;
-
-            try
+            Task.Run(async () =>
             {
-                await client.StartDownload();
-            }
-            catch (Exception ex)
-            {
-                client.Dispose();
-                IsDownloadActive = false;
-                ViewModel.State = $"Error: '{ex.Message}'";
-                ViewModel.DownloadUIVisibility = System.Windows.Visibility.Hidden;
-            }
+                IsDownloadActive = true;
+                ViewModel.State = "Downloading...";
+                ViewModel.DownloadUIVisibility = System.Windows.Visibility.Visible;
+                ViewModel.DownloadFailedVisibility = System.Windows.Visibility.Hidden;
+
+                if (!Directory.Exists(m_DownloadPath)) { Directory.CreateDirectory(m_DownloadPath); }
+                client = new HttpClientDownloadWithProgress($"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/{ViewModel.Game.ID}/download", $"{m_DownloadPath}\\{Path.GetFileName(ViewModel.Game.FilePath)}");
+                client.ProgressChanged += DownloadProgress;
+                startTime = DateTime.Now;
+
+                try
+                {
+                    await client.StartDownload();
+                    await CacheHelper.CreateOfflineCacheAsync(ViewModel.Game);
+                }
+                catch (Exception ex)
+                {
+                    client.Dispose();
+                    IsDownloadActive = false;
+                    ViewModel.State = $"Error: '{ex.Message}'";
+                    ViewModel.DownloadUIVisibility = System.Windows.Visibility.Hidden;
+                    ViewModel.DownloadFailedVisibility = System.Windows.Visibility.Visible;
+                }
+            });
+        }
+        private void RetryDownload_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ViewModel.DownloadInfo = string.Empty;
+            ViewModel.GameDownloadProgress = 0;
+            DownloadGame();
         }
         private void DownloadProgress(long? totalFileSize, long totalBytesDownloaded, double? progressPercentage)
         {
             App.Current.Dispatcher.Invoke((Action)delegate
             {
-                ViewModel.TotalBytesDownloaded = totalBytesDownloaded;
-                ViewModel.DownloadRate = CalculateDownloadSpeed(totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds);
-                ViewModel.TimeLeft = CalculateTimeLeft(totalFileSize, totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds);
+
+                ViewModel.DownloadInfo = $"{CalculateSpeed(totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds)} - {CalculateSize(totalBytesDownloaded)} of {CalculateSize((double)totalFileSize)} | Time left: {CalculateTimeLeft(totalFileSize, totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds)}";
                 if (ViewModel.GameDownloadProgress != (int)progressPercentage)
                 {
                     ViewModel.GameDownloadProgress = (int)progressPercentage;
@@ -127,24 +147,30 @@ namespace gamevault.UserControls
 
         private void DownloadCompleted()
         {
+            ViewModel.DownloadUIVisibility = System.Windows.Visibility.Hidden;
             client.Dispose();
             IsDownloadActive = false;
             ViewModel.State = "Downloaded";
-            ViewModel.DownloadUIVisibility = System.Windows.Visibility.Hidden;
-            if (!Directory.Exists(m_InstallPath))
+            uiBtnExtract.IsEnabled = true;
+            if (!Directory.Exists(ViewModel.InstallPath))
             {
-                Directory.CreateDirectory(m_InstallPath);
+                Directory.CreateDirectory(ViewModel.InstallPath);
             }
-            MainWindowViewModel.Instance.Installs.AddSystemFileWatcher(m_InstallPath);
+            MainWindowViewModel.Instance.Installs.AddSystemFileWatcher(ViewModel.InstallPath);
         }
 
-        private void CancelDownload_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void CancelDownload_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             CancelDownload();
         }
-        private string CalculateDownloadSpeed(double size, double tspan)
+        private void CancelExtraction_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            string message = "Download Speed:";
+            extractionCancelled = true;
+            sevenZipHelper.Cancel();
+        }
+        private string CalculateSpeed(double size, double tspan)
+        {
+            string message = string.Empty;
             if (size / tspan > 1024 * 1024) // MB
             {
                 return $"{message} {Math.Round(size / (1024 * 1204) / tspan, 2)} MB/s"; //string.Format(message, size / (1024 * 1204) / tspan, "MB/s");
@@ -163,7 +189,11 @@ namespace gamevault.UserControls
         {
             var averagespeed = totalBytesDownloaded / tspan;
             var timeleft = (totalFileSize / averagespeed) - (tspan);
-            var t = TimeSpan.FromSeconds(Convert.ToInt32(timeleft));
+            TimeSpan t = TimeSpan.FromSeconds(0);
+            if (!double.IsInfinity(Convert.ToDouble(timeleft)))
+            {
+                t = TimeSpan.FromSeconds(Convert.ToInt32(timeleft));
+            }
             return string.Format("{0:00}:{1:00}:{2:00}", ((int)t.TotalHours), t.Minutes, t.Seconds);
         }
 
@@ -172,10 +202,17 @@ namespace gamevault.UserControls
             MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to delete '{ViewModel.Game.Title}' ?", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
             if (result == MessageDialogResult.Affirmative)
             {
-                if (Directory.Exists(m_DownloadPath))
-                    Directory.Delete(m_DownloadPath, true);
+                try
+                {
+                    if (Directory.Exists(m_DownloadPath))
+                        Directory.Delete(m_DownloadPath, true);
 
-                DownloadsViewModel.Instance.DownloadedGames.Remove(this);
+                    DownloadsViewModel.Instance.DownloadedGames.Remove(this);
+                }
+                catch
+                {
+                    MainWindowViewModel.Instance.AppBarText = "Can not delete during the download, extraction, installing process";
+                }
             }
         }
         private void OpenDirectory_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -187,6 +224,193 @@ namespace gamevault.UserControls
         private void GameImage_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(ViewModel.Game, LoginManager.Instance.IsLoggedIn()));
+        }
+
+        private void ExtractionProgress(object sender, SevenZipProgressEventArgs e)
+        {
+            long totalBytesDownloaded = (Convert.ToInt64(ViewModel.Game.Size) / 100) * e.PercentageDone;
+            ViewModel.ExtractionInfo = $"{CalculateSpeed(totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds)} - {CalculateSize(totalBytesDownloaded)} of {CalculateSize(Convert.ToInt64(ViewModel.Game.Size))} | Time left: {CalculateTimeLeft(Convert.ToInt64(ViewModel.Game.Size), totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds)}";
+            ViewModel.GameExtractionProgress = e.PercentageDone;
+        }
+
+        private async void Extract_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            uiBtnInstall.IsEnabled = false;
+            ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
+            ViewModel.State = "Extracting...";
+            ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Visible;
+
+            sevenZipHelper.Process += ExtractionProgress;
+            startTime = DateTime.Now;
+            int result = await sevenZipHelper.ExtractArchive($"{m_DownloadPath}\\{Path.GetFileName(ViewModel.Game.FilePath)}", $"{m_DownloadPath}\\Extract");
+            if (result == 0)
+            {
+                if (!File.Exists($"{m_DownloadPath}\\Extract\\gamevault-metadata"))
+                {
+                    File.Create($"{m_DownloadPath}\\Extract\\gamevault-metadata").Close();
+                }
+                Preferences.Set(AppConfigKey.ExtractionFinished, "1", $"{m_DownloadPath}\\Extract\\gamevault-metadata");
+                ViewModel.State = "Extracted";
+                ((TextBlock)uiBtnExtract.Child).Text = "Re-Extract";
+                uiBtnInstall.IsEnabled = true;
+                ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
+            }
+            else
+            {
+                if (Directory.Exists($"{m_DownloadPath}\\Extract"))
+                {
+                    Directory.Delete($"{m_DownloadPath}\\Extract", true);
+                }
+                if (extractionCancelled)
+                {
+                    extractionCancelled = false;
+                    ViewModel.State = "Extraction cancelled";
+                }
+                else
+                {
+                    ViewModel.State = "Something went wrong during extraction";
+                }
+                ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
+            }
+        }
+        private string CalculateSize(double size)
+        {
+            try
+            {
+                size = size / 1000000;
+                if (size > 1000)
+                {
+                    size = size / 1000;
+                    size = Math.Round(size, 2);
+                    return $"{size} GB";
+                }
+                size = Math.Round(size, 2);
+                return $"{size} MB";
+            }
+            catch (Exception ex)
+            {
+                return "?";
+            }
+        }
+
+        private void OpenInstallOptions_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            uiInstallOptions.Visibility = System.Windows.Visibility.Visible;
+            LoadSetupExecutables();
+
+        }
+
+        private void InstallOptionCancel_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            uiInstallOptions.Visibility = System.Windows.Visibility.Collapsed;
+        }
+
+        private void LoadSetupExecutables()
+        {
+            if (Directory.Exists($"{m_DownloadPath}\\Extract"))
+            {
+                string[] allExecutables = Directory.GetFiles($"{m_DownloadPath}\\Extract", "*.EXE", SearchOption.AllDirectories);
+                for (int count = 0; count < allExecutables.Length; count++)
+                {
+                    allExecutables[count] = Path.GetFileName(allExecutables[count]);
+                }
+                uiCbSetupExecutable.ItemsSource = allExecutables;
+                if (allExecutables.Length == 1)
+                {
+                    uiCbSetupExecutable.SelectedIndex = 0;
+                }
+            }
+            else
+            {
+                uiCbSetupExecutable.ItemsSource = null;
+            }
+        }
+
+        private async void Install_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ((FrameworkElement)sender).IsEnabled = false;
+            if (ViewModel.Game.Type == GameType.WINDOWS_PORTABLE)
+            {
+                bool error = false;
+                uiProgressRingInstall.IsActive = true;
+                await Task.Run(async () =>
+                {
+                    try
+                    {
+                        if (Directory.Exists($"{ViewModel.InstallPath}\\Files"))
+                        {
+                            Directory.Delete($"{ViewModel.InstallPath}\\Files", true);
+                        }
+                        Directory.Move($"{m_DownloadPath}\\Extract", $"{ViewModel.InstallPath}\\Files");
+                    }
+                    catch { error = true; }
+                });
+                uiBtnInstall.IsEnabled = false;
+                uiProgressRingInstall.IsActive = false;
+                ((FrameworkElement)sender).IsEnabled = true;
+                ViewModel.State = "Downloaded";
+                ((TextBlock)uiBtnExtract.Child).Text = "Extract";
+                if (error)
+                {
+                    MainWindowViewModel.Instance.AppBarText = "Something wen't wrong during installation";
+                }
+                else
+                {
+                    MainWindowViewModel.Instance.AppBarText = $"Successfully installed '{ViewModel.Game.Title}'";
+                }
+            }
+            else if (ViewModel.Game.Type == GameType.WINDOWS_SETUP)
+            {
+                string setupEexecutable = string.Empty;
+                if (!Directory.Exists($"{m_DownloadPath}\\Extract"))
+                    return;
+                uiProgressRingInstall.IsActive = true;
+                string[] allExecutables = Directory.GetFiles($"{m_DownloadPath}\\Extract", "*.EXE", SearchOption.AllDirectories);
+                for (int count = 0; count < allExecutables.Length; count++)
+                {
+                    if (Path.GetFileName(allExecutables[count]) == uiCbSetupExecutable.SelectedValue.ToString())
+                    {
+                        setupEexecutable = allExecutables[count];
+                        break;
+                    }
+                }
+
+                if (File.Exists(setupEexecutable))
+                {
+                    Process setupProcess = null;
+                    try
+                    {
+                        setupProcess = ProcessHelper.StartApp(setupEexecutable);
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            setupProcess = ProcessHelper.StartApp(setupEexecutable, true);
+                        }
+                        catch
+                        {
+                            MainWindowViewModel.Instance.AppBarText = $"Can not execute '{setupEexecutable}'";
+                        }
+                    }
+                    if (setupProcess != null)
+                    {
+                        await setupProcess.WaitForExitAsync();
+                        ((FrameworkElement)sender).IsEnabled = true;
+                    }
+                }
+                else
+                {
+                    MainWindowViewModel.Instance.AppBarText = $"Could not find executable '{setupEexecutable}'";
+                }
+            }
+            uiInstallOptions.Visibility = System.Windows.Visibility.Collapsed;
+            uiProgressRingInstall.IsActive = false;
+        }
+
+        private void CopyInstallPathToClipboard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Clipboard.SetText(ViewModel.InstallPath);
         }
     }
 }

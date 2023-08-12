@@ -134,6 +134,10 @@ namespace gamevault.UserControls
         }
         private string ApplyFilter(string filter)
         {
+            if (ViewModel.SelectedGameFilterGameType.Value != string.Empty)
+            {
+                filter += $"&filter.type=$eq:{ViewModel.SelectedGameFilterGameType.Value}";
+            }
             if (ViewModel.EarlyAccessOnly == true)
             {
                 filter += "&filter.early_access=$eq:true";
@@ -184,7 +188,7 @@ namespace gamevault.UserControls
 
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
-            string url = e.Uri.OriginalString;            
+            string url = e.Uri.OriginalString;
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
             e.Handled = true;
         }
