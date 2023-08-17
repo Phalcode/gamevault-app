@@ -1,11 +1,13 @@
 ﻿using gamevault.Helper;
 using gamevault.Models;
 using gamevault.ViewModels;
+using ImageMagick.Formats;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -235,6 +237,13 @@ namespace gamevault.UserControls
 
         private async void Extract_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            DirectoryInfo dirInf = new DirectoryInfo(m_DownloadPath);
+            FileInfo[] files = dirInf.GetFiles().Where(f => ViewModel.SupportedArchives.Contains(f.Extension.ToLower())).ToArray();
+            if (files.Length <= 0)
+            {
+                ViewModel.State = "No archive found";
+                return;
+            }
             uiBtnInstall.IsEnabled = false;
             ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
             ViewModel.State = "Extracting...";
@@ -242,7 +251,7 @@ namespace gamevault.UserControls
 
             sevenZipHelper.Process += ExtractionProgress;
             startTime = DateTime.Now;
-            int result = await sevenZipHelper.ExtractArchive($"{m_DownloadPath}\\{Path.GetFileName(ViewModel.Game.FilePath)}", $"{m_DownloadPath}\\Extract");
+            int result = await sevenZipHelper.ExtractArchive($"{m_DownloadPath}\\{files[0].Name}", $"{m_DownloadPath}\\Extract");
             if (result == 0)
             {
                 if (!File.Exists($"{m_DownloadPath}\\Extract\\gamevault-metadata"))
