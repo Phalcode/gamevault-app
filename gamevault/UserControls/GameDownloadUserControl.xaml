@@ -147,6 +147,22 @@
                         <TextBlock Text="Install" FontSize="5"/>
                     </Border>
                 </Grid>
+                <Grid>
+                    <Grid.Style>
+                        <Style TargetType="{x:Type Grid}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=Game.Type}" Value="UNDETECTABLE">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <TextBlock Text="Could not determine game type. Please install this game manually to the folder below." FontSize="4" TextWrapping="Wrap" MaxWidth="126" Margin="0,17,0,0"/>
+                    <Border Background="Gainsboro" CornerRadius="2" Margin="0,31,1,0"  VerticalAlignment="Top" Padding="1" ToolTip="Copy to clipboard" MouseLeftButtonUp="CopyInstallPathToClipboard_Click">
+                        <TextBlock Text="{Binding InstallPath}" FontSize="3" Foreground="#FF424242" HorizontalAlignment="Left" Cursor="Hand"/>
+                    </Border>
+                </Grid>
                 <Viewbox Width="9" Height="9" Margin="0,0,30,0" HorizontalAlignment="Right" VerticalAlignment="Bottom">
                     <mah:ProgressRing x:Name="uiProgressRingInstall" IsActive="False"/>
                 </Viewbox>

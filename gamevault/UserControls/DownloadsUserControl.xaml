@@ -35,7 +35,7 @@
 
             <ScrollViewer Grid.Column="1" Margin="10,10,0,0" VerticalAlignment="Top" VerticalScrollBarVisibility="Auto">
                 <Viewbox>
-                    <ItemsControl ItemsSource="{Binding DownloadedGames}">
+                    <ItemsControl ItemsSource="{Binding DownloadedGames}" Focusable="False">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Vertical"/>
