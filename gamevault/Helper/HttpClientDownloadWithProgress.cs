@@ -15,7 +15,8 @@ namespace gamevault.Helper
     public class HttpClientDownloadWithProgress : IDisposable
     {
         private readonly string _downloadUrl;
-        private readonly string _destinationFilePath;
+        private readonly string _destinationFolderPath;
+        private string _fileName;
         private bool _Cancelled = false;
         private DateTime lastTime;
         private HttpClient _httpClient;
@@ -24,10 +25,10 @@ namespace gamevault.Helper
 
         public event ProgressChangedHandler ProgressChanged;
 
-        public HttpClientDownloadWithProgress(string downloadUrl, string destinationFilePath)
+        public HttpClientDownloadWithProgress(string downloadUrl, string destinationFolderPath)
         {
             _downloadUrl = downloadUrl;
-            _destinationFilePath = destinationFilePath;
+            _destinationFolderPath = destinationFolderPath;
         }
 
         public async Task StartDownload()
@@ -45,6 +46,11 @@ namespace gamevault.Helper
         {
             response.EnsureSuccessStatusCode();
 
+            _fileName = response.Content.Headers.ContentDisposition.FileName.Replace("\"", "");
+            if(string.IsNullOrEmpty(_fileName))
+            {
+                throw new Exception("Incomplete request header");
+            }
             var totalBytes = response.Content.Headers.ContentLength;
 
             using (var contentStream = await response.Content.ReadAsStreamAsync())
@@ -53,11 +59,12 @@ namespace gamevault.Helper
 
         private async Task ProcessContentStream(long? totalDownloadSize, Stream contentStream)
         {
-            var totalBytesRead = 0L;          
+            var totalBytesRead = 0L;
             var buffer = new byte[8192];
             var isMoreToRead = true;
             lastTime = DateTime.Now;
-            using (var fileStream = new FileStream(_destinationFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true))
+            string fullFilePath = $"{_destinationFolderPath}\\{_fileName}";
+            using (var fileStream = new FileStream(fullFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true))
             {
                 do
                 {
@@ -66,7 +73,7 @@ namespace gamevault.Helper
                         fileStream.Close();
                         try
                         {
-                            File.Delete(_destinationFilePath);
+                            File.Delete(fullFilePath);
                         }
                         catch { }
                         return;
@@ -84,10 +91,10 @@ namespace gamevault.Helper
 
                     totalBytesRead += bytesRead;
                     //readCount += 1;                    
-                    if((DateTime.Now - lastTime).TotalSeconds > 2)
+                    if ((DateTime.Now - lastTime).TotalSeconds > 2)
                     {
                         TriggerProgressChanged(totalDownloadSize, totalBytesRead);
-                        lastTime = DateTime.Now;                        
+                        lastTime = DateTime.Now;
                     }
                     //if (readCount % 100 == 0)
                     //    TriggerProgressChanged(totalDownloadSize, totalBytesRead);

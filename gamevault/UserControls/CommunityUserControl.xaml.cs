@@ -35,7 +35,19 @@ namespace gamevault.UserControls
                 return users;
             });
         }
-
+        internal void ShowUser(User userToShow)
+        {
+            for (int count = 0; count < ViewModel.Users.Length; count++)
+            {
+                if (ViewModel.Users[count].ID == userToShow.ID)
+                {
+                    if (uiSelectUser.SelectedIndex != count)
+                    {
+                        uiSelectUser.SelectedIndex = count;
+                    }
+                }
+            }
+        }
         private async void Users_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try

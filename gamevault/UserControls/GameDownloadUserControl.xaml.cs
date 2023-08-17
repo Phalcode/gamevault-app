@@ -103,7 +103,7 @@ namespace gamevault.UserControls
                 ViewModel.DownloadFailedVisibility = System.Windows.Visibility.Hidden;
 
                 if (!Directory.Exists(m_DownloadPath)) { Directory.CreateDirectory(m_DownloadPath); }
-                client = new HttpClientDownloadWithProgress($"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/{ViewModel.Game.ID}/download", $"{m_DownloadPath}\\{Path.GetFileName(ViewModel.Game.FilePath)}");
+                client = new HttpClientDownloadWithProgress($"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/{ViewModel.Game.ID}/download", m_DownloadPath);
                 client.ProgressChanged += DownloadProgress;
                 startTime = DateTime.Now;
 

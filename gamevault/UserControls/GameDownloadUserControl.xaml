@@ -21,7 +21,7 @@
             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="56,2,0,0" Text="{Binding Path=Game.Title}" MaxWidth="100" FontSize="6" FontWeight="Bold"/>
             <TextBlock Text="🗑️" FontSize="6" Foreground="IndianRed" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,2,2,0" Cursor="Hand" ToolTip="Delete File" MouseLeftButtonUp="DeleteFile_MouseLeftButtonUp"/>
             <TextBlock Text="📁" FontSize="6" Foreground="LightBlue" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,2,10,0" Cursor="Hand" ToolTip="Open Directory" MouseLeftButtonUp="OpenDirectory_MouseLeftButtonUp"/>
-            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="56,10,0,0" Text="{Binding State,StringFormat={}State: {0}}" FontSize="4"/>
+            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="56,10,0,0" Text="{Binding State,StringFormat={}State: {0}}" FontSize="4" Width="122"/>
 
             <TextBlock Text="📥" FontSize="9" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="55,17,0,0"/>
             <Border Visibility="{Binding DownloadFailedVisibility}" Background="{StaticResource MahApps.Brushes.Accent}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="70,21,2,0" CornerRadius="2" Padding="1" Cursor="Hand" ToolTip="Download Game" MouseLeftButtonUp="RetryDownload_Click">

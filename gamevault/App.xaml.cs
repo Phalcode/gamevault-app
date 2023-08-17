@@ -35,6 +35,7 @@ namespace gamevault
         {
 
             Application.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(AppDispatcherUnhandledException);
+            
             try
             {
                 NewNameMigrationHelper.MigrateIfNeeded();
@@ -101,7 +102,7 @@ namespace gamevault
         {
             ProcessShepherd.KillAllChildProcesses();
 #if DEBUG
-            e.Handled = false;
+            e.Handled = false;            
 #else
             LogUnhandledException(e);
 #endif
@@ -121,7 +122,12 @@ namespace gamevault
         {
             e.Handled = true;
             LogUnhandledException(e.Exception);
-            System.Windows.MessageBox.Show("Something went wrong. View error log for more details", "Unhandled Exception", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBoxResult result = System.Windows.MessageBox.Show("Something went wrong. View error log for more details.\nDo you want to open the error logs?", "Unhandled Exception", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (result == MessageBoxResult.Yes)
+            {
+                if (Directory.Exists(AppFilePath.ErrorLog))
+                    Process.Start("explorer.exe", AppFilePath.ErrorLog.Replace(@"\\",@"\").Replace("/",@"\"));
+            }
             ShutdownApp();
         }
         private void StartServer()

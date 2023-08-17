@@ -172,5 +172,12 @@ namespace gamevault.UserControls
             await InitUserList();
             await MainWindowViewModel.Instance.Community.InitUserList();
         }
+
+        private void ShowUser_Click(object sender, MouseButtonEventArgs e)
+        {
+            User selectedUser = ((FrameworkElement)sender).DataContext as User;           
+            MainWindowViewModel.Instance.SetActiveControl(MainControl.Community);
+            MainWindowViewModel.Instance.Community.ShowUser(selectedUser);
+        }
     }
 }
