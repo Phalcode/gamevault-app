@@ -18,7 +18,7 @@
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0">
             <StackPanel Margin="5">
                 <TextBlock Text="Executable" FontSize="15" FontWeight="Bold" HorizontalAlignment="Right"/>
-                <ComboBox x:Name="uiCbExecutables" ItemsSource="{Binding Executables}" SelectionChanged="Executable_SelectionChanged" PreviewMouseLeftButtonDown="ExecutablesCombobox_Click"/>
+                <ComboBox x:Name="uiCbExecutables" DisplayMemberPath="Value" ItemsSource="{Binding Executables}" SelectionChanged="Executable_SelectionChanged" PreviewMouseLeftButtonDown="ExecutablesCombobox_Click"/>
             </StackPanel>
             <Button Content="Play"  FontSize="25" Padding="15,0,15,0" Background="{StaticResource MahApps.Brushes.Accent}" Click="Play_Clicked">
                 <Button.Style>

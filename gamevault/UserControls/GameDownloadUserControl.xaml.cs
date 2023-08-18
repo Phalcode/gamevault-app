@@ -172,18 +172,17 @@ namespace gamevault.UserControls
         }
         private string CalculateSpeed(double size, double tspan)
         {
-            string message = string.Empty;
             if (size / tspan > 1024 * 1024) // MB
             {
-                return $"{message} {Math.Round(size / (1024 * 1204) / tspan, 2)} MB/s"; //string.Format(message, size / (1024 * 1204) / tspan, "MB/s");
+                return $"{Math.Round(size / (1024 * 1204) / tspan, 2)} MB/s";
             }
             else if (size / tspan > 1024) // KB
             {
-                return string.Format(message, size / (1024) / tspan, "KB/s");
+                return $"{Math.Round(size / (1024) / tspan, 2)} KB/s";
             }
             else
             {
-                return string.Format(message, size / tspan, "B/s");
+                return $"{Math.Round(size / tspan, 2)} B/s";
             }
         }
 

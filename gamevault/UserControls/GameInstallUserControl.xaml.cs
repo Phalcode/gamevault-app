@@ -36,7 +36,7 @@ namespace gamevault.UserControls
             m_Directory = m_Directory.Replace(@"\\", @"\");
             m_IgnoreList = ignoreList;
             FindGameExecutables(m_Directory, true);
-        }
+        }        
         public string GetDirectory()
         {
             return m_Directory;
@@ -62,12 +62,16 @@ namespace gamevault.UserControls
             {
                 if (ContainsValueFromIgnoreList(allExecutables[count]))
                     continue;
-
-                ViewModel.Executables.Add(allExecutables[count]);
-                if (true == checkForSavedExecutable && allExecutables[count] == m_SavedExecutable) { uiCbExecutables.SelectedIndex = count; }
-                else if(true == checkForSavedExecutable && m_SavedExecutable == string.Empty && uiCbExecutables.SelectedIndex == -1)
+                var currentItem = new KeyValuePair<string, string>(allExecutables[count], allExecutables[count].Replace(m_Directory, string.Empty));
+                ViewModel.Executables.Add(currentItem);
+                if (true == checkForSavedExecutable && allExecutables[count] == m_SavedExecutable)
                 {
-                    uiCbExecutables.SelectedIndex = count;
+                    uiCbExecutables.SelectedItem = currentItem;
+                }
+                else if (true == checkForSavedExecutable && m_SavedExecutable == string.Empty)
+                {
+                    checkForSavedExecutable = false;
+                    uiCbExecutables.SelectedItem = currentItem;
                 }
             }
         }
@@ -79,10 +83,10 @@ namespace gamevault.UserControls
         {
             if (e.AddedItems.Count > 0)
             {
-                m_SavedExecutable = e.AddedItems[0].ToString();
+                m_SavedExecutable = ((KeyValuePair<string, string>)e.AddedItems[0]).Key;
                 if (Directory.Exists(m_Directory))
                 {
-                    Preferences.Set(AppConfigKey.Executable, e.AddedItems[0].ToString(), $"{m_Directory}\\gamevault-exec");
+                    Preferences.Set(AppConfigKey.Executable, m_SavedExecutable, $"{m_Directory}\\gamevault-exec");
                 }
             }
         }
@@ -113,7 +117,7 @@ namespace gamevault.UserControls
             {
                 MainWindowViewModel.Instance.AppBarText = $"Could not find executable '{m_SavedExecutable}'";
             }
-        }       
+        }
 
         private void GameImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
@@ -128,6 +132,6 @@ namespace gamevault.UserControls
         private bool ContainsValueFromIgnoreList(string value)
         {
             return (m_IgnoreList != null && m_IgnoreList.Any(s => Path.GetFileNameWithoutExtension(value).Contains(s, StringComparison.OrdinalIgnoreCase)));
-        }
+        }      
     }
 }
