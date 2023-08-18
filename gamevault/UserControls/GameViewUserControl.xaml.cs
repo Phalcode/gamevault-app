@@ -147,17 +147,41 @@ namespace gamevault.UserControls
         }
         private async void RawgGameSearch_Click(object sender, RoutedEventArgs e)
         {
-            ((Button)sender).IsEnabled = false;
+            await RawgGameSearch();
+        }
+        private async void RawgGameSearch_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                await RawgGameSearch();
+            }
+        }
+        private async Task RawgGameSearch()
+        {
+            uiBtnRawgGameSearch.IsEnabled = false;
             ViewModel.RawgGames = await Task<Game[]>.Run(() =>
             {
                 string currentShownUser = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/rawg/search?query={ViewModel.RawgSearchQuery}");
                 return JsonSerializer.Deserialize<Game[]>(currentShownUser);
             });
-            ((Button)sender).IsEnabled = true;
+            uiBtnRawgGameSearch.IsEnabled = true;
         }
         private async void BoxArtImageSave_Click(object sender, RoutedEventArgs e)
         {
-            ((Button)sender).IsEnabled = false;
+            await SaveBoxArtImage();
+            this.Focus();//Bring back focus for the escape key
+        }
+        private async void SaveBoxArtImage_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                await SaveBoxArtImage();
+                this.Focus();//Bring back focus for the escape key
+            }
+        }
+        private async Task SaveBoxArtImage()
+        {
+            uiBtnSaveBoxArtImage.IsEnabled = false;
             await Task.Run(() =>
             {
                 try
@@ -171,8 +195,7 @@ namespace gamevault.UserControls
                     MainWindowViewModel.Instance.AppBarText = msg;
                 }
             });
-            ((Button)sender).IsEnabled = true;
-            this.Focus();//Bring back focus for the escape key
+            uiBtnSaveBoxArtImage.IsEnabled = true;
         }
         private async void RawgGameRemap_Click(object sender, RoutedEventArgs e)
         {
