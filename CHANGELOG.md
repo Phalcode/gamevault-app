@@ -6,7 +6,8 @@
 - In the admin console, you can now jump directly to the profiles
 - Support single file binary
 - The selectable executables are now trimmed in the installation tab
-- Bug fix: Dealing with undiscovered games in the installation process
+- Enter key on forms now submits forms
+- Bug fix: Dealing with undetected game types in the installation process
 - Bug fix: A long error message in the download tab, no longer rescales the individual elements
 - Bug fix: Download speed not shown, when it's KB/s and below 
 

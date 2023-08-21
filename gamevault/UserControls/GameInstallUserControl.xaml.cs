@@ -36,7 +36,7 @@ namespace gamevault.UserControls
             m_Directory = m_Directory.Replace(@"\\", @"\");
             m_IgnoreList = ignoreList;
             FindGameExecutables(m_Directory, true);
-        }        
+        }
         public string GetDirectory()
         {
             return m_Directory;
@@ -62,7 +62,7 @@ namespace gamevault.UserControls
             {
                 if (ContainsValueFromIgnoreList(allExecutables[count]))
                     continue;
-                var currentItem = new KeyValuePair<string, string>(allExecutables[count], allExecutables[count].Replace(m_Directory, string.Empty));
+                var currentItem = new KeyValuePair<string, string>(allExecutables[count], allExecutables[count].Substring(m_Directory.Length + 1));
                 ViewModel.Executables.Add(currentItem);
                 if (true == checkForSavedExecutable && allExecutables[count] == m_SavedExecutable)
                 {
@@ -132,6 +132,6 @@ namespace gamevault.UserControls
         private bool ContainsValueFromIgnoreList(string value)
         {
             return (m_IgnoreList != null && m_IgnoreList.Any(s => Path.GetFileNameWithoutExtension(value).Contains(s, StringComparison.OrdinalIgnoreCase)));
-        }      
+        }
     }
 }
