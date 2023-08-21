@@ -7,7 +7,7 @@
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" MaxWidth="300">
-    <Border Background="{StaticResource DarkBackground2}" Padding="10" BorderBrush="White" BorderThickness="2" CornerRadius="10">
+    <Border Background="{StaticResource DarkBackground2}" Padding="10" BorderBrush="White" BorderThickness="2" CornerRadius="10" KeyDown="Save_KeyDown">
         <StackPanel>
             <TextBox Margin="0,5,0,0" Text="{Binding Username,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="Username" mah:TextBoxHelper.UseFloatingWatermark="True"/>
             <TextBox Margin="0,5,0,0" Text="{Binding FirstName,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="First name" mah:TextBoxHelper.UseFloatingWatermark="True"/>
@@ -16,7 +16,7 @@
             <TextBox Margin="0,5,0,0" Text="{Binding Password,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="Password" mah:TextBoxHelper.UseFloatingWatermark="True"/>
             <TextBox Margin="0,5,0,0" Text="{Binding ProfilePictureUrl,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="Profile picture URL" mah:TextBoxHelper.UseFloatingWatermark="True"/>
             <TextBox Margin="0,5,0,0" Text="{Binding BackgroundImageUrl,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="Background picture URL" mah:TextBoxHelper.UseFloatingWatermark="True"/>
-            <Button Margin="0,5,0,0" Content="Save" Click="Save_Clicked"/>
+            <Button x:Name="uiBtnSave" Margin="0,5,0,0" Content="Save" Click="Save_Clicked"/>
         </StackPanel>
     </Border>
 </UserControl>

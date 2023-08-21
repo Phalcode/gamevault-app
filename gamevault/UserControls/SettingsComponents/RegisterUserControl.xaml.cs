@@ -31,7 +31,31 @@ namespace gamevault.UserControls.SettingsComponents
         }
         private async void Registration_Clicked(object sender, System.Windows.RoutedEventArgs e)
         {
-            ((Button)sender).IsEnabled = false;
+            await Register();
+        }
+        private async void Register_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                await Register();
+            }
+        }
+        private bool HasEmptyFields()
+        {
+            SettingsViewModel.Instance.RegistrationUser.Password = uiPwReg.Password.ToString();
+            SettingsViewModel.Instance.RegistrationUser.RepeatPassword = uiPwRegRepeat.Password.ToString();
+
+            if (string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.Username) || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.FirstName)
+                || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.LastName) || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.EMail)
+                || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.Password) || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.RepeatPassword))
+            {
+                return true;
+            }
+            return false;
+        }
+        private async Task Register()
+        {
+            uiBtnRegister.IsEnabled = false;
             await Task.Run(async () =>
             {
                 try
@@ -66,20 +90,7 @@ namespace gamevault.UserControls.SettingsComponents
                     MainWindowViewModel.Instance.AppBarText = "Could not connect to server";
                 }
             });
-            ((Button)sender).IsEnabled = true;
-        }
-        private bool HasEmptyFields()
-        {
-            SettingsViewModel.Instance.RegistrationUser.Password = uiPwReg.Password.ToString();
-            SettingsViewModel.Instance.RegistrationUser.RepeatPassword = uiPwRegRepeat.Password.ToString();
-
-            if (string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.Username) || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.FirstName)
-                || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.LastName) || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.EMail)
-                || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.Password) || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.RepeatPassword))
-            {
-                return true;
-            }
-            return false;
+            uiBtnRegister.IsEnabled = true;
         }
     }
 }

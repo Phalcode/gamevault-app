@@ -30,7 +30,6 @@ namespace gamevault.UserControls
         internal UserEditUserControl(User user)
         {
             InitializeComponent();
-
             this.DataContext = Copy(user);
 
         }
@@ -38,7 +37,15 @@ namespace gamevault.UserControls
         private void Save_Clicked(object sender, RoutedEventArgs e)
         {
             if (this.UserSaved != null)
-                this.UserSaved(sender, e);            
+                this.UserSaved(sender, e);
+        }
+        private void Save_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                if (this.UserSaved != null)
+                    this.UserSaved(uiBtnSave, e);
+            }
         }
         private User Copy(User source)
         {
@@ -48,6 +55,6 @@ namespace gamevault.UserControls
                 prop.SetValue(dest, prop.GetValue(source));
             }
             return dest;
-        }
+        }      
     }
 }

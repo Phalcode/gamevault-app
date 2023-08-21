@@ -109,7 +109,11 @@ namespace gamevault.Windows
                 if (Preferences.Get(AppConfigKey.RunningInTrayMessage, AppFilePath.UserFile) != "1")
                 {
                     Preferences.Set(AppConfigKey.RunningInTrayMessage, "1", AppFilePath.UserFile);
-                    new ToastContentBuilder().AddText("Notification").AddText("App is still running in the system tray").Show();
+                    try
+                    {
+                        new ToastContentBuilder().AddText("Notification").AddText("App is still running in the system tray").Show();
+                    }
+                    catch { }
                 }
             }
         }

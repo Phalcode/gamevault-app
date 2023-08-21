@@ -23,6 +23,18 @@ namespace gamevault.UserControls.SettingsComponents
         }
         private void SaveServerUrl_Click(object sender, RoutedEventArgs e)
         {
+            SaveServerURL();
+        }
+
+        private void Save_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                SaveServerURL();
+            }
+        }
+        private void SaveServerURL()
+        {
             if (SettingsViewModel.Instance.ServerUrl.EndsWith("/"))
             {
                 SettingsViewModel.Instance.ServerUrl = SettingsViewModel.Instance.ServerUrl.Substring(0, SettingsViewModel.Instance.ServerUrl.Length - 1);

@@ -1,11 +1,13 @@
 ﻿using gamevault.Helper;
 using gamevault.Models;
 using gamevault.ViewModels;
+using ImageMagick.Formats;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -103,7 +105,7 @@ namespace gamevault.UserControls
                 ViewModel.DownloadFailedVisibility = System.Windows.Visibility.Hidden;
 
                 if (!Directory.Exists(m_DownloadPath)) { Directory.CreateDirectory(m_DownloadPath); }
-                client = new HttpClientDownloadWithProgress($"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/{ViewModel.Game.ID}/download", $"{m_DownloadPath}\\{Path.GetFileName(ViewModel.Game.FilePath)}");
+                client = new HttpClientDownloadWithProgress($"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/{ViewModel.Game.ID}/download", m_DownloadPath);
                 client.ProgressChanged += DownloadProgress;
                 startTime = DateTime.Now;
 
@@ -170,18 +172,17 @@ namespace gamevault.UserControls
         }
         private string CalculateSpeed(double size, double tspan)
         {
-            string message = string.Empty;
             if (size / tspan > 1024 * 1024) // MB
             {
-                return $"{message} {Math.Round(size / (1024 * 1204) / tspan, 2)} MB/s"; //string.Format(message, size / (1024 * 1204) / tspan, "MB/s");
+                return $"{Math.Round(size / (1024 * 1204) / tspan, 2)} MB/s";
             }
             else if (size / tspan > 1024) // KB
             {
-                return string.Format(message, size / (1024) / tspan, "KB/s");
+                return $"{Math.Round(size / (1024) / tspan, 2)} KB/s";
             }
             else
             {
-                return string.Format(message, size / tspan, "B/s");
+                return $"{Math.Round(size / tspan, 2)} B/s";
             }
         }
 
@@ -235,6 +236,13 @@ namespace gamevault.UserControls
 
         private async void Extract_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            DirectoryInfo dirInf = new DirectoryInfo(m_DownloadPath);
+            FileInfo[] files = dirInf.GetFiles().Where(f => ViewModel.SupportedArchives.Contains(f.Extension.ToLower())).ToArray();
+            if (files.Length <= 0)
+            {
+                ViewModel.State = "No archive found";
+                return;
+            }
             uiBtnInstall.IsEnabled = false;
             ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
             ViewModel.State = "Extracting...";
@@ -242,7 +250,7 @@ namespace gamevault.UserControls
 
             sevenZipHelper.Process += ExtractionProgress;
             startTime = DateTime.Now;
-            int result = await sevenZipHelper.ExtractArchive($"{m_DownloadPath}\\{Path.GetFileName(ViewModel.Game.FilePath)}", $"{m_DownloadPath}\\Extract");
+            int result = await sevenZipHelper.ExtractArchive($"{m_DownloadPath}\\{files[0].Name}", $"{m_DownloadPath}\\Extract");
             if (result == 0)
             {
                 if (!File.Exists($"{m_DownloadPath}\\Extract\\gamevault-metadata"))

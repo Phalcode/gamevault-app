@@ -1,5 +1,16 @@
 # GameVault App Changelog
 
+## 1.4.0
+### Changes
+- In case of an unhandled exception, you can now navigate directly to the error logs
+- In the admin console, you can now jump directly to the profiles
+- Support single file binary
+- The selectable executables are now trimmed in the installation tab
+- Enter key on forms now submits forms
+- Bug fix: Dealing with undetected game types in the installation process
+- Bug fix: A long error message in the download tab, no longer rescales the individual elements
+- Bug fix: Download speed not shown, when it's KB/s and below 
+
 ## 1.3.0
 ### Changes
 - Installation pipeline implemented. The UI for the download tab has been completely overhauled. GameVault is now able to extract downloaded game archives and perform the installation process depending on the game type.

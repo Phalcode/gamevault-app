@@ -16,7 +16,7 @@ namespace gamevault.ViewModels
         private Game m_Game { get; set; }
         private string m_State { get; set; }
         private int m_GameDownloadProgress { get; set; }
-        private int m_GameExtractionProgress { get; set; }    
+        private int m_GameExtractionProgress { get; set; }
         private string m_DownloadInfo { get; set; }
         private string m_ExtractionInfo { get; set; }
         private string m_InstallPath { get; set; }
@@ -76,6 +76,13 @@ namespace gamevault.ViewModels
         {
             get { return m_InstallPath; }
             set { m_InstallPath = value; OnPropertyChanged(); }
+        }
+        public string[] SupportedArchives
+        {
+            get
+            {
+                return new string[] { ".7z", ".xz", ".bz2", ".gz", ".tar", ".zip", ".wim", ".ar", ".arj", ".cab", ".chm", ".cpio", ".cramfs", ".dmg", ".ext", ".fat", ".gpt", ".hfs", ".ihex", ".iso", ".lzh", ".lzma", ".mbr", ".msi", ".nsis", ".ntfs", ".qcow2", ".rar", ".rpm", ".squashfs", ".udf", ".uefi", ".vdi", ".vhd", ".vmdk", ".wim", ".xar", ".z" };
+            }
         }
     }
 }

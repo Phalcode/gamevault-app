@@ -47,7 +47,7 @@
                                     </Style>
                                 </Grid.Style>
 
-                                <local:CacheImage ImageCacheType="UserIcon" Data="{Binding}" Width="6" HorizontalAlignment="Left">
+                                <local:CacheImage ImageCacheType="UserIcon" Data="{Binding}" Width="6" HorizontalAlignment="Left" Cursor="Hand" MouseLeftButtonUp="ShowUser_Click">
                                     <local:CacheImage.Clip>
                                         <EllipseGeometry RadiusX="3" RadiusY="3" Center="3,3"/>
                                     </local:CacheImage.Clip>

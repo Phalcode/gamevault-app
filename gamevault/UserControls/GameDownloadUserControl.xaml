@@ -18,10 +18,10 @@
         <Grid>
             <local:CacheImage HorizontalAlignment="Left" VerticalAlignment="Top" MaxWidth="52" Margin="2,2,120,2" ImageCacheType="BoxArt" Data="{Binding Path=Game}" CornerRadius="2" Cursor="Hand" MouseLeftButtonUp="GameImage_MouseLeftButtonUp"/>
 
-            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="56,2,0,0" Text="{Binding Path=Game.Title}" MaxWidth="100" FontSize="6" FontWeight="Bold"/>
+            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="56,2,0,0" Text="{Binding Path=Game.Title}" MaxWidth="106" FontSize="6" FontWeight="Bold"/>
             <TextBlock Text="🗑️" FontSize="6" Foreground="IndianRed" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,2,2,0" Cursor="Hand" ToolTip="Delete File" MouseLeftButtonUp="DeleteFile_MouseLeftButtonUp"/>
             <TextBlock Text="📁" FontSize="6" Foreground="LightBlue" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,2,10,0" Cursor="Hand" ToolTip="Open Directory" MouseLeftButtonUp="OpenDirectory_MouseLeftButtonUp"/>
-            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="56,10,0,0" Text="{Binding State,StringFormat={}State: {0}}" FontSize="4"/>
+            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="56,10,0,0" Text="{Binding State,StringFormat={}State: {0}}" FontSize="4" Width="122"/>
 
             <TextBlock Text="📥" FontSize="9" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="55,17,0,0"/>
             <Border Visibility="{Binding DownloadFailedVisibility}" Background="{StaticResource MahApps.Brushes.Accent}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="70,21,2,0" CornerRadius="2" Padding="1" Cursor="Hand" ToolTip="Download Game" MouseLeftButtonUp="RetryDownload_Click">
@@ -145,6 +145,22 @@
                             </Style>
                         </Border.Style>
                         <TextBlock Text="Install" FontSize="5"/>
+                    </Border>
+                </Grid>
+                <Grid>
+                    <Grid.Style>
+                        <Style TargetType="{x:Type Grid}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=Game.Type}" Value="UNDETECTABLE">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <TextBlock Text="Could not determine game type. Please install this game manually to the folder below." FontSize="4" TextWrapping="Wrap" MaxWidth="126" Margin="0,17,0,0"/>
+                    <Border Background="Gainsboro" CornerRadius="2" Margin="0,31,1,0"  VerticalAlignment="Top" Padding="1" ToolTip="Copy to clipboard" MouseLeftButtonUp="CopyInstallPathToClipboard_Click">
+                        <TextBlock Text="{Binding InstallPath}" FontSize="3" Foreground="#FF424242" HorizontalAlignment="Left" Cursor="Hand"/>
                     </Border>
                 </Grid>
                 <Viewbox Width="9" Height="9" Margin="0,0,30,0" HorizontalAlignment="Right" VerticalAlignment="Bottom">

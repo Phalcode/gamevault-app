@@ -29,6 +29,20 @@ namespace gamevault.UserControls.SettingsComponents
         private async void Login_Clicked(object sender, System.Windows.RoutedEventArgs e)
         {
             ((Button)sender).IsEnabled = false;
+            await Login();
+            ((Button)sender).IsEnabled = true;
+        }
+
+        private async void Login_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                await Login();
+            }
+        }
+        private async Task Login()
+        {
+            uiBtnLogin.IsEnabled = false;            
             if (SettingsViewModel.Instance.UserName != string.Empty && uiPwBox.Password != string.Empty)
             {
                 if (LoginManager.Instance.IsLoggedIn() && LoginManager.Instance.GetCurrentUser().Username == SettingsViewModel.Instance.UserName)
@@ -63,7 +77,7 @@ namespace gamevault.UserControls.SettingsComponents
             {
                 MainWindowViewModel.Instance.AppBarText = "Username or password are not set";
             }
-            ((Button)sender).IsEnabled = true;
+            uiBtnLogin.IsEnabled = true;
         }
     }
 }

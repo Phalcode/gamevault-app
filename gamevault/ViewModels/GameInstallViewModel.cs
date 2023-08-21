@@ -13,7 +13,7 @@ namespace gamevault.ViewModels
     {
         #region PrivateMembers
         private Game m_Game { get; set; }
-        private ObservableCollection<string> m_Executables { get; set; }
+        private ObservableCollection<KeyValuePair<string, string>> m_Executables { get; set; }
 
         #endregion
 
@@ -22,13 +22,13 @@ namespace gamevault.ViewModels
             get { return m_Game; }
             set { m_Game = value; OnPropertyChanged(); }
         }
-        public ObservableCollection<string> Executables
+        public ObservableCollection<KeyValuePair<string, string>> Executables
         {
             get
             {
                 if (m_Executables == null)
                 {
-                    m_Executables = new ObservableCollection<string>();
+                    m_Executables = new ObservableCollection<KeyValuePair<string, string>>();
                 }
                 return m_Executables;
             }
