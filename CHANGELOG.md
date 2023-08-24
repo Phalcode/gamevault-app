@@ -1,5 +1,11 @@
 # GameVault App Changelog
 
+## 1.4.1
+### Changes
+- Bug fix: Image optimization was skipped if it was not a Microsoft store version
+- Bug fix: System tray icon was still visible after closing the application until hovering over it with the mouse
+- Bug fix: Incompatible request header for download in server version 3. Fallback included for downloading regardless.
+
 ## 1.4.0
 ### Changes
 - In case of an unhandled exception, you can now navigate directly to the error logs
