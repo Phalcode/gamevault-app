@@ -17,6 +17,7 @@ namespace gamevault.Helper
         private readonly string _downloadUrl;
         private readonly string _destinationFolderPath;
         private string _fileName;
+        private string _fallbackFileName;
         private bool _Cancelled = false;
         private DateTime lastTime;
         private HttpClient _httpClient;
@@ -25,10 +26,11 @@ namespace gamevault.Helper
 
         public event ProgressChangedHandler ProgressChanged;
 
-        public HttpClientDownloadWithProgress(string downloadUrl, string destinationFolderPath)
+        public HttpClientDownloadWithProgress(string downloadUrl, string destinationFolderPath, string fallbackFileName)
         {
             _downloadUrl = downloadUrl;
             _destinationFolderPath = destinationFolderPath;
+            _fallbackFileName = fallbackFileName;
         }
 
         public async Task StartDownload()
@@ -46,10 +48,17 @@ namespace gamevault.Helper
         {
             response.EnsureSuccessStatusCode();
 
-            _fileName = response.Content.Headers.ContentDisposition.FileName.Replace("\"", "");
-            if(string.IsNullOrEmpty(_fileName))
+            try
             {
-                throw new Exception("Incomplete request header");
+                _fileName = response.Content.Headers.ContentDisposition.FileName.Replace("\"", "");
+                if (string.IsNullOrEmpty(_fileName))
+                {
+                    throw new Exception("Incomplete request header");
+                }
+            }
+            catch
+            {
+                _fileName = _fallbackFileName;
             }
             var totalBytes = response.Content.Headers.ContentLength;
 

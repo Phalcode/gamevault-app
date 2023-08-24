@@ -219,6 +219,8 @@ namespace gamevault
         {
             ShowToastMessage = false;
             ProcessShepherd.KillAllChildProcesses();
+            m_Icon.Icon.Dispose();
+            m_Icon.Dispose();
             Shutdown();
         }
     }

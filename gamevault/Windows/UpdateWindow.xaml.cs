@@ -30,17 +30,15 @@ namespace gamevault.Windows
         private async void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
             try
-            {               
+            {
                 m_StoreHelper = new StoreHelper();
                 if (true == await m_StoreHelper.UpdatesAvailable())
                 {
                     await m_StoreHelper.DownloadAndInstallAllUpdatesAsync(this);
                 }
                 App.IsWindowsPackage = true;
-                uiTxtStatus.Text = "Optimizing cache...";              
-                await CacheHelper.OptimizeCache();
             }
-            catch(COMException comEx)
+            catch (COMException comEx)
             {
                 //Is no MSIX package
             }
@@ -48,6 +46,12 @@ namespace gamevault.Windows
             {
                 //rest of the cases
             }
+            try
+            {
+                uiTxtStatus.Text = "Optimizing cache...";
+                await CacheHelper.OptimizeCache();
+            }
+            catch { }
             this.Close();
         }
     }
