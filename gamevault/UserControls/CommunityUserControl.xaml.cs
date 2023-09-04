@@ -132,6 +132,11 @@ namespace gamevault.UserControls
         }
         private async void ReloadUser_Clicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if (!LoginManager.Instance.IsLoggedIn())
+            {
+                MainWindowViewModel.Instance.AppBarText = "You are not logged in";
+                return;
+            }
             ((TextBlock)sender).IsEnabled = false;
             try
             {
@@ -155,6 +160,11 @@ namespace gamevault.UserControls
         }
         protected async void UserSaved(object sender, EventArgs e)
         {
+            if(!LoginManager.Instance.IsLoggedIn())
+            {
+                MainWindowViewModel.Instance.AppBarText = "You are not logged in";
+                return;
+            }
             ((Button)sender).IsEnabled = false;
             this.IsEnabled = false;
             User selectedUser = (User)((Button)sender).DataContext;

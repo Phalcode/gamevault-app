@@ -7,6 +7,7 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace gamevault.Helper
 {
@@ -109,6 +110,12 @@ namespace gamevault.Helper
             m_User = user;
             m_LoginState = state;
             return state;
+        }
+        public void Logout()
+        {
+            m_User = null;
+            m_LoginState = LoginState.Error;
+            WebHelper.OverrideCredentials(string.Empty, string.Empty);
         }
         private LoginState DetermineLoginState(string code)
         {

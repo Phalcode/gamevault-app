@@ -6,6 +6,8 @@ using System.Windows;
 using Windows.ApplicationModel;
 using System;
 using gamevault.Helper;
+using System.Threading.Tasks;
+using gamevault.Converter;
 
 namespace gamevault.UserControls
 {
@@ -29,6 +31,7 @@ namespace gamevault.UserControls
             {
                 Directory.Delete(AppFilePath.ImageCache, true);
                 Directory.CreateDirectory(AppFilePath.ImageCache);
+                ViewModel.ImageCacheSize = 0;
                 MainWindowViewModel.Instance.AppBarText = "Image cache cleared";
             }
             catch
@@ -50,6 +53,7 @@ namespace gamevault.UserControls
                 {
                     File.Delete(AppFilePath.OfflineCache);
                 }
+                ViewModel.OfflineCacheSize = 0;
                 MainWindowViewModel.Instance.AppBarText = "Offline cache cleared";
             }
             catch
@@ -87,6 +91,44 @@ namespace gamevault.UserControls
                     AutostartHelper.RegistryCreateAutostartKey();
                 }
             }
+        }
+
+        private async void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (((TabControl)sender).SelectedIndex == 2)
+            {
+                ViewModel.ImageCacheSize = await CalculateDirectorySize(new DirectoryInfo(AppFilePath.ImageCache));
+                ViewModel.OfflineCacheSize = new FileInfo(AppFilePath.OfflineCache).Length;
+            }
+        }
+        private async Task<long> CalculateDirectorySize(DirectoryInfo d)
+        {
+            return await Task<long>.Run(async () =>
+            {
+                long size = 0;
+                try
+                {
+                    FileInfo[] fis = d.GetFiles();
+                    foreach (FileInfo fi in fis)
+                    {
+                        size += fi.Length;
+                    }
+                    DirectoryInfo[] dis = d.GetDirectories();
+                    foreach (DirectoryInfo di in dis)
+                    {
+                        size += await CalculateDirectorySize(di);
+                    }
+                }
+                catch { }
+                return size;
+            });
+        }
+
+        private void Logout_Click(object sender, RoutedEventArgs e)
+        {
+            LoginManager.Instance.Logout();
+            MainWindowViewModel.Instance.UserIcon = null;
+            MainWindowViewModel.Instance.AppBarText = "Successfully logged out";
         }
     }
 }

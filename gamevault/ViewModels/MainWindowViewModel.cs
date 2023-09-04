@@ -67,8 +67,13 @@ namespace gamevault.ViewModels
         public User? UserIcon
         {
             get { return m_UserIcon; }
-            set { m_UserIcon = value; OnPropertyChanged(); }
-        }       
+            set
+            {
+                m_UserIcon = value; if (m_UserIcon == null)
+                { m_UserIcon = new User(); }
+                OnPropertyChanged();
+            }
+        }
         #endregion
         #region PrivateMembers        
         private int m_ActiveControlIndex = -1;

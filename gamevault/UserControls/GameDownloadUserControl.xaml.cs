@@ -159,6 +159,13 @@ namespace gamevault.UserControls
                 Directory.CreateDirectory(ViewModel.InstallPath);
             }
             MainWindowViewModel.Instance.Installs.AddSystemFileWatcher(ViewModel.InstallPath);
+            if (SettingsViewModel.Instance.AutoExtract)
+            {
+                App.Current.Dispatcher.Invoke((Action)async delegate
+                {
+                    await Extract();
+                });
+            }
         }
 
         private void CancelDownload_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -235,6 +242,10 @@ namespace gamevault.UserControls
         }
 
         private async void Extract_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            await Extract();
+        }
+        private async Task Extract()
         {
             DirectoryInfo dirInf = new DirectoryInfo(m_DownloadPath);
             FileInfo[] files = dirInf.GetFiles().Where(f => ViewModel.SupportedArchives.Contains(f.Extension.ToLower())).ToArray();

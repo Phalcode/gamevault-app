@@ -1,5 +1,12 @@
 # GameVault App Changelog
 
+## 1.5.0
+### Changes
+- Reorganized settings tab
+- "Auto-Extract Downloaded Games" option added to settings
+- Image cache and offline cache size is displayed in settings
+- Added Logout option to settings
+
 ## 1.4.1
 ### Changes
 - Bug fix: Image optimization was skipped if it was not a Microsoft store version

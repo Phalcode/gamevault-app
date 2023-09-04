@@ -16,6 +16,7 @@ namespace gamevault.Models
         BackgroundStart,
         ServerUrl,
         LibStartup,
+        AutoExtract,
         ExtractionFinished,
         RunningInTrayMessage
     }
