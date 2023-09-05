@@ -11,6 +11,7 @@
              d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
     <UserControl.Resources>
         <conv:GameSizeConverter x:Key="sizeConv"/>
+        <conv:DownloadLimitConverter x:Key="downloadLimitConv"/>
 
     </UserControl.Resources>
     <Grid>
@@ -36,6 +37,12 @@
                         <StackPanel Margin="0,10,0,0">
                             <TextBlock Text="Server Settings" FontSize="20" FontWeight="Bold"/>
                             <settingsComponents:ServerUrlUserControl Margin="10,10,0,0" HorizontalAlignment="Left"/>
+                            <GroupBox Header="Download Limit" Margin="10,10,0,0" Width="510" HorizontalAlignment="Left" mah:ControlsHelper.CornerRadius="4">
+                                <StackPanel>
+                                    <TextBox Text="{Binding DownloadLimitUIValue,UpdateSourceTrigger=PropertyChanged}" Margin="0,10,0,5" MaxLength="11" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="{Binding DownloadLimitUIValue,Converter={StaticResource downloadLimitConv}}" PreviewTextInput="DownloadLimit_InputValidation" TextChanged="DownloadLimit_InputValidation" KeyDown="DownloadLimit_Save"/>
+                                    <Button Content="Save" FontSize="15" Width="80" HorizontalAlignment="Left" Click="DownloadLimit_Save"/>
+                                </StackPanel>
+                            </GroupBox>
                         </StackPanel>
                         <StackPanel Margin="0,10,0,0">
                             <TextBlock Text="Startup" FontSize="20" FontWeight="Bold"/>

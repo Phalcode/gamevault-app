@@ -8,6 +8,11 @@ using System;
 using gamevault.Helper;
 using System.Threading.Tasks;
 using gamevault.Converter;
+using System.Globalization;
+using System.Text.RegularExpressions;
+using System.Windows.Input;
+using static System.Net.Mime.MediaTypeNames;
+using ABI.System;
 
 namespace gamevault.UserControls
 {
@@ -129,6 +134,39 @@ namespace gamevault.UserControls
             LoginManager.Instance.Logout();
             MainWindowViewModel.Instance.UserIcon = null;
             MainWindowViewModel.Instance.AppBarText = "Successfully logged out";
+        }
+
+        private void DownloadLimit_InputValidation(object sender, EventArgs e)
+        {
+            if (e.GetType() == typeof(TextCompositionEventArgs))
+            {
+                ((TextCompositionEventArgs)e).Handled = new Regex("[^0-9]+").IsMatch(((TextCompositionEventArgs)e).Text);
+            }
+            else if (e.GetType() == typeof(TextChangedEventArgs))
+            {
+                if (string.IsNullOrEmpty(((TextBox)sender).Text))
+                {
+                    ((TextBox)sender).Text = "0";
+                }
+                else if (!long.TryParse(((TextBox)sender).Text, out long result))
+                {
+                    ((TextBox)sender).Text = "0";
+                }               
+            }
+        }
+
+        private void DownloadLimit_Save(object sender, EventArgs e)
+        {
+            if (e.GetType() == typeof(KeyEventArgs))
+            {
+                if (((KeyEventArgs)e).Key != Key.Enter)
+                {
+                    return;
+                }
+            }
+            ViewModel.DownloadLimit = ViewModel.DownloadLimitUIValue;
+            Preferences.Set(AppConfigKey.DownloadLimit, ViewModel.DownloadLimit, AppFilePath.UserFile);
+            MainWindowViewModel.Instance.AppBarText = "Successfully saved download limit";
         }
     }
 }

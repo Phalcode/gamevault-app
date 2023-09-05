@@ -35,6 +35,8 @@ namespace gamevault.ViewModels
         private string m_ServerUrl { get; set; }
         private float m_ImageCacheSize { get; set; }
         private float m_OfflineCacheSize { get; set; }
+        private long m_DownloadLimit { get; set; }
+        private long m_DownloadLimitUIValue { get; set; }
         private User m_RegistrationUser = new User() { ProfilePicture = new Image(), BackgroundImage = new Image() };
         #endregion
 
@@ -54,6 +56,16 @@ namespace gamevault.ViewModels
             else
             {
                 m_LibStartup = (libstartup == "1"); OnPropertyChanged(nameof(LibStartup));
+            }
+            if (long.TryParse(Preferences.Get(AppConfigKey.DownloadLimit, AppFilePath.UserFile), out long downloadLimitResult))
+            {
+                DownloadLimit = downloadLimitResult;
+                DownloadLimitUIValue = DownloadLimit;
+            }
+            else
+            {
+                DownloadLimit = 0;
+                DownloadLimitUIValue = 0;
             }
         }
 
@@ -131,6 +143,16 @@ namespace gamevault.ViewModels
         {
             get { return m_OfflineCacheSize; }
             set { m_OfflineCacheSize = value; OnPropertyChanged(); }
+        }
+        public long DownloadLimit
+        {
+            get { return m_DownloadLimit; }
+            set { m_DownloadLimit = value; OnPropertyChanged(); }
+        }
+        public long DownloadLimitUIValue
+        {
+            get { return m_DownloadLimitUIValue; }
+            set { m_DownloadLimitUIValue = value; OnPropertyChanged(); }
         }
         public User RegistrationUser
         {
