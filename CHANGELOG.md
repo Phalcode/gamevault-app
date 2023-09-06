@@ -9,6 +9,7 @@
 - Added Download Limit to settings
 - Added re-index button to Admin Console
 - Email, First Name, and Last Name are not mandatory for registration anymore
+- Download progress is now displayed in the taskbar
 
 ## 1.4.1
 ### Changes

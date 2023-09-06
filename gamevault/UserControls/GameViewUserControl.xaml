@@ -28,6 +28,7 @@
         <Popup IsOpen="{Binding GameRemapPopupIsOpen}" Placement="Center" StaysOpen="False" AllowsTransparency="True" Panel.ZIndex="1">
             <Border Background="{StaticResource DarkBackground}" CornerRadius="10" Width="300" BorderThickness="1" BorderBrush="White" Padding="10">
                 <StackPanel>
+                    <Button Content="Game re-cache" Margin="0,0,5,5" Click="Recache_Click"/>
                     <StackPanel Orientation="Horizontal">
                         <TextBox Text="{Binding Path=UpdatedBoxImage,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Game image url" Width="220" KeyDown="SaveBoxArtImage_KeyDown"/>
                         <Button x:Name="uiBtnSaveBoxArtImage" Content="Save" Margin="5,0,0,0" Width="48" Click="BoxArtImageSave_Click"/>

@@ -9,7 +9,10 @@
 		xmlns:conv="clr-namespace:gamevault.Converter"
         mc:Ignorable="d" Icon="/Resources/Images/icon.ico"
         Title="GameVault" Height="450" Width="800" WindowStartupLocation="CenterScreen" WindowState="Maximized" MinWidth="600" MinHeight="345" Loaded="MetroWindow_Loaded" Closing="MetroWindow_Closing">
-	<mah:MetroWindow.Resources>
+    <mah:MetroWindow.TaskbarItemInfo>
+        <TaskbarItemInfo ProgressValue="{Binding TaskbarProgress}" ProgressState="Normal"/>
+    </mah:MetroWindow.TaskbarItemInfo>
+    <mah:MetroWindow.Resources>
 		<conv:PermissionRoleConverter x:Key="permissionRoleConv"/>
 	</mah:MetroWindow.Resources>
 	<mah:MetroWindow.RightWindowCommands>

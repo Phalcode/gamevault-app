@@ -83,6 +83,10 @@ namespace gamevault.UserControls
         {
             return ViewModel.Game.BoxImage.ID;
         }
+        public int GetDownloadProgress()
+        {
+            return ViewModel.GameDownloadProgress;
+        }
         public void CancelDownload()
         {
             if (client == null)
@@ -143,6 +147,7 @@ namespace gamevault.UserControls
                     {
                         DownloadCompleted();
                     }
+                    MainWindowViewModel.Instance.UpdateTaskbarProgress();
                 }
             });
         }

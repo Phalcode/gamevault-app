@@ -166,7 +166,7 @@ namespace gamevault.UserControls
                     string currentShownUser = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/rawg/search?query={ViewModel.RawgSearchQuery}");
                     return JsonSerializer.Deserialize<Game[]>(currentShownUser);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     MainWindowViewModel.Instance.AppBarText = $"Could not load rawg data. ({ex.Message})";
                     return null;
@@ -252,6 +252,25 @@ namespace gamevault.UserControls
                 return true;
             }
             return false;
+        }
+
+        private async void Recache_Click(object sender, RoutedEventArgs e)
+        {
+            ((Button)sender).IsEnabled = false;
+            await Task.Run(() =>
+            {
+                try
+                {
+                    WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/rawg/{ViewModel.Game.ID}/recache", string.Empty);
+                    MainWindowViewModel.Instance.AppBarText = $"Sucessfully re-cached {ViewModel.Game.Title}";
+                }
+                catch (WebException ex)
+                {
+                    string msg = WebExceptionHelper.GetServerMessage(ex);
+                    MainWindowViewModel.Instance.AppBarText = msg;
+                }
+            });
+            ((Button)sender).IsEnabled = true;
         }
     }
 }
