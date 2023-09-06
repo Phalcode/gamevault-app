@@ -161,8 +161,16 @@ namespace gamevault.UserControls
             uiBtnRawgGameSearch.IsEnabled = false;
             ViewModel.RawgGames = await Task<Game[]>.Run(() =>
             {
-                string currentShownUser = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/rawg/search?query={ViewModel.RawgSearchQuery}");
-                return JsonSerializer.Deserialize<Game[]>(currentShownUser);
+                try
+                {
+                    string currentShownUser = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/rawg/search?query={ViewModel.RawgSearchQuery}");
+                    return JsonSerializer.Deserialize<Game[]>(currentShownUser);
+                }
+                catch(Exception ex)
+                {
+                    MainWindowViewModel.Instance.AppBarText = $"Could not load rawg data. ({ex.Message})";
+                    return null;
+                }
             });
             uiBtnRawgGameSearch.IsEnabled = true;
         }
@@ -186,7 +194,7 @@ namespace gamevault.UserControls
             {
                 try
                 {
-                    WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/v1/utility/overwrite/{m_GameId}/box_image", "{\n\"image_url\": \"" + ViewModel.UpdatedBoxImage + "\"\n}");
+                    WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/{m_GameId}", "{\n\"box_image_url\": \"" + ViewModel.UpdatedBoxImage + "\"\n}");
                     MainWindowViewModel.Instance.AppBarText = "Successfully updated box image";
                 }
                 catch (WebException ex)
@@ -205,7 +213,7 @@ namespace gamevault.UserControls
             {
                 try
                 {
-                    WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/v1/utility/overwrite/{m_GameId}/rawg_id", "{\n\"rawg_id\": " + rawgId + "\n}");
+                    WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/{m_GameId}", "{\n\"rawg_id\": " + rawgId + "\n}");
                     MainWindowViewModel.Instance.AppBarText = "Successfully remapped game";
                 }
                 catch (WebException ex)

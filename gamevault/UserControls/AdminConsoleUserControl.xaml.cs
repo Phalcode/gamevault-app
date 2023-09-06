@@ -58,7 +58,7 @@ namespace gamevault.UserControls
             {
                 string msg = WebExceptionHelper.GetServerMessage(ex);
                 MainWindowViewModel.Instance.AppBarText = msg;
-            }           
+            }
         }
 
         private void PermissionRole_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -102,7 +102,7 @@ namespace gamevault.UserControls
             User selectedUser = (User)((FrameworkElement)sender).DataContext;
 
             await Task.Run(async () =>
-            {                
+            {
                 try
                 {
                     if (selectedUser.DeletedAt == null)
@@ -175,9 +175,28 @@ namespace gamevault.UserControls
 
         private void ShowUser_Click(object sender, MouseButtonEventArgs e)
         {
-            User selectedUser = ((FrameworkElement)sender).DataContext as User;           
+            User selectedUser = ((FrameworkElement)sender).DataContext as User;
             MainWindowViewModel.Instance.SetActiveControl(MainControl.Community);
             MainWindowViewModel.Instance.Community.ShowUser(selectedUser);
+        }
+
+        private async void Reindex_Click(object sender, RoutedEventArgs e)
+        {
+            ((Button)sender).IsEnabled = false;
+            await Task.Run(() =>
+            {
+                try
+                {
+                    WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/files/reindex", string.Empty);
+                    MainWindowViewModel.Instance.AppBarText = "Sucessfully reindexed games";
+                }
+                catch (WebException ex)
+                {
+                    string msg = WebExceptionHelper.GetServerMessage(ex);
+                    MainWindowViewModel.Instance.AppBarText = msg;
+                }
+            });
+            ((Button)sender).IsEnabled = true;
         }
     }
 }

@@ -9,14 +9,14 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Border BorderBrush="{StaticResource MahApps.Brushes.Accent}" Background="{StaticResource DarkBackground2}" BorderThickness="2" CornerRadius="10" Width="205" Padding="5" KeyDown="Register_KeyDown">
         <StackPanel>
-            <TextBox Text="{Binding RegistrationUser.Username,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Username" Margin="5"/>
+            <TextBox Text="{Binding RegistrationUser.Username,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Username*" Margin="5"/>
             <TextBox Text="{Binding RegistrationUser.FirstName,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="First name" Margin="5"/>
             <TextBox Text="{Binding RegistrationUser.LastName,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Last name" Margin="5"/>
             <TextBox Text="{Binding RegistrationUser.EMail,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="E-mail" Margin="5"/>
-            <PasswordBox x:Name="uiPwReg" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Password" Margin="5"/>
-            <PasswordBox x:Name="uiPwRegRepeat" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Repeat password" Margin="5"/>
-            <TextBox Text="{Binding RegistrationUser.ProfilePictureUrl,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Profile picture url (Optional)" Margin="5"/>
-            <TextBox Text="{Binding RegistrationUser.BackgroundImageUrl,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Profile art url (Optional)" Margin="5"/>
+            <PasswordBox x:Name="uiPwReg" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Password*" Margin="5"/>
+            <PasswordBox x:Name="uiPwRegRepeat" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Repeat password*" Margin="5"/>
+            <TextBox Text="{Binding RegistrationUser.ProfilePictureUrl,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Profile picture url" Margin="5"/>
+            <TextBox Text="{Binding RegistrationUser.BackgroundImageUrl,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Profile art url" Margin="5"/>
             <Button x:Name="uiBtnRegister" Content="Register" Click="Registration_Clicked" FontSize="15"/>
         </StackPanel>
     </Border>

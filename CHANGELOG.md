@@ -7,6 +7,8 @@
 - Image cache and offline cache size is displayed in settings
 - Added Logout option to settings
 - Added Download Limit to settings
+- Added re-index button to Admin Console
+- Email, First Name, and Last Name are not mandatory for registration anymore
 
 ## 1.4.1
 ### Changes

@@ -15,7 +15,7 @@
         <Border Background="{StaticResource DarkBackground2}" Grid.Row="0">
             <Grid>
                 <TextBlock Text="Admin Console" FontSize="35" Margin="20,0,0,0" Foreground="White"/>
-                <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Version,StringFormat='{}V {0}'}" Margin="0,0,5,0"/>
+                <Button Content="Reindex Games" HorizontalAlignment="Right" Margin="10" Click="Reindex_Click"/>
             </Grid>
         </Border>
         <Grid Grid.RowSpan="2">
