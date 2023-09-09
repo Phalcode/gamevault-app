@@ -130,10 +130,14 @@ namespace gamevault.UserControls
 
         private void EditUser_Clicked(object sender, MouseButtonEventArgs e)
         {
-            uiUserEditPopup.IsOpen = true;
+            uiUserEditPopup.Visibility = Visibility.Visible;
             var obj = new UserEditUserControl((User)((FrameworkElement)sender).DataContext);
             obj.UserSaved += UserSaved;
-            uiUserEditPopup.Child = obj;
+            if (uiUserEditPopup.Children.Count != 0)
+            {
+                uiUserEditPopup.Children.Clear();
+            }
+            uiUserEditPopup.Children.Add(obj);
         }
         protected async void UserSaved(object sender, EventArgs e)
         {

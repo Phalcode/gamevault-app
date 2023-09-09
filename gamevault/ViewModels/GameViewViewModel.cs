@@ -17,8 +17,9 @@ namespace gamevault.ViewModels
         private string[]? m_States { get; set; }
         private Progress? m_Progress { get; set; }
         private string m_RawgSearchQuery { get; set; }
-        private string m_UpdatedBoxImage { get; set; }
-        private bool m_GameRemapPopupIsOpen { get; set; }      
+        private string m_UpdatedBoxImageUrl { get; set; }
+        private long? m_UpdatedBoxImageId { get; set; }
+        private Visibility m_GameRemapPopupVisibillity = Visibility.Collapsed;  
         private bool m_IsAlreadyInstalled { get; set; }
 
         #endregion
@@ -47,15 +48,20 @@ namespace gamevault.ViewModels
             get { return m_RawgSearchQuery; }
             set { m_RawgSearchQuery = value; OnPropertyChanged(); }
         }
-        public string? UpdatedBoxImage
+        public string? UpdatedBoxImageUrl
         {
-            get { return m_UpdatedBoxImage; }
-            set { m_UpdatedBoxImage = value; OnPropertyChanged(); }
+            get { return m_UpdatedBoxImageUrl; }
+            set { m_UpdatedBoxImageUrl = value; OnPropertyChanged(); }
         }
-        public bool GameRemapPopupIsOpen
+        public long? UpdatedBoxImageId
         {
-            get { return m_GameRemapPopupIsOpen; }
-            set { m_GameRemapPopupIsOpen = value; OnPropertyChanged(); }
+            get { return m_UpdatedBoxImageId; }
+            set { m_UpdatedBoxImageId = value; OnPropertyChanged(); }
+        }
+        public Visibility GameRemapPopupVisibillity
+        {
+            get { return m_GameRemapPopupVisibillity; }
+            set { m_GameRemapPopupVisibillity = value; OnPropertyChanged(); }
         }
         public Visibility CanEditGame
         {

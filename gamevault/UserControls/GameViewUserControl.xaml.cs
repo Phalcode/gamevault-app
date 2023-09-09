@@ -194,7 +194,7 @@ namespace gamevault.UserControls
             {
                 try
                 {
-                    WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/{m_GameId}", "{\n\"box_image_url\": \"" + ViewModel.UpdatedBoxImage + "\"\n}");
+                    WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/{m_GameId}", "{\n" + "\"box_image_id\": \"" + ViewModel.UpdatedBoxImageId + "\"" + ",\"box_image_url\": \"" + ViewModel.UpdatedBoxImageUrl + "\"\n}");
                     MainWindowViewModel.Instance.AppBarText = "Successfully updated box image";
                 }
                 catch (WebException ex)
@@ -207,7 +207,7 @@ namespace gamevault.UserControls
         }
         private async void RawgGameRemap_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.GameRemapPopupIsOpen = false;
+            ViewModel.GameRemapPopupVisibillity = Visibility.Collapsed;
             int? rawgId = ((Game)((FrameworkElement)sender).DataContext).RawgId;
             await Task.Run(() =>
             {
@@ -226,7 +226,15 @@ namespace gamevault.UserControls
         }
         private void GameRemapPopup_Click(object sender, MouseButtonEventArgs e)
         {
-            ViewModel.GameRemapPopupIsOpen = true;
+            if(ViewModel.GameRemapPopupVisibillity == Visibility.Visible)
+            {
+                ViewModel.GameRemapPopupVisibillity = Visibility.Collapsed;
+            }
+            else
+            {
+                ViewModel.GameRemapPopupVisibillity = Visibility.Visible;
+            }
+           
         }
         private bool IsEnoughDriveSpaceAvailable(string path, long gameSize)
         {
@@ -272,5 +280,17 @@ namespace gamevault.UserControls
             });
             ((Button)sender).IsEnabled = true;
         }
+
+        private void UploadBoxArtImage_Click(object sender, RoutedEventArgs e)
+        {          
+            if (fileSelectionPopupPP.Visibility == Visibility.Visible)
+            {
+                fileSelectionPopupPP.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                fileSelectionPopupPP.Visibility = Visibility.Visible;
+            }
+        }      
     }
 }

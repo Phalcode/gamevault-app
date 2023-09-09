@@ -60,7 +60,7 @@
                         <TextBlock Text="✏️" Cursor="Hand" ToolTip="Edit User" MouseLeftButtonUp="UserEdit_Clicked" Visibility="{Binding SelectedIndex,ElementName=uiSelectUser,Converter={StaticResource roleToVisConv}}" HorizontalAlignment="Right"  Margin="0,2,5,0"/>
                         <TextBlock Text="↻" Cursor="Hand" ToolTip="Reload user" MouseLeftButtonUp="ReloadUser_Clicked" HorizontalAlignment="Right" Margin="0,-8,25,0" FontSize="24"/>
                       
-                        <Popup x:Name="uiUserEditPopup" IsOpen="False" Placement="Right" StaysOpen="False" AllowsTransparency="True"/>
+                        <Canvas x:Name="uiUserEditPopup" Margin="48,0,0,0"/>
                     </Grid>
                     <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="320,0,10,0">
                         <TextBlock Text="Sort by: "/>

@@ -18,10 +18,10 @@
                 <Button Content="Reindex Games" HorizontalAlignment="Right" Margin="10" Click="Reindex_Click"/>
             </Grid>
         </Border>
-        <Grid Grid.RowSpan="2">
+        <Grid Grid.RowSpan="2" Panel.ZIndex="1">
             <Viewbox>
                 <Grid Height="700" Width="700">
-                    <Popup x:Name="uiUserEditPopup" IsOpen="False" Placement="Center" StaysOpen="False" AllowsTransparency="True"/>
+                    <Grid x:Name="uiUserEditPopup" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Grid>
             </Viewbox>
         </Grid>

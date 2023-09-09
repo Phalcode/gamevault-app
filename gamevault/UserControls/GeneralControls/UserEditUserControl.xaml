@@ -7,16 +7,26 @@
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" MaxWidth="300">
-    <Border Background="{StaticResource DarkBackground2}" Padding="10" BorderBrush="White" BorderThickness="2" CornerRadius="10" KeyDown="Save_KeyDown">
-        <StackPanel>
-            <TextBox Margin="0,5,0,0" Text="{Binding Username,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="Username" mah:TextBoxHelper.UseFloatingWatermark="True"/>
-            <TextBox Margin="0,5,0,0" Text="{Binding FirstName,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="First name" mah:TextBoxHelper.UseFloatingWatermark="True"/>
-            <TextBox Margin="0,5,0,0" Text="{Binding LastName,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="Last name" mah:TextBoxHelper.UseFloatingWatermark="True"/>
-            <TextBox Margin="0,5,0,0" Text="{Binding EMail,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="E-Mail" mah:TextBoxHelper.UseFloatingWatermark="True"/>
-            <TextBox Margin="0,5,0,0" Text="{Binding Password,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="Password" mah:TextBoxHelper.UseFloatingWatermark="True"/>
-            <TextBox Margin="0,5,0,0" Text="{Binding ProfilePictureUrl,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="Profile picture URL" mah:TextBoxHelper.UseFloatingWatermark="True"/>
-            <TextBox Margin="0,5,0,0" Text="{Binding BackgroundImageUrl,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="Background picture URL" mah:TextBoxHelper.UseFloatingWatermark="True"/>
-            <Button x:Name="uiBtnSave" Margin="0,5,0,0" Content="Save" Click="Save_Clicked"/>
-        </StackPanel>
-    </Border>
+    <Grid>
+        <TextBlock Text="x" FontWeight="Bold" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,-2,5,0" FontSize="15" Panel.ZIndex="1" MouseLeftButtonUp="UserEditPopup_Close" Cursor="Hand"/>
+        <Border Background="{StaticResource DarkBackground2}" Padding="10" BorderBrush="White" BorderThickness="2" CornerRadius="10" KeyDown="Save_KeyDown">
+
+            <StackPanel>
+                <TextBox Margin="0,5,0,0" Text="{Binding Username,UpdateSourceTrigger=PropertyChanged}" mah:ControlsHelper.CornerRadius="2" mah:TextBoxHelper.Watermark="Username" mah:TextBoxHelper.UseFloatingWatermark="True"/>
+                <TextBox Margin="0,5,0,0" Text="{Binding FirstName,UpdateSourceTrigger=PropertyChanged}" mah:ControlsHelper.CornerRadius="2" mah:TextBoxHelper.Watermark="First name" mah:TextBoxHelper.UseFloatingWatermark="True"/>
+                <TextBox Margin="0,5,0,0" Text="{Binding LastName,UpdateSourceTrigger=PropertyChanged}" mah:ControlsHelper.CornerRadius="2" mah:TextBoxHelper.Watermark="Last name" mah:TextBoxHelper.UseFloatingWatermark="True"/>
+                <TextBox Margin="0,5,0,0" Text="{Binding EMail,UpdateSourceTrigger=PropertyChanged}" mah:ControlsHelper.CornerRadius="2" mah:TextBoxHelper.Watermark="E-Mail" mah:TextBoxHelper.UseFloatingWatermark="True"/>
+                <TextBox Margin="0,5,0,0" Text="{Binding Password,UpdateSourceTrigger=PropertyChanged}" mah:ControlsHelper.CornerRadius="2" mah:TextBoxHelper.Watermark="Password" mah:TextBoxHelper.UseFloatingWatermark="True"/>
+                <Button x:Name="btnUploadProfilePicture" Margin="0,5,0,0" Content="PROFILE PICTURE" Click="UploadProfilePicture_Click"/>
+                <Button x:Name="btnUploadBackgroundPicture" Margin="0,5,0,0" Content="BACKGROUND PICTURE" Click="UploadBackgroundPicture_Click"/>
+                <Button x:Name="uiBtnSave" Margin="0,5,0,0" Content="Save" Click="Save_Clicked"/>
+            </StackPanel>
+        </Border>
+        <Canvas x:Name="fileSelectionPopupPP" Visibility="Collapsed" Margin="146,225,0,0" HorizontalAlignment="Right">
+            <local:FileSelectorUserControl ImageId="{Binding Path=ProfilePictureId,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" ImageUrl="{Binding Path=ProfilePictureUrl,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+        </Canvas>
+        <Canvas x:Name="fileSelectionPopupBP" Visibility="Collapsed" Margin="146,255,0,0" HorizontalAlignment="Right">
+            <local:FileSelectorUserControl ImageId="{Binding Path=BackgroundImageId,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" ImageUrl="{Binding Path=BackgroundImageUrl,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+        </Canvas>
+    </Grid>
 </UserControl>
