@@ -19,6 +19,8 @@ namespace gamevault.ViewModels
         private string m_RawgSearchQuery { get; set; }
         private string m_UpdatedBoxImageUrl { get; set; }
         private long? m_UpdatedBoxImageId { get; set; }
+        private string m_UpdatedBackgroundImageUrl { get; set; }
+        private long? m_UpdatedBackgroundImageId { get; set; }
         private Visibility m_GameRemapPopupVisibillity = Visibility.Collapsed;  
         private bool m_IsAlreadyInstalled { get; set; }
 
@@ -57,6 +59,16 @@ namespace gamevault.ViewModels
         {
             get { return m_UpdatedBoxImageId; }
             set { m_UpdatedBoxImageId = value; OnPropertyChanged(); }
+        }
+        public string? UpdatedBackgroundImageUrl
+        {
+            get { return m_UpdatedBackgroundImageUrl; }
+            set { m_UpdatedBackgroundImageUrl = value; OnPropertyChanged(); }
+        }
+        public long? UpdatedBackgroundImageId
+        {
+            get { return m_UpdatedBackgroundImageId; }
+            set { m_UpdatedBackgroundImageId = value; OnPropertyChanged(); }
         }
         public Visibility GameRemapPopupVisibillity
         {

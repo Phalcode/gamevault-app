@@ -10,6 +10,7 @@
 - Added re-index button to Admin Console
 - Email, First Name, and Last Name are not mandatory for registration anymore
 - Download progress is now displayed in the taskbar
+- It is now possible to upload images from the client
 
 ## 1.4.1
 ### Changes

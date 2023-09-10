@@ -26,16 +26,18 @@
         <Image Source="pack://application:,,,/gamevault;component/Resources/Images/gameView_Back.png" HorizontalAlignment="Left" VerticalAlignment="Top" Height="50" Margin="5" Cursor="Hand" ToolTip="Back" Panel.ZIndex="1" MouseLeftButtonUp="BackButton_Clicked"/>
         <TextBlock Text="✏️" Cursor="Hand" ToolTip="Remap game" HorizontalAlignment="Right" Foreground="White" VerticalAlignment="Top" FontSize="20" Margin="5" Visibility="{Binding CanEditGame}" Panel.ZIndex="1" MouseLeftButtonUp="GameRemapPopup_Click"/>
         <Grid Visibility="{Binding GameRemapPopupVisibillity}" Panel.ZIndex="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <TextBlock Text="x" FontWeight="Bold" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,-2,5,0" FontSize="15" Panel.ZIndex="1" MouseLeftButtonUp="GameRemapPopup_Click" Cursor="Hand"/>
+            <TextBlock Text="x" FontWeight="Bold" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,0,8,0" FontSize="17" Panel.ZIndex="1" MouseLeftButtonUp="GameRemapPopup_Click" Cursor="Hand"/>
             <Border Background="{StaticResource DarkBackground}" CornerRadius="10" Width="300" BorderThickness="1" BorderBrush="White" Padding="10">
                 <StackPanel>
-                    <Button Content="Game re-cache" Margin="0,0,5,5" Click="Recache_Click"/>
-                    <StackPanel Orientation="Horizontal">
-                        <!--<TextBox Text="{Binding Path=UpdatedBoxImage,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Game image url" Width="220" KeyDown="SaveBoxArtImage_KeyDown"/>-->
+                    <Button Content="Game re-cache" Margin="0,0,58,5" Click="Recache_Click"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                         <Button Content="BOX ART IMAGE" Width="220" Click="UploadBoxArtImage_Click"/>
-                        <Button x:Name="uiBtnSaveBoxArtImage" Content="Save" Margin="5,0,0,0" Width="48" Click="BoxArtImageSave_Click"/>
-                    </StackPanel>                  
-                    
+                        <Button Content="Save" Margin="5,0,0,0" Width="48" Click="ImagesSave_Click"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="BACKGROUND IMAGE" Width="220" Click="UploadBackgroundImage_Click"/>
+                        <Button Content="Save" Margin="5,0,0,0" Width="48" Click="ImagesSave_Click"/>
+                    </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                         <TextBox Text="{Binding RawgSearchQuery,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Rawg game" Width="220" KeyDown="RawgGameSearch_KeyDown"/>
                         <Button x:Name="uiBtnRawgGameSearch" Content="Search" Click="RawgGameSearch_Click" Margin="5,0,0,0"/>
@@ -76,6 +78,9 @@
             </Border>
             <Canvas x:Name="fileSelectionPopupPP" Visibility="Collapsed" Margin="0,40,0,0" HorizontalAlignment="Right">
                 <local:FileSelectorUserControl ImageId="{Binding Path=UpdatedBoxImageId,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" ImageUrl="{Binding Path=UpdatedBoxImageUrl,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+            </Canvas>
+            <Canvas x:Name="fileSelectionPopupBP" Visibility="Collapsed" Margin="0,70,0,0" HorizontalAlignment="Right">
+                <local:FileSelectorUserControl ImageId="{Binding Path=UpdatedBackgroundImageId,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" ImageUrl="{Binding Path=UpdatedBackgroundImageUrl,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
             </Canvas>
         </Grid>
         <local:CacheImage ImageCacheType="GameBackground" Data="{Binding Game}"/>
