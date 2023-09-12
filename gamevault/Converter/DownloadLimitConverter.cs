@@ -19,28 +19,24 @@ namespace gamevault.Converter
                 {
                     return "Unlimited";
                 }
-                size = size / 1000000;
-                if (size > 100)
+                
+                if (size >= 1000000)
                 {
-                    size = size / 1000;
+                    size /= 1000000;
                     size = Math.Round(size, 2);
                     return $"{size} GB/s";
                 }
-                else if (size > 0.1)
+                else if (size >= 1000)
                 {
+                    size /= 1000;
                     size = Math.Round(size, 2);
                     return $"{size} MB/s";
                 }
-                else if (size > 0.0001)
-                {
-                    size *= 1000; size = Math.Round(size, 2);
-                    return $"{size} KB/s";
-                }
                 else
                 {
-                    size *= 1000000; size = Math.Round(size, 2);
-                    return $"{size} B/s";
-                }
+                    size = Math.Round(size, 2);
+                    return $"{size} KB/s";
+                }                
             }
             catch
             {

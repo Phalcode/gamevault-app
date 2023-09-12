@@ -48,6 +48,7 @@ namespace gamevault
 
 #if DEBUG
             AppFilePath.InitDebugPaths();
+            await CacheHelper.OptimizeCache();
 #else
             try
             {

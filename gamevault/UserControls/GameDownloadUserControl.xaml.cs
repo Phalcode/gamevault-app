@@ -98,6 +98,8 @@ namespace gamevault.UserControls
             ViewModel.State = "Download Cancelled";
             ViewModel.DownloadUIVisibility = System.Windows.Visibility.Hidden;
             ViewModel.DownloadFailedVisibility = System.Windows.Visibility.Visible;
+
+            MainWindowViewModel.Instance.UpdateTaskbarProgress();
         }
         private void DownloadGame()
         {
