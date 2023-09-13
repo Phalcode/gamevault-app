@@ -6,6 +6,13 @@ using System.Windows;
 using Windows.ApplicationModel;
 using System;
 using gamevault.Helper;
+using System.Threading.Tasks;
+using gamevault.Converter;
+using System.Globalization;
+using System.Text.RegularExpressions;
+using System.Windows.Input;
+using static System.Net.Mime.MediaTypeNames;
+using ABI.System;
 
 namespace gamevault.UserControls
 {
@@ -29,6 +36,7 @@ namespace gamevault.UserControls
             {
                 Directory.Delete(AppFilePath.ImageCache, true);
                 Directory.CreateDirectory(AppFilePath.ImageCache);
+                ViewModel.ImageCacheSize = 0;
                 MainWindowViewModel.Instance.AppBarText = "Image cache cleared";
             }
             catch
@@ -50,6 +58,7 @@ namespace gamevault.UserControls
                 {
                     File.Delete(AppFilePath.OfflineCache);
                 }
+                ViewModel.OfflineCacheSize = 0;
                 MainWindowViewModel.Instance.AppBarText = "Offline cache cleared";
             }
             catch
@@ -87,6 +96,77 @@ namespace gamevault.UserControls
                     AutostartHelper.RegistryCreateAutostartKey();
                 }
             }
+        }
+
+        private async void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (((TabControl)sender).SelectedIndex == 2)
+            {
+                ViewModel.ImageCacheSize = await CalculateDirectorySize(new DirectoryInfo(AppFilePath.ImageCache));
+                ViewModel.OfflineCacheSize = new FileInfo(AppFilePath.OfflineCache).Length;
+            }
+        }
+        private async Task<long> CalculateDirectorySize(DirectoryInfo d)
+        {
+            return await Task<long>.Run(async () =>
+            {
+                long size = 0;
+                try
+                {
+                    FileInfo[] fis = d.GetFiles();
+                    foreach (FileInfo fi in fis)
+                    {
+                        size += fi.Length;
+                    }
+                    DirectoryInfo[] dis = d.GetDirectories();
+                    foreach (DirectoryInfo di in dis)
+                    {
+                        size += await CalculateDirectorySize(di);
+                    }
+                }
+                catch { }
+                return size;
+            });
+        }
+
+        private void Logout_Click(object sender, RoutedEventArgs e)
+        {
+            LoginManager.Instance.Logout();
+            MainWindowViewModel.Instance.UserIcon = null;
+            MainWindowViewModel.Instance.AppBarText = "Successfully logged out";
+        }
+
+        private void DownloadLimit_InputValidation(object sender, EventArgs e)
+        {
+            if (e.GetType() == typeof(TextCompositionEventArgs))
+            {
+                ((TextCompositionEventArgs)e).Handled = new Regex("[^0-9]+").IsMatch(((TextCompositionEventArgs)e).Text);
+            }
+            else if (e.GetType() == typeof(TextChangedEventArgs))
+            {
+                if (string.IsNullOrEmpty(((TextBox)sender).Text))
+                {
+                    ((TextBox)sender).Text = "0";
+                }
+                else if (!long.TryParse(((TextBox)sender).Text, out long result))
+                {
+                    ((TextBox)sender).Text = "0";
+                }               
+            }
+        }
+
+        private void DownloadLimit_Save(object sender, EventArgs e)
+        {
+            if (e.GetType() == typeof(KeyEventArgs))
+            {
+                if (((KeyEventArgs)e).Key != Key.Enter)
+                {
+                    return;
+                }
+            }
+            ViewModel.DownloadLimit = ViewModel.DownloadLimitUIValue;
+            Preferences.Set(AppConfigKey.DownloadLimit, ViewModel.DownloadLimit, AppFilePath.UserFile);
+            MainWindowViewModel.Instance.AppBarText = "Successfully saved download limit";
         }
     }
 }

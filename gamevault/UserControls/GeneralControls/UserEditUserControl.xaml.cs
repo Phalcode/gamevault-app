@@ -1,6 +1,7 @@
 ﻿using gamevault.Helper;
 using gamevault.Models;
 using gamevault.ViewModels;
+using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,6 +56,42 @@ namespace gamevault.UserControls
                 prop.SetValue(dest, prop.GetValue(source));
             }
             return dest;
-        }      
+        }
+
+
+        private void UploadProfilePicture_Click(object sender, RoutedEventArgs e)
+        {
+            if (fileSelectionPopupPP.Visibility == Visibility.Visible)
+            {
+                fileSelectionPopupPP.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                fileSelectionPopupPP.Visibility = Visibility.Visible;
+                fileSelectionPopupBP.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void UploadBackgroundPicture_Click(object sender, RoutedEventArgs e)
+        {
+            if (fileSelectionPopupBP.Visibility == Visibility.Visible)
+            {
+                fileSelectionPopupBP.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                fileSelectionPopupBP.Visibility = Visibility.Visible;
+                fileSelectionPopupPP.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void UserEditPopup_Close(object sender, MouseButtonEventArgs e)
+        {
+            var parent = this.Parent as Panel;
+            if (parent != null)
+            {
+                parent.Visibility = Visibility.Collapsed;
+            }
+        }
     }
 }

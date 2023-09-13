@@ -83,6 +83,10 @@ namespace gamevault.UserControls
         {
             return ViewModel.Game.BoxImage.ID;
         }
+        public int GetDownloadProgress()
+        {
+            return ViewModel.GameDownloadProgress;
+        }
         public void CancelDownload()
         {
             if (client == null)
@@ -94,6 +98,8 @@ namespace gamevault.UserControls
             ViewModel.State = "Download Cancelled";
             ViewModel.DownloadUIVisibility = System.Windows.Visibility.Hidden;
             ViewModel.DownloadFailedVisibility = System.Windows.Visibility.Visible;
+
+            MainWindowViewModel.Instance.UpdateTaskbarProgress();
         }
         private void DownloadGame()
         {
@@ -143,6 +149,7 @@ namespace gamevault.UserControls
                     {
                         DownloadCompleted();
                     }
+                    MainWindowViewModel.Instance.UpdateTaskbarProgress();
                 }
             });
         }
@@ -159,6 +166,13 @@ namespace gamevault.UserControls
                 Directory.CreateDirectory(ViewModel.InstallPath);
             }
             MainWindowViewModel.Instance.Installs.AddSystemFileWatcher(ViewModel.InstallPath);
+            if (SettingsViewModel.Instance.AutoExtract)
+            {
+                App.Current.Dispatcher.Invoke((Action)async delegate
+                {
+                    await Extract();
+                });
+            }
         }
 
         private void CancelDownload_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -235,6 +249,10 @@ namespace gamevault.UserControls
         }
 
         private async void Extract_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            await Extract();
+        }
+        private async Task Extract()
         {
             DirectoryInfo dirInf = new DirectoryInfo(m_DownloadPath);
             FileInfo[] files = dirInf.GetFiles().Where(f => ViewModel.SupportedArchives.Contains(f.Extension.ToLower())).ToArray();

@@ -30,8 +30,13 @@ namespace gamevault.ViewModels
         private string m_RootPath { get; set; }
         private bool m_IsOnIdle = true;
         private bool m_BackgroundStart { get; set; }
-        private bool m_LibStartup { get; set; }       
+        private bool m_LibStartup { get; set; }
+        private bool m_AutoExtract { get; set; }
         private string m_ServerUrl { get; set; }
+        private float m_ImageCacheSize { get; set; }
+        private float m_OfflineCacheSize { get; set; }
+        private long m_DownloadLimit { get; set; }
+        private long m_DownloadLimitUIValue { get; set; }
         private User m_RegistrationUser = new User() { ProfilePicture = new Image(), BackgroundImage = new Image() };
         #endregion
 
@@ -41,6 +46,7 @@ namespace gamevault.ViewModels
             RootPath = Preferences.Get(AppConfigKey.RootPath, AppFilePath.UserFile);
             ServerUrl = Preferences.Get(AppConfigKey.ServerUrl, AppFilePath.UserFile, true);
             m_BackgroundStart = (Preferences.Get(AppConfigKey.BackgroundStart, AppFilePath.UserFile) == "1"); OnPropertyChanged(nameof(BackgroundStart));
+            m_AutoExtract = (Preferences.Get(AppConfigKey.AutoExtract, AppFilePath.UserFile) == "1"); OnPropertyChanged(nameof(AutoExtract));
 
             string libstartup = Preferences.Get(AppConfigKey.LibStartup, AppFilePath.UserFile);
             if (libstartup == string.Empty)
@@ -50,7 +56,17 @@ namespace gamevault.ViewModels
             else
             {
                 m_LibStartup = (libstartup == "1"); OnPropertyChanged(nameof(LibStartup));
-            }           
+            }
+            if (long.TryParse(Preferences.Get(AppConfigKey.DownloadLimit, AppFilePath.UserFile), out long downloadLimitResult))
+            {
+                DownloadLimit = downloadLimitResult;
+                DownloadLimitUIValue = DownloadLimit;
+            }
+            else
+            {
+                DownloadLimit = 0;
+                DownloadLimitUIValue = 0;
+            }
         }
 
         public string UserName
@@ -97,11 +113,46 @@ namespace gamevault.ViewModels
                 }
                 Preferences.Set(AppConfigKey.LibStartup, stringValue, AppFilePath.UserFile);
             }
-        }      
+        }
+        public bool AutoExtract
+        {
+            get { return m_AutoExtract; }
+            set
+            {
+                m_AutoExtract = value;
+                OnPropertyChanged();
+                string stringValue = "1";
+                if (!m_AutoExtract)
+                {
+                    stringValue = "0";
+                }
+                Preferences.Set(AppConfigKey.AutoExtract, stringValue, AppFilePath.UserFile);
+            }
+        }
         public string ServerUrl
         {
             get { return m_ServerUrl; }
             set { m_ServerUrl = value; OnPropertyChanged(); }
+        }
+        public float ImageCacheSize
+        {
+            get { return m_ImageCacheSize; }
+            set { m_ImageCacheSize = value; OnPropertyChanged(); }
+        }
+        public float OfflineCacheSize
+        {
+            get { return m_OfflineCacheSize; }
+            set { m_OfflineCacheSize = value; OnPropertyChanged(); }
+        }
+        public long DownloadLimit
+        {
+            get { return m_DownloadLimit; }
+            set { m_DownloadLimit = value; OnPropertyChanged(); }
+        }
+        public long DownloadLimitUIValue
+        {
+            get { return m_DownloadLimitUIValue; }
+            set { m_DownloadLimitUIValue = value; OnPropertyChanged(); }
         }
         public User RegistrationUser
         {
@@ -116,7 +167,7 @@ namespace gamevault.ViewModels
                 if (result == System.Windows.Forms.DialogResult.OK && Directory.Exists(dialog.SelectedPath))
                 {
                     Preferences.Set(AppConfigKey.RootPath, dialog.SelectedPath, AppFilePath.UserFile);
-                    RootPath = dialog.SelectedPath;
+                    RootPath = dialog.SelectedPath.Replace(@"\\", @"\");
                     return System.Windows.Forms.DialogResult.OK;
                 }
                 return System.Windows.Forms.DialogResult.Cancel;
@@ -130,7 +181,7 @@ namespace gamevault.ViewModels
         {
             get
             {
-                return "1.4.1";
+                return "1.5.0";
             }
         }
 

@@ -45,9 +45,7 @@ namespace gamevault.UserControls.SettingsComponents
             SettingsViewModel.Instance.RegistrationUser.Password = uiPwReg.Password.ToString();
             SettingsViewModel.Instance.RegistrationUser.RepeatPassword = uiPwRegRepeat.Password.ToString();
 
-            if (string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.Username) || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.FirstName)
-                || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.LastName) || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.EMail)
-                || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.Password) || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.RepeatPassword))
+            if (string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.Username) || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.Password) || string.IsNullOrEmpty(SettingsViewModel.Instance.RegistrationUser.RepeatPassword))
             {
                 return true;
             }
@@ -75,7 +73,7 @@ namespace gamevault.UserControls.SettingsComponents
                     }
                     else
                     {
-                        message = "Each field must be filled";
+                        message = "All mandatory fields must be filled";
                     }
                     MainWindowViewModel.Instance.AppBarText = message;
                 }

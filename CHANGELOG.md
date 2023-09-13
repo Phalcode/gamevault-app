@@ -1,5 +1,17 @@
 # GameVault App Changelog
 
+## 1.5.0
+### Changes
+- Reorganized settings tab
+- "Auto-Extract Downloaded Games" option added to settings
+- Image cache and offline cache size is displayed in settings
+- Added Logout option to settings
+- Added Download Limit to settings
+- Added re-index button to Admin Console
+- Email, First Name, and Last Name are not mandatory for registration anymore
+- Download progress is now displayed in the taskbar
+- It is now possible to upload images from the client
+
 ## 1.4.1
 ### Changes
 - Bug fix: Image optimization was skipped if it was not a Microsoft store version

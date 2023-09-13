@@ -15,6 +15,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Navigation;
 
 
@@ -161,51 +162,28 @@ namespace gamevault.UserControls
             uiBtnRawgGameSearch.IsEnabled = false;
             ViewModel.RawgGames = await Task<Game[]>.Run(() =>
             {
-                string currentShownUser = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/rawg/search?query={ViewModel.RawgSearchQuery}");
-                return JsonSerializer.Deserialize<Game[]>(currentShownUser);
+                try
+                {
+                    string currentShownUser = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/rawg/search?query={ViewModel.RawgSearchQuery}");
+                    return JsonSerializer.Deserialize<Game[]>(currentShownUser);
+                }
+                catch (Exception ex)
+                {
+                    MainWindowViewModel.Instance.AppBarText = $"Could not load rawg data. ({ex.Message})";
+                    return null;
+                }
             });
             uiBtnRawgGameSearch.IsEnabled = true;
         }
-        private async void BoxArtImageSave_Click(object sender, RoutedEventArgs e)
-        {
-            await SaveBoxArtImage();
-            this.Focus();//Bring back focus for the escape key
-        }
-        private async void SaveBoxArtImage_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-            {
-                await SaveBoxArtImage();
-                this.Focus();//Bring back focus for the escape key
-            }
-        }
-        private async Task SaveBoxArtImage()
-        {
-            uiBtnSaveBoxArtImage.IsEnabled = false;
-            await Task.Run(() =>
-            {
-                try
-                {
-                    WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/v1/utility/overwrite/{m_GameId}/box_image", "{\n\"image_url\": \"" + ViewModel.UpdatedBoxImage + "\"\n}");
-                    MainWindowViewModel.Instance.AppBarText = "Successfully updated box image";
-                }
-                catch (WebException ex)
-                {
-                    string msg = WebExceptionHelper.GetServerMessage(ex);
-                    MainWindowViewModel.Instance.AppBarText = msg;
-                }
-            });
-            uiBtnSaveBoxArtImage.IsEnabled = true;
-        }
         private async void RawgGameRemap_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.GameRemapPopupIsOpen = false;
+            ViewModel.GameRemapPopupVisibillity = Visibility.Collapsed;
             int? rawgId = ((Game)((FrameworkElement)sender).DataContext).RawgId;
             await Task.Run(() =>
             {
                 try
                 {
-                    WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/v1/utility/overwrite/{m_GameId}/rawg_id", "{\n\"rawg_id\": " + rawgId + "\n}");
+                    WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/{m_GameId}", "{\n\"rawg_id\": " + rawgId + "\n}");
                     MainWindowViewModel.Instance.AppBarText = "Successfully remapped game";
                 }
                 catch (WebException ex)
@@ -218,7 +196,15 @@ namespace gamevault.UserControls
         }
         private void GameRemapPopup_Click(object sender, MouseButtonEventArgs e)
         {
-            ViewModel.GameRemapPopupIsOpen = true;
+            if (ViewModel.GameRemapPopupVisibillity == Visibility.Visible)
+            {
+                ViewModel.GameRemapPopupVisibillity = Visibility.Collapsed;
+            }
+            else
+            {
+                ViewModel.GameRemapPopupVisibillity = Visibility.Visible;
+            }
+
         }
         private bool IsEnoughDriveSpaceAvailable(string path, long gameSize)
         {
@@ -245,5 +231,78 @@ namespace gamevault.UserControls
             }
             return false;
         }
+
+        private async void Recache_Click(object sender, RoutedEventArgs e)
+        {
+            ((Button)sender).IsEnabled = false;
+            await Task.Run(() =>
+            {
+                try
+                {
+                    WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/rawg/{ViewModel.Game.ID}/recache", string.Empty);
+                    MainWindowViewModel.Instance.AppBarText = $"Sucessfully re-cached {ViewModel.Game.Title}";
+                }
+                catch (WebException ex)
+                {
+                    string msg = WebExceptionHelper.GetServerMessage(ex);
+                    MainWindowViewModel.Instance.AppBarText = msg;
+                }
+            });
+            ((Button)sender).IsEnabled = true;
+        }
+       
+        private void UploadBoxArtImage_Click(object sender, RoutedEventArgs e)
+        {
+            if (fileSelectionPopupPP.Visibility == Visibility.Visible)
+            {
+                fileSelectionPopupPP.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                fileSelectionPopupPP.Visibility = Visibility.Visible;
+            }
+            fileSelectionPopupBP.Visibility = Visibility.Collapsed;
+        }
+
+        private void UploadBackgroundImage_Click(object sender, RoutedEventArgs e)
+        {
+            if (fileSelectionPopupBP.Visibility == Visibility.Visible)
+            {
+                fileSelectionPopupBP.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                fileSelectionPopupBP.Visibility = Visibility.Visible;
+            }
+            fileSelectionPopupPP.Visibility = Visibility.Collapsed;
+        }
+        private async void ImagesSave_Click(object sender, RoutedEventArgs e)
+        {
+            ((Button)sender).IsEnabled = false;
+            await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic updateObject = new System.Dynamic.ExpandoObject();
+                    updateObject.box_image_id = ViewModel.UpdatedBoxImageId;
+                    updateObject.box_image_url = ViewModel.UpdatedBoxImageUrl;
+                    updateObject.background_image_id = ViewModel.UpdatedBackgroundImageId;
+                    updateObject.background_image_url = ViewModel.UpdatedBackgroundImageUrl;
+                    WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/{m_GameId}", JsonSerializer.Serialize(updateObject));
+                    MainWindowViewModel.Instance.AppBarText = "Successfully updated image";
+                }
+                catch (WebException ex)
+                {
+                    string msg = WebExceptionHelper.GetServerMessage(ex);
+                    MainWindowViewModel.Instance.AppBarText = msg;
+                }
+                catch (Exception ex)
+                {
+                    MainWindowViewModel.Instance.AppBarText = ex.Message;
+                }
+            });
+            ((Button)sender).IsEnabled = true;
+            this.Focus();//Bring back focus for the escape key
+        }       
     }
 }

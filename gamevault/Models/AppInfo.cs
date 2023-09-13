@@ -16,8 +16,10 @@ namespace gamevault.Models
         BackgroundStart,
         ServerUrl,
         LibStartup,
+        AutoExtract,
         ExtractionFinished,
-        RunningInTrayMessage
+        RunningInTrayMessage,
+        DownloadLimit
     }
     public static class AppFilePath
     {

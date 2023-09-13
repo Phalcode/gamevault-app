@@ -5,11 +5,15 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Mime;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Security.Policy;
 using System.Text;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace gamevault.Helper
 {
@@ -126,16 +130,35 @@ namespace gamevault.Helper
                 client.Headers.Add($"User-Agent: GameVault/{SettingsViewModel.Instance.Version}");
                 await client.DownloadFileTaskAsync(new Uri(imageUrl), cacheFile);
             }
-            //using (HttpClient client = new HttpClient())
-            //{
-            //    client.DefaultRequestHeaders.Add("Authorization", "Basic " + Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes($"{m_UserName}:{m_Password}")));
-            //    client.DefaultRequestHeaders.Add("User-Agent", $"GameVault/{SettingsViewModel.Instance.Version}");
-            //    var response = await client.GetAsync(new Uri(imageUrl));
-            //    using (FileStream fs = new FileStream(cacheFile, FileMode.Create))
-            //    {
-            //        await response.Content.CopyToAsync(fs);
-            //    }
-            //}
+        }
+        public static async Task<string> UploadImageAsync(string apiUrl, Stream imageStream, string fileName)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                var authenticationString = $"{m_UserName}:{m_Password}";
+                var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.ASCIIEncoding.UTF8.GetBytes(authenticationString));
+                httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + base64EncodedAuthenticationString);
+
+                using (var formData = new MultipartFormDataContent())
+                {
+                    var imageContent = new StreamContent(imageStream);
+                    string mimeType = MimeTypeHelper.GetMimeType(fileName);
+                    imageContent.Headers.ContentType = new MediaTypeHeaderValue(mimeType);
+                    formData.Add(imageContent, "file", fileName);
+                    var response = await httpClient.PostAsync(apiUrl, formData);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var responseContent = await response.Content.ReadAsStringAsync();
+                        return responseContent;
+                    }
+                    else
+                    {
+                        string responseContent = await response.Content.ReadAsStringAsync();
+                        dynamic obj = JsonNode.Parse(responseContent);
+                        throw new HttpRequestException($"{response.StatusCode}: {obj["message"]}");
+                    }
+                }
+            }
         }
     }
 }

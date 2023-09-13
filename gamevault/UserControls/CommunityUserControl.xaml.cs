@@ -119,6 +119,7 @@ namespace gamevault.UserControls
                         break;
                 }
             }
+            uiUserEditPopup.Visibility = Visibility.Collapsed;
         }
 
         private void GameImage_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -132,6 +133,11 @@ namespace gamevault.UserControls
         }
         private async void ReloadUser_Clicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if (!LoginManager.Instance.IsLoggedIn())
+            {
+                MainWindowViewModel.Instance.AppBarText = "You are not logged in";
+                return;
+            }
             ((TextBlock)sender).IsEnabled = false;
             try
             {
@@ -148,13 +154,30 @@ namespace gamevault.UserControls
         }
         private void UserEdit_Clicked(object sender, RoutedEventArgs e)
         {
-            uiUserEditPopup.IsOpen = true;
+            if (uiUserEditPopup.Visibility == Visibility.Visible)
+            {
+                uiUserEditPopup.Visibility = Visibility.Collapsed;
+                return;
+            }
+            else
+            {
+                uiUserEditPopup.Visibility = Visibility.Visible;
+            }
             var obj = new UserEditUserControl(ViewModel.CurrentShownUser);
             obj.UserSaved += UserSaved;
-            uiUserEditPopup.Child = obj;
+            if (uiUserEditPopup.Children.Count != 0)
+            {
+                uiUserEditPopup.Children.Clear();
+            }
+            uiUserEditPopup.Children.Add(obj);
         }
         protected async void UserSaved(object sender, EventArgs e)
         {
+            if (!LoginManager.Instance.IsLoggedIn())
+            {
+                MainWindowViewModel.Instance.AppBarText = "You are not logged in";
+                return;
+            }
             ((Button)sender).IsEnabled = false;
             this.IsEnabled = false;
             User selectedUser = (User)((Button)sender).DataContext;
