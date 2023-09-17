@@ -1,5 +1,11 @@
 # GameVault App Changelog
 
+## 1.5.1
+### Changes
+- Faster Rawg search in the game view
+- More detailed error messages when downloading 
+- Bug fix: Crash if you navigate to Settings/Data and never downloaded a game before
+
 ## 1.5.0
 ### Changes
 - Reorganized settings tab

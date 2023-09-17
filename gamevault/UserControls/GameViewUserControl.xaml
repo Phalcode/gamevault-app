@@ -44,7 +44,7 @@
                     </StackPanel>
                     <ScrollViewer MaxHeight="400" Margin="0,5,0,0" VerticalScrollBarVisibility="Auto">
                         <Grid>
-                            <TextBlock FontSize="10" Text="1: If you can't see the new box image after saving, try reload the library.&#10;2: Server needs to pull new data from rawg. This could take some time." TextWrapping="Wrap">
+                            <TextBlock FontSize="10" Text="If you can't see the new image after saving, try reload the library." TextWrapping="Wrap">
                                 <TextBlock.Style>
                                     <Style TargetType="{x:Type TextBlock}">
                                         <Setter Property="Visibility" Value="Hidden"/>
@@ -65,8 +65,8 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Grid Height="50" Margin="0,0,0,6" HorizontalAlignment="Left">
-                                            <Image Source="{Binding Path=BackgroundImage.Source}" Stretch="UniformToFill" Width="100" HorizontalAlignment="Left"/>
-                                            <TextBlock Text="{Binding Path=RawgTitle}" Width="160" FontSize="13" TextWrapping="Wrap" VerticalAlignment="Top" Margin="102,0,0,0"/>
+                                            <Image Source="{Binding Path=BoxImageUrl}" Stretch="UniformToFill" Width="100" HorizontalAlignment="Left"/>
+                                            <TextBlock Text="{Binding Path=Title}" Width="160" FontSize="13" TextWrapping="Wrap" VerticalAlignment="Top" Margin="102,0,0,0"/>
                                             <Button Content="Remap" VerticalAlignment="Bottom" Width="50" HorizontalAlignment="Right" FontSize="10" Click="RawgGameRemap_Click"/>
                                         </Grid>
                                     </DataTemplate>
