@@ -56,9 +56,16 @@ namespace gamevault.UserControls
             {
                 m_SavedExecutable = Preferences.Get(AppConfigKey.Executable, $"{m_Directory}\\gamevault-exec");
             }
-
-            string[] allExecutables = Directory.GetFiles(directory, "*.EXE", SearchOption.AllDirectories);
-            for (int count = 0; count < allExecutables.Length; count++)
+            string[] fileTypesToSearch = new string[] { "EXE", "BAT", "COM", "CMD", "INF", "IPA", "OSX", "PIF", "RUN", "WSH", "LNK" };
+            List<string> allExecutables = new List<string>();
+            foreach (string fileType in fileTypesToSearch)
+            {
+                foreach (string entry in Directory.GetFiles(directory, $"*.{fileType}", SearchOption.AllDirectories))
+                {
+                    allExecutables.Add(entry);
+                }
+            }
+            for (int count = 0; count < allExecutables.Count; count++)
             {
                 if (ContainsValueFromIgnoreList(allExecutables[count]))
                     continue;

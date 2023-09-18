@@ -29,6 +29,7 @@
 		<None Remove="Resources\Images\glyph_installs.png" />
 		<None Remove="Resources\Images\glyph_settings.png" />
 		<None Remove="Resources\Images\icon.ico" />
+		<None Remove="Resources\Images\library_dice.png" />
 		<None Remove="Resources\Images\library_NoBoxart.png" />
 	</ItemGroup>
 
@@ -50,6 +51,7 @@
 		<Resource Include="Resources\Images\glyph_server.png" />
 		<Resource Include="Resources\Images\glyph_settings.png" />
 		<Resource Include="Resources\Images\icon.ico" />
+		<Resource Include="Resources\Images\library_dice.png" />
 		<Resource Include="Resources\Images\library_NoBoxart.png" />
 	</ItemGroup>
 

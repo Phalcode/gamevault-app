@@ -18,13 +18,16 @@
         </Grid.RowDefinitions>
         <Grid Background="{StaticResource DarkBackground2}" >
             <TextBlock  Text="Library" FontSize="35" Margin="20,0,0,0" Foreground="White" HorizontalAlignment="Left"/>
-            <Grid VerticalAlignment="Center" MaxWidth="500" HorizontalAlignment="Stretch" Width="Auto" Margin="200,0,200,0">
+            <Grid VerticalAlignment="Center" MaxWidth="500" HorizontalAlignment="Stretch" Width="Auto" Margin="170,0,170,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
-                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="100"/>
                 </Grid.ColumnDefinitions>
                 <TextBox Grid.Column="0" Text="{Binding SearchQuery,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsSearchEnabled}" mah:TextBoxHelper.Watermark="Search..." mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.ClearTextButton="True" KeyDown="On_Search"/>
-                <Button Grid.Column="1" Content="Search" Click="On_Search" IsEnabled="{Binding IsSearchEnabled}" Margin="10,0,0,0"/>
+                <StackPanel  Grid.Column="1" Margin="10,0,0,0" Orientation="Horizontal">
+                    <Button Content="Search" Click="On_Search" IsEnabled="{Binding IsSearchEnabled}"/>
+                    <Image Source="pack://application:,,,/gamevault;component/Resources/Images/library_dice.png" Margin="15,0,0,0" Height="25" Cursor="Hand" ToolTip="Random Game" MouseLeftButtonUp="RandomGame_Click" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
+                </StackPanel>
             </Grid>
             <TextBlock x:Name="uiBtnFilter" Style="{StaticResource TextTurnAnimation}" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20" Margin="0,0,20,0" Text="FILTER" Cursor="Hand" MouseLeftButtonUp="Filter_Click">
                 <TextBlock.RenderTransform>
