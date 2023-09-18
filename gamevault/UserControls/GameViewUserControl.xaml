@@ -100,7 +100,7 @@
                             <TextBlock.Text>
                                 <MultiBinding StringFormat="{}{0} ({1})">
                                     <Binding Path="Game.Title" />
-                                    <Binding Path="Game.ReleaseDate.Year" />
+                                    <Binding Path="Game.ReleaseDate.Year" FallbackValue="?"/>
                                 </MultiBinding>
                             </TextBlock.Text>
                         </TextBlock>

@@ -5,6 +5,8 @@
 - Faster Rawg search in the game view
 - More detailed error messages when downloading 
 - Bug fix: Crash if you navigate to Settings/Data and never downloaded a game before
+- Bug fix: Image was requested although an invalid image id was specified
+- Bug fix: Game Title was also not displayed when the Release Date was not set
 
 ## 1.5.0
 ### Changes
