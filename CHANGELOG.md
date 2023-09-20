@@ -6,9 +6,11 @@
 - More detailed error messages when downloading
 - Added support for more executable files
 - Added get random game button to library
+- Added new Exception Window where you can choose whether to send a crash report or not
 - Bug fix: Crash if you navigate to Settings/Data and never downloaded a game before
 - Bug fix: Image was requested although an invalid image id was specified
 - Bug fix: Game Title was also not displayed when the Release Date was not set
+- Bug fix: Could not navigate to errorlog on Microsoft Store version
 
 ## 1.5.0
 ### Changes

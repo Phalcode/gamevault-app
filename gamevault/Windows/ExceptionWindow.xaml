@@ -1,0 +1,22 @@
+﻿<mah:MetroWindow x:Class="gamevault.Windows.ExceptionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+         xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:local="clr-namespace:gamevault.Windows"
+        mc:Ignorable="d"
+        Title="Unhandled Exception" Height="200" Width="300" ShowMinButton="False" ShowMaxRestoreButton="False" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterScreen" Closing="On_Closing">
+    <Grid>
+        <mah:ToggleSwitch x:Name="uiToggleSendCrashReport" Header="Send crash report" IsOn="True" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">
+            Something went wrong. <LineBreak/>
+            View error log for more details.<LineBreak/>
+            Do you want to open the error logs?
+        </TextBlock>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,5">
+            <Button Content="YES" Margin="0,0,20,0" Width="50" Click="Yes_Click"/>
+            <Button Content="NO" Width="50" Click="No_Click"/>
+        </StackPanel>
+    </Grid>
+</mah:MetroWindow>

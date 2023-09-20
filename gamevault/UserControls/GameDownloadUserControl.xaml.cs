@@ -205,7 +205,7 @@ namespace gamevault.UserControls
             var averagespeed = totalBytesDownloaded / tspan;
             var timeleft = (totalFileSize / averagespeed) - (tspan);
             TimeSpan t = TimeSpan.FromSeconds(0);
-            if (!double.IsInfinity(Convert.ToDouble(timeleft)))
+            if (!double.IsInfinity(Convert.ToDouble(timeleft)) && !double.IsNaN(Convert.ToDouble(timeleft)))
             {
                 t = TimeSpan.FromSeconds(Convert.ToInt32(timeleft));
             }
