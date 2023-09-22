@@ -158,6 +158,15 @@
                         </TextBlock.ToolTip>
                     </TextBlock>
                     <StackPanel Orientation="Horizontal" Height="40" Margin="0,10,0,10" ToolTip="Metacritic rating">
+                        <StackPanel.Style>
+                            <Style TargetType="{x:Type StackPanel}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Path=Game.Rating}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Hidden"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
                         <Image Source="pack://application:,,,/gamevault;component/Resources/Images/gameView_Metacritic.png"/>
                         <TextBlock Text="{Binding Path=Game.Rating,StringFormat={}{0}%}" FontSize="20" VerticalAlignment="Center" Margin="5,0,0,0"/>
                     </StackPanel>
@@ -173,7 +182,17 @@
                         </Border.Style>
                         <TextBlock Text="EARLY ACCESS" FontSize="20"/>
                     </Border>
-                    <TextBlock Text="{Binding Path=Game.Version,StringFormat={}Version: {0}}" FontSize="20"/>
+                    <TextBlock Text="{Binding Path=Game.Version,StringFormat={}Version: {0}}" FontSize="20">
+                        <TextBlock.Style>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Path=Game.Version}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Hidden"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Developed by: " FontSize="20"/>
                         <ItemsControl HorizontalAlignment="Left" ItemsSource="{Binding Path=Game.Developers}">
@@ -228,7 +247,17 @@
                     <Viewbox Grid.Column="1" IsEnabled="{Binding IsLoggedIn}">
                         <Grid>
                             <TextBlock VerticalAlignment="Center" FontSize="3" HorizontalAlignment="Left">
-                                    <Hyperlink TextDecorations="None" NavigateUri="{Binding Path=Game.WebsiteUrl}" RequestNavigate="Website_Navigate">
+                                <TextBlock.Style>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=Game.WebsiteUrl}" Value="">
+                                                <Setter Property="Visibility" Value="Hidden"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                                        <Hyperlink TextDecorations="None" NavigateUri="{Binding Path=Game.WebsiteUrl}" RequestNavigate="Website_Navigate">
                                     <Hyperlink.Inlines>
                                         <Run Text="🌐"/>
                                     </Hyperlink.Inlines>

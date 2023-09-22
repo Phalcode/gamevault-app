@@ -7,6 +7,7 @@
 - Added support for more executable files
 - Added get random game button to library
 - Added new Exception Window where you can choose whether to send a crash report or not
+- Show certain data in the gameview only if they are available
 - Bug fix: Crash if you navigate to Settings/Data and never downloaded a game before
 - Bug fix: Image was requested although an invalid image id was specified
 - Bug fix: Game Title was also not displayed when the Release Date was not set
