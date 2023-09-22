@@ -28,7 +28,7 @@ namespace gamevault.Windows
             InitializeComponent();
         }
 
-        private void Yes_Click(object sender, RoutedEventArgs e)
+        private void OpenLog_Click(object sender, RoutedEventArgs e)
         {
             string path = "";
             if (App.IsWindowsPackage)
@@ -50,17 +50,17 @@ namespace gamevault.Windows
             {
                 Process.Start("explorer.exe", path);
             }
-            DialogResult = uiToggleSendCrashReport.IsOn;
+            DialogResult = uiSendCrashReport.IsChecked;
             this.Close();
         }
-        private void No_Click(object sender, RoutedEventArgs e)
+        private void Close_Click(object sender, RoutedEventArgs e)
         {
-            DialogResult = uiToggleSendCrashReport.IsOn;
+            DialogResult = uiSendCrashReport.IsChecked;
             this.Close();
         }
         private void On_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            DialogResult = uiToggleSendCrashReport.IsOn;
+            DialogResult = uiSendCrashReport.IsChecked;
         }
     }
 }

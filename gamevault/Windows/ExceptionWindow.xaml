@@ -6,17 +6,19 @@
          xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:local="clr-namespace:gamevault.Windows"
         mc:Ignorable="d"
-        Title="Unhandled Exception" Height="200" Width="300" ShowMinButton="False" ShowMaxRestoreButton="False" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterScreen" Closing="On_Closing">
+        Title="Unhandled Error" Height="130" Width="450" ShowMinButton="False" ShowMaxRestoreButton="False" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterScreen" Closing="On_Closing">
     <Grid>
-        <mah:ToggleSwitch x:Name="uiToggleSendCrashReport" Header="Send crash report" IsOn="True" VerticalAlignment="Top" HorizontalAlignment="Center"/>
-        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">
-            Something went wrong. <LineBreak/>
-            View error log for more details.<LineBreak/>
-            Do you want to open the error logs?
+        <!--<mah:ToggleSwitch x:Name="uiToggleSendCrashReport" Header="Send crash report" IsOn="True" VerticalAlignment="Top" HorizontalAlignment="Center"/>-->
+        <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,10,0,0" FontSize="13">
+            An unhandeled Error has occured in GameVault <LineBreak/>
+           You can view technical details in the Error Log that has been created.
         </TextBlock>
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,5">
-            <Button Content="YES" Margin="0,0,20,0" Width="50" Click="Yes_Click"/>
-            <Button Content="NO" Width="50" Click="No_Click"/>
+
+        <Button Content="Open Log Folder" Width="100" Height="20" Margin="0,0,120,10" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="OpenLog_Click"/>
+        <Button Content="Close" Margin="0,0,10,10" Width="100" Height="20" Click="Close_Click" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
+        <StackPanel HorizontalAlignment="Left" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="10,0,0,13">
+            <CheckBox x:Name="uiSendCrashReport" IsChecked="True"/>
+            <TextBlock Text="Send anonymous Crash Report" FontSize="13"/>
         </StackPanel>
     </Grid>
 </mah:MetroWindow>
