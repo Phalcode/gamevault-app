@@ -125,6 +125,14 @@ namespace gamevault.UserControls
                         if (game != null)
                         {
                             InstallViewModel.Instance.InstalledGames.Add(new GameInstallUserControl(game, foundGames.ElementAt(count).Value, m_IgnoreList));
+                            if (LoginManager.Instance.IsLoggedIn())
+                            {
+                                if (!Preferences.Exists(game.ID.ToString(), AppFilePath.OfflineCache))
+                                {
+                                    string gameToSave = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/{game.ID}");
+                                    await CacheHelper.CreateOfflineCacheAsync(JsonSerializer.Deserialize<Game>(gameToSave));
+                                }
+                            }
                         }
                     }
                     catch { }

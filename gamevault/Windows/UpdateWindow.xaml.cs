@@ -1,9 +1,13 @@
 ﻿using gamevault.Helper;
+using gamevault.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -46,6 +50,25 @@ namespace gamevault.Windows
             {
                 //rest of the cases
             }
+            try
+            {
+                HttpClient httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Add("User-Agent", "Other");
+                var response = await httpClient.GetStringAsync("https://api.github.com/repos/Phalcode/gamevault-app/releases");
+                dynamic obj = JsonNode.Parse(response);
+                string version = (string)obj[0]["tag_name"];
+                if (Convert.ToInt32(version.Replace(".", "")) > Convert.ToInt32(SettingsViewModel.Instance.Version.Replace(".", "")))
+                {
+                    MessageBoxResult result = MessageBox.Show($"A new version of GameVault is now available on GitHub.\nCurrent Version '{SettingsViewModel.Instance.Version}' -> new Version '{version}'\nWould you like to download it? (No automatic installation)", "Info", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        string downloadUrl = (string)obj[0]["assets"][0]["browser_download_url"];
+                        Process.Start(new ProcessStartInfo(downloadUrl) { UseShellExecute = true });
+                        App.Current.Shutdown();
+                    }
+                }
+            }
+            catch { }
             try
             {
                 uiTxtStatus.Text = "Optimizing cache...";
