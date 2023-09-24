@@ -1,6 +1,8 @@
 ﻿using gamevault.Helper;
 using gamevault.Models;
 using gamevault.ViewModels;
+using MahApps.Metro.Controls.Dialogs;
+using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,6 +15,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Text.Json;
 
 namespace gamevault.UserControls
 {
@@ -135,6 +138,59 @@ namespace gamevault.UserControls
         {
             if (Directory.Exists(m_Directory))
                 Process.Start("explorer.exe", m_Directory);
+        }
+        private async void Uninstall_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (ViewModel.Game.Type == GameType.WINDOWS_PORTABLE)
+            {
+                MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to uninstall '{ViewModel.Game.Title}' ?", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+                if (result == MessageDialogResult.Affirmative)
+                {
+                    try
+                    {
+                        if (Directory.Exists(m_Directory))
+                            Directory.Delete(m_Directory, true);
+
+                        InstallViewModel.Instance.InstalledGames.Remove(this);
+                    }
+                    catch
+                    {
+                        MainWindowViewModel.Instance.AppBarText = "Something went wrong when deleting the files. Maybe they are opened by another process.";
+                    }
+                }
+            }
+            else if (ViewModel.Game.Type == GameType.WINDOWS_SETUP)
+            {
+                MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to uninstall '{ViewModel.Game.Title}' ?\nAs this is a Windows setup, you will need to select an uninstall executable", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+                if (result == MessageDialogResult.Affirmative)
+                {
+                    using (var dialog = new System.Windows.Forms.OpenFileDialog())
+                    {
+                        dialog.InitialDirectory = m_Directory;
+                        dialog.Filter = "uninstall|*.exe";
+                        System.Windows.Forms.DialogResult fileResult = dialog.ShowDialog();
+                        if (fileResult == System.Windows.Forms.DialogResult.OK && File.Exists(dialog.FileName))
+                        {
+                            try
+                            {
+                                ProcessHelper.StartApp(dialog.FileName);
+                            }
+                            catch
+                            {
+
+                                try
+                                {
+                                    ProcessHelper.StartApp(dialog.FileName, true);
+                                }
+                                catch
+                                {
+                                    MainWindowViewModel.Instance.AppBarText = $"Can not execute '{dialog.FileName}'";
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
         private bool ContainsValueFromIgnoreList(string value)
         {

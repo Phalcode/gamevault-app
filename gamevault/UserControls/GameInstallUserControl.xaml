@@ -33,6 +33,7 @@
                 </Button.Style>
             </Button>
             <TextBlock Text="📁" FontSize="30" Foreground="LightBlue" VerticalAlignment="Center" Margin="5,0,0,0" Cursor="Hand" ToolTip="Open Directory" MouseLeftButtonUp="OpenDirectory_MouseLeftButtonUp"/>
+            <TextBlock Text="🗑️" FontSize="30" Foreground="IndianRed" VerticalAlignment="Center" Margin="5,0,0,0" Cursor="Hand" ToolTip="Uninstall game" MouseLeftButtonUp="Uninstall_MouseLeftButtonUp"/>
         </StackPanel>
     </Grid>
 </UserControl>
