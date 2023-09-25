@@ -60,7 +60,7 @@ namespace gamevault.UserControls.SettingsComponents
                     }
                     else if (LoginState.Unauthorized == state)
                     {
-                        MainWindowViewModel.Instance.AppBarText = "Login failed. Username or password was not correct";
+                        MainWindowViewModel.Instance.AppBarText = "Login failed. Couldn't establish a secure connection to the server, or your username/password was incorrect.";
                     }
                     else if (LoginState.Forbidden == state)
                     {
