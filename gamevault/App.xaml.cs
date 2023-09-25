@@ -35,7 +35,7 @@ namespace gamevault
         {
 
             Application.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(AppDispatcherUnhandledException);
-            
+
             try
             {
                 NewNameMigrationHelper.MigrateIfNeeded();
@@ -43,7 +43,6 @@ namespace gamevault
             catch (Exception ex)
             {
                 LogUnhandledException(ex);
-                //m_StoreHelper.NoInternetException();              
             }
 
 #if DEBUG
@@ -103,13 +102,14 @@ namespace gamevault
         {
             ProcessShepherd.KillAllChildProcesses();
 #if DEBUG
-            e.Handled = false;            
+            e.Handled = false;
 #else
-            LogUnhandledException(e);
+            LogUnhandledException(e.Exception);
 #endif
         }
         public void LogUnhandledException(Exception e)
         {
+            Application.Current.DispatcherUnhandledException -= new DispatcherUnhandledExceptionEventHandler(AppDispatcherUnhandledException);
             string errorMessage = $"MESSAGE:\n{e.Message}\nINNER_EXCEPTION:{(e.InnerException != null ? "" + e.InnerException.Message : null)}\nSTACK_TRACE:\n{(e.StackTrace != null ? "" + e.StackTrace : null)}";
             string errorLogPath = $"{AppFilePath.ErrorLog}\\GameVault_ErrorLog_{DateTime.Now.ToString("yyyyMMddHHmmssfff")}.txt";
             if (!File.Exists(errorLogPath))
@@ -118,16 +118,9 @@ namespace gamevault
                 File.Create(errorLogPath).Close();
             }
             File.WriteAllText(errorLogPath, errorMessage);
-        }
-        void LogUnhandledException(DispatcherUnhandledExceptionEventArgs e)
-        {
-            e.Handled = true;
-            LogUnhandledException(e.Exception);
-            MessageBoxResult result = System.Windows.MessageBox.Show("Something went wrong. View error log for more details.\nDo you want to open the error logs?", "Unhandled Exception", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-            if (result == MessageBoxResult.Yes)
+            if (new ExceptionWindow().ShowDialog() == true)
             {
-                if (Directory.Exists(AppFilePath.ErrorLog))
-                    Process.Start("explorer.exe", AppFilePath.ErrorLog.Replace(@"\\",@"\").Replace("/",@"\"));
+                CrashReportHelper.SendCrashReport(e, "Dispatcher.UnhandledException");
             }
             ShutdownApp();
         }
@@ -220,8 +213,11 @@ namespace gamevault
         {
             ShowToastMessage = false;
             ProcessShepherd.KillAllChildProcesses();
-            m_Icon.Icon.Dispose();
-            m_Icon.Dispose();
+            if (m_Icon != null)
+            {
+                m_Icon.Icon.Dispose();
+                m_Icon.Dispose();
+            }
             Shutdown();
         }
     }

@@ -57,7 +57,7 @@ namespace gamevault.Helper
                 _fileName = response.Content.Headers.ContentDisposition.FileName.Replace("\"", "");
                 if (string.IsNullOrEmpty(_fileName))
                 {
-                    throw new Exception("Incomplete request header");
+                    throw new Exception("Incomplete response header");
                 }
             }
             catch
@@ -65,6 +65,10 @@ namespace gamevault.Helper
                 _fileName = _fallbackFileName;
             }
             var totalBytes = response.Content.Headers.ContentLength;
+            if (totalBytes == null || totalBytes == 0)
+            {
+                throw new Exception("Incomplete response header (lenght)");
+            }
 
             using (var contentStream = await response.Content.ReadAsStreamAsync())
                 await ProcessContentStream(totalBytes, contentStream);

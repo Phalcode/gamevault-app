@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Net;
+using System.Security.Policy;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
@@ -191,6 +192,34 @@ namespace gamevault.UserControls
             string url = e.Uri.OriginalString;
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
             e.Handled = true;
+        }
+
+        private async void RandomGame_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ((FrameworkElement)sender).IsEnabled = false;
+            Game? result = await Task<Game>.Run(() =>
+            {
+                try
+                {
+                    string randomGame = WebHelper.GetRequest($"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/random");
+                    return JsonSerializer.Deserialize<Game>(randomGame);
+                }
+                catch (JsonException exJson)
+                {
+                    MainWindowViewModel.Instance.AppBarText = exJson.Message;
+                    return null;
+                }
+                catch (Exception ex)
+                {
+                    MainWindowViewModel.Instance.AppBarText = "Could not connect to server";
+                    return null;
+                }
+            });
+            if (result != null)
+            {
+                MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(result, true));
+            }
+            ((FrameworkElement)sender).IsEnabled = true;
         }
     }
 }

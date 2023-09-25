@@ -160,12 +160,12 @@ namespace gamevault.UserControls
         private async Task RawgGameSearch()
         {
             uiBtnRawgGameSearch.IsEnabled = false;
-            ViewModel.RawgGames = await Task<Game[]>.Run(() =>
+            ViewModel.RawgGames = await Task<RawgGame[]>.Run(() =>
             {
                 try
                 {
                     string currentShownUser = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/rawg/search?query={ViewModel.RawgSearchQuery}");
-                    return JsonSerializer.Deserialize<Game[]>(currentShownUser);
+                    return JsonSerializer.Deserialize<RawgGame[]>(currentShownUser);
                 }
                 catch (Exception ex)
                 {
@@ -178,7 +178,7 @@ namespace gamevault.UserControls
         private async void RawgGameRemap_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.GameRemapPopupVisibillity = Visibility.Collapsed;
-            int? rawgId = ((Game)((FrameworkElement)sender).DataContext).RawgId;
+            int? rawgId = ((RawgGame)((FrameworkElement)sender).DataContext).ID;
             await Task.Run(() =>
             {
                 try

@@ -32,6 +32,10 @@ namespace gamevault.Helper
             string cacheFile = $"{cachePath}/{identifier}.{imageId}";
             try
             {
+                if (imageId == -1)
+                {
+                    throw new Exception("image id does not exist");
+                }
                 if (File.Exists(cacheFile))
                 {
                     //if file exists then return it directly
@@ -102,7 +106,7 @@ namespace gamevault.Helper
         {
             await Task.Run(() =>
             {
-                double maxHeight = SystemParameters.FullPrimaryScreenHeight / 4;               
+                double maxHeight = SystemParameters.FullPrimaryScreenHeight / 4;
                 var files = Directory.GetFiles(AppFilePath.ImageCache, "*.*", SearchOption.AllDirectories);
                 foreach (string file in files)
                 {

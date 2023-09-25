@@ -96,32 +96,32 @@ namespace gamevault.UserControls
                         {
                             cachePath += "/gbox";
                             var game = ((Game)data);
-                            identifier = game.ID;
-                            imageId = game.BoxImage.ID;
+                            identifier = (game == null ? -1 : game.ID);
+                            imageId = ((game == null || game.BoxImage == null) ? -1 : game.BoxImage.ID);
                             break;
                         }
                     case ImageCache.GameBackground:
                         {
                             cachePath += "/gbg";
                             var game = ((Game)data);
-                            identifier = game.ID;
-                            imageId = game.BackgroundImage.ID;
+                            identifier = (game == null ? -1 : game.ID);
+                            imageId = ((game == null || game.BackgroundImage == null) ? -1 : game.BackgroundImage.ID);
                             break;
                         }
                     case ImageCache.UserIcon:
                         {
                             cachePath += "/uico";
                             var user = ((User)data);
-                            identifier = user.ID;
-                            imageId = user.ProfilePicture.ID;
+                            identifier = (user == null ? -1 : user.ID);
+                            imageId = ((user == null || user.ProfilePicture == null) ? -1 : user.ProfilePicture.ID);
                             break;
                         }
                     case ImageCache.UserBackground:
                         {
                             cachePath += "/ubg";
                             var user = ((User)data);
-                            identifier = user.ID;
-                            imageId = user.BackgroundImage.ID;
+                            identifier = (user == null ? -1 : user.ID);
+                            imageId = ((user == null || user.BackgroundImage == null) ? -1 : user.BackgroundImage.ID);
                             break;
                         }
                 }

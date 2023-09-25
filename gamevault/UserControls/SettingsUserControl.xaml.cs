@@ -103,7 +103,7 @@ namespace gamevault.UserControls
             if (((TabControl)sender).SelectedIndex == 2)
             {
                 ViewModel.ImageCacheSize = await CalculateDirectorySize(new DirectoryInfo(AppFilePath.ImageCache));
-                ViewModel.OfflineCacheSize = new FileInfo(AppFilePath.OfflineCache).Length;
+                ViewModel.OfflineCacheSize = (File.Exists(AppFilePath.OfflineCache) ? new FileInfo(AppFilePath.OfflineCache).Length : 0);
             }
         }
         private async Task<long> CalculateDirectorySize(DirectoryInfo d)
@@ -151,7 +151,7 @@ namespace gamevault.UserControls
                 else if (!long.TryParse(((TextBox)sender).Text, out long result))
                 {
                     ((TextBox)sender).Text = "0";
-                }               
+                }
             }
         }
 

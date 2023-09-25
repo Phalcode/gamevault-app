@@ -12,7 +12,7 @@ namespace gamevault.ViewModels
     internal class GameViewViewModel : ViewModelBase
     {
         #region PrivateMembers
-        private Game[]? m_RawgGames { get; set; }
+        private RawgGame[]? m_RawgGames { get; set; }
         private Game? m_Game { get; set; }
         private string[]? m_States { get; set; }
         private Progress? m_Progress { get; set; }
@@ -25,7 +25,7 @@ namespace gamevault.ViewModels
         private bool m_IsAlreadyInstalled { get; set; }
 
         #endregion
-        public Game[]? RawgGames
+        public RawgGame[]? RawgGames
         {
             get { return m_RawgGames; }
             set { m_RawgGames = value; OnPropertyChanged(); }
