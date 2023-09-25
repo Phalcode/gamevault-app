@@ -6,7 +6,7 @@
          xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:local="clr-namespace:gamevault.Windows"
         mc:Ignorable="d"
-        Title="Unhandled Error" Height="130" Width="450" ShowMinButton="False" ShowMaxRestoreButton="False" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterScreen" Closing="On_Closing">
+        Title="Unhandled Error" Height="130" Width="450" ShowMinButton="False" ShowMaxRestoreButton="False" Topmost="True" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterScreen" Closing="On_Closing">
     <Grid>
         <!--<mah:ToggleSwitch x:Name="uiToggleSendCrashReport" Header="Send crash report" IsOn="True" VerticalAlignment="Top" HorizontalAlignment="Center"/>-->
         <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,10,0,0" FontSize="13">
