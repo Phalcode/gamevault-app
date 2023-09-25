@@ -285,7 +285,11 @@ namespace gamevault.UserControls
             {
                 if (Directory.Exists($"{m_DownloadPath}\\Extract"))
                 {
-                    Directory.Delete($"{m_DownloadPath}\\Extract", true);
+                    try
+                    {
+                        Directory.Delete($"{m_DownloadPath}\\Extract", true);
+                    }
+                    catch { }
                 }
                 if (extractionCancelled)
                 {
@@ -355,6 +359,7 @@ namespace gamevault.UserControls
         private async void Install_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             ((FrameworkElement)sender).IsEnabled = false;
+            uiBtnExtract.IsEnabled = false;
             if (ViewModel.Game.Type == GameType.WINDOWS_PORTABLE)
             {
                 bool error = false;
@@ -432,6 +437,7 @@ namespace gamevault.UserControls
             }
             uiInstallOptions.Visibility = System.Windows.Visibility.Collapsed;
             uiProgressRingInstall.IsActive = false;
+            uiBtnExtract.IsEnabled = true;
         }
 
         private void CopyInstallPathToClipboard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
