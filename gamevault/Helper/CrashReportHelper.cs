@@ -17,12 +17,12 @@ namespace gamevault.Helper
 
     internal class CrashReportHelper
     {
-        public static void SendCrashReport(Exception e, string unhandledExceptionType)
+        public static void SendCrashReport(string errrorMessage, string stackTrace, string unhandledExceptionType)
         {
             try
             {
                 string sysInfo = $"Version: {SettingsViewModel.Instance.Version} | Is Windows Package: {(App.IsWindowsPackage == true ? "True" : "False")}";
-                CrashReport crashReport = new CrashReport { source = "GameVault Client", message = $"({unhandledExceptionType}): {e.Message}", stackTrace = e.StackTrace, systemInfo = sysInfo };
+                CrashReport crashReport = new CrashReport { source = "GameVault Client", message = $"({unhandledExceptionType}): {errrorMessage}", stackTrace = stackTrace, systemInfo = sysInfo };
                 string parameter = System.Text.Json.JsonSerializer.Serialize(crashReport);
                 using (System.Net.WebClient wc = new System.Net.WebClient())
                 {

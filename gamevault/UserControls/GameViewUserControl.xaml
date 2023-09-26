@@ -268,10 +268,14 @@
                                 <Border.Style>
                                     <Style TargetType="{x:Type Border}">
                                         <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Accent}"/>
+                                        <Setter Property="IsEnabled" Value="True"/>
                                         <Style.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
                                                 <Setter Property="Background" Value="{StaticResource HoverColor}" />
                                             </Trigger>
+                                            <DataTrigger  Binding="{Binding Game}" Value="{x:Null}">
+                                                <Setter Property="IsEnabled" Value="False" />
+                                            </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
                                 </Border.Style>

@@ -1,5 +1,10 @@
 # GameVault App Changelog
 
+## 1.6.1
+### Changes
+- Bug fix: Setup games are no longer uninstalled correctly
+- Bug fix: Users could start a download in offline mode
+
 ## 1.6.0
 ### Changes
 - Faster Rawg search in the game view

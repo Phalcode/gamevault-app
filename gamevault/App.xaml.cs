@@ -51,7 +51,7 @@ namespace gamevault
 #else
             try
             {
-                UpdateWindow updateWindow = new UpdateWindow(); 
+                UpdateWindow updateWindow = new UpdateWindow();
                 updateWindow.ShowDialog();
             }
             catch (Exception ex)
@@ -110,17 +110,18 @@ namespace gamevault
         public void LogUnhandledException(Exception e)
         {
             Application.Current.DispatcherUnhandledException -= new DispatcherUnhandledExceptionEventHandler(AppDispatcherUnhandledException);
-            string errorMessage = $"MESSAGE:\n{e.Message}\nINNER_EXCEPTION:{(e.InnerException != null ? "" + e.InnerException.Message : null)}\nSTACK_TRACE:\n{(e.StackTrace != null ? "" + e.StackTrace : null)}";
+            string errorMessage = $"MESSAGE:\n{e.Message}\nINNER_EXCEPTION:{(e.InnerException != null ? "" + e.InnerException.Message : null)}";
+            string errorStackTrace = $"STACK_TRACE:\n{(e.StackTrace != null ? "" + e.StackTrace : null)}";
             string errorLogPath = $"{AppFilePath.ErrorLog}\\GameVault_ErrorLog_{DateTime.Now.ToString("yyyyMMddHHmmssfff")}.txt";
             if (!File.Exists(errorLogPath))
             {
                 Directory.CreateDirectory(AppFilePath.ErrorLog);
                 File.Create(errorLogPath).Close();
             }
-            File.WriteAllText(errorLogPath, errorMessage);
+            File.WriteAllText(errorLogPath, errorMessage + "\n" + errorStackTrace);
             if (new ExceptionWindow().ShowDialog() == true)
             {
-                CrashReportHelper.SendCrashReport(e, "Dispatcher.UnhandledException");
+                CrashReportHelper.SendCrashReport(errorMessage, errorStackTrace, "Dispatcher.UnhandledException");
             }
             ShutdownApp();
         }
