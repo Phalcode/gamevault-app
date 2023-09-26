@@ -45,7 +45,7 @@ namespace gamevault.UserControls.SettingsComponents
             uiBtnLogin.IsEnabled = false;            
             if (SettingsViewModel.Instance.UserName != string.Empty && uiPwBox.Password != string.Empty)
             {
-                if (LoginManager.Instance.IsLoggedIn() && LoginManager.Instance.GetCurrentUser().Username == SettingsViewModel.Instance.UserName)
+                if (LoginManager.Instance.IsLoggedIn() && LoginManager.Instance.GetCurrentUser().Username.ToLower() == SettingsViewModel.Instance.UserName.ToLower())
                 {
                     MainWindowViewModel.Instance.AppBarText = $"You are already logged in as '{SettingsViewModel.Instance.UserName}'";
                 }

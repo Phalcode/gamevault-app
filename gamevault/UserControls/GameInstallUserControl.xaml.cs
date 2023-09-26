@@ -141,6 +141,7 @@ namespace gamevault.UserControls
         }
         private async void Uninstall_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            ((FrameworkElement)sender).IsEnabled = false;
             if (ViewModel.Game.Type == GameType.WINDOWS_PORTABLE)
             {
                 MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to uninstall '{ViewModel.Game.Title}' ?", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
@@ -171,26 +172,39 @@ namespace gamevault.UserControls
                         System.Windows.Forms.DialogResult fileResult = dialog.ShowDialog();
                         if (fileResult == System.Windows.Forms.DialogResult.OK && File.Exists(dialog.FileName))
                         {
+                            Process uninstProcess = null;
                             try
                             {
-                                ProcessHelper.StartApp(dialog.FileName);
+                                uninstProcess = ProcessHelper.StartApp(dialog.FileName);
                             }
                             catch
                             {
 
                                 try
                                 {
-                                    ProcessHelper.StartApp(dialog.FileName, true);
+                                    uninstProcess = ProcessHelper.StartApp(dialog.FileName, true);
                                 }
                                 catch
                                 {
                                     MainWindowViewModel.Instance.AppBarText = $"Can not execute '{dialog.FileName}'";
                                 }
                             }
+                            if (uninstProcess != null)
+                            {
+                                await uninstProcess.WaitForExitAsync();
+                                try
+                                {
+                                    if (Directory.Exists(m_Directory))
+                                        Directory.Delete(m_Directory, true);
+                                }
+                                catch { }
+                                InstallViewModel.Instance.InstalledGames.Remove(this);
+                            }
                         }
                     }
                 }
             }
+            ((FrameworkElement)sender).IsEnabled = true;
         }
         private bool ContainsValueFromIgnoreList(string value)
         {

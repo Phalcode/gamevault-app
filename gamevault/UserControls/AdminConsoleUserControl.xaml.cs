@@ -86,7 +86,7 @@ namespace gamevault.UserControls
             {
                 User selectedUser = (User)((FrameworkElement)sender).DataContext;
                 WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/users/{selectedUser.ID}", JsonSerializer.Serialize(new User() { Activated = selectedUser.Activated }));
-                string state = selectedUser.Activated ? "activated" : "deactivated";
+                string state = selectedUser.Activated == true ? "activated" : "deactivated";
                 MainWindowViewModel.Instance.AppBarText = $"Successfully {state} user '{selectedUser.Username}'";
             }
             catch (WebException ex)

@@ -1,5 +1,13 @@
 # GameVault App Changelog
 
+## 1.6.1
+### Changes
+- Admins can delete user progress
+- Bug fix: Setup games were not uninstalled correctly
+- Bug fix: Users could start a download in offline mode
+- Bug fix: When changing the role of a user, the user was deactivated
+- Bug fix: Progress for deleted games are now displayed. Also added validation for this in the game view
+
 ## 1.6.0
 ### Changes
 - Faster Rawg search in the game view

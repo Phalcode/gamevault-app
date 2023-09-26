@@ -91,6 +91,11 @@ namespace gamevault.UserControls
 
         private void Download_Click(object sender, MouseButtonEventArgs e)
         {
+            if (LoginManager.Instance.IsLoggedIn() == false)
+            {
+                MainWindowViewModel.Instance.AppBarText = "Could not connect to server";
+                return;
+            }
             if (true == ViewModel.IsAlreadyInstalled)
             {
                 MainWindowViewModel.Instance.SetActiveControl(MainControl.Installs);
@@ -99,7 +104,7 @@ namespace gamevault.UserControls
             this.Focus();//Bring back focus for the escape key
             if (SettingsViewModel.Instance.RootPath == string.Empty)
             {
-                MainWindowViewModel.Instance.AppBarText = "Root path is not set! Go to ⚙️Settings->Download";
+                MainWindowViewModel.Instance.AppBarText = "Root path is not set! Go to ⚙️Settings->Data";
                 return;
             }
             if (IsAlreadyDownloading(ViewModel.Game.ID))
@@ -250,7 +255,7 @@ namespace gamevault.UserControls
             });
             ((Button)sender).IsEnabled = true;
         }
-       
+
         private void UploadBoxArtImage_Click(object sender, RoutedEventArgs e)
         {
             if (fileSelectionPopupPP.Visibility == Visibility.Visible)
@@ -303,6 +308,6 @@ namespace gamevault.UserControls
             });
             ((Button)sender).IsEnabled = true;
             this.Focus();//Bring back focus for the escape key
-        }       
+        }
     }
 }
