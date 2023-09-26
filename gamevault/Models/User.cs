@@ -38,15 +38,15 @@ namespace gamevault.Models
         [JsonPropertyName("profile_picture_url")]
         public string ProfilePictureUrl { get; set; }
         [JsonPropertyName("profile_picture_id")]
-        public long ProfilePictureId { get; set; }
+        public long? ProfilePictureId { get; set; }
         [JsonPropertyName("background_image_url")]
         public string BackgroundImageUrl { get; set; }
         [JsonPropertyName("background_image_id")]
-        public long BackgroundImageId { get; set; }
+        public long? BackgroundImageId { get; set; }
         [JsonPropertyName("role")]
         public PERMISSION_ROLE? Role { get; set; }
         [JsonPropertyName("activated")]
-        public bool Activated { get; set; }
+        public bool? Activated { get; set; }
         [JsonPropertyName("deleted_at")]
         public string DeletedAt { get; set; }
     }

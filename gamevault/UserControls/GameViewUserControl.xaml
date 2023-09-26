@@ -14,6 +14,7 @@
         <conv:GameSizeConverter x:Key="sizeConv"/>
         <conv:GameTimeConverter x:Key="timeConv"/>
         <conv:EnumDescriptionConverter x:Key="enumDescConv"/>
+        <conv:InverseNullConverter x:Key="inverseNullConv"/>
     </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Key="Esc">
@@ -270,10 +271,16 @@
                                         <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Accent}"/>
                                         <Setter Property="IsEnabled" Value="True"/>
                                         <Style.Triggers>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Background" Value="LightGray" />
+                                            </Trigger>
                                             <Trigger Property="IsMouseOver" Value="True">
                                                 <Setter Property="Background" Value="{StaticResource HoverColor}" />
                                             </Trigger>
                                             <DataTrigger  Binding="{Binding Game}" Value="{x:Null}">
+                                                <Setter Property="IsEnabled" Value="False" />
+                                            </DataTrigger>
+                                            <DataTrigger  Binding="{Binding Path=Game.Deleted_At,Converter={StaticResource inverseNullConv}}" Value="False">
                                                 <Setter Property="IsEnabled" Value="False" />
                                             </DataTrigger>
                                         </Style.Triggers>

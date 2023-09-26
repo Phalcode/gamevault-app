@@ -46,8 +46,8 @@ namespace gamevault.Models
         public int? Rating { get; set; }
         [JsonPropertyName("average_playtime")]
         public int? AveragePlaytime { get; set; }
-        [JsonPropertyName("deleted")]
-        public bool Deleted { get; set; }
+        [JsonPropertyName("deleted_at")]
+        public DateTime? Deleted_At { get; set; }
         [JsonPropertyName("early_access")]
         public bool EarlyAccess { get; set; }
         [JsonPropertyName("developers")]
