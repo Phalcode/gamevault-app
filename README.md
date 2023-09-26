@@ -29,7 +29,7 @@
 </details>
 
 <details>
-<summary>Scenario 2: Download Path exists</summary> 
+<summary>Scenario 2: Download Path exists</summary>
   
 | Path        | State           |
 | :------------- |:-------------:|
