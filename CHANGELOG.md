@@ -1,5 +1,10 @@
 # GameVault App Changelog
 
+## 1.6.2
+### Changes
+- Bug fix: Update Notification for non Microsoft Store Version was shown in the Microsoft Store Version
+- Bug fix: Error while setting the installation path to Clipboard
+
 ## 1.6.1
 ### Changes
 - Admins can delete user progress

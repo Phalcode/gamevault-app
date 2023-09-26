@@ -442,7 +442,11 @@ namespace gamevault.UserControls
 
         private void CopyInstallPathToClipboard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            Clipboard.SetText(ViewModel.InstallPath);
+            try
+            {
+                Clipboard.SetText(ViewModel.InstallPath);
+            }
+            catch { }
         }
     }
 }
