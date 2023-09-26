@@ -52,19 +52,24 @@ namespace gamevault.Windows
             }
             try
             {
-                HttpClient httpClient = new HttpClient();
-                httpClient.DefaultRequestHeaders.Add("User-Agent", "Other");
-                var response = await httpClient.GetStringAsync("https://api.github.com/repos/Phalcode/gamevault-app/releases");
-                dynamic obj = JsonNode.Parse(response);
-                string version = (string)obj[0]["tag_name"];
-                if (Convert.ToInt32(version.Replace(".", "")) > Convert.ToInt32(SettingsViewModel.Instance.Version.Replace(".", "")))
+                if (App.IsWindowsPackage == false)
                 {
-                    MessageBoxResult result = MessageBox.Show($"A new version of GameVault is now available on GitHub.\nCurrent Version '{SettingsViewModel.Instance.Version}' -> new Version '{version}'\nWould you like to download it? (No automatic installation)", "Info", MessageBoxButton.YesNo, MessageBoxImage.Information);
-                    if (result == MessageBoxResult.Yes)
+                    using (HttpClient httpClient = new HttpClient())
                     {
-                        string downloadUrl = (string)obj[0]["assets"][0]["browser_download_url"];
-                        Process.Start(new ProcessStartInfo(downloadUrl) { UseShellExecute = true });
-                        App.Current.Shutdown();
+                        httpClient.DefaultRequestHeaders.Add("User-Agent", "Other");
+                        var response = await httpClient.GetStringAsync("https://api.github.com/repos/Phalcode/gamevault-app/releases");
+                        dynamic obj = JsonNode.Parse(response);
+                        string version = (string)obj[0]["tag_name"];
+                        if (Convert.ToInt32(version.Replace(".", "")) > Convert.ToInt32(SettingsViewModel.Instance.Version.Replace(".", "")))
+                        {
+                            MessageBoxResult result = MessageBox.Show($"A new version of GameVault is now available on GitHub.\nCurrent Version '{SettingsViewModel.Instance.Version}' -> new Version '{version}'\nWould you like to download it? (No automatic installation)", "Info", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                            if (result == MessageBoxResult.Yes)
+                            {
+                                string downloadUrl = (string)obj[0]["assets"][0]["browser_download_url"];
+                                Process.Start(new ProcessStartInfo(downloadUrl) { UseShellExecute = true });
+                                App.Current.Shutdown();
+                            }
+                        }
                     }
                 }
             }
