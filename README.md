@@ -15,7 +15,7 @@
 | ``D:/GameVault/Downloads/(74) Assassin's Creed Unity/`` | ``empty or non-existent`` |
 | ``D:/GameVault/Installations/(74) Assassin's Creed Unity/`` | ``empty or non-existent`` |
 
-**When does this happen**
+**When does this happen** 
 
 - The Game was not even downloaded yet.
 - The Game was deleted.
