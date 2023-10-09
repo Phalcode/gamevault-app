@@ -5,6 +5,7 @@ using ImageMagick.Formats;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -339,13 +340,16 @@ namespace gamevault.UserControls
         {
             if (Directory.Exists($"{m_DownloadPath}\\Extract"))
             {
-                string[] allExecutables = Directory.GetFiles($"{m_DownloadPath}\\Extract", "*.EXE", SearchOption.AllDirectories);
-                for (int count = 0; count < allExecutables.Length; count++)
+                List<string> allExecutables = new List<string>();
+                foreach (string fileType in Globals.SupportedExecutables)
                 {
-                    allExecutables[count] = Path.GetFileName(allExecutables[count]);
+                    foreach (string entry in Directory.GetFiles(m_DownloadPath, $"*.{fileType}", SearchOption.AllDirectories))
+                    {
+                        allExecutables.Add(Path.GetFileName(entry));
+                    }
                 }
                 uiCbSetupExecutable.ItemsSource = allExecutables;
-                if (allExecutables.Length == 1)
+                if (allExecutables.Count == 1)
                 {
                     uiCbSetupExecutable.SelectedIndex = 0;
                 }
