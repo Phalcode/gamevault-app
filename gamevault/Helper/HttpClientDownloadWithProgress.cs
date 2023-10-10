@@ -100,6 +100,7 @@ namespace gamevault.Helper
                     if (bytesRead == 0)
                     {
                         isMoreToRead = false;
+                        fileStream.Close();
                         TriggerProgressChanged(totalDownloadSize, totalBytesRead);
                         continue;
                     }

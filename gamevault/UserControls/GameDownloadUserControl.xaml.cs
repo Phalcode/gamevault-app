@@ -224,6 +224,11 @@ namespace gamevault.UserControls
                         Directory.Delete(m_DownloadPath, true);
 
                     DownloadsViewModel.Instance.DownloadedGames.Remove(this);
+
+                    if (Directory.Exists(ViewModel.InstallPath) && !Directory.EnumerateFileSystemEntries(ViewModel.InstallPath).Any())
+                    {
+                        Directory.Delete(ViewModel.InstallPath);
+                    }
                 }
                 catch
                 {

@@ -61,9 +61,10 @@ namespace gamevault.UserControls
             }
 
             List<string> allExecutables = new List<string>();
-            foreach (string fileType in Globals.SupportedExecutables)
+            foreach (string entry in Directory.GetFiles(directory, "*", SearchOption.AllDirectories))
             {
-                foreach (string entry in Directory.GetFiles(directory, $"*.{fileType}", SearchOption.AllDirectories))
+                string fileType = Path.GetExtension(entry).TrimStart('.');
+                if (Globals.SupportedExecutables.Contains(fileType.ToUpper()))
                 {
                     allExecutables.Add(entry);
                 }
@@ -85,7 +86,7 @@ namespace gamevault.UserControls
                 }
             }
         }
-        private void ExecutablesCombobox_Click(object sender, MouseButtonEventArgs e)
+        private void ExecutableSelection_Opened(object sender, EventArgs e)
         {
             FindGameExecutables(m_Directory, false);
         }

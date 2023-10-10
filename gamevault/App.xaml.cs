@@ -49,16 +49,7 @@ namespace gamevault
             AppFilePath.InitDebugPaths();
             await CacheHelper.OptimizeCache();
 #else
-            try
-            {
-                UpdateWindow updateWindow = new UpdateWindow();
-                updateWindow.ShowDialog();
-            }
-            catch (Exception ex)
-            {
-                LogUnhandledException(ex);
-                //m_StoreHelper.NoInternetException();              
-            }
+
             int pcount = Process.GetProcessesByName(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name).Count();
             //System.Windows.MessageBox.Show("pcount: "+pcount);
             if (pcount != 1)
@@ -73,6 +64,16 @@ namespace gamevault
             else
             {
                 StartServer();
+            }
+            try
+            {
+                UpdateWindow updateWindow = new UpdateWindow();
+                updateWindow.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                LogUnhandledException(ex);
+                //m_StoreHelper.NoInternetException();              
             }
 #endif
             #region DirectoryCreation

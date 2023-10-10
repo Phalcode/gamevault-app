@@ -1,8 +1,12 @@
 # GameVault App Changelog
 
-## 1.6.2
+## 1.6.3
 ### Changes
-- Expanded selectable executables in the download tab
+- Added support for more executable files in the download tab
+- When you remove the download, the installation folder will be deleted automatically if it is empty.
+- Bug fix: Auto extraction sometimes failed
+- Bug fix: The executable selection sometimes did not respond correctly to the mouse input.
+- Bug fix: The one instance functionality was executed after the update check
 
 ## 1.6.2
 ### Changes
