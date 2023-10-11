@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Management;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,6 +23,11 @@ namespace gamevault.Helper
             try
             {
                 string sysInfo = $"Version: {SettingsViewModel.Instance.Version} | Is Windows Package: {(App.IsWindowsPackage == true ? "True" : "False")}";
+                try
+                {
+                    sysInfo += "\n" + GetSysInfo();
+                }
+                catch { }
                 CrashReport crashReport = new CrashReport { source = "GameVault Client", message = $"({unhandledExceptionType}): {errrorMessage}", stackTrace = stackTrace, systemInfo = sysInfo };
                 string parameter = System.Text.Json.JsonSerializer.Serialize(crashReport);
                 using (System.Net.WebClient wc = new System.Net.WebClient())
@@ -34,6 +40,15 @@ namespace gamevault.Helper
             catch (Exception ex)
             {
             }
+        }
+        public static string GetSysInfo()
+        {
+            var OS = new ManagementObjectSearcher("select * from Win32_OperatingSystem").Get().Cast<ManagementObject>().First();
+            string os = $"OS: {OS["Caption"]} - {OS["OSArchitecture"]} - Version.{OS["Version"]}"; os = os.Replace("NT 5.1.2600", "XP"); os = os.Replace("NT 5.2.3790", "Server 2003");
+            string ram = $"RAM: {OS["TotalVisibleMemorySize"]} KB";
+            var CPU = new ManagementObjectSearcher("select * from Win32_Processor").Get().Cast<ManagementObject>().First();
+            string cpu = $"CPU: {CPU["Name"]} - {CPU["MaxClockSpeed"]} MHz - {CPU["NumberOfCores"]} Core";
+            return $"{os}; {ram}; {cpu};";
         }
     }
 }
