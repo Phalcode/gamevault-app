@@ -26,7 +26,7 @@ namespace gamevault.UserControls
     /// </summary>
     public partial class AdminConsoleUserControl : UserControl
     {
-        private AdminConsoleViewModel ViewModel { get; set; }       
+        private AdminConsoleViewModel ViewModel { get; set; }
 
         public AdminConsoleUserControl()
         {
@@ -38,7 +38,7 @@ namespace gamevault.UserControls
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             if (this.Visibility == Visibility.Visible)
-            {               
+            {
                 await InitUserList();
             }
         }
@@ -199,6 +199,11 @@ namespace gamevault.UserControls
                 }
             });
             ((Button)sender).IsEnabled = true;
+        }
+
+        private async void Reload_Click(object sender, MouseButtonEventArgs e)
+        {
+            await InitUserList();
         }
     }
 }
