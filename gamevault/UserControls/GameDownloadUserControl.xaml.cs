@@ -377,7 +377,12 @@ namespace gamevault.UserControls
                 {
                     try
                     {
-                        if (Directory.Exists($"{ViewModel.InstallPath}\\Files"))
+                        if (!Directory.Exists(ViewModel.InstallPath))
+                        {
+                            Directory.CreateDirectory(ViewModel.InstallPath);
+                            MainWindowViewModel.Instance.Installs.AddSystemFileWatcher(ViewModel.InstallPath);
+                        }
+                        else if (Directory.Exists($"{ViewModel.InstallPath}\\Files"))
                         {
                             Directory.Delete($"{ViewModel.InstallPath}\\Files", true);
                         }

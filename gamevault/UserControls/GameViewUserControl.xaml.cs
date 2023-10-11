@@ -132,8 +132,8 @@ namespace gamevault.UserControls
                 await Task.Run(() =>
                 {
                     try
-                    {
-                        WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{m_GameId}", System.Text.Json.JsonSerializer.Serialize(ViewModel.Progress));
+                    {                       
+                        WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{m_GameId}", System.Text.Json.JsonSerializer.Serialize(new Progress() { State = ViewModel.Progress.State }));
                     }
                     catch (WebException webEx)
                     {
