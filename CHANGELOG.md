@@ -8,6 +8,7 @@
 - Bug fix: The executable selection sometimes did not respond correctly to the mouse input.
 - Bug fix: The one instance functionality was executed after the update check
 - Bug fix: Problems in the installation Tab when uninstall->reinstall Games
+- Bug fix: New users do not show on the community page without client restart
 
 ## 1.6.2
 ### Changes

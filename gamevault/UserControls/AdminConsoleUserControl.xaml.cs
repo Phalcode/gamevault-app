@@ -26,8 +26,7 @@ namespace gamevault.UserControls
     /// </summary>
     public partial class AdminConsoleUserControl : UserControl
     {
-        private AdminConsoleViewModel ViewModel { get; set; }
-        private bool m_Loaded = false;
+        private AdminConsoleViewModel ViewModel { get; set; }       
 
         public AdminConsoleUserControl()
         {
@@ -38,11 +37,10 @@ namespace gamevault.UserControls
 
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (!m_Loaded)
-            {
+            if (this.Visibility == Visibility.Visible)
+            {               
                 await InitUserList();
             }
-            m_Loaded = !m_Loaded;
         }
         public async Task InitUserList()
         {

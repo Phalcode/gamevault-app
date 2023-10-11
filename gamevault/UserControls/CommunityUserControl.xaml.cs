@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-
+using System.Diagnostics;
 
 namespace gamevault.UserControls
 {
@@ -24,6 +24,13 @@ namespace gamevault.UserControls
             InitializeComponent();
             ViewModel = new CommunityViewModel();
             this.DataContext = ViewModel;
+        }
+        private async void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (this.Visibility == Visibility.Visible)
+            {               
+                await InitUserList();
+            }
         }
         public async Task InitUserList()
         {
