@@ -16,6 +16,8 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Text.Json;
+using IWshRuntimeLibrary;
+using File = System.IO.File;
 
 namespace gamevault.UserControls
 {
@@ -210,6 +212,31 @@ namespace gamevault.UserControls
         private bool ContainsValueFromIgnoreList(string value)
         {
             return (m_IgnoreList != null && m_IgnoreList.Any(s => Path.GetFileNameWithoutExtension(value).Contains(s, StringComparison.OrdinalIgnoreCase)));
+        }
+
+        private async void CreateDesktopShortcut_Click(object sender, MouseButtonEventArgs e)
+        {
+            MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Do you want to create a desktop shortcut for the current selected executable?", "",
+                MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+            if (result == MessageDialogResult.Affirmative)
+            {
+                try
+                {
+                    string desktopDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+                    string shortcutPath = desktopDir + @"\\" + Path.GetFileNameWithoutExtension(m_SavedExecutable) + ".lnk";
+                    if (!File.Exists(shortcutPath))
+                    {
+                        WshShell shell = new WshShell();
+                        IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutPath);
+                        //shortcut.Description = "New shortcut for a Notepad";
+                        //shortcut.Hotkey = "Ctrl+Shift+N";
+                        shortcut.TargetPath = m_SavedExecutable;
+                        shortcut.WorkingDirectory = m_Directory;
+                        shortcut.Save();
+                    }
+                }
+                catch { }
+            }
         }
     }
 }

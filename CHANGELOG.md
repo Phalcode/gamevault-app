@@ -5,6 +5,7 @@
 - Added support for more executable files in the download tab
 - When you remove the download, the installation folder will be deleted automatically if it is empty.
 - Added Refresh button on Admin Console
+- Added desktop shortcut creation button to install tab
 - Bug fix: Auto extraction sometimes failed
 - Bug fix: The executable selection sometimes did not respond correctly to the mouse input.
 - Bug fix: The one instance functionality was executed after the update check
