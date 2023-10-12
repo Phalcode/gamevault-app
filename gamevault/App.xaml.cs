@@ -122,7 +122,7 @@ namespace gamevault
             File.WriteAllText(errorLogPath, errorMessage + "\n" + errorStackTrace);
             if (new ExceptionWindow().ShowDialog() == true)
             {
-                CrashReportHelper.SendCrashReport(errorMessage, errorStackTrace, "Dispatcher.UnhandledException");
+                CrashReportHelper.SendCrashReport(errorMessage, errorStackTrace, $"Type: {e.GetType().ToString()}");
             }
             ShutdownApp();
         }

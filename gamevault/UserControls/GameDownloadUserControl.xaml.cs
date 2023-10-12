@@ -260,6 +260,12 @@ namespace gamevault.UserControls
         }
         private async Task Extract()
         {
+            if(!Directory.Exists(m_DownloadPath))
+            {
+                ViewModel.State = "Download path not found";
+                MainWindowViewModel.Instance.AppBarText = "Please report this issue on our Discord server or create a GitHub issue.";
+                return;
+            }
             DirectoryInfo dirInf = new DirectoryInfo(m_DownloadPath);
             FileInfo[] files = dirInf.GetFiles().Where(f => ViewModel.SupportedArchives.Contains(f.Extension.ToLower())).ToArray();
             if (files.Length <= 0)
