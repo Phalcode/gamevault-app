@@ -112,6 +112,10 @@ namespace gamevault.UserControls
                         MainWindowViewModel.Instance.AppBarText = exJson.Message;
                         return null;
                     }
+                    catch(FormatException exFormat)
+                    {
+                        MainWindowViewModel.Instance.AppBarText = "The offline cache is corrupted";
+                    }
                 }
                 return null;
             });

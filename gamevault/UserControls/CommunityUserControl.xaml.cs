@@ -28,8 +28,15 @@ namespace gamevault.UserControls
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             if (this.Visibility == Visibility.Visible)
-            {               
-                await InitUserList();
+            {
+                try
+                {
+                    await InitUserList();
+                }
+                catch
+                {
+                    MainWindowViewModel.Instance.AppBarText = "Can not access community tab while offline";
+                }
             }
         }
         public async Task InitUserList()
