@@ -19,6 +19,7 @@ namespace gamevault.UserControls
     public partial class CommunityUserControl : UserControl
     {
         private CommunityViewModel ViewModel { get; set; }
+        private int forceShowId = -1;
         public CommunityUserControl()
         {
             InitializeComponent();
@@ -48,17 +49,39 @@ namespace gamevault.UserControls
                 users = BringCurrentUserToTop(users);
                 return users;
             });
+            if (uiSelectUser.SelectedIndex == -1 && ViewModel.CurrentShownUser == null)
+            {
+                if (forceShowId != -1)
+                {
+                    int index = ViewModel.Users.ToList().FindIndex(u => u.ID == forceShowId);
+                    if (index != -1)
+                    {
+                        uiSelectUser.SelectedIndex = index;
+                    }
+                }
+                else
+                {
+                    uiSelectUser.SelectedIndex = 0;
+                }
+            }
+        }
+        internal void Reset()
+        {
+            ViewModel = new CommunityViewModel();
+            this.DataContext = ViewModel;
         }
         internal void ShowUser(User userToShow)
         {
-            for (int count = 0; count < ViewModel.Users.Length; count++)
+            if (userToShow != null)
             {
-                if (ViewModel.Users[count].ID == userToShow.ID)
+                forceShowId = userToShow.ID;
+                if (MainWindowViewModel.Instance.ActiveControl == MainWindowViewModel.Instance.Community)
                 {
-                    if (uiSelectUser.SelectedIndex != count)
-                    {
-                        uiSelectUser.SelectedIndex = count;
-                    }
+                    InitUserList();
+                }
+                else
+                {
+                    MainWindowViewModel.Instance.SetActiveControl(MainControl.Community);
                 }
             }
         }
@@ -66,11 +89,28 @@ namespace gamevault.UserControls
         {
             try
             {
+                if (uiSelectUser.SelectedIndex == -1 && ViewModel.CurrentShownUser != null)
+                {
+                    int index = -1;
+                    if (forceShowId == -1)
+                    {
+                        index = ViewModel.Users.ToList().FindIndex(u => u.ID == ViewModel.CurrentShownUser.ID);
+                    }
+                    else
+                    {
+                        index = ViewModel.Users.ToList().FindIndex(u => u.ID == forceShowId);
+                        forceShowId = -1;
+                    }
+                    if (index != -1)
+                    {
+                        uiSelectUser.SelectedIndex = index;
+                    }
+                    return;
+                }
                 uiProgressScrollView.ScrollToTop();
                 int selectedUserId = -1;
                 if (e.AddedItems.Count == 0)
                 {
-                    uiSelectUser.SelectedIndex = 0;
                     return;
                 }
                 else

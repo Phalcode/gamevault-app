@@ -1,5 +1,6 @@
 ﻿using gamevault.Helper;
 using gamevault.Models;
+using gamevault.UserControls.SettingsComponents;
 using gamevault.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -115,7 +116,6 @@ namespace gamevault.UserControls
                         MainWindowViewModel.Instance.AppBarText = $"Successfully recovered deleted user '{selectedUser.Username}'";
                         await InitUserList();
                     }
-                    //ViewModel.UpdateUsersToUI();//Very dirty. Will be fixed
                 }
                 catch (WebException ex)
                 {
@@ -131,6 +131,17 @@ namespace gamevault.UserControls
             uiUserEditPopup.Visibility = Visibility.Visible;
             var obj = new UserEditUserControl((User)((FrameworkElement)sender).DataContext);
             obj.UserSaved += UserSaved;
+            if (uiUserEditPopup.Children.Count != 0)
+            {
+                uiUserEditPopup.Children.Clear();
+            }
+            uiUserEditPopup.Children.Add(obj);
+        }
+        private void BackupRestore_Click(object sender, RoutedEventArgs e)
+        {           
+            uiUserEditPopup.Visibility = Visibility.Visible;
+            var obj = new BackupRestoreUserControl();
+            //obj.UserSaved += UserSaved;
             if (uiUserEditPopup.Children.Count != 0)
             {
                 uiUserEditPopup.Children.Clear();
@@ -172,13 +183,11 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.UserIcon = LoginManager.Instance.GetCurrentUser();
             }
             await InitUserList();
-            await MainWindowViewModel.Instance.Community.InitUserList();
         }
 
         private void ShowUser_Click(object sender, MouseButtonEventArgs e)
         {
             User selectedUser = ((FrameworkElement)sender).DataContext as User;
-            MainWindowViewModel.Instance.SetActiveControl(MainControl.Community);
             MainWindowViewModel.Instance.Community.ShowUser(selectedUser);
         }
 

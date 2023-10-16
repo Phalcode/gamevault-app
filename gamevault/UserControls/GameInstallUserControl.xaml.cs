@@ -224,7 +224,7 @@ namespace gamevault.UserControls
                 {
                     string desktopDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
                     string shortcutPath = desktopDir + @"\\" + Path.GetFileNameWithoutExtension(m_SavedExecutable) + ".lnk";
-                    if (!File.Exists(shortcutPath))
+                    if (Directory.Exists(desktopDir) && !File.Exists(shortcutPath))
                     {
                         WshShell shell = new WshShell();
                         IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutPath);

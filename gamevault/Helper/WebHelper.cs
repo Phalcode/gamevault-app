@@ -2,6 +2,7 @@
 using gamevault.Models;
 using gamevault.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -131,14 +132,17 @@ namespace gamevault.Helper
                 await client.DownloadFileTaskAsync(new Uri(imageUrl), cacheFile);
             }
         }
-        public static async Task<string> UploadImageAsync(string apiUrl, Stream imageStream, string fileName)
+        public static async Task<string> UploadFileAsync(string apiUrl, Stream imageStream, string fileName, KeyValuePair<string, string>? additionalHeader)
         {
             using (var httpClient = new HttpClient())
             {
                 var authenticationString = $"{m_UserName}:{m_Password}";
                 var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.ASCIIEncoding.UTF8.GetBytes(authenticationString));
                 httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + base64EncodedAuthenticationString);
-
+                if (additionalHeader != null)
+                {
+                    httpClient.DefaultRequestHeaders.Add(additionalHeader.Value.Key, additionalHeader.Value.Value);
+                }
                 using (var formData = new MultipartFormDataContent())
                 {
                     var imageContent = new StreamContent(imageStream);

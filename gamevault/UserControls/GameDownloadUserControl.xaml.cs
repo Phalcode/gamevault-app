@@ -112,7 +112,12 @@ namespace gamevault.UserControls
                 ViewModel.DownloadFailedVisibility = System.Windows.Visibility.Hidden;
 
                 if (!Directory.Exists(m_DownloadPath)) { Directory.CreateDirectory(m_DownloadPath); }
-                client = new HttpClientDownloadWithProgress($"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/{ViewModel.Game.ID}/download", m_DownloadPath, Path.GetFileName(ViewModel.Game.FilePath));
+                KeyValuePair<string, string>? header = null;
+                if (SettingsViewModel.Instance.DownloadLimit > 0)
+                {
+                    header = new KeyValuePair<string, string>("X-Download-Speed-Limit", SettingsViewModel.Instance.DownloadLimit.ToString());
+                }
+                client = new HttpClientDownloadWithProgress($"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/{ViewModel.Game.ID}/download", m_DownloadPath, Path.GetFileName(ViewModel.Game.FilePath), header);
                 client.ProgressChanged += DownloadProgress;
                 startTime = DateTime.Now;
 
@@ -260,7 +265,7 @@ namespace gamevault.UserControls
         }
         private async Task Extract()
         {
-            if(!Directory.Exists(m_DownloadPath))
+            if (!Directory.Exists(m_DownloadPath))
             {
                 ViewModel.State = "Download path not found";
                 MainWindowViewModel.Instance.AppBarText = "Please report this issue on our Discord server or create a GitHub issue.";
