@@ -58,6 +58,7 @@ namespace gamevault.UserControls.SettingsComponents
         private async void StartBackup_Click(object sender, RoutedEventArgs e)
         {
             uiBtnStartBackup.IsEnabled = false;
+            this.IsEnabled = false;
             try
             {
                 HttpClientDownloadWithProgress httpClientDownloadWithProgress = new HttpClientDownloadWithProgress(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/database/backup",
@@ -82,6 +83,7 @@ namespace gamevault.UserControls.SettingsComponents
 
             }
             uiBtnStartBackup.IsEnabled = true;
+            this.IsEnabled = true;
         }
         //### RESTORE ###
         private void ChooseRestoreFile_Click(object sender, RoutedEventArgs e)
@@ -114,6 +116,7 @@ namespace gamevault.UserControls.SettingsComponents
         private async void StartRestore_Click(object sender, RoutedEventArgs e)
         {
             uiBtnStartRestore.IsEnabled = false;
+            this.IsEnabled = false;
             try
             {
                 await WebHelper.UploadFileAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/database/restore", File.OpenRead(uiRestoreFile.Tag.ToString()), uiRestoreFile.Text, new KeyValuePair<string, string>("X-Database-Password", uiRestoreDatabasePassword.Password));
@@ -135,6 +138,7 @@ namespace gamevault.UserControls.SettingsComponents
 
             }
             uiBtnStartRestore.IsEnabled = true;
+            this.IsEnabled = true;
         }
     }
 }

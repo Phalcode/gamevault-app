@@ -231,7 +231,7 @@ namespace gamevault.UserControls
                         //shortcut.Description = "New shortcut for a Notepad";
                         //shortcut.Hotkey = "Ctrl+Shift+N";
                         shortcut.TargetPath = m_SavedExecutable;
-                        shortcut.WorkingDirectory = m_Directory;
+                        shortcut.WorkingDirectory = Path.GetDirectoryName(m_SavedExecutable);
                         shortcut.Save();
                     }
                 }
