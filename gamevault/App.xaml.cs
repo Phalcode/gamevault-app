@@ -34,31 +34,13 @@ namespace gamevault
         private async void Application_Startup(object sender, StartupEventArgs e)
         {
 
-            Application.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(AppDispatcherUnhandledException);
-
-            try
-            {
-                NewNameMigrationHelper.MigrateIfNeeded();
-            }
-            catch (Exception ex)
-            {
-                LogUnhandledException(ex);
-            }
+            Application.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(AppDispatcherUnhandledException);           
 
 #if DEBUG
             AppFilePath.InitDebugPaths();
             await CacheHelper.OptimizeCache();
 #else
-            try
-            {
-                UpdateWindow updateWindow = new UpdateWindow();
-                updateWindow.ShowDialog();
-            }
-            catch (Exception ex)
-            {
-                LogUnhandledException(ex);
-                //m_StoreHelper.NoInternetException();              
-            }
+
             int pcount = Process.GetProcessesByName(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name).Count();
             //System.Windows.MessageBox.Show("pcount: "+pcount);
             if (pcount != 1)
@@ -73,6 +55,16 @@ namespace gamevault
             else
             {
                 StartServer();
+            }
+            try
+            {
+                UpdateWindow updateWindow = new UpdateWindow();
+                updateWindow.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                LogUnhandledException(ex);
+                //m_StoreHelper.NoInternetException();              
             }
 #endif
             #region DirectoryCreation
@@ -121,7 +113,7 @@ namespace gamevault
             File.WriteAllText(errorLogPath, errorMessage + "\n" + errorStackTrace);
             if (new ExceptionWindow().ShowDialog() == true)
             {
-                CrashReportHelper.SendCrashReport(errorMessage, errorStackTrace, "Dispatcher.UnhandledException");
+                CrashReportHelper.SendCrashReport(errorMessage, errorStackTrace, $"Type: {e.GetType().ToString()}");
             }
             ShutdownApp();
         }

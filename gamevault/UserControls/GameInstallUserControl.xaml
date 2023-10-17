@@ -18,7 +18,7 @@
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0">
             <StackPanel Margin="5">
                 <TextBlock Text="Executable" FontSize="15" FontWeight="Bold" HorizontalAlignment="Right"/>
-                <ComboBox x:Name="uiCbExecutables" DisplayMemberPath="Value" ItemsSource="{Binding Executables}" SelectionChanged="Executable_SelectionChanged" PreviewMouseLeftButtonDown="ExecutablesCombobox_Click"/>
+                <ComboBox x:Name="uiCbExecutables" DisplayMemberPath="Value" ItemsSource="{Binding Executables}" SelectionChanged="Executable_SelectionChanged" DropDownOpened="ExecutableSelection_Opened"/>
             </StackPanel>
             <Button Content="Play"  FontSize="25" Padding="15,0,15,0" Background="{StaticResource MahApps.Brushes.Accent}" Click="Play_Clicked">
                 <Button.Style>
@@ -32,6 +32,7 @@
                     </Style>
                 </Button.Style>
             </Button>
+            <TextBlock Text="🔗" FontSize="30" Padding="15,10,0,0" Margin="5,0,0,0" Cursor="Hand" ToolTip="Create a desktop shotcut for the current selected executable" MouseLeftButtonUp="CreateDesktopShortcut_Click"/>
             <TextBlock Text="📁" FontSize="30" Foreground="LightBlue" VerticalAlignment="Center" Margin="5,0,0,0" Cursor="Hand" ToolTip="Open Directory" MouseLeftButtonUp="OpenDirectory_MouseLeftButtonUp"/>
             <TextBlock Text="🗑️" FontSize="30" Foreground="IndianRed" VerticalAlignment="Center" Margin="5,0,0,0" Cursor="Hand" ToolTip="Uninstall game" MouseLeftButtonUp="Uninstall_MouseLeftButtonUp"/>
         </StackPanel>

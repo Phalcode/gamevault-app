@@ -22,9 +22,9 @@ namespace gamevault.Models
     public class Progress
     {
         [JsonPropertyName("id")]
-        public int ID { get; set; }
+        public int? ID { get; set; }
         [JsonPropertyName("minutes_played")]
-        public int MinutesPlayed { get; set; }
+        public int? MinutesPlayed { get; set; }
         [JsonPropertyName("state")]
         public string? State { get; set; }
         [JsonPropertyName("last_played_at")]

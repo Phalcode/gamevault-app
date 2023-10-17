@@ -42,7 +42,7 @@ namespace gamevault.UserControls.SettingsComponents
         }
         private async Task Login()
         {
-            uiBtnLogin.IsEnabled = false;            
+            uiBtnLogin.IsEnabled = false;
             if (SettingsViewModel.Instance.UserName != string.Empty && uiPwBox.Password != string.Empty)
             {
                 if (LoginManager.Instance.IsLoggedIn() && LoginManager.Instance.GetCurrentUser().Username.ToLower() == SettingsViewModel.Instance.UserName.ToLower())
@@ -55,8 +55,6 @@ namespace gamevault.UserControls.SettingsComponents
                     if (LoginState.Success == state)
                     {
                         MainWindowViewModel.Instance.AppBarText = $"Successfully logged in as '{SettingsViewModel.Instance.UserName}'";
-                        await MainWindowViewModel.Instance.Community.InitUserList();
-
                     }
                     else if (LoginState.Unauthorized == state)
                     {
@@ -70,7 +68,7 @@ namespace gamevault.UserControls.SettingsComponents
                     {
                         MainWindowViewModel.Instance.AppBarText = "Could not connect to server";
                     }
-                    MainWindowViewModel.Instance.UserIcon = LoginManager.Instance.GetCurrentUser();
+                    MainWindowViewModel.Instance.UserIcon = LoginManager.Instance.GetCurrentUser();                  
                 }
             }
             else

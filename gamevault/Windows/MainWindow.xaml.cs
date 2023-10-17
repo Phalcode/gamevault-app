@@ -85,7 +85,7 @@ namespace gamevault.Windows
             LoginState state = LoginManager.Instance.GetState();
             if (LoginState.Success == state)
             {
-                await MainWindowViewModel.Instance.Community.InitUserList();
+
             }
             else if (LoginState.Unauthorized == state || LoginState.Forbidden == state)
             {
@@ -119,8 +119,8 @@ namespace gamevault.Windows
         }
 
         private void UserIcon_Clicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            MainWindowViewModel.Instance.SetActiveControl(MainControl.Community);
+        {          
+            MainWindowViewModel.Instance.Community.ShowUser(LoginManager.Instance.GetCurrentUser());            
         }
         private void WindowCommand_Clicked(object sender, RoutedEventArgs e)
         {

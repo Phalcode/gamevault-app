@@ -16,6 +16,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Text.Json;
+using File = System.IO.File;
 
 namespace gamevault.UserControls
 {
@@ -59,11 +60,12 @@ namespace gamevault.UserControls
             {
                 m_SavedExecutable = Preferences.Get(AppConfigKey.Executable, $"{m_Directory}\\gamevault-exec");
             }
-            string[] fileTypesToSearch = new string[] { "EXE", "BAT", "COM", "CMD", "INF", "IPA", "OSX", "PIF", "RUN", "WSH", "LNK" };
+
             List<string> allExecutables = new List<string>();
-            foreach (string fileType in fileTypesToSearch)
+            foreach (string entry in Directory.GetFiles(directory, "*", SearchOption.AllDirectories))
             {
-                foreach (string entry in Directory.GetFiles(directory, $"*.{fileType}", SearchOption.AllDirectories))
+                string fileType = Path.GetExtension(entry).TrimStart('.');
+                if (Globals.SupportedExecutables.Contains(fileType.ToUpper()))
                 {
                     allExecutables.Add(entry);
                 }
@@ -85,7 +87,7 @@ namespace gamevault.UserControls
                 }
             }
         }
-        private void ExecutablesCombobox_Click(object sender, MouseButtonEventArgs e)
+        private void ExecutableSelection_Opened(object sender, EventArgs e)
         {
             FindGameExecutables(m_Directory, false);
         }
@@ -209,6 +211,31 @@ namespace gamevault.UserControls
         private bool ContainsValueFromIgnoreList(string value)
         {
             return (m_IgnoreList != null && m_IgnoreList.Any(s => Path.GetFileNameWithoutExtension(value).Contains(s, StringComparison.OrdinalIgnoreCase)));
+        }
+
+        private async void CreateDesktopShortcut_Click(object sender, MouseButtonEventArgs e)
+        {
+            MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Do you want to create a desktop shortcut for the current selected executable?", "",
+                MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+            if (result == MessageDialogResult.Affirmative)
+            {
+                try
+                {
+                    string desktopDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+                    string shortcutPath = desktopDir + @"\\" + Path.GetFileNameWithoutExtension(m_SavedExecutable) + ".url";
+
+                    using (StreamWriter writer = new StreamWriter(shortcutPath))
+                    {
+                        writer.Write("[InternetShortcut]\r\n");
+                        writer.Write("URL=file:///" + m_SavedExecutable.Replace('\\', '/') + "\r\n");
+                        writer.Write("IconIndex=0\r\n");
+                        writer.Write("IconFile=" + m_SavedExecutable.Replace('\\', '/') + "\r\n");
+                        writer.WriteLine("WorkingDirectory=" + Path.GetDirectoryName(m_SavedExecutable).Replace('\\', '/'));
+                        writer.Flush();
+                    }
+                }
+                catch { }
+            }
         }
     }
 }

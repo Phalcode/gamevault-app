@@ -112,9 +112,18 @@ namespace gamevault.ViewModels
             set { m_ActiveControlIndex = value; OnPropertyChanged(); }
         }
         public UserControl ActiveControl
-        {
+        {          
             get { return m_ActiveControl; }
-            set { m_ActiveControl = value; OnPropertyChanged(); }
+            set
+            {
+                if (m_ActiveControl != null) { m_ActiveControl.Visibility = System.Windows.Visibility.Collapsed; }
+                m_ActiveControl = value;
+                if (m_ActiveControl != null)
+                {
+                    m_ActiveControl.Visibility = System.Windows.Visibility.Visible;
+                }
+                OnPropertyChanged();
+            }
         }
         internal LibraryUserControl Library
         {

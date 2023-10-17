@@ -1,5 +1,20 @@
 # GameVault App Changelog
 
+## 1.7.0
+### Changes
+- Added support for more executable files in the download tab
+- When you remove the download, the installation folder will be deleted automatically if it is empty
+- Added Refresh button to Admin Console
+- Added desktop shortcut creation button to install tab
+- Added Databse Backup-Restore functionality to the admin console
+- Bug fix: Auto extraction sometimes failed
+- Bug fix: The executable selection sometimes did not respond correctly to the mouse input
+- Bug fix: The One Instance functionality was incorrectly executed after the update check
+- Bug fix: Problems in the installation Tab when uninstall->reinstall Games
+- Bug fix: New users do not show on the community tab without client restart
+- Bug fix: Last selected user is not refreshed, when entering the community tab
+- Bug fix: Added a few more safeties in the offline cache
+
 ## 1.6.2
 ### Changes
 - Bug fix: Update Notification for non Microsoft Store Version was shown in the Microsoft Store Version

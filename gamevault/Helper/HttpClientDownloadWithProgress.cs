@@ -18,6 +18,7 @@ namespace gamevault.Helper
         private readonly string _destinationFolderPath;
         private string _fileName;
         private string _fallbackFileName;
+        KeyValuePair<string, string>? _additionalHeader;
         private bool _Cancelled = false;
         private DateTime lastTime;
         private HttpClient _httpClient;
@@ -26,11 +27,12 @@ namespace gamevault.Helper
 
         public event ProgressChangedHandler ProgressChanged;
 
-        public HttpClientDownloadWithProgress(string downloadUrl, string destinationFolderPath, string fallbackFileName)
+        public HttpClientDownloadWithProgress(string downloadUrl, string destinationFolderPath, string fallbackFileName, KeyValuePair<string, string>? additionalHeader = null)
         {
             _downloadUrl = downloadUrl;
             _destinationFolderPath = destinationFolderPath;
             _fallbackFileName = fallbackFileName;
+            _additionalHeader = additionalHeader;
         }
 
         public async Task StartDownload()
@@ -40,9 +42,10 @@ namespace gamevault.Helper
             _httpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Basic", Convert.ToBase64String(System.Text.ASCIIEncoding.UTF8.GetBytes($"{auth[0]}:{auth[1]}")));
             _httpClient.DefaultRequestHeaders.Add("User-Agent", $"GameVault/{SettingsViewModel.Instance.Version}");
-            if (SettingsViewModel.Instance.DownloadLimit > 0)
+           
+            if (_additionalHeader != null)
             {
-                _httpClient.DefaultRequestHeaders.Add("X-Download-Speed-Limit", SettingsViewModel.Instance.DownloadLimit.ToString());
+                _httpClient.DefaultRequestHeaders.Add(_additionalHeader.Value.Key, _additionalHeader.Value.Value);
             }
             using (var response = await _httpClient.GetAsync(_downloadUrl, HttpCompletionOption.ResponseHeadersRead))
                 await DownloadFileFromHttpResponseMessage(response);
@@ -100,6 +103,7 @@ namespace gamevault.Helper
                     if (bytesRead == 0)
                     {
                         isMoreToRead = false;
+                        fileStream.Close();
                         TriggerProgressChanged(totalDownloadSize, totalBytesRead);
                         continue;
                     }

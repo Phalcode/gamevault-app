@@ -133,7 +133,7 @@ namespace gamevault.UserControls
                 {
                     try
                     {
-                        WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{m_GameId}", System.Text.Json.JsonSerializer.Serialize(ViewModel.Progress));
+                        WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{m_GameId}", System.Text.Json.JsonSerializer.Serialize(new Progress() { State = ViewModel.Progress.State }));
                     }
                     catch (WebException webEx)
                     {
@@ -144,11 +144,12 @@ namespace gamevault.UserControls
                         }
                         MainWindowViewModel.Instance.AppBarText = msg;
                     }
+                    catch { }
                 });
             }
             else
             {
-                m_ProgressLoaded = true;
+                m_ProgressLoaded = true;//Because selection changed event is triggered by loading the progress into the view model
             }
         }
         private async void RawgGameSearch_Click(object sender, RoutedEventArgs e)

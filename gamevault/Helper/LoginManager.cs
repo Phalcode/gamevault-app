@@ -116,6 +116,7 @@ namespace gamevault.Helper
             m_User = null;
             m_LoginState = LoginState.Error;
             WebHelper.OverrideCredentials(string.Empty, string.Empty);
+            MainWindowViewModel.Instance.Community.Reset();
         }
         private LoginState DetermineLoginState(string code)
         {

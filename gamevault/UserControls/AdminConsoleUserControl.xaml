@@ -15,7 +15,9 @@
         <Border Background="{StaticResource DarkBackground2}" Grid.Row="0">
             <Grid>
                 <TextBlock Text="Admin Console" FontSize="35" Margin="20,0,0,0" Foreground="White"/>
-                <Button Content="Reindex Games" HorizontalAlignment="Right" Margin="10" Click="Reindex_Click"/>
+                <Button Content="Backup/Restore" HorizontalAlignment="Right" Margin="10,10,150,10" Click="BackupRestore_Click"/>
+                <Button Content="Reindex Games" HorizontalAlignment="Right" Margin="10,10,46,10" Click="Reindex_Click"/>
+                <TextBlock Text="↻" Cursor="Hand" ToolTip="Refresh admin console" HorizontalAlignment="Right" Margin="0,2,10,0" FontSize="30" MouseLeftButtonUp="Reload_Click"/>
             </Grid>
         </Border>
         <Grid Grid.RowSpan="2" Panel.ZIndex="1">

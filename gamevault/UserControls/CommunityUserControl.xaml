@@ -7,7 +7,7 @@
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
     <UserControl.Resources>
         <conv:PermissionRoleToVisibilityConverter x:Key="roleToVisConv"/>
         <conv:UrlImageConverter x:Key="urlImgConv"/>
@@ -22,7 +22,7 @@
         <Border Background="{StaticResource DarkBackground2}" Grid.Row="0">
             <Grid>
                 <TextBlock Text="Community" FontSize="35" Margin="20,0,0,0" Foreground="White"/>
-                <ComboBox x:Name="uiSelectUser" SelectedIndex="0" ItemsSource="{Binding Users}" DisplayMemberPath="Username" Margin="5" HorizontalAlignment="Right" SelectionChanged="Users_SelectionChanged"/>
+                <ComboBox x:Name="uiSelectUser" ItemsSource="{Binding Users}" DisplayMemberPath="Username" Margin="5" HorizontalAlignment="Right" SelectionChanged="Users_SelectionChanged"/>
             </Grid>
         </Border>
         <Grid  Grid.Row="1">

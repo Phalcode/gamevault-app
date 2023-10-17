@@ -348,13 +348,28 @@
                                     </StackPanel.ToolTip>
                                     <TextBlock Text="LAST PLAYED" FontWeight="Bold" FontSize="10"/>
                                     <TextBlock FontSize="8" HorizontalAlignment="Center">
-                                        <TextBlock.Text>
-                                            <MultiBinding StringFormat="{}{0}.{1}.{2}">
-                                                <Binding Path="Progress.LastPlayedAt.Day"/>
-                                                <Binding Path="Progress.LastPlayedAt.Month"/>
-                                                <Binding Path="Progress.LastPlayedAt.Year"/>
-                                            </MultiBinding>
-                                        </TextBlock.Text>
+                                        <TextBlock.Style>
+                                            <Style TargetType="{x:Type TextBlock}">
+                                                <Style.Setters>
+                                                    <Setter Property="Text">
+                                                        <Setter.Value>
+                                                            <MultiBinding StringFormat="{}{0}.{1}.{2}">
+                                                                <Binding Path="Progress.LastPlayedAt.Day"/>
+                                                                <Binding Path="Progress.LastPlayedAt.Month"/>
+                                                                <Binding Path="Progress.LastPlayedAt.Year"/>
+                                                            </MultiBinding>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style.Setters>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Path=Progress.LastPlayedAt}" Value="{x:Null}">
+                                                        <DataTrigger.Setters>
+                                                            <Setter Property="Text" Value="never"/>
+                                                        </DataTrigger.Setters>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
                                     </TextBlock>
                                 </StackPanel>
                                 <StackPanel HorizontalAlignment="Right">

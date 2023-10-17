@@ -5,6 +5,7 @@ using ImageMagick.Formats;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -111,7 +112,12 @@ namespace gamevault.UserControls
                 ViewModel.DownloadFailedVisibility = System.Windows.Visibility.Hidden;
 
                 if (!Directory.Exists(m_DownloadPath)) { Directory.CreateDirectory(m_DownloadPath); }
-                client = new HttpClientDownloadWithProgress($"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/{ViewModel.Game.ID}/download", m_DownloadPath, Path.GetFileName(ViewModel.Game.FilePath));
+                KeyValuePair<string, string>? header = null;
+                if (SettingsViewModel.Instance.DownloadLimit > 0)
+                {
+                    header = new KeyValuePair<string, string>("X-Download-Speed-Limit", SettingsViewModel.Instance.DownloadLimit.ToString());
+                }
+                client = new HttpClientDownloadWithProgress($"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/{ViewModel.Game.ID}/download", m_DownloadPath, Path.GetFileName(ViewModel.Game.FilePath), header);
                 client.ProgressChanged += DownloadProgress;
                 startTime = DateTime.Now;
 
@@ -223,6 +229,11 @@ namespace gamevault.UserControls
                         Directory.Delete(m_DownloadPath, true);
 
                     DownloadsViewModel.Instance.DownloadedGames.Remove(this);
+
+                    if (Directory.Exists(ViewModel.InstallPath) && !Directory.EnumerateFileSystemEntries(ViewModel.InstallPath).Any())
+                    {
+                        Directory.Delete(ViewModel.InstallPath);
+                    }
                 }
                 catch
                 {
@@ -254,6 +265,12 @@ namespace gamevault.UserControls
         }
         private async Task Extract()
         {
+            if (!Directory.Exists(m_DownloadPath))
+            {
+                ViewModel.State = "Download path not found";
+                MainWindowViewModel.Instance.AppBarText = "Please report this issue on our Discord server or create a GitHub issue.";
+                return;
+            }
             DirectoryInfo dirInf = new DirectoryInfo(m_DownloadPath);
             FileInfo[] files = dirInf.GetFiles().Where(f => ViewModel.SupportedArchives.Contains(f.Extension.ToLower())).ToArray();
             if (files.Length <= 0)
@@ -339,13 +356,16 @@ namespace gamevault.UserControls
         {
             if (Directory.Exists($"{m_DownloadPath}\\Extract"))
             {
-                string[] allExecutables = Directory.GetFiles($"{m_DownloadPath}\\Extract", "*.EXE", SearchOption.AllDirectories);
-                for (int count = 0; count < allExecutables.Length; count++)
+                List<string> allExecutables = new List<string>();
+                foreach (string fileType in Globals.SupportedExecutables)
                 {
-                    allExecutables[count] = Path.GetFileName(allExecutables[count]);
+                    foreach (string entry in Directory.GetFiles(m_DownloadPath, $"*.{fileType}", SearchOption.AllDirectories))
+                    {
+                        allExecutables.Add(Path.GetFileName(entry));
+                    }
                 }
                 uiCbSetupExecutable.ItemsSource = allExecutables;
-                if (allExecutables.Length == 1)
+                if (allExecutables.Count == 1)
                 {
                     uiCbSetupExecutable.SelectedIndex = 0;
                 }
@@ -368,7 +388,12 @@ namespace gamevault.UserControls
                 {
                     try
                     {
-                        if (Directory.Exists($"{ViewModel.InstallPath}\\Files"))
+                        if (!Directory.Exists(ViewModel.InstallPath))
+                        {
+                            Directory.CreateDirectory(ViewModel.InstallPath);
+                            MainWindowViewModel.Instance.Installs.AddSystemFileWatcher(ViewModel.InstallPath);
+                        }
+                        else if (Directory.Exists($"{ViewModel.InstallPath}\\Files"))
                         {
                             Directory.Delete($"{ViewModel.InstallPath}\\Files", true);
                         }
@@ -445,6 +470,7 @@ namespace gamevault.UserControls
             try
             {
                 Clipboard.SetText(ViewModel.InstallPath);
+                MainWindowViewModel.Instance.AppBarText = "Copied Installation Directory to Clipboard";
             }
             catch { }
         }
