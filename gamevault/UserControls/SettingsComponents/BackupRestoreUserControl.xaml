@@ -6,7 +6,7 @@
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:local="clr-namespace:gamevault.UserControls.SettingsComponents"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
     <Grid>
         <TextBlock Text="x" FontWeight="Bold" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,-2,5,0" FontSize="15" Panel.ZIndex="1" MouseLeftButtonUp="BackupRestorePopup_Close" Cursor="Hand"/>
         <Border Background="{StaticResource DarkBackground2}" Padding="10" BorderBrush="White" BorderThickness="2" CornerRadius="10">
@@ -17,7 +17,9 @@
                         <TextBlock Text="Select a directory in which the backup file should be saved." FontSize="15" TextWrapping="Wrap"/>
                         <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                             <Button Content="Select Directory" Click="ChooseBackupDirectory_Click"/>
-                            <TextBlock x:Name="uiBackupDirectory" FontSize="15" Margin="10,1,0,0" FontWeight="Bold"/>
+                            <ScrollViewer x:Name="uiBackupDirectoryScrollViewer" Margin="10,3,0,0" Height="20" Width="380" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden">
+                                <TextBlock x:Name="uiBackupDirectory" FontSize="12"  FontWeight="Bold"/>
+                            </ScrollViewer>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                             <PasswordBox x:Name="uiBackupDatabasePassword" mah:ControlsHelper.CornerRadius="2" mah:PasswordBoxHelper.CapsLockWarningToolTip="CAPSLOCK" Width="347" PasswordChanged="Backup_PasswordChanged"/>
@@ -28,9 +30,9 @@
                 </TabItem>
                 <TabItem Header="Restore">
                     <StackPanel>
-                        <TextBlock Text="Restoring your database from a file will completely replace your existing database. Please proceed with caution." FontSize="15" TextWrapping="Wrap"/>
-                        <TextBlock Text="Select the Database File to upload." FontSize="15" TextWrapping="Wrap" Margin="0,0,0,20"/>
-                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <TextBlock Text="Restoring your database from a file will completely replace your existing database. It is strongly discouraged to restore a database from another version and it is not possible to restore a database from another DBMS (SQLITE x POSTGRESQL)" FontSize="13" TextWrapping="Wrap"/>
+                        <TextBlock Text="Select the Database File to upload." FontSize="13" TextWrapping="Wrap" Margin="0,0,0,20"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,0.7,0,0">
                             <Button Content="Select Database File" Click="ChooseRestoreFile_Click"/>
                             <TextBlock x:Name="uiRestoreFile" FontSize="12" Margin="10,3,0,0" FontWeight="Bold"/>
                         </StackPanel>

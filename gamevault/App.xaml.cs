@@ -34,16 +34,7 @@ namespace gamevault
         private async void Application_Startup(object sender, StartupEventArgs e)
         {
 
-            Application.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(AppDispatcherUnhandledException);
-
-            try
-            {
-                NewNameMigrationHelper.MigrateIfNeeded();
-            }
-            catch (Exception ex)
-            {
-                LogUnhandledException(ex);
-            }
+            Application.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(AppDispatcherUnhandledException);           
 
 #if DEBUG
             AppFilePath.InitDebugPaths();

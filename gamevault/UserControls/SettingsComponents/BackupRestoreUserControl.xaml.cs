@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 
@@ -20,8 +21,16 @@ namespace gamevault.UserControls.SettingsComponents
         public BackupRestoreUserControl()
         {
             InitializeComponent();
-        }
 
+        }
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                (uiBackupDirectoryScrollViewer.Template.FindName("PART_HorizontalScrollBar", uiBackupDirectoryScrollViewer) as ScrollBar).Height = 7;
+            }
+            catch { }
+        }
         private void BackupRestorePopup_Close(object sender, MouseButtonEventArgs e)
         {
             var parent = this.Parent as Panel;
@@ -80,7 +89,7 @@ namespace gamevault.UserControls.SettingsComponents
             }
             catch (Exception ex)
             {
-
+                MainWindowViewModel.Instance.AppBarText = $"Error: {ex.Message}";
             }
             uiBtnStartBackup.IsEnabled = true;
             this.IsEnabled = true;
@@ -135,7 +144,7 @@ namespace gamevault.UserControls.SettingsComponents
             }
             catch (Exception ex)
             {
-
+                MainWindowViewModel.Instance.AppBarText = $"Error: {ex.Message}";
             }
             uiBtnStartRestore.IsEnabled = true;
             this.IsEnabled = true;

@@ -470,6 +470,7 @@ namespace gamevault.UserControls
             try
             {
                 Clipboard.SetText(ViewModel.InstallPath);
+                MainWindowViewModel.Instance.AppBarText = "Copied Installation Directory to Clipboard";
             }
             catch { }
         }
