@@ -16,7 +16,6 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Text.Json;
-using IWshRuntimeLibrary;
 using File = System.IO.File;
 
 namespace gamevault.UserControls
@@ -223,16 +222,16 @@ namespace gamevault.UserControls
                 try
                 {
                     string desktopDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-                    string shortcutPath = desktopDir + @"\\" + Path.GetFileNameWithoutExtension(m_SavedExecutable) + ".lnk";
-                    if (Directory.Exists(desktopDir) && !File.Exists(shortcutPath))
+                    string shortcutPath = desktopDir + @"\\" + Path.GetFileNameWithoutExtension(m_SavedExecutable) + ".url";
+
+                    using (StreamWriter writer = new StreamWriter(shortcutPath))
                     {
-                        WshShell shell = new WshShell();
-                        IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutPath);
-                        //shortcut.Description = "New shortcut for a Notepad";
-                        //shortcut.Hotkey = "Ctrl+Shift+N";
-                        shortcut.TargetPath = m_SavedExecutable;
-                        shortcut.WorkingDirectory = Path.GetDirectoryName(m_SavedExecutable);
-                        shortcut.Save();
+                        writer.Write("[InternetShortcut]\r\n");
+                        writer.Write("URL=file:///" + m_SavedExecutable.Replace('\\', '/') + "\r\n");
+                        writer.Write("IconIndex=0\r\n");
+                        writer.Write("IconFile=" + m_SavedExecutable.Replace('\\', '/') + "\r\n");
+                        writer.WriteLine("WorkingDirectory=" + Path.GetDirectoryName(m_SavedExecutable).Replace('\\', '/'));
+                        writer.Flush();
                     }
                 }
                 catch { }
