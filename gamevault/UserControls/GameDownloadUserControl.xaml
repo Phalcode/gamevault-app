@@ -89,7 +89,7 @@
 
                     <TextBlock FontSize="4" TextWrapping="Wrap" Margin="0,15,0,0" Text="1. Pick the correct installer from the dropdown menu below."/>
                     <Viewbox Height="8" Margin="0,22,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
-                        <ComboBox x:Name="uiCbSetupExecutable"/>
+                        <ComboBox x:Name="uiCbSetupExecutable" DisplayMemberPath="Key"/>
                     </Viewbox>
                     <TextBlock Text="2. Hit the 'Install' button to launch the games installer." Margin="0,32,0,0" FontSize="4"/>
                     <TextBlock Text="3. Go through the game's setup process." Margin="0,37,0,0" FontSize="4" />

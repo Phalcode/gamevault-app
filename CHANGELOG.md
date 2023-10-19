@@ -1,5 +1,9 @@
 # GameVault App Changelog
 
+## 1.7.1
+### Changes
+- Bug fix: Error when selecting script as installer in the Download Tab
+
 ## 1.7.0
 ### Changes
 - Added support for more executable files in the download tab

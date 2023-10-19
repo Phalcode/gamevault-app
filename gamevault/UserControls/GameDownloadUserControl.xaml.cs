@@ -356,12 +356,12 @@ namespace gamevault.UserControls
         {
             if (Directory.Exists($"{m_DownloadPath}\\Extract"))
             {
-                List<string> allExecutables = new List<string>();
+                Dictionary<string, string> allExecutables = new Dictionary<string, string>();
                 foreach (string fileType in Globals.SupportedExecutables)
                 {
                     foreach (string entry in Directory.GetFiles(m_DownloadPath, $"*.{fileType}", SearchOption.AllDirectories))
                     {
-                        allExecutables.Add(Path.GetFileName(entry));
+                        allExecutables.Add(Path.GetFileName(entry), entry);
                     }
                 }
                 uiCbSetupExecutable.ItemsSource = allExecutables;
@@ -421,16 +421,7 @@ namespace gamevault.UserControls
                 if (!Directory.Exists($"{m_DownloadPath}\\Extract"))
                     return;
                 uiProgressRingInstall.IsActive = true;
-                string[] allExecutables = Directory.GetFiles($"{m_DownloadPath}\\Extract", "*.EXE", SearchOption.AllDirectories);
-                for (int count = 0; count < allExecutables.Length; count++)
-                {
-                    if (Path.GetFileName(allExecutables[count]) == uiCbSetupExecutable.SelectedValue.ToString())
-                    {
-                        setupEexecutable = allExecutables[count];
-                        break;
-                    }
-                }
-
+                setupEexecutable = ((KeyValuePair<string, string>)uiCbSetupExecutable.SelectedValue).Value;
                 if (File.Exists(setupEexecutable))
                 {
                     Process setupProcess = null;
@@ -452,13 +443,13 @@ namespace gamevault.UserControls
                     if (setupProcess != null)
                     {
                         await setupProcess.WaitForExitAsync();
-                        ((FrameworkElement)sender).IsEnabled = true;
                     }
                 }
                 else
                 {
                     MainWindowViewModel.Instance.AppBarText = $"Could not find executable '{setupEexecutable}'";
                 }
+                 ((FrameworkElement)sender).IsEnabled = true;
             }
             uiInstallOptions.Visibility = System.Windows.Visibility.Collapsed;
             uiProgressRingInstall.IsActive = false;
