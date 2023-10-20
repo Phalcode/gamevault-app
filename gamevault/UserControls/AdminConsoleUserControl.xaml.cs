@@ -7,8 +7,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -41,6 +43,7 @@ namespace gamevault.UserControls
             if (this.Visibility == Visibility.Visible)
             {
                 await InitUserList();
+                ViewModel.ServerVersionInfo = await GetServerVersionInfo();
             }
         }
         public async Task InitUserList()
@@ -138,7 +141,7 @@ namespace gamevault.UserControls
             uiUserEditPopup.Children.Add(obj);
         }
         private void BackupRestore_Click(object sender, RoutedEventArgs e)
-        {           
+        {
             uiUserEditPopup.Visibility = Visibility.Visible;
             var obj = new BackupRestoreUserControl();
             //obj.UserSaved += UserSaved;
@@ -213,6 +216,39 @@ namespace gamevault.UserControls
         private async void Reload_Click(object sender, MouseButtonEventArgs e)
         {
             await InitUserList();
+        }
+        private async Task<KeyValuePair<string, string>> GetServerVersionInfo()
+        {
+            try
+            {
+                using (HttpClient httpClient = new HttpClient())
+                {
+
+                    httpClient.DefaultRequestHeaders.Add("User-Agent", "Other");
+                    var gitResponse = await httpClient.GetStringAsync("https://api.github.com/repos/Phalcode/gamevault-backend/releases");
+                    dynamic gitObj = JsonNode.Parse(gitResponse);
+                    string newestServerVersion = (string)gitObj[0]["tag_name"];
+                    string serverResonse = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/health/admin");
+                    string currentServerVersion = JsonSerializer.Deserialize<ServerInfo>(serverResonse).Version;
+                    if (Convert.ToInt32(newestServerVersion.Replace(".", "")) > Convert.ToInt32(currentServerVersion.Replace(".", "")))
+                    {
+                        return new KeyValuePair<string, string>($"v{currentServerVersion}", (string)gitObj[0]["html_url"]);
+                    }
+                    return new KeyValuePair<string, string>($"v{currentServerVersion}", "");
+                }
+            }
+            catch
+            {
+                return new KeyValuePair<string, string>("", "");
+            }
+        }
+
+        private void ServerUpdate_Navigate(object sender, RequestNavigateEventArgs e)
+        {
+            string url = e.Uri.OriginalString;
+            url = url.Replace("&", "^&");
+            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+            e.Handled = true;
         }
     }
 }

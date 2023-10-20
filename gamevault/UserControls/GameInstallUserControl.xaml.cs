@@ -17,6 +17,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Text.Json;
 using File = System.IO.File;
+using System.Configuration;
 
 namespace gamevault.UserControls
 {
@@ -55,6 +56,11 @@ namespace gamevault.UserControls
         }
         private void FindGameExecutables(string directory, bool checkForSavedExecutable)
         {
+            string lastSelected = "";
+            if (uiCbExecutables.SelectedItem != null)
+            {
+                lastSelected = ((KeyValuePair<string, string>)uiCbExecutables.SelectedItem).Key;
+            }
             ViewModel.Executables.Clear();
             if (true == checkForSavedExecutable)
             {
@@ -84,6 +90,14 @@ namespace gamevault.UserControls
                 {
                     checkForSavedExecutable = false;
                     uiCbExecutables.SelectedItem = currentItem;
+                }
+                else if(lastSelected != string.Empty)
+                {
+                    var result = ViewModel.Executables.Where(e => e.Key == lastSelected).FirstOrDefault();                  
+                    if (result.Key != null)
+                    {
+                        uiCbExecutables.SelectedItem = result;
+                    }
                 }
             }
         }

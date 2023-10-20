@@ -3,10 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:conv="clr-namespace:gamevault.Converter"
              xmlns:local="clr-namespace:gamevault.UserControls"
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
+    <UserControl.Resources>
+        <conv:InverseEmptyStringConverter x:Key="InvertStringConv"/>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
@@ -15,6 +19,26 @@
         <Border Background="{StaticResource DarkBackground2}" Grid.Row="0">
             <Grid>
                 <TextBlock Text="Admin Console" FontSize="35" Margin="20,0,0,0" Foreground="White"/>
+                <StackPanel Orientation="Horizontal" Margin="270,0,0,0" HorizontalAlignment="Left">
+                    <TextBlock Text="{Binding Path=ServerVersionInfo.Key}" FontSize="20" VerticalAlignment="Center"/>
+                    <TextBlock VerticalAlignment="Center" FontSize="20" Margin="5,0,0,0">
+                        <TextBlock.Style>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Visibility" Value="Hidden"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Path=ServerVersionInfo.Value,Converter={StaticResource InvertStringConv}}" Value="False">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                        <Hyperlink TextDecorations="None" Foreground="Red" NavigateUri="{Binding Path=ServerVersionInfo.Value}" RequestNavigate="ServerUpdate_Navigate">
+                            <Hyperlink.Inlines>
+                                <Run Text="(Update Available)"/>
+                            </Hyperlink.Inlines>
+                        </Hyperlink>
+                    </TextBlock>
+                </StackPanel>
                 <Button Content="Backup/Restore" HorizontalAlignment="Right" Margin="10,10,150,10" Click="BackupRestore_Click"/>
                 <Button Content="Reindex Games" HorizontalAlignment="Right" Margin="10,10,46,10" Click="Reindex_Click"/>
                 <TextBlock Text="↻" Cursor="Hand" ToolTip="Refresh admin console" HorizontalAlignment="Right" Margin="0,2,10,0" FontSize="30" MouseLeftButtonUp="Reload_Click"/>
