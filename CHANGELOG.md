@@ -2,7 +2,9 @@
 
 ## 1.7.1
 ### Changes
+- Current server version is now displayed in the Admin Console. Additionally a message is displayed when the server is outdated
 - Bug fix: Error when selecting script as installer in the Download Tab
+- Bug fix: Current selected executable turned Blank after open the executable dropdown in the Installation Tab
 
 ## 1.7.0
 ### Changes
