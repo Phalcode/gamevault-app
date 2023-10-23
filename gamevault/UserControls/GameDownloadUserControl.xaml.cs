@@ -361,7 +361,15 @@ namespace gamevault.UserControls
                 {
                     foreach (string entry in Directory.GetFiles(m_DownloadPath, $"*.{fileType}", SearchOption.AllDirectories))
                     {
-                        allExecutables.Add(Path.GetFileName(entry), entry);
+                        string keyToAdd = Path.GetFileName(entry);
+                        if (!allExecutables.ContainsKey(keyToAdd))
+                        {
+                            allExecutables.Add(keyToAdd, entry);
+                        }
+                        else
+                        {
+                            allExecutables.Add(entry.Replace($"{m_DownloadPath}\\Extract", ""), entry); ;
+                        }
                     }
                 }
                 uiCbSetupExecutable.ItemsSource = allExecutables;

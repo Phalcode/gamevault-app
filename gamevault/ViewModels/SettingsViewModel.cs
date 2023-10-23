@@ -181,7 +181,7 @@ namespace gamevault.ViewModels
         {
             get
             {
-                return "1.7.1";
+                return "1.7.2";
             }
         }
 

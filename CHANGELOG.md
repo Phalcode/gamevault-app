@@ -1,5 +1,9 @@
 # GameVault App Changelog
 
+## 1.7.2
+### Changes
+- Bug fix: The installer executable selection list gave an error if there was an executable file with the same name in one of the subfolders
+
 ## 1.7.1
 ### Changes
 - Current server version is now displayed in the Admin Console. Additionally a message is displayed when the server is outdated
