@@ -52,7 +52,7 @@ namespace gamevault.Helper
                     }
                 }
                 List<int> gamesToCountUp = new List<int>();
-                var processes = Process.GetProcesses().Where(x => x.MainWindowTitle != string.Empty).ToArray();
+                var processes = Process.GetProcesses().Where(x => x.MainWindowHandle != IntPtr.Zero).ToArray();
                 for (int x = 0; x < processes.Length; x++)
                 {
 
