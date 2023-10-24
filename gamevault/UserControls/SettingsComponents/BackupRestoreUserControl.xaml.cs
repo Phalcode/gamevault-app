@@ -70,7 +70,7 @@ namespace gamevault.UserControls.SettingsComponents
             this.IsEnabled = false;
             try
             {
-                HttpClientDownloadWithProgress httpClientDownloadWithProgress = new HttpClientDownloadWithProgress(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/database/backup",
+                HttpClientDownloadWithProgress httpClientDownloadWithProgress = new HttpClientDownloadWithProgress(@$"{SettingsViewModel.Instance.ServerUrl}/api/admin/database/backup",
                     uiBackupDirectory.Text, $"DB_Backup_{DateTime.Now.ToString()}.db", new KeyValuePair<string, string>("X-Database-Password", uiBackupDatabasePassword.Password));
 
                 await httpClientDownloadWithProgress.StartDownload();
@@ -128,7 +128,7 @@ namespace gamevault.UserControls.SettingsComponents
             this.IsEnabled = false;
             try
             {
-                await WebHelper.UploadFileAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/database/restore", File.OpenRead(uiRestoreFile.Tag.ToString()), uiRestoreFile.Text, new KeyValuePair<string, string>("X-Database-Password", uiRestoreDatabasePassword.Password));
+                await WebHelper.UploadFileAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/admin/database/restore", File.OpenRead(uiRestoreFile.Tag.ToString()), uiRestoreFile.Text, new KeyValuePair<string, string>("X-Database-Password", uiRestoreDatabasePassword.Password));
                 MainWindowViewModel.Instance.AppBarText = "Successfully uploaded database file";
             }
             catch (HttpRequestException httpEx)

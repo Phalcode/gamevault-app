@@ -44,7 +44,7 @@ namespace gamevault.UserControls
         {
             ViewModel.Users = await Task<User[]>.Run(() =>
             {
-                string userList = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/users");
+                string userList = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/users");
                 var users = JsonSerializer.Deserialize<User[]>(userList);
                 users = BringCurrentUserToTop(users);
                 return users;
@@ -119,7 +119,7 @@ namespace gamevault.UserControls
                 }
                 ViewModel.CurrentShownUser = await Task<User>.Run(() =>
                 {
-                    string currentShownUser = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/users/{selectedUserId}");
+                    string currentShownUser = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/{selectedUserId}");
                     return JsonSerializer.Deserialize<User>(currentShownUser);
                 });
                 if (uiSortBy.SelectedIndex == 2)
@@ -198,7 +198,7 @@ namespace gamevault.UserControls
                 int currentUserId = ViewModel.CurrentShownUser.ID;
                 ViewModel.CurrentShownUser = await Task<User>.Run(() =>
                 {
-                    string currentShownUser = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/users/{currentUserId}");
+                    string currentShownUser = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/{currentUserId}");
                     return JsonSerializer.Deserialize<User>(currentShownUser);
                 });
             }
@@ -236,10 +236,10 @@ namespace gamevault.UserControls
             this.IsEnabled = false;
             User selectedUser = (User)((Button)sender).DataContext;
             bool error = false;
-            string url = @$"{SettingsViewModel.Instance.ServerUrl}/api/v1/users/{selectedUser.ID}";
+            string url = @$"{SettingsViewModel.Instance.ServerUrl}/api/users/{selectedUser.ID}";
             if (LoginManager.Instance.GetCurrentUser().ID == selectedUser.ID)
             {
-                url = @$"{SettingsViewModel.Instance.ServerUrl}/api/v1/users/me";
+                url = @$"{SettingsViewModel.Instance.ServerUrl}/api/users/me";
             }
             await Task.Run(() =>
             {
@@ -276,7 +276,7 @@ namespace gamevault.UserControls
                     "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
                 if (result == MessageDialogResult.Affirmative)
                 {
-                    WebHelper.Delete(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/progresses/{dataContext.ID}");
+                    WebHelper.Delete(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/{dataContext.ID}");
                     //ToDo: Dirty but i dont want to use ObservableCollection only for this one action
                     List<Progress> copy = ViewModel.UserProgresses;
                     copy.Remove(dataContext);

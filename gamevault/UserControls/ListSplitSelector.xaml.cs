@@ -59,11 +59,11 @@ namespace gamevault.UserControls
                     string usage = Usage;
                     if (usage == "0")
                     {
-                        url = $"{SettingsViewModel.Instance.ServerUrl}/api/v1/genres";
+                        url = $"{SettingsViewModel.Instance.ServerUrl}/api/genres";
                     }
                     else if (usage == "1")
                     {
-                        url = $"{SettingsViewModel.Instance.ServerUrl}/api/v1/tags?limit=100";
+                        url = $"{SettingsViewModel.Instance.ServerUrl}/api/tags?limit=100";
                     }
                     await Task.Run(() =>
                     {
@@ -115,7 +115,7 @@ namespace gamevault.UserControls
         private async void Timer_Elapsed(object sender, EventArgs e)
         {
             string url = string.Empty;
-            url = $"{SettingsViewModel.Instance.ServerUrl}/api/v1/tags?search={SearchText}&limit=100";
+            url = $"{SettingsViewModel.Instance.ServerUrl}/api/tags?search={SearchText}&limit=100";
             await Task.Run(() =>
             {
                 string result = WebHelper.GetRequest(url);

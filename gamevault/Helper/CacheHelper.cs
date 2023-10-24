@@ -54,7 +54,7 @@ namespace gamevault.Helper
                         {
                             File.Delete(files[0]);
                         }
-                        await TaskQueue.Instance.Enqueue(() => WebHelper.DownloadImageFromUrlAsync($"{SettingsViewModel.Instance.ServerUrl}/api/v1/images/{imageId}", cacheFile), imageId);
+                        await TaskQueue.Instance.Enqueue(() => WebHelper.DownloadImageFromUrlAsync($"{SettingsViewModel.Instance.ServerUrl}/api/images/{imageId}", cacheFile), imageId);
                         return BitmapHelper.GetBitmapImage(cacheFile);
                     }
                     else

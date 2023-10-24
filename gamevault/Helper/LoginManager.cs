@@ -66,7 +66,7 @@ namespace gamevault.Helper
                 try
                 {
                     WebHelper.SetCredentials(Preferences.Get(AppConfigKey.Username, AppFilePath.UserFile), Preferences.Get(AppConfigKey.Password, AppFilePath.UserFile, true));
-                    string result = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/users/me");
+                    string result = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me");
                     return JsonSerializer.Deserialize<User>(result);
                 }
                 catch (WebException ex)
@@ -92,7 +92,7 @@ namespace gamevault.Helper
                 try
                 {
                     WebHelper.OverrideCredentials(username, password);
-                    string result = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/users/me");
+                    string result = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me");
                     return JsonSerializer.Deserialize<User>(result);
                 }
                 catch (WebException ex)

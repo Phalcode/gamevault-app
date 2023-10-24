@@ -93,7 +93,7 @@ namespace gamevault.Helper
                     {
                         foreach (int gameid in gamesToCountUp)
                         {
-                            WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{gameid}/increment", string.Empty);
+                            WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{gameid}/increment", string.Empty);
                         }
                     }
                     catch (Exception ex)
@@ -129,7 +129,7 @@ namespace gamevault.Helper
                          {
                              string value = Preferences.Get(key, AppFilePath.OfflineProgress, true);
                              int.Parse(value);
-                             WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{key}/increment/{value}", string.Empty);
+                             WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{key}/increment/{value}", string.Empty);
                              Preferences.DeleteKey(key, AppFilePath.OfflineProgress);
                          }
                          catch { }
@@ -176,7 +176,7 @@ namespace gamevault.Helper
                 {
                     if (!File.Exists(AppFilePath.IgnoreList))
                     {
-                        string response = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/progresses/ignorefile");
+                        string response = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/ignorefile");
                         m_IgnoreList = JsonSerializer.Deserialize<string[]>(response);
                         Preferences.Set("IL", response.Replace("\n", ""), AppFilePath.IgnoreList);
                     }

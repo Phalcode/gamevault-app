@@ -58,12 +58,12 @@ namespace gamevault.UserControls
                     {
                         ViewModel.Game = await Task<Game>.Run(() =>
                         {
-                            string gameList = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/{m_GameId}");
+                            string gameList = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{m_GameId}");
                             return System.Text.Json.JsonSerializer.Deserialize<Game>(gameList);
                         });
                         ViewModel.Progress = await Task<Progress>.Run(() =>
                         {
-                            string result = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{m_GameId}");
+                            string result = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{m_GameId}");
                             return System.Text.Json.JsonSerializer.Deserialize<Progress>(result);
                         });
                     }
@@ -133,7 +133,7 @@ namespace gamevault.UserControls
                 {
                     try
                     {
-                        WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{m_GameId}", System.Text.Json.JsonSerializer.Serialize(new Progress() { State = ViewModel.Progress.State }));
+                        WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{m_GameId}", System.Text.Json.JsonSerializer.Serialize(new Progress() { State = ViewModel.Progress.State }));
                     }
                     catch (WebException webEx)
                     {
@@ -170,7 +170,7 @@ namespace gamevault.UserControls
             {
                 try
                 {
-                    string currentShownUser = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/rawg/search?query={ViewModel.RawgSearchQuery}");
+                    string currentShownUser = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/rawg/search?query={ViewModel.RawgSearchQuery}");
                     return JsonSerializer.Deserialize<RawgGame[]>(currentShownUser);
                 }
                 catch (Exception ex)
@@ -189,7 +189,7 @@ namespace gamevault.UserControls
             {
                 try
                 {
-                    WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/{m_GameId}", "{\n\"rawg_id\": " + rawgId + "\n}");
+                    WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{m_GameId}", "{\n\"rawg_id\": " + rawgId + "\n}");
                     MainWindowViewModel.Instance.AppBarText = "Successfully remapped game";
                 }
                 catch (WebException ex)
@@ -245,7 +245,7 @@ namespace gamevault.UserControls
             {
                 try
                 {
-                    WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/rawg/{ViewModel.Game.ID}/recache", string.Empty);
+                    WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/rawg/{ViewModel.Game.ID}/recache", string.Empty);
                     MainWindowViewModel.Instance.AppBarText = $"Sucessfully re-cached {ViewModel.Game.Title}";
                 }
                 catch (WebException ex)
@@ -294,7 +294,7 @@ namespace gamevault.UserControls
                     updateObject.box_image_url = ViewModel.UpdatedBoxImageUrl;
                     updateObject.background_image_id = ViewModel.UpdatedBackgroundImageId;
                     updateObject.background_image_url = ViewModel.UpdatedBackgroundImageUrl;
-                    WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/{m_GameId}", JsonSerializer.Serialize(updateObject));
+                    WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{m_GameId}", JsonSerializer.Serialize(updateObject));
                     MainWindowViewModel.Instance.AppBarText = "Successfully updated image";
                 }
                 catch (WebException ex)

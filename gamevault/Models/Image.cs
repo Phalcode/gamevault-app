@@ -22,7 +22,7 @@ namespace gamevault.Models
             {
                 //if (ID != null)
                 //{
-                //    return $"{SettingsViewModel.Instance.ServerUrl}/api/v1/images/{ID}";
+                //    return $"{SettingsViewModel.Instance.ServerUrl}/api/images/{ID}";
                 //}
                 //else
                 //{
