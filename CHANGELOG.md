@@ -1,6 +1,6 @@
 # GameVault App Changelog
 
-## 1.8.0
+## 1.7.3
 ### Changes
 - Switched to non-deprecated APIs
 - Bug fix: Rare case in the time tracker where a game was not recognized as a game
