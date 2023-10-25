@@ -52,7 +52,7 @@ namespace gamevault.UserControls
             {
                 ViewModel.Users = await Task<User[]>.Run(() =>
                 {
-                    string userList = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/users/all");
+                    string userList = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/all");
                     return JsonSerializer.Deserialize<User[]>(userList);
                 });
             }
@@ -72,7 +72,7 @@ namespace gamevault.UserControls
                 {
                     return;
                 }
-                WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/users/{selectedUser.ID}", JsonSerializer.Serialize(new User() { Role = selectedUser.Role }));
+                WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/{selectedUser.ID}", JsonSerializer.Serialize(new User() { Role = selectedUser.Role }));
                 MainWindowViewModel.Instance.AppBarText = $"Successfully updated permission role of user '{selectedUser.Username}' to '{selectedUser.Role}'";
             }
             catch (WebException ex)
@@ -87,7 +87,7 @@ namespace gamevault.UserControls
             try
             {
                 User selectedUser = (User)((FrameworkElement)sender).DataContext;
-                WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/users/{selectedUser.ID}", JsonSerializer.Serialize(new User() { Activated = selectedUser.Activated }));
+                WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/{selectedUser.ID}", JsonSerializer.Serialize(new User() { Activated = selectedUser.Activated }));
                 string state = selectedUser.Activated == true ? "activated" : "deactivated";
                 MainWindowViewModel.Instance.AppBarText = $"Successfully {state} user '{selectedUser.Username}'";
             }
@@ -109,13 +109,13 @@ namespace gamevault.UserControls
                 {
                     if (selectedUser.DeletedAt == null)
                     {
-                        WebHelper.Delete(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/users/{selectedUser.ID}");
+                        WebHelper.Delete(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/{selectedUser.ID}");
                         MainWindowViewModel.Instance.AppBarText = $"Successfully deleted user '{selectedUser.Username}'";
                         await InitUserList();
                     }
                     else
                     {
-                        WebHelper.Post(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/users/{selectedUser.ID}/recover", "");
+                        WebHelper.Post(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/{selectedUser.ID}/recover", "");
                         MainWindowViewModel.Instance.AppBarText = $"Successfully recovered deleted user '{selectedUser.Username}'";
                         await InitUserList();
                     }
@@ -161,7 +161,7 @@ namespace gamevault.UserControls
             {
                 try
                 {
-                    WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/users/{selectedUser.ID}", JsonSerializer.Serialize(selectedUser));
+                    WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/{selectedUser.ID}", JsonSerializer.Serialize(selectedUser));
                     MainWindowViewModel.Instance.AppBarText = "Sucessfully saved user changes";
                 }
                 catch (WebException ex)
@@ -201,7 +201,7 @@ namespace gamevault.UserControls
             {
                 try
                 {
-                    WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/files/reindex", string.Empty);
+                    WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/files/reindex", string.Empty);
                     MainWindowViewModel.Instance.AppBarText = "Sucessfully reindexed games";
                 }
                 catch (WebException ex)
@@ -228,7 +228,7 @@ namespace gamevault.UserControls
                     var gitResponse = await httpClient.GetStringAsync("https://api.github.com/repos/Phalcode/gamevault-backend/releases");
                     dynamic gitObj = JsonNode.Parse(gitResponse);
                     string newestServerVersion = (string)gitObj[0]["tag_name"];
-                    string serverResonse = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/health/admin");
+                    string serverResonse = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/admin/health");
                     string currentServerVersion = JsonSerializer.Deserialize<ServerInfo>(serverResonse).Version;
                     if (Convert.ToInt32(newestServerVersion.Replace(".", "")) > Convert.ToInt32(currentServerVersion.Replace(".", "")))
                     {

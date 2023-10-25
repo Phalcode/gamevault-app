@@ -68,7 +68,7 @@ namespace gamevault.UserControls
             string gameSortByFilter = ViewModel.SelectedGameFilterSortBy.Value;
             string gameOrderByFilter = ViewModel.SelectedGameFilterOrderBy.Value;
             ViewModel.GameCards.Clear();
-            string filterUrl = @$"{SettingsViewModel.Instance.ServerUrl}/api/v1/games?search={ViewModel.SearchQuery}&sortBy={gameSortByFilter}:{gameOrderByFilter}&limit=80";
+            string filterUrl = @$"{SettingsViewModel.Instance.ServerUrl}/api/games?search={ViewModel.SearchQuery}&sortBy={gameSortByFilter}:{gameOrderByFilter}&limit=80";
             filterUrl = ApplyFilter(filterUrl);
 
             PaginatedData<Game>? gameResult = await GetGamesData(filterUrl);//add try catch
@@ -201,7 +201,7 @@ namespace gamevault.UserControls
             {
                 try
                 {
-                    string randomGame = WebHelper.GetRequest($"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/random");
+                    string randomGame = WebHelper.GetRequest($"{SettingsViewModel.Instance.ServerUrl}/api/games/random");
                     return JsonSerializer.Deserialize<Game>(randomGame);
                 }
                 catch (JsonException exJson)

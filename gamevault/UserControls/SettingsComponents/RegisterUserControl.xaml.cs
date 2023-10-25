@@ -67,7 +67,7 @@ namespace gamevault.UserControls.SettingsComponents
                             return;
                         }
                         string jsonObject = JsonSerializer.Serialize(SettingsViewModel.Instance.RegistrationUser);
-                        WebHelper.Post($"{SettingsViewModel.Instance.ServerUrl}/api/v1/users/register", jsonObject);
+                        WebHelper.Post($"{SettingsViewModel.Instance.ServerUrl}/api/users/register", jsonObject);
                         message = "Successfully registered";
                         SettingsViewModel.Instance.RegistrationUser = new User();
                     }

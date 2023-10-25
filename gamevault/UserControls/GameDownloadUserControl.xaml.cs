@@ -117,7 +117,7 @@ namespace gamevault.UserControls
                 {
                     header = new KeyValuePair<string, string>("X-Download-Speed-Limit", SettingsViewModel.Instance.DownloadLimit.ToString());
                 }
-                client = new HttpClientDownloadWithProgress($"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/{ViewModel.Game.ID}/download", m_DownloadPath, Path.GetFileName(ViewModel.Game.FilePath), header);
+                client = new HttpClientDownloadWithProgress($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}/download", m_DownloadPath, Path.GetFileName(ViewModel.Game.FilePath), header);
                 client.ProgressChanged += DownloadProgress;
                 startTime = DateTime.Now;
 

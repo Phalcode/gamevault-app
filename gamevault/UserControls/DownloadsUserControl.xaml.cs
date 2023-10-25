@@ -50,7 +50,7 @@ namespace gamevault.UserControls
                  {
                      if (LoginManager.Instance.IsLoggedIn())
                      {
-                         string gameList = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/games?filter.id=$in:{string.Join(',', allIds)}");
+                         string gameList = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/games?filter.id=$in:{string.Join(',', allIds)}");
                          return JsonSerializer.Deserialize<PaginatedData<Game>>(gameList)?.Data;
                      }
                      List<Game> offlineCacheGames = new List<Game>();

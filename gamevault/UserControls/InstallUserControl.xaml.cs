@@ -78,7 +78,7 @@ namespace gamevault.UserControls
                             }
                             if (LoginManager.Instance.IsLoggedIn())
                             {
-                                string gameList = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/games?filter.id=$in:{gameIds}");
+                                string gameList = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/games?filter.id=$in:{gameIds}");
                                 return JsonSerializer.Deserialize<PaginatedData<Game>>(gameList).Data;
                             }
                             else
@@ -133,7 +133,7 @@ namespace gamevault.UserControls
                             {
                                 if (!Preferences.Exists(game.ID.ToString(), AppFilePath.OfflineCache))
                                 {
-                                    string gameToSave = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/{game.ID}");
+                                    string gameToSave = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{game.ID}");
                                     await CacheHelper.CreateOfflineCacheAsync(JsonSerializer.Deserialize<Game>(gameToSave));
                                 }
                             }
@@ -175,7 +175,7 @@ namespace gamevault.UserControls
                 Game? game = null;
                 if (LoginManager.Instance.IsLoggedIn())
                 {
-                    string result = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/v1/games/{id}");
+                    string result = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{id}");
                     game = JsonSerializer.Deserialize<Game>(result);
                 }
                 else

@@ -1,5 +1,11 @@
 # GameVault App Changelog
 
+## 1.7.3
+Recommended Gamevault Server Version: `v9.0.0`
+### Changes
+- Switched to non-deprecated APIs
+- Bug fix: Rare case in the time tracker where a game was not recognized as a game
+
 ## 1.7.2
 ### Changes
 - Bug fix: The installer executable selection list gave an error if there was an executable file with the same name in one of the subfolders
