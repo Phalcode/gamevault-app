@@ -98,7 +98,7 @@ namespace gamevault.UserControls
             }
             if (true == ViewModel.IsAlreadyInstalled)
             {
-                MainWindowViewModel.Instance.SetActiveControl(MainControl.Installs);
+                //MainWindowViewModel.Instance.SetActiveControl(MainControl.Installs);
                 return;
             }
             this.Focus();//Bring back focus for the escape key

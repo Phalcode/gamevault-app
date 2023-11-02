@@ -27,12 +27,12 @@
                                 Duration="0:0:0.15"
                                 
                                 Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
-                                To="1.1"/>
+                                To="0.95"/>
                             <DoubleAnimation
                                 Duration="0:0:0.15"
                                 
                                 Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
-                                To="1.1"/>
+                                To="0.95"/>
                         </Storyboard>
                     </BeginStoryboard>
                 </Trigger.EnterActions>
@@ -245,4 +245,75 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <!--Expander Header-->
+    <Style x:Key="CustomExpanderToggleButton" BasedOn="{StaticResource MahApps.Styles.ToggleButton.ExpanderHeader.Up}" TargetType="{x:Type ToggleButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{DynamicResource MainColor}" BorderThickness="4" CornerRadius="5" Margin="-2">
+                        <Grid Margin="{TemplateBinding Padding}" Background="Transparent" SnapsToDevicePixels="False">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid Margin="1">
+                                <Path Name="Arrow" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M0 16 L16 0 L32 16 L30 16 L16 2 L2 16 Z" RenderTransformOrigin="0.5, 0.5" SnapsToDevicePixels="false" Stroke="{TemplateBinding Foreground}" StrokeThickness="2">
+                                    <Path.RenderTransform>
+                                        <ScaleTransform ScaleX="0.7" ScaleY="0.7"/>
+                                    </Path.RenderTransform>
+                                </Path>
+                            </Grid>
+                            <mah:ContentControlEx Grid.Column="1" Margin="4 0 0 0" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}" RecognizesAccessKey="False" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" ContentCharacterCasing="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(mah:ControlsHelper.ContentCharacterCasing)}" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="ToggleButton.IsChecked" Value="true">
+                            <Setter TargetName="Arrow" Property="Data" Value="M2 0 L16 14 L30 0 L32 0 L16 16 L0 0 Z" />
+                        </Trigger>
+                        <Trigger Property="UIElement.IsMouseOver" Value="true">
+                            <Setter TargetName="Arrow" Value="{DynamicResource MahApps.Brushes.Gray2}" Property="Stroke" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="true">
+                            <Setter TargetName="Arrow" Value="{DynamicResource MahApps.Brushes.ThemeForeground}" Property="Stroke" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="MahApps.Styles.Thumb.ScrollBar" TargetType="{x:Type Thumb}">
+        <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Thumb}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="FrameworkElement.OverridesDefaultStyle" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Thumb}">
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="ThumbVisual" Property="UIElement.Opacity" Value="0" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                    <Grid Name="ThumbVisual">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="MouseOver" Storyboard="{StaticResource MahApps.Storyboard.ScrollBarThumbMouseOver}" />
+                                <VisualState x:Name="Pressed" Storyboard="{StaticResource MahApps.Storyboard.ScrollBarThumbPressed}" />
+                                <VisualState x:Name="Disabled" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Border Name="Background" Background="{TemplateBinding Background}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5"/>
+                        <Border Name="MouseOverRectangle" Background="{DynamicResource MahApps.Brushes.ThemeForeground}" Opacity="0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5"/>
+                        <Border Name="PressedRectangle" Background="{DynamicResource MahApps.Brushes.ThemeForeground}" Opacity="0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
 </ResourceDictionary>

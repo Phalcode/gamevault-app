@@ -171,7 +171,7 @@ namespace gamevault.UserControls
             {
                 Directory.CreateDirectory(ViewModel.InstallPath);
             }
-            MainWindowViewModel.Instance.Installs.AddSystemFileWatcher(ViewModel.InstallPath);
+            //MainWindowViewModel.Instance.Installs.AddSystemFileWatcher(ViewModel.InstallPath);
             if (SettingsViewModel.Instance.AutoExtract)
             {
                 App.Current.Dispatcher.Invoke((Action)async delegate
@@ -399,7 +399,7 @@ namespace gamevault.UserControls
                         if (!Directory.Exists(ViewModel.InstallPath))
                         {
                             Directory.CreateDirectory(ViewModel.InstallPath);
-                            MainWindowViewModel.Instance.Installs.AddSystemFileWatcher(ViewModel.InstallPath);
+                            //MainWindowViewModel.Instance.Installs.AddSystemFileWatcher(ViewModel.InstallPath);
                         }
                         else if (Directory.Exists($"{ViewModel.InstallPath}\\Files"))
                         {

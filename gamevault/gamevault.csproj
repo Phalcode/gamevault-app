@@ -27,15 +27,17 @@
 		<None Remove="Resources\Images\glyph_community.png" />
 		<None Remove="Resources\Images\glyph_download.png" />
 		<None Remove="Resources\Images\glyph_installs.png" />
+		<None Remove="Resources\Images\glyph_installs_NoInstalls.png" />
 		<None Remove="Resources\Images\glyph_settings.png" />
 		<None Remove="Resources\Images\icon.ico" />
+		<None Remove="Resources\Images\InstallsEmptySpace.jpg" />
 		<None Remove="Resources\Images\library_dice.png" />
 		<None Remove="Resources\Images\library_NoBoxart.png" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Magick.NET-Q8-x64" Version="13.3.0" />
-		<PackageReference Include="MahApps.Metro" Version="2.4.9" />
+		<PackageReference Include="Magick.NET-Q8-x64" Version="13.4.0" />
+		<PackageReference Include="MahApps.Metro" Version="2.4.10" />
 		<PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
 		<PackageReference Include="System.Management" Version="7.0.2" />
 	</ItemGroup>
@@ -49,6 +51,7 @@
 		<Resource Include="Resources\Images\glyph_community.png" />
 		<Resource Include="Resources\Images\glyph_download.png" />
 		<Resource Include="Resources\Images\glyph_installs.png" />
+		<Resource Include="Resources\Images\glyph_installs_NoInstalls.png" />
 		<Resource Include="Resources\Images\glyph_server.png" />
 		<Resource Include="Resources\Images\glyph_settings.png" />
 		<Resource Include="Resources\Images\icon.ico" />

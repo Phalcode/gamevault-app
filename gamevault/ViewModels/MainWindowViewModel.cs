@@ -16,7 +16,7 @@ namespace gamevault.ViewModels
     {
         Library = 0,
         Downloads = 1,
-        Installs = 2,
+        NewLibrary = 2,
         Community = 3,
         Settings = 4,
         AdminConsole = 5
@@ -28,7 +28,7 @@ namespace gamevault.ViewModels
             m_Library = new LibraryUserControl();
             m_Settings = new SettingsUserControl();
             m_Downloads = new DownloadsUserControl();
-            m_Installs = new InstallUserControl();
+            m_NewLibrary = new NewLibraryUserControl();
             m_Community = new CommunityUserControl();
             m_AdminConsole = new AdminConsoleUserControl();
         }
@@ -96,7 +96,7 @@ namespace gamevault.ViewModels
 
         private SettingsUserControl m_Settings { get; set; }
         private DownloadsUserControl m_Downloads { get; set; }
-        private InstallUserControl m_Installs { get; set; }
+        private NewLibraryUserControl m_NewLibrary { get; set; }
         private CommunityUserControl m_Community { get; set; }
         private AdminConsoleUserControl m_AdminConsole { get; set; }
         #endregion
@@ -112,7 +112,7 @@ namespace gamevault.ViewModels
             set { m_ActiveControlIndex = value; OnPropertyChanged(); }
         }
         public UserControl ActiveControl
-        {          
+        {
             get { return m_ActiveControl; }
             set
             {
@@ -140,10 +140,10 @@ namespace gamevault.ViewModels
             get { return m_Downloads; }
             private set { m_Downloads = value; }
         }
-        internal InstallUserControl Installs
+        internal NewLibraryUserControl NewLibrary
         {
-            get { return m_Installs; }
-            private set { m_Installs = value; }
+            get { return m_NewLibrary; }
+            private set { m_NewLibrary = value; }
         }
         internal CommunityUserControl Community
         {

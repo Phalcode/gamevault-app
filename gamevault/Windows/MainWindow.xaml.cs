@@ -53,9 +53,9 @@ namespace gamevault.Windows
                         MainWindowViewModel.Instance.ActiveControl = MainWindowViewModel.Instance.Downloads;
                         break;
                     }
-                case MainControl.Installs:
+                case MainControl.NewLibrary:
                     {
-                        MainWindowViewModel.Instance.ActiveControl = MainWindowViewModel.Instance.Installs;
+                        MainWindowViewModel.Instance.ActiveControl = MainWindowViewModel.Instance.NewLibrary;
                         break;
                     }
                 case MainControl.Community:
@@ -95,7 +95,7 @@ namespace gamevault.Windows
             {
                 MainWindowViewModel.Instance.AppBarText = "Could not connect to server";
             }
-            await MainWindowViewModel.Instance.Installs.StartInstalledGamesTracker();
+            //await MainWindowViewModel.Instance.Installs.StartInstalledGamesTracker();
             await MainWindowViewModel.Instance.Downloads.RestoreDownloadedGames();
             MainWindowViewModel.Instance.UserIcon = LoginManager.Instance.GetCurrentUser();
         }
