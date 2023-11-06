@@ -315,5 +315,75 @@
         </Setter>
     </Style>
 
+    <Style x:Key="SearchTextBox" TargetType="{x:Type TextBox}">
+        <Setter Property="Background" Value="White" />
+        <Setter Property="BorderBrush" Value="White" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="Black" />
+        <Setter Property="CaretBrush" Value="Black" />
+        <Setter Property="FontFamily" Value="{DynamicResource MahApps.Fonts.Family.Control}" />
+        <Setter Property="Padding" Value="4" />
+        <Setter Property="TextBoxBase.SelectionBrush" Value="{DynamicResource MahApps.Brushes.Highlight}" />
+        <Setter Property="UIElement.SnapsToDevicePixels" Value="True" />
+        
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TextBox}">
+                    <Grid>
+                        <!--<AdornerDecorator Name="PART_WaitingForDataEffectAdornerDecorator" Visibility="Collapsed">
+                            <Border Name="PART_WaitingForDataEffectGrid" Background="{TemplateBinding Background}" BorderBrush="Transparent" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}" Effect="{DynamicResource MahApps.DropShadowEffect.WaitingForData}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </AdornerDecorator>-->
+                        <Border Name="Base" Background="{TemplateBinding Background}" BorderBrush="Black" BorderThickness="1" CornerRadius="5" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        <Grid Name="PART_InnerGrid" Margin="{TemplateBinding BorderThickness}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Name="TextColumn" Width="*" />
+                                <ColumnDefinition Name="ButtonColumn" Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Name="ButtonRow" Height="*" />
+                            </Grid.RowDefinitions>
+                            <ScrollViewer Name="PART_ContentHost" Grid.Row="1" Grid.Column="0" Margin="0" Padding="{TemplateBinding Padding}" VerticalAlignment="Stretch" BorderThickness="0" IsTabStop="False" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Background="{x:Null}" BorderBrush="{x:Null}"/>
+                            <TextBlock Name="PART_Message" Grid.Row="1" Grid.Column="0" Margin="4 0" Padding="{TemplateBinding Padding}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Foreground="{TemplateBinding Foreground}" Style="{DynamicResource MahApps.Styles.TextBlock.Watermark}" Text="Search..." TextAlignment="Center" TextTrimming="None" TextWrapping="NoWrap" Visibility="Collapsed"/>
+                            <Border Name="PART_ClearTextBorder" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Width="25" BorderThickness="1" CornerRadius="5" SnapsToDevicePixels="False">
+                                <Button Name="PART_ClearText" FontSize="15" Foreground="Black" Focusable="False" IsTabStop="False" Style="{DynamicResource MahApps.Styles.Button.Chromeless}">
+                                    <Path Margin="2" Stretch="Fill" Fill="Black" Data="m11.25 4.75l-6.5 6.5m0-6.5l6.5 6.5"/>
+                                </Button>
+                            </Border>
+                        </Grid>
+                        <!--<Border Name="DisabledVisualElement" Background="{DynamicResource MahApps.Brushes.Control.Disabled}" BorderBrush="{DynamicResource MahApps.Brushes.Control.Disabled}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5" IsHitTestVisible="False" Opacity="0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(mah:ControlsHelper.DisabledVisualElementVisibility), Mode=OneWay}" />-->
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger SourceName="PART_ClearText" Property="UIElement.IsMouseOver" Value="True">
+                            <Setter TargetName="PART_ClearText" Value="LightGray" Property="Background" />
+                            <Setter TargetName="PART_ClearText" Value="white" Property="Foreground" />
+                            <Setter TargetName="PART_ClearTextBorder" Value="LightGray" Property="BorderBrush" />
+                            
+                        </Trigger>
+                        <Trigger Property="UIElement.IsFocused" Value="True">
+                            <Setter TargetName="PART_Message" Property="Foreground" Value="#7F000000"/>
+                            <Setter TargetName="Base" Property="BorderBrush" Value="LightGray"/>
+                        </Trigger>
+                        <Trigger Property="UIElement.IsMouseOver" Value="True">
+                            <Setter TargetName="Base" Property="BorderBrush" Value="LightGray"/>
+                        </Trigger>
+                        <Trigger Property="Text" Value="">
+                            <Setter TargetName="PART_Message" Property="Visibility" Value="Visible"/>
+                            <!--<Setter TargetName="PART_ClearText" Property="Content">
+                                <Setter.Value>
+                                    <Path Margin="2" Stretch="Fill" Fill="{TemplateBinding Foreground}" Data="M42.5,22A12.5,12.5 0 0,1 55,34.5A12.5,12.5 0 0,1 42.5,47C40.14,47 37.92,46.34 36,45.24L26.97,54.27C25.8,55.44 23.9,55.44 22.73,54.27C21.56,53.1 21.56,51.2 22.73,50.03L31.8,40.96C30.66,39.08 30,36.86 30,34.5A12.5,12.5 0 0,1 42.5,22M42.5,26A8.5,8.5 0 0,0 34,34.5A8.5,8.5 0 0,0 42.5,43A8.5,8.5 0 0,0 51,34.5A8.5,8.5 0 0,0 42.5,26Z"/>
+                                </Setter.Value>
+                            </Setter>-->
+                        </Trigger>
+                        <Trigger SourceName="PART_ClearText" Property="IsPressed" Value="True">
+                            <Setter Property="Text" Value="" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+       
+    </Style>
+
 
 </ResourceDictionary>
