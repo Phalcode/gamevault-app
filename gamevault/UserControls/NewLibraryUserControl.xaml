@@ -46,7 +46,12 @@
                                 </TextBlock.Text>
                             </TextBlock>
                             <TextBox HorizontalAlignment="Center" Width="375" Margin="0,4,41,4" Style="{DynamicResource SearchTextBox}" TextChanged="Search_TextChanged"/>
-                            <Path Data="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z" Fill="White" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,5" Cursor="Hand"/>
+                            <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,5" Cursor="Hand" Background="#02000000" MouseLeftButtonDown="Filter_Click">
+                                <Path Data="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z" Fill="White"/>
+                                <Grid.RenderTransform>
+                                    <ScaleTransform/>
+                                </Grid.RenderTransform>
+                            </Grid>
                         </Grid>
                     </Expander.Header>
                     <Border Background="{StaticResource DarkBackground4}" CornerRadius="5" Margin="-6,5,-6,0" VerticalAlignment="Top">

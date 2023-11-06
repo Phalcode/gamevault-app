@@ -51,7 +51,7 @@ namespace gamevault.UserControls
         private async void InputTimerElapsed(object sender, EventArgs e)
         {
             inputTimer?.Stop();
-            await Search();          
+            await Search();
         }
         private async Task Search()
         {
@@ -130,6 +130,12 @@ namespace gamevault.UserControls
         private void GameCard_Clicked(object sender, MouseButtonEventArgs e)
         {
             MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl((Game)((FrameworkElement)sender).DataContext));
+        }
+
+        private void Filter_Click(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+            MainWindowViewModel.Instance.AppBarText = "Filter Opened";
         }
     }
 }

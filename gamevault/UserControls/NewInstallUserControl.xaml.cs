@@ -258,11 +258,13 @@ namespace gamevault.UserControls
 
         private void Play_Click(object sender, MouseButtonEventArgs e)
         {
+            e.Handled= true;
             MainWindowViewModel.Instance.AppBarText = "PLAY";
         }
 
         private void Settings_Click(object sender, MouseButtonEventArgs e)
         {
+            e.Handled = true;
             MainWindowViewModel.Instance.AppBarText = "Settings";
         }
         private void InitTimer()
