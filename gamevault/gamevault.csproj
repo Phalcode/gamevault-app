@@ -31,8 +31,10 @@
 		<None Remove="Resources\Images\glyph_settings.png" />
 		<None Remove="Resources\Images\icon.ico" />
 		<None Remove="Resources\Images\InstallsEmptySpace.jpg" />
+		<None Remove="Resources\Images\install_NoGameFound.png" />
 		<None Remove="Resources\Images\library_dice.png" />
 		<None Remove="Resources\Images\library_NoBoxart.png" />
+		<None Remove="Resources\Images\library_NoGameFound.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -51,12 +53,13 @@
 		<Resource Include="Resources\Images\glyph_community.png" />
 		<Resource Include="Resources\Images\glyph_download.png" />
 		<Resource Include="Resources\Images\glyph_installs.png" />
-		<Resource Include="Resources\Images\glyph_installs_NoInstalls.png" />
 		<Resource Include="Resources\Images\glyph_server.png" />
 		<Resource Include="Resources\Images\glyph_settings.png" />
 		<Resource Include="Resources\Images\icon.ico" />
+		<Resource Include="Resources\Images\install_NoGameFound.png" />
 		<Resource Include="Resources\Images\library_dice.png" />
 		<Resource Include="Resources\Images\library_NoBoxart.png" />
+		<Resource Include="Resources\Images\library_NoGameFound.png" />
 	</ItemGroup>
 
 	<ItemGroup>

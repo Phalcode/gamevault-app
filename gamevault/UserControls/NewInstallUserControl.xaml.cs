@@ -7,9 +7,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -21,18 +24,17 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace gamevault.UserControls
-{
-    /// <summary>
-    /// Interaction logic for NewInstallUserControl.xaml
-    /// </summary>
+{   
     public partial class NewInstallUserControl : UserControl
     {
+        private InputTimer inputTimer { get; set; }
         private List<FileSystemWatcher> m_FileWatcherList = new List<FileSystemWatcher>();
         private string[]? m_IgnoreList { get; set; }
         public NewInstallUserControl()
         {
             InitializeComponent();
             this.DataContext = NewInstallViewModel.Instance;
+            InitTimer();
         }
         public async Task RestoreInstalledGames()
         {
@@ -236,6 +238,38 @@ namespace gamevault.UserControls
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             await RestoreInstalledGames();
+        }
+
+        private void Search_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            inputTimer.Stop();
+            inputTimer.Data = ((TextBox)sender).Text;
+            inputTimer.Start();
+        }
+        private void InputTimerElapsed(object sender, EventArgs e)
+        {
+            inputTimer.Stop();
+            if(NewInstallViewModel.Instance.InstalledGamesOrigin == null)
+            {
+                NewInstallViewModel.Instance.InstalledGamesOrigin = NewInstallViewModel.Instance.InstalledGames;
+            }
+            NewInstallViewModel.Instance.InstalledGames = new System.Collections.ObjectModel.ObservableCollection<KeyValuePair<Game, string>>(NewInstallViewModel.Instance.InstalledGamesOrigin.Where(i => i.Key.Title.Contains(inputTimer.Data, StringComparison.OrdinalIgnoreCase)));
+        }
+
+        private void Play_Click(object sender, MouseButtonEventArgs e)
+        {
+            MainWindowViewModel.Instance.AppBarText = "PLAY";
+        }
+
+        private void Settings_Click(object sender, MouseButtonEventArgs e)
+        {
+            MainWindowViewModel.Instance.AppBarText = "Settings";
+        }
+        private void InitTimer()
+        {
+            inputTimer = new InputTimer();
+            inputTimer.Interval = TimeSpan.FromMilliseconds(400);           
+            inputTimer.Tick += InputTimerElapsed;
         }
     }
 }
