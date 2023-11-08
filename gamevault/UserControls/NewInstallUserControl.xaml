@@ -39,7 +39,7 @@
                         </TextBlock>
                     </StackPanel>
                     <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto">
-                        <ItemsControl ItemsSource="{Binding Path=InstalledGames}" Background="Transparent">
+                        <ItemsControl ItemsSource="{Binding Path=InstalledGames}" Background="Transparent" IsTabStop="False">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <StackPanel  Background="Transparent" Orientation="Horizontal"/>
@@ -47,7 +47,7 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid Cursor="Hand" Style="{StaticResource GameCardAnimation}" Name="ParentGrid" MaxHeight="267" MaxWidth="178" Margin="10,10,10,10" MouseLeftButtonUp="GameCard_Clicked">
+                                    <Grid Cursor="Hand" Style="{StaticResource GameCardAnimation}" Name="ParentGrid" MaxHeight="267" MaxWidth="178" Height="267" Width="178" Margin="10,10,10,10" MouseLeftButtonUp="GameCard_Clicked">
                                         <Grid.RenderTransform>
                                             <ScaleTransform/>
                                         </Grid.RenderTransform>

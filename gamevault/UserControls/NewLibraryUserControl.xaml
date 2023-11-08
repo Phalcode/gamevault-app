@@ -15,107 +15,109 @@
         <Border Background="{StaticResource DarkBackground4}" Grid.Row="0">
             <TextBlock Text="New Library" FontSize="35" Margin="20,0,0,0" Foreground="White"/>
         </Border>
-        <StackPanel Grid.Row="1">
-            <Viewbox>
-                <local:NewInstallUserControl Width="2000"/>
-            </Viewbox>
-            <Viewbox>
-                <Expander Width="2000" Margin="10" mah:ExpanderHelper.HeaderDownStyle="{StaticResource CustomExpanderToggleButton}" BorderBrush="{x:Null}">
-                    <Expander.Header>
-                        <Grid Height="35">
-                            <TextBlock Text="Server Games" FontWeight="Bold" HorizontalAlignment="Left" FontSize="20" VerticalAlignment="Center"/>
-                            <TextBlock FontWeight="Bold" HorizontalAlignment="Left" FontSize="20" VerticalAlignment="Center" Margin="135,0,0,0">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Visible" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding TotalGamesCount}" Value="0">
-                                                <Setter Property="Visibility" Value="Hidden" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding TotalGamesCount}" Value="-1">
-                                                <Setter Property="Visibility" Value="Hidden" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                                <TextBlock.Text>
-                                    <MultiBinding StringFormat="{}({0} of {1})">
-                                        <Binding Path="GameCards.Count"/>
-                                        <Binding Path="TotalGamesCount"/>
-                                    </MultiBinding>
-                                </TextBlock.Text>
-                            </TextBlock>
-                            <TextBox HorizontalAlignment="Center" Width="375" Margin="0,4,41,4" Style="{DynamicResource SearchTextBox}" TextChanged="Search_TextChanged"/>
-                            <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,5" Cursor="Hand" Background="#02000000" MouseLeftButtonDown="Filter_Click">
-                                <Path Data="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z" Fill="White"/>
-                                <Grid.RenderTransform>
-                                    <ScaleTransform/>
-                                </Grid.RenderTransform>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <Viewbox>
+                    <local:NewInstallUserControl Width="2000"/>
+                </Viewbox>
+                <Viewbox>
+                    <Expander Width="2000" Margin="10" mah:ExpanderHelper.HeaderDownStyle="{StaticResource CustomExpanderToggleButton}" BorderBrush="{x:Null}">
+                        <Expander.Header>
+                            <Grid Height="35">
+                                <TextBlock Text="Server Games" FontWeight="Bold" HorizontalAlignment="Left" FontSize="20" VerticalAlignment="Center"/>
+                                <TextBlock FontWeight="Bold" HorizontalAlignment="Left" FontSize="20" VerticalAlignment="Center" Margin="135,0,0,0">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding TotalGamesCount}" Value="0">
+                                                    <Setter Property="Visibility" Value="Hidden" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding TotalGamesCount}" Value="-1">
+                                                    <Setter Property="Visibility" Value="Hidden" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}({0} of {1})">
+                                            <Binding Path="GameCards.Count"/>
+                                            <Binding Path="TotalGamesCount"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                                <TextBox HorizontalAlignment="Center" Width="375" Margin="0,4,41,4" Style="{DynamicResource SearchTextBox}" TextChanged="Search_TextChanged"/>
+                                <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,5" Cursor="Hand" Background="#02000000" MouseLeftButtonDown="Filter_Click">
+                                    <Path Data="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z" Fill="White"/>
+                                    <Grid.RenderTransform>
+                                        <ScaleTransform/>
+                                    </Grid.RenderTransform>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </Expander.Header>
-                    <Border Background="{StaticResource DarkBackground4}" CornerRadius="5" Margin="-6,5,-6,0" VerticalAlignment="Top">
-                        <Grid>
-                            <!--No Games Found-->
-                            <StackPanel>
-                                <StackPanel.Style>
-                                    <Style TargetType="{x:Type StackPanel}">
-                                        <Setter Property="Visibility" Value="Hidden"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Path=InstalledGames.Count}" Value="0">
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </StackPanel.Style>
-                                <Image Source="pack://application:,,,/gamevault;component/Resources/Images/library_NoGameFound.png" RenderOptions.EdgeMode="Aliased" Height="190"/>
-                                <TextBlock Text="No Games found" FontSize="20" HorizontalAlignment="Center"/>
-                                <TextBlock HorizontalAlignment="Center" FontSize="10" Margin="0,0,0,5" >
+                        </Expander.Header>
+                        <Border Background="{StaticResource DarkBackground4}" CornerRadius="5" Margin="-6,5,-6,0" VerticalAlignment="Top">
+                            <Grid>
+                                <!--No Games Found-->
+                                <StackPanel>
+                                    <StackPanel.Style>
+                                        <Style TargetType="{x:Type StackPanel}">
+                                            <Setter Property="Visibility" Value="Hidden"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding TotalGamesCount}" Value="0">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackPanel.Style>
+                                    <Image Source="pack://application:,,,/gamevault;component/Resources/Images/library_NoGameFound.png" RenderOptions.EdgeMode="Aliased" Height="190"/>
+                                    <TextBlock Text="No Games found" FontSize="20" HorizontalAlignment="Center"/>
+                                    <TextBlock HorizontalAlignment="Center" FontSize="10" Margin="0,0,0,5" >
                     <Hyperlink TextDecorations="Baseline" NavigateUri="" RequestNavigate="Hyperlink_RequestNavigate" Foreground="#FFD4D4D4">
                     <Hyperlink.Inlines>
                         <Run Text="Troubleshooting"/>
                     </Hyperlink.Inlines>
                 </Hyperlink>
-                                </TextBlock>
-                            </StackPanel>
-                            <!--Games found-->
-                            <ItemsControl ItemsSource="{Binding Path=GameCards}" Background="Transparent">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <UniformGrid Background="Transparent" Columns="10"/>
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid Cursor="Hand" Style="{StaticResource GameCardAnimation}" Name="ParentGrid" MaxHeight="267" MaxWidth="178" Margin="10,10,10,10" MouseLeftButtonUp="GameCard_Clicked">
-                                            <Grid.RenderTransform>
-                                                <ScaleTransform/>
-                                            </Grid.RenderTransform>
-                                            <Border Background="{StaticResource DarkBackground3}" CornerRadius="8">
-                                                <local:CacheImage Stretch="Fill" ImageCacheType="BoxArt" Data="{Binding}" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                            </Border>
-                                            <Border Name="banner" VerticalAlignment="Stretch" Background="#B2000000" CornerRadius="8">
-                                                <Border.Style>
-                                                    <Style TargetType="{x:Type Border}">
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding IsMouseOver, ElementName=ParentGrid}" Value="False">
-                                                                <Setter Property="Height" Value="0" />
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Border.Style>
-                                                <Grid>
-                                                    <TextBlock Text="{Binding Path=Title}" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" TextAlignment="Center" TextWrapping="Wrap"/>
-                                                </Grid>
-                                            </Border>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </Grid>
-                    </Border>
-                </Expander>
-            </Viewbox>
-        </StackPanel>
+                                    </TextBlock>
+                                </StackPanel>
+                                <!--Games found-->
+                                <ItemsControl ItemsSource="{Binding Path=GameCards}" Background="Transparent" IsTabStop="False">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid Background="Transparent" Columns="10"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Cursor="Hand" Style="{StaticResource GameCardAnimation}" Name="ParentGrid" MaxHeight="267" MaxWidth="178" Margin="10,10,10,10" MouseLeftButtonUp="GameCard_Clicked">
+                                                <Grid.RenderTransform>
+                                                    <ScaleTransform/>
+                                                </Grid.RenderTransform>
+                                                <Border Background="{StaticResource DarkBackground3}" CornerRadius="8">
+                                                    <local:CacheImage Stretch="Fill" ImageCacheType="BoxArt" Data="{Binding}" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <Border Name="banner" VerticalAlignment="Stretch" Background="#B2000000" CornerRadius="8">
+                                                    <Border.Style>
+                                                        <Style TargetType="{x:Type Border}">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsMouseOver, ElementName=ParentGrid}" Value="False">
+                                                                    <Setter Property="Height" Value="0" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                    <Grid>
+                                                        <TextBlock Text="{Binding Path=Title}" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" TextAlignment="Center" TextWrapping="Wrap"/>
+                                                    </Grid>
+                                                </Border>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Grid>
+                        </Border>
+                    </Expander>
+                </Viewbox>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </UserControl>
