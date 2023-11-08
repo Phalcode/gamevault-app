@@ -5,32 +5,45 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace gamevault.ViewModels
 {
     internal class NewLibraryViewModel : ViewModelBase
     {
         #region PrivateMembers      
-        private ObservableCollection<Game> m_GameCards { get; set; }
-        private int m_TotalGamesCount = -1;
+        private ObservableCollection<Game> gameCards { get; set; }
+        private int totalGamesCount = -1;
+        private Visibility scrollToTopVisibility { get; set; }
+        private Visibility filterVisibility = Visibility.Collapsed;
         #endregion
         public ObservableCollection<Game> GameCards
         {
             get
             {
-                if (m_GameCards == null)
+                if (gameCards == null)
                 {
-                    m_GameCards = new ObservableCollection<Game>();
+                    gameCards = new ObservableCollection<Game>();
                 }
-                return m_GameCards;
+                return gameCards;
             }
-            set { m_GameCards = value; }
+            set { gameCards = value; }
         }
         public int TotalGamesCount
         {
-            get { return m_TotalGamesCount; }
-            set { m_TotalGamesCount = value; OnPropertyChanged(); }
+            get { return totalGamesCount; }
+            set { totalGamesCount = value; OnPropertyChanged(); }
         }
-        public string NextPage {  get; set; }
+        public Visibility ScrollToTopVisibility
+        {
+            get { return scrollToTopVisibility; }
+            set { scrollToTopVisibility = value; OnPropertyChanged(); }
+        }
+        public Visibility FilterVisibility
+        {
+            get { return filterVisibility; }
+            set { filterVisibility = value; OnPropertyChanged(); }
+        }
+        public string NextPage { get; set; }
     }
 }

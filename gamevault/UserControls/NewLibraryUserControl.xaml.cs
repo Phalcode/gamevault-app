@@ -135,7 +135,19 @@ namespace gamevault.UserControls
         private void Filter_Click(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
-            MainWindowViewModel.Instance.AppBarText = "Filter Opened";
+            ViewModel.FilterVisibility = ViewModel.FilterVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private void Library_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            double scrollPercentage = e.VerticalOffset / ((ScrollViewer)sender).ScrollableHeight * 100;
+
+            ViewModel.ScrollToTopVisibility = scrollPercentage > 10 ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void ScrollToTop_Click(object sender, MouseButtonEventArgs e)
+        {
+            uiMainScrollBar.ScrollToTop();
         }
     }
 }
