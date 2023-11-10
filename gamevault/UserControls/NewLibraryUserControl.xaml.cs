@@ -28,6 +28,8 @@ namespace gamevault.UserControls
     {
         private NewLibraryViewModel ViewModel;
         private InputTimer inputTimer { get; set; }
+
+        private bool scrollBlocked = false;
         public NewLibraryUserControl()
         {
             InitializeComponent();
@@ -68,8 +70,8 @@ namespace gamevault.UserControls
             //uiGameCardScrollViewer.ScrollToTop();
 
             //ViewModel.IsSearchEnabled = false;
-            string gameSortByFilter = "";
-            string gameOrderByFilter = "";
+            string gameSortByFilter = ViewModel.SelectedGameFilterSortBy.Value;
+            string gameOrderByFilter = ViewModel.OrderByValue;
             ViewModel.GameCards.Clear();
             string filterUrl = @$"{SettingsViewModel.Instance.ServerUrl}/api/games?search={inputTimer.Data}&sortBy={gameSortByFilter}:{gameOrderByFilter}&limit=80";
             //filterUrl = ApplyFilter(filterUrl);
@@ -138,16 +140,33 @@ namespace gamevault.UserControls
             ViewModel.FilterVisibility = ViewModel.FilterVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
         }
 
-        private void Library_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        private async void Library_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             double scrollPercentage = e.VerticalOffset / ((ScrollViewer)sender).ScrollableHeight * 100;
 
             ViewModel.ScrollToTopVisibility = scrollPercentage > 10 ? Visibility.Visible : Visibility.Collapsed;
+
+            if (scrollBlocked == false && ViewModel.NextPage != null && scrollPercentage > 90)
+            {
+                scrollBlocked = true;
+                PaginatedData<Game>? gameResult = await GetGamesData(ViewModel.NextPage);
+                ViewModel.NextPage = gameResult?.Links.Next;
+                await ProcessGamesData(gameResult);
+                scrollBlocked = false;
+
+            }
         }
 
         private void ScrollToTop_Click(object sender, MouseButtonEventArgs e)
         {
             uiMainScrollBar.ScrollToTop();
+        }
+
+        private void OrderBy_Changed(object sender, MouseButtonEventArgs e)
+        {
+            var transform = ((Grid)sender).RenderTransform as ScaleTransform;
+            transform.ScaleY = transform.ScaleY == 1 ? -1 : 1;
+            ViewModel.OrderByValue = transform.ScaleY == 1 ? "DESC" : "ASC";     
         }
     }
 }

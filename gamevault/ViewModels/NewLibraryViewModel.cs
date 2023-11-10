@@ -16,6 +16,7 @@ namespace gamevault.ViewModels
         private int totalGamesCount = -1;
         private Visibility scrollToTopVisibility { get; set; }
         private Visibility filterVisibility = Visibility.Collapsed;
+        private KeyValuePair<string, string> m_SelectedGameFilterSortBy { get; set; }
         #endregion
         public ObservableCollection<Game> GameCards
         {
@@ -44,6 +45,28 @@ namespace gamevault.ViewModels
             get { return filterVisibility; }
             set { filterVisibility = value; OnPropertyChanged(); }
         }
-        public string NextPage { get; set; }
+        public string? NextPage { get; set; }
+        public Dictionary<string, string> GameFilterSortByValues
+        {
+            get
+            {
+                var dict = new Dictionary<string, string>
+                {
+                    {"Game title","title"},
+                    {"Game size","size" },
+                    {"Game release date","rawg_release_date" },
+                    {"Game rating","metacritic_rating" },
+                    {"Game average playtime","average_playtime" },
+                    {"Recently added","created_at" }
+                };
+                return dict;
+            }
+        }
+        public KeyValuePair<string, string> SelectedGameFilterSortBy
+        {
+            get { return m_SelectedGameFilterSortBy; }
+            set { m_SelectedGameFilterSortBy = value; }
+        }
+        public string OrderByValue = "ASC";
     }
 }

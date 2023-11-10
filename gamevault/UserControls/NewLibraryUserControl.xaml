@@ -65,12 +65,17 @@
                                     <mah:ToggleSwitch Header="Early Access Only"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <Path Data="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z" Fill="White" Height="25" RenderTransformOrigin="0.5,0.5">
-                                        <Path.RenderTransform>
-                                            <ScaleTransform ScaleX="2" ScaleY="2"/>
-                                        </Path.RenderTransform>
-                                    </Path>
-                                    <ComboBox Height="20" Margin="30,0,10,0"/>
+                                    <Grid Height="25" Width="25"  Cursor="Hand" Background="Blue" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="OrderBy_Changed">
+                                        <Path Data="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z" Fill="White" RenderTransformOrigin="0.5,0.5">
+                                            <Path.RenderTransform>
+                                                <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                            </Path.RenderTransform>
+                                        </Path>
+                                        <Grid.RenderTransform>
+                                            <ScaleTransform/>
+                                        </Grid.RenderTransform>
+                                    </Grid>
+                                    <ComboBox Height="20" Margin="30,0,10,0" DisplayMemberPath="Key" SelectedIndex="0" SelectedItem="{Binding SelectedGameFilterSortBy}" ItemsSource="{Binding GameFilterSortByValues}"/>
                                 </StackPanel>
                             </Grid>
                             <Border Background="{StaticResource DarkBackground4}" CornerRadius="5" Margin="-6,5,-6,0" VerticalAlignment="Top">
