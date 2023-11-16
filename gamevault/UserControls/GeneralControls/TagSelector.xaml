@@ -1,0 +1,64 @@
+﻿<UserControl x:Class="gamevault.UserControls.TagSelector"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:conv="clr-namespace:gamevault.Converter"
+             xmlns:local="clr-namespace:gamevault.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
+    <UserControl.Resources>
+        <conv:StringToColorConverter x:Key="colorConv"/>
+    </UserControl.Resources>
+    <Grid>
+        <StackPanel>
+            <TextBlock x:Name="uiTxtHeader" FontSize="15"/>
+            <StackPanel Orientation="Horizontal">
+                <ItemsControl x:Name="uiSelectedEntries">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border CornerRadius="5" Background="{Binding Name,Converter={StaticResource colorConv}}" Margin="0,2,5,0" Width="140">
+                                <Grid Margin="2">
+                                    <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <Path Data="m11.25 4.75l-6.5 6.5m0-6.5l6.5 6.5" Stroke="White"  StrokeThickness="2" HorizontalAlignment="Right" Margin="0,0,2,0" Cursor="Hand" MouseLeftButtonUp="RemoveEntry_Click"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <Border MouseLeftButtonUp="OpenSelection_Click" Cursor="Hand" Background="#02000000">
+                    <Path Data="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" Fill="{DynamicResource MainColor}"/>
+                </Border>
+            </StackPanel>
+        </StackPanel>
+        <Popup x:Name="uiSelectionpopup" StaysOpen="False" AllowsTransparency="True">
+            <Border CornerRadius="5" Width="205" Padding="5">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="7" Direction="0" ShadowDepth="0"/>
+                </Border.Effect>
+                <Border CornerRadius="5" Background="{DynamicResource DarkBackground2}">
+                    <StackPanel Margin="5">
+                        <TextBlock x:Name="uiTxtSelectionHeader" HorizontalAlignment="Center"/>
+                        <TextBox Style="{DynamicResource SearchTextBox}" Height="26" TextChanged="Search_TextChanged" Margin="0,0,0,5"/>
+                        <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" MaxHeight="200">
+                            <ItemsControl x:Name="uiSelectionEntries">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="2">
+                                            <Border CornerRadius="5" Background="{Binding Name,Converter={StaticResource colorConv}}" Margin="0,0,25,0">
+                                                <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <Border Background="#02000000" Cursor="Hand" HorizontalAlignment="Right" MouseLeftButtonUp="AddEntry_Click">
+                                                <Path Data="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" Fill="White"/>
+                                            </Border>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </StackPanel>
+                </Border>
+            </Border>
+        </Popup>
+    </Grid>
+</UserControl>

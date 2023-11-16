@@ -21,7 +21,7 @@
                     <local:NewInstallUserControl Width="2000"/>
                 </Viewbox>
                 <Viewbox>
-                    <Expander Width="2000" Margin="10" mah:ExpanderHelper.HeaderDownStyle="{StaticResource CustomExpanderToggleButton}" BorderBrush="{x:Null}">
+                    <Expander x:Name="uiExpanderGameCards" Width="2000" Margin="10" mah:ExpanderHelper.HeaderDownStyle="{StaticResource CustomExpanderToggleButton}" BorderBrush="{x:Null}">
                         <Expander.Header>
                             <Grid Height="35">
                                 <TextBlock Text="Server Games" FontWeight="Bold" HorizontalAlignment="Left" FontSize="20" VerticalAlignment="Center"/>
@@ -62,10 +62,13 @@
                         <StackPanel>
                             <Grid Visibility="{Binding FilterVisibility}">
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                    <mah:ToggleSwitch Header="Early Access Only"/>
+                                    <local:TagSelector SelectionType="GameType" Margin="0,0,100,0" EntriesUpdated="FilterUpdated"/>
+                                    <local:TagSelector x:Name="uiFilterTagSelector" SelectionType="Tags" Margin="0,0,100,0" EntriesUpdated="FilterUpdated"/>
+                                    <local:TagSelector x:Name="uiFilterGenreSelector" SelectionType="Genres" Margin="0,0,100,0" EntriesUpdated="FilterUpdated"/>
+                                    <mah:ToggleSwitch x:Name="uiFilterEarlyAccess" Header="Early Access Only" Toggled="FilterUpdated"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <Grid Height="25" Width="25"  Cursor="Hand" Background="Blue" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="OrderBy_Changed">
+                                    <Grid Height="25" Width="25"  Cursor="Hand" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="OrderBy_Changed">
                                         <Path Data="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z" Fill="White" RenderTransformOrigin="0.5,0.5">
                                             <Path.RenderTransform>
                                                 <ScaleTransform ScaleX="2" ScaleY="2"/>
@@ -75,7 +78,7 @@
                                             <ScaleTransform/>
                                         </Grid.RenderTransform>
                                     </Grid>
-                                    <ComboBox Height="20" Margin="30,0,10,0" DisplayMemberPath="Key" SelectedIndex="0" SelectedItem="{Binding SelectedGameFilterSortBy}" ItemsSource="{Binding GameFilterSortByValues}"/>
+                                    <ComboBox Height="20" Width="180" Margin="30,0,10,0" DisplayMemberPath="Key" SelectedIndex="0" SelectedItem="{Binding SelectedGameFilterSortBy}" ItemsSource="{Binding GameFilterSortByValues}" SelectionChanged="SelectedGameFilterSortBy_SelectionChanged"/>
                                 </StackPanel>
                             </Grid>
                             <Border Background="{StaticResource DarkBackground4}" CornerRadius="5" Margin="-6,5,-6,0" VerticalAlignment="Top">

@@ -1,6 +1,7 @@
 ﻿using gamevault.Helper;
 using gamevault.Models;
 using gamevault.ViewModels;
+using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -57,6 +58,10 @@ namespace gamevault.UserControls
         }
         private async Task Search()
         {
+            if (!uiExpanderGameCards.IsExpanded)
+            {
+                uiExpanderGameCards.IsExpanded = true;
+            }
             //if (!LoginManager.Instance.IsLoggedIn())
             //{
             //    if (true == m_Loaded)
@@ -74,7 +79,7 @@ namespace gamevault.UserControls
             string gameOrderByFilter = ViewModel.OrderByValue;
             ViewModel.GameCards.Clear();
             string filterUrl = @$"{SettingsViewModel.Instance.ServerUrl}/api/games?search={inputTimer.Data}&sortBy={gameSortByFilter}:{gameOrderByFilter}&limit=80";
-            //filterUrl = ApplyFilter(filterUrl);
+            filterUrl = ApplyFilter(filterUrl);
 
             PaginatedData<Game>? gameResult = await GetGamesData(filterUrl);//add try catch
             if (gameResult != null)
@@ -137,6 +142,10 @@ namespace gamevault.UserControls
         private void Filter_Click(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
+            if (!uiExpanderGameCards.IsExpanded)
+            {
+                uiExpanderGameCards.IsExpanded = true;
+            }
             ViewModel.FilterVisibility = ViewModel.FilterVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
         }
 
@@ -162,11 +171,47 @@ namespace gamevault.UserControls
             uiMainScrollBar.ScrollToTop();
         }
 
-        private void OrderBy_Changed(object sender, MouseButtonEventArgs e)
+        private async void OrderBy_Changed(object sender, MouseButtonEventArgs e)
         {
             var transform = ((Grid)sender).RenderTransform as ScaleTransform;
             transform.ScaleY = transform.ScaleY == 1 ? -1 : 1;
-            ViewModel.OrderByValue = transform.ScaleY == 1 ? "DESC" : "ASC";     
+            ViewModel.OrderByValue = transform.ScaleY == 1 ? "DESC" : "ASC";
+            await Search();
         }
+        private string ApplyFilter(string filter)
+        {
+            //if (ViewModel.SelectedGameFilterGameType.Value != string.Empty)
+            //{
+            //    filter += $"&filter.type=$eq:{ViewModel.SelectedGameFilterGameType.Value}";
+            //}
+            if (uiFilterEarlyAccess.IsOn == true)
+            {
+                filter += "&filter.early_access=$eq:true";
+            }
+            //    if (uiYearFilterSlider.Minimum != ViewModel.YearFilterLower || uiYearFilterSlider.Maximum != ViewModel.YearFilterUpper)
+            //    {
+            //        filter += $"&filter.release_date=$btw:{ViewModel.YearFilterLower}-01-01,{ViewModel.YearFilterUpper}-12-31";
+            //    }
+            string genres = uiFilterGenreSelector.GetSelectedEntries();
+            if (genres != string.Empty)
+            {
+                filter += $"&filter.genres.name=$in:{genres}";
+            }
+            string tags = uiFilterTagSelector.GetSelectedEntries();
+            if (tags != string.Empty)
+            {
+                filter += $"&filter.tags.name=$in:{tags}";
+            }
+            return filter;
+        }
+        private void SelectedGameFilterSortBy_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ((ComboBox)sender).SelectionChanged -= SelectedGameFilterSortBy_SelectionChanged;
+            ((ComboBox)sender).SelectionChanged += FilterUpdated;
+        }
+        private async void FilterUpdated(object sender, EventArgs e)
+        {           
+            await Search();
+        }       
     }
 }
