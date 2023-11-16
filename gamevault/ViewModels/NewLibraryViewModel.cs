@@ -67,6 +67,6 @@ namespace gamevault.ViewModels
             get { return m_SelectedGameFilterSortBy; }
             set { m_SelectedGameFilterSortBy = value; }
         }
-        public string OrderByValue = "ASC";
+        public string OrderByValue = "DESC";
     }
 }

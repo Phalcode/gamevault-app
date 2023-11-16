@@ -62,10 +62,11 @@
                         <StackPanel>
                             <Grid Visibility="{Binding FilterVisibility}">
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                    <local:TagSelector SelectionType="GameType" Margin="0,0,100,0" EntriesUpdated="FilterUpdated"/>
+                                    <local:TagSelector x:Name="uiFilterGameTypeSelector" SelectionType="GameType" Margin="0,0,100,0" EntriesUpdated="FilterUpdated"/>
                                     <local:TagSelector x:Name="uiFilterTagSelector" SelectionType="Tags" Margin="0,0,100,0" EntriesUpdated="FilterUpdated"/>
                                     <local:TagSelector x:Name="uiFilterGenreSelector" SelectionType="Genres" Margin="0,0,100,0" EntriesUpdated="FilterUpdated"/>
-                                    <mah:ToggleSwitch x:Name="uiFilterEarlyAccess" Header="Early Access Only" Toggled="FilterUpdated"/>
+                                    <mah:ToggleSwitch x:Name="uiFilterEarlyAccess" Header="Early Access Only"  Margin="0,0,100,0" Toggled="FilterUpdated"/>
+                                    <TextBlock Text="Release Year" FontSize="15"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                     <Grid Height="25" Width="25"  Cursor="Hand" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="OrderBy_Changed">

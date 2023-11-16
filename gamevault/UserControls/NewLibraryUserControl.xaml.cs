@@ -180,10 +180,11 @@ namespace gamevault.UserControls
         }
         private string ApplyFilter(string filter)
         {
-            //if (ViewModel.SelectedGameFilterGameType.Value != string.Empty)
-            //{
-            //    filter += $"&filter.type=$eq:{ViewModel.SelectedGameFilterGameType.Value}";
-            //}
+            string gameType = uiFilterGameTypeSelector.GetSelectedEntries();
+            if (gameType != string.Empty)
+            {
+                filter += $"&filter.type=$eq:{gameType}";
+            }
             if (uiFilterEarlyAccess.IsOn == true)
             {
                 filter += "&filter.early_access=$eq:true";
@@ -210,8 +211,8 @@ namespace gamevault.UserControls
             ((ComboBox)sender).SelectionChanged += FilterUpdated;
         }
         private async void FilterUpdated(object sender, EventArgs e)
-        {           
+        {
             await Search();
-        }       
+        }
     }
 }
