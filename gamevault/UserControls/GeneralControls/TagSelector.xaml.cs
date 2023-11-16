@@ -88,18 +88,25 @@ namespace gamevault.UserControls
                 Selection selection = SelectionType;
                 await Task.Run(() =>
                 {
-                    string result = WebHelper.GetRequest(url);
-                    data = selection switch
+                    try
                     {
-                        Selection.Tags => JsonSerializer.Deserialize<PaginatedData<Genre_Tag>>(result).Data,
-                        Selection.Genres => JsonSerializer.Deserialize<Genre_Tag[]>(result).Where(x => x.Name.Contains(debounceTimer.Data, StringComparison.OrdinalIgnoreCase)).ToArray()
-                    };
+                        string result = WebHelper.GetRequest(url);
+                        data = selection switch
+                        {
+                            Selection.Tags => JsonSerializer.Deserialize<PaginatedData<Genre_Tag>>(result).Data,
+                            Selection.Genres => JsonSerializer.Deserialize<Genre_Tag[]>(result).Where(x => x.Name.Contains(debounceTimer.Data, StringComparison.OrdinalIgnoreCase)).ToArray()
+                        };
+                    }
+                    catch
+                    {
+                        MainWindowViewModel.Instance.AppBarText = "Could not connect to server";
+                    }
                 });
             }
             else
             {
                 data = new Genre_Tag[2] { new Genre_Tag() { Name = "WINDOWS_SETUP" }, new Genre_Tag() { Name = "WINDOWS_PORTABLE" } };
-                data = data.Where(x=>x.Name.Contains(debounceTimer.Data, StringComparison.OrdinalIgnoreCase)).ToArray();
+                data = data.Where(x => x.Name.Contains(debounceTimer.Data, StringComparison.OrdinalIgnoreCase)).ToArray();
             }
             uiSelectionEntries.ItemsSource = data;
         }

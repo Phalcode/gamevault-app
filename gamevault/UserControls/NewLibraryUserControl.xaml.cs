@@ -73,8 +73,7 @@ namespace gamevault.UserControls
             TaskQueue.Instance.ClearQueue();
             //m_Next = null;
             //uiGameCardScrollViewer.ScrollToTop();
-
-            //ViewModel.IsSearchEnabled = false;
+          
             string gameSortByFilter = ViewModel.SelectedGameFilterSortBy.Value;
             string gameOrderByFilter = ViewModel.OrderByValue;
             ViewModel.GameCards.Clear();
@@ -90,8 +89,7 @@ namespace gamevault.UserControls
                     ViewModel.NextPage = gameResult.Links.Next;
                     await ProcessGamesData(gameResult);
                 }
-            }
-            //ViewModel.IsSearchEnabled = true;
+            }            
         }
         private async Task<PaginatedData<Game>?> GetGamesData(string url)
         {
@@ -171,11 +169,9 @@ namespace gamevault.UserControls
             uiMainScrollBar.ScrollToTop();
         }
 
-        private async void OrderBy_Changed(object sender, MouseButtonEventArgs e)
+        private async void OrderBy_Changed(object sender, RoutedEventArgs e)
         {
-            var transform = ((Grid)sender).RenderTransform as ScaleTransform;
-            transform.ScaleY = transform.ScaleY == 1 ? -1 : 1;
-            ViewModel.OrderByValue = transform.ScaleY == 1 ? "DESC" : "ASC";
+            ViewModel.OrderByValue = (ViewModel.OrderByValue == "ASC") ? "DESC" : "ASC";
             await Search();
         }
         private string ApplyFilter(string filter)
@@ -183,7 +179,7 @@ namespace gamevault.UserControls
             string gameType = uiFilterGameTypeSelector.GetSelectedEntries();
             if (gameType != string.Empty)
             {
-                filter += $"&filter.type=$eq:{gameType}";
+                filter += $"&filter.type=$in:{gameType}";
             }
             if (uiFilterEarlyAccess.IsOn == true)
             {

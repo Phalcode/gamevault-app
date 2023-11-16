@@ -69,16 +69,32 @@
                                     <TextBlock Text="Release Year" FontSize="15"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <Grid Height="25" Width="25"  Cursor="Hand" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="OrderBy_Changed">
-                                        <Path Data="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z" Fill="White" RenderTransformOrigin="0.5,0.5">
-                                            <Path.RenderTransform>
-                                                <ScaleTransform ScaleX="2" ScaleY="2"/>
-                                            </Path.RenderTransform>
-                                        </Path>
-                                        <Grid.RenderTransform>
-                                            <ScaleTransform/>
-                                        </Grid.RenderTransform>
-                                    </Grid>
+                                    <ToggleButton Width="45" Cursor="Hand" Checked="OrderBy_Changed" Unchecked="OrderBy_Changed">                                       
+                                            <ToggleButton.Style>
+                                            <Style TargetType="ToggleButton">
+                                                <Style.Setters>
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="ToggleButton">
+                                                                <Grid Background="Transparent" Width="{TemplateBinding Width}">
+                                                                    <Path Name="PART_Icon" Data="M3.5 2.5a.5.5 0 0 0-1 0v8.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999l.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L3.5 11.293V2.5zm3.5 1a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zM7.5 6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zm0 3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zm0 3a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1z" Fill="White" RenderTransformOrigin="0.0,-0.05">
+                                                                        <Path.RenderTransform>
+                                                                            <ScaleTransform ScaleX="2.8" ScaleY="2.8"/>
+                                                                        </Path.RenderTransform>
+                                                                    </Path>
+                                                                </Grid>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsChecked" Value="True">
+                                                                        <Setter TargetName="PART_Icon" Property="Data" Value="M3.5 12.5a.5.5 0 0 1-1 0V3.707L1.354 4.854a.5.5 0 1 1-.708-.708l2-1.999l.007-.007a.498.498 0 0 1 .7.006l2 2a.5.5 0 1 1-.707.708L3.5 3.707V12.5zm3.5-9a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zM7.5 6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zm0 3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zm0 3a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1z"/>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style.Setters>
+                                            </Style>
+                                        </ToggleButton.Style>
+                                    </ToggleButton>
                                     <ComboBox Height="20" Width="180" Margin="30,0,10,0" DisplayMemberPath="Key" SelectedIndex="0" SelectedItem="{Binding SelectedGameFilterSortBy}" ItemsSource="{Binding GameFilterSortByValues}" SelectionChanged="SelectedGameFilterSortBy_SelectionChanged"/>
                                 </StackPanel>
                             </Grid>
