@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
@@ -37,6 +38,7 @@ namespace gamevault.UserControls
             ViewModel = new NewLibraryViewModel();
             this.DataContext = ViewModel;
             InitTimer();
+            uiFilterYearTo.Text = DateTime.Now.Year.ToString();
         }
 
         private void Search_TextChanged(object sender, TextChangedEventArgs e)
@@ -73,11 +75,11 @@ namespace gamevault.UserControls
             TaskQueue.Instance.ClearQueue();
             //m_Next = null;
             //uiGameCardScrollViewer.ScrollToTop();
-          
+
             string gameSortByFilter = ViewModel.SelectedGameFilterSortBy.Value;
             string gameOrderByFilter = ViewModel.OrderByValue;
             ViewModel.GameCards.Clear();
-            string filterUrl = @$"{SettingsViewModel.Instance.ServerUrl}/api/games?search={inputTimer.Data}&sortBy={gameSortByFilter}:{gameOrderByFilter}&limit=80";
+            string filterUrl = @$"{SettingsViewModel.Instance.ServerUrl}/api/games?search={inputTimer.Data}&sortBy={gameSortByFilter}:{gameOrderByFilter}&limit=60";
             filterUrl = ApplyFilter(filterUrl);
 
             PaginatedData<Game>? gameResult = await GetGamesData(filterUrl);//add try catch
@@ -89,7 +91,7 @@ namespace gamevault.UserControls
                     ViewModel.NextPage = gameResult.Links.Next;
                     await ProcessGamesData(gameResult);
                 }
-            }            
+            }
         }
         private async Task<PaginatedData<Game>?> GetGamesData(string url)
         {
@@ -185,10 +187,10 @@ namespace gamevault.UserControls
             {
                 filter += "&filter.early_access=$eq:true";
             }
-            //    if (uiYearFilterSlider.Minimum != ViewModel.YearFilterLower || uiYearFilterSlider.Maximum != ViewModel.YearFilterUpper)
-            //    {
-            //        filter += $"&filter.release_date=$btw:{ViewModel.YearFilterLower}-01-01,{ViewModel.YearFilterUpper}-12-31";
-            //    }
+            if (int.TryParse(uiFilterYearFrom.Text, out int yearFrom) && int.TryParse(uiFilterYearTo.Text, out int yearTo))
+            {
+                filter += $"&filter.release_date=$btw:{yearFrom}-01-01,{yearTo}-12-31";
+            }
             string genres = uiFilterGenreSelector.GetSelectedEntries();
             if (genres != string.Empty)
             {
@@ -209,6 +211,11 @@ namespace gamevault.UserControls
         private async void FilterUpdated(object sender, EventArgs e)
         {
             await Search();
+        }
+        private void YearSelector_Changed(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = (((TextBox)e.Source).Text == "" && e.Text == "0") || regex.IsMatch(e.Text);
         }
     }
 }

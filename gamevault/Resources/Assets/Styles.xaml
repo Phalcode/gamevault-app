@@ -299,7 +299,7 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Grid Margin="1">
-                                <Path Name="Arrow" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M0 16 L16 0 L32 16 L30 16 L16 2 L2 16 Z" RenderTransformOrigin="0.5, 0.5" SnapsToDevicePixels="false" Stroke="{TemplateBinding Foreground}" StrokeThickness="2">
+                                <Path Name="Arrow" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M2 0 L16 14 L30 0 L32 0 L16 16 L0 0 Z" RenderTransformOrigin="0.5, 0.5" SnapsToDevicePixels="false" Stroke="{TemplateBinding Foreground}" StrokeThickness="2">
                                     <Path.RenderTransform>
                                         <ScaleTransform ScaleX="0.7" ScaleY="0.7"/>
                                     </Path.RenderTransform>
@@ -310,7 +310,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="ToggleButton.IsChecked" Value="true">
-                            <Setter TargetName="Arrow" Property="Data" Value="M2 0 L16 14 L30 0 L32 0 L16 16 L0 0 Z" />
+                            <Setter TargetName="Arrow" Property="Data" Value="M0 16 L16 0 L32 16 L30 16 L16 2 L2 16 Z" />
                         </Trigger>
                         <Trigger Property="UIElement.IsMouseOver" Value="true">
                             <Setter TargetName="Arrow" Value="{DynamicResource MahApps.Brushes.Gray2}" Property="Stroke" />
