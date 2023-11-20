@@ -151,24 +151,28 @@ namespace gamevault.UserControls
 
         private async void Library_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            double scrollPercentage = e.VerticalOffset / ((ScrollViewer)sender).ScrollableHeight * 100;
-
-            ViewModel.ScrollToTopVisibility = scrollPercentage > 10 ? Visibility.Visible : Visibility.Collapsed;
-
-            if (scrollBlocked == false && ViewModel.NextPage != null && scrollPercentage > 90)
+            if ((ScrollViewer)sender != uiMainScrollBar)
             {
-                scrollBlocked = true;
-                PaginatedData<Game>? gameResult = await GetGamesData(ViewModel.NextPage);
-                ViewModel.NextPage = gameResult?.Links.Next;
-                await ProcessGamesData(gameResult);
-                scrollBlocked = false;
+                double scrollPercentage = e.VerticalOffset / ((ScrollViewer)sender).ScrollableHeight * 100;
 
+                ViewModel.ScrollToTopVisibility = scrollPercentage > 10 ? Visibility.Visible : Visibility.Collapsed;
+
+                if (scrollBlocked == false && ViewModel.NextPage != null && scrollPercentage > 90)
+                {
+                    scrollBlocked = true;
+                    PaginatedData<Game>? gameResult = await GetGamesData(ViewModel.NextPage);
+                    ViewModel.NextPage = gameResult?.Links.Next;
+                    await ProcessGamesData(gameResult);
+                    scrollBlocked = false;
+
+                }
             }
         }
 
         private void ScrollToTop_Click(object sender, MouseButtonEventArgs e)
         {
-            uiMainScrollBar.ScrollToTop();
+            ((ScrollViewer)((Grid)((FrameworkElement)sender).Parent).Children[0]).ScrollToTop();
+            //uiMainScrollBar.ScrollToTop();
         }
 
         private async void OrderBy_Changed(object sender, RoutedEventArgs e)

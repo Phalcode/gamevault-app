@@ -13,6 +13,7 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Dark.Purple.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/gamevault;component/Resources/Assets/Styles.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/gamevault;component/Resources/Assets/Colors.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/gamevault;component/Resources/Assets/Icons.xaml" />
 
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

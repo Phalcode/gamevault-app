@@ -391,7 +391,6 @@
                                 </Button>
                             </Border>
                         </Grid>
-                        <!--<Border Name="DisabledVisualElement" Background="{DynamicResource MahApps.Brushes.Control.Disabled}" BorderBrush="{DynamicResource MahApps.Brushes.Control.Disabled}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5" IsHitTestVisible="False" Opacity="0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(mah:ControlsHelper.DisabledVisualElementVisibility), Mode=OneWay}" />-->
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger SourceName="PART_ClearText" Property="UIElement.IsMouseOver" Value="True">
