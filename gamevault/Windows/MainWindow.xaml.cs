@@ -95,7 +95,7 @@ namespace gamevault.Windows
             {
                 MainWindowViewModel.Instance.AppBarText = "Could not connect to server";
             }
-            //await MainWindowViewModel.Instance.Installs.StartInstalledGamesTracker();
+            await MainWindowViewModel.Instance.NewLibrary.GetGameInstalls().RestoreInstalledGames();
             await MainWindowViewModel.Instance.Downloads.RestoreDownloadedGames();
             MainWindowViewModel.Instance.UserIcon = LoginManager.Instance.GetCurrentUser();
         }
@@ -119,8 +119,8 @@ namespace gamevault.Windows
         }
 
         private void UserIcon_Clicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {          
-            MainWindowViewModel.Instance.Community.ShowUser(LoginManager.Instance.GetCurrentUser());            
+        {
+            MainWindowViewModel.Instance.Community.ShowUser(LoginManager.Instance.GetCurrentUser());
         }
         private void WindowCommand_Clicked(object sender, RoutedEventArgs e)
         {

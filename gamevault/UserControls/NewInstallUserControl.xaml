@@ -6,9 +6,9 @@
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
+             d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Expander Margin="10" mah:ExpanderHelper.HeaderDownStyle="{StaticResource CustomExpanderToggleButton}" BorderBrush="{x:Null}">
+        <Expander x:Name="uiInstalledGames" Margin="10" mah:ExpanderHelper.HeaderDownStyle="{StaticResource CustomExpanderToggleButton}" BorderBrush="{x:Null}" Expanded="InstalledGames_Toggled" Collapsed="InstalledGames_Toggled">
             <Expander.Header>
                 <Grid Height="35">
                     <TextBlock Text="{Binding Path=InstalledGames.Count,StringFormat='{}Installed Games ({0})'}" FontWeight="Bold" HorizontalAlignment="Left" FontSize="20" VerticalAlignment="Center"/>
@@ -130,5 +130,8 @@
                 </Grid>
             </Border>
         </Expander>
+        <Popup x:Name="uiGameSettingsPopup" Placement="Relative" PlacementRectangle="450,100,0,0" IsOpen="False" StaysOpen="False" AllowsTransparency="True">
+            <local:GameSettingsUserControl Width="1200" Height="800"/>
+        </Popup>
     </Grid>
 </UserControl>

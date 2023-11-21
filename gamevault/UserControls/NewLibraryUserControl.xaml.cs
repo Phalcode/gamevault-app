@@ -60,26 +60,23 @@ namespace gamevault.UserControls
         }
         private async Task Search()
         {
+            if (!LoginManager.Instance.IsLoggedIn())
+            {
+                MainWindowViewModel.Instance.AppBarText = "You are not logged in";
+                return;
+            }
             if (!uiExpanderGameCards.IsExpanded)
             {
                 uiExpanderGameCards.IsExpanded = true;
             }
-            //if (!LoginManager.Instance.IsLoggedIn())
-            //{
-            //    if (true == m_Loaded)
-            //    {
-            //        MainWindowViewModel.Instance.AppBarText = "You are not logged in";
-            //    }
-            //    return;
-            //}
+            ((ScrollViewer)uiServerGamesItemsControl.Template.FindName("PART_ItemsScroll", uiServerGamesItemsControl)).ScrollToTop();
+
             TaskQueue.Instance.ClearQueue();
-            //m_Next = null;
-            //uiGameCardScrollViewer.ScrollToTop();
 
             string gameSortByFilter = ViewModel.SelectedGameFilterSortBy.Value;
             string gameOrderByFilter = ViewModel.OrderByValue;
             ViewModel.GameCards.Clear();
-            string filterUrl = @$"{SettingsViewModel.Instance.ServerUrl}/api/games?search={inputTimer.Data}&sortBy={gameSortByFilter}:{gameOrderByFilter}&limit=60";
+            string filterUrl = @$"{SettingsViewModel.Instance.ServerUrl}/api/games?search={inputTimer.Data}&sortBy={gameSortByFilter}:{gameOrderByFilter}&limit=50";
             filterUrl = ApplyFilter(filterUrl);
 
             PaginatedData<Game>? gameResult = await GetGamesData(filterUrl);//add try catch
@@ -92,6 +89,10 @@ namespace gamevault.UserControls
                     await ProcessGamesData(gameResult);
                 }
             }
+        }
+        public NewInstallUserControl GetGameInstalls()
+        {
+            return uiGameInstalls;
         }
         private async Task<PaginatedData<Game>?> GetGamesData(string url)
         {
@@ -220,6 +221,35 @@ namespace gamevault.UserControls
         {
             Regex regex = new Regex("[^0-9]+");
             e.Handled = (((TextBox)e.Source).Text == "" && e.Text == "0") || regex.IsMatch(e.Text);
+        }
+
+        private async void RandomGame_Click(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+            ((FrameworkElement)sender).IsEnabled = false;
+            Game? result = await Task<Game>.Run(() =>
+            {
+                try
+                {
+                    string randomGame = WebHelper.GetRequest($"{SettingsViewModel.Instance.ServerUrl}/api/games/random");
+                    return JsonSerializer.Deserialize<Game>(randomGame);
+                }
+                catch (JsonException exJson)
+                {
+                    MainWindowViewModel.Instance.AppBarText = exJson.Message;
+                    return null;
+                }
+                catch (Exception ex)
+                {
+                    MainWindowViewModel.Instance.AppBarText = "Could not connect to server";
+                    return null;
+                }
+            });
+            if (result != null)
+            {
+                MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(result, true));
+            }
+            ((FrameworkElement)sender).IsEnabled = true;
         }
     }
 }

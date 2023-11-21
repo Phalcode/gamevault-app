@@ -27,7 +27,7 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
                 <Border MouseLeftButtonUp="OpenSelection_Click" Cursor="Hand" Background="#02000000">
-                    <Path Data="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" Fill="{DynamicResource MainColor}"/>
+                    <Path Data="{DynamicResource IconAddTag}" Fill="{DynamicResource MainColor}"/>
                 </Border>
             </StackPanel>
         </StackPanel>
@@ -49,7 +49,7 @@
                                                 <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <Border Background="#02000000" Cursor="Hand" HorizontalAlignment="Right" MouseLeftButtonUp="AddEntry_Click">
-                                                <Path Data="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" Fill="White"/>
+                                                <Path Data="{DynamicResource IconAddTag}" Fill="White"/>
                                             </Border>
                                         </Grid>
                                     </DataTemplate>

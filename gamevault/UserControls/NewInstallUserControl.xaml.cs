@@ -37,6 +37,7 @@ namespace gamevault.UserControls
             InitializeComponent();
             this.DataContext = NewInstallViewModel.Instance;
             InitTimer();
+            uiInstalledGames.IsExpanded = Preferences.Get(AppConfigKey.InstalledGamesOpen, AppFilePath.UserFile) == "1" ? true : false;
         }
         public async Task RestoreInstalledGames()
         {
@@ -235,13 +236,7 @@ namespace gamevault.UserControls
         private void GameCard_Clicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key));
-        }
-
-        private async void UserControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            await RestoreInstalledGames();
-        }
-
+        }      
         private void Search_TextChanged(object sender, TextChangedEventArgs e)
         {
             inputTimer.Stop();
@@ -267,7 +262,8 @@ namespace gamevault.UserControls
         private void Settings_Click(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
-            MainWindowViewModel.Instance.AppBarText = "Settings";
+            //MainWindowViewModel.Instance.AppBarText = "Settings";
+            uiGameSettingsPopup.IsOpen = true;
         }
         private void InitTimer()
         {
@@ -296,6 +292,11 @@ namespace gamevault.UserControls
             }
             while (parentDepObj != null);
             return null;
+        }
+
+        private void InstalledGames_Toggled(object sender, RoutedEventArgs e)
+        {
+            Preferences.Set(AppConfigKey.InstalledGamesOpen, uiInstalledGames.IsExpanded ? "1" : "0", AppFilePath.UserFile);
         }
     }
 }
