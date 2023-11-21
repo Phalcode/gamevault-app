@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -22,9 +23,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Windows.UI.Composition;
 
 namespace gamevault.UserControls
-{   
+{
     public partial class NewInstallUserControl : UserControl
     {
         private InputTimer inputTimer { get; set; }
@@ -249,7 +251,7 @@ namespace gamevault.UserControls
         private void InputTimerElapsed(object sender, EventArgs e)
         {
             inputTimer.Stop();
-            if(NewInstallViewModel.Instance.InstalledGamesOrigin == null)
+            if (NewInstallViewModel.Instance.InstalledGamesOrigin == null)
             {
                 NewInstallViewModel.Instance.InstalledGamesOrigin = NewInstallViewModel.Instance.InstalledGames;
             }
@@ -258,7 +260,7 @@ namespace gamevault.UserControls
 
         private void Play_Click(object sender, MouseButtonEventArgs e)
         {
-            e.Handled= true;
+            e.Handled = true;
             MainWindowViewModel.Instance.AppBarText = "PLAY";
         }
 
@@ -270,8 +272,30 @@ namespace gamevault.UserControls
         private void InitTimer()
         {
             inputTimer = new InputTimer();
-            inputTimer.Interval = TimeSpan.FromMilliseconds(400);           
+            inputTimer.Interval = TimeSpan.FromMilliseconds(400);
             inputTimer.Tick += InputTimerElapsed;
+        }
+
+        private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            e.Handled = true;
+            ScrollViewer parent = FindParentScrollViewer((ScrollViewer)sender);
+            var eventArg = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
+            eventArg.RoutedEvent = UIElement.MouseWheelEvent;
+            eventArg.Source = sender;
+            parent.RaiseEvent(eventArg);
+        }
+        public ScrollViewer FindParentScrollViewer(DependencyObject child)
+        {
+            DependencyObject parentDepObj = child;
+            do
+            {
+                parentDepObj = VisualTreeHelper.GetParent(parentDepObj);
+                ScrollViewer parent = parentDepObj as ScrollViewer;
+                if (parent != null) return parent;
+            }
+            while (parentDepObj != null);
+            return null;
         }
     }
 }
