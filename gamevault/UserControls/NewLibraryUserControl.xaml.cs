@@ -69,7 +69,11 @@ namespace gamevault.UserControls
             {
                 uiExpanderGameCards.IsExpanded = true;
             }
-            ((ScrollViewer)uiServerGamesItemsControl.Template.FindName("PART_ItemsScroll", uiServerGamesItemsControl)).ScrollToTop();
+            ScrollViewer itemScroll = ((ScrollViewer)uiServerGamesItemsControl.Template.FindName("PART_ItemsScroll", uiServerGamesItemsControl));
+            if (itemScroll != null)
+            {
+                itemScroll.ScrollToTop();
+            }
 
             TaskQueue.Instance.ClearQueue();
 

@@ -236,7 +236,7 @@ namespace gamevault.UserControls
         private void GameCard_Clicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key));
-        }      
+        }
         private void Search_TextChanged(object sender, TextChangedEventArgs e)
         {
             inputTimer.Stop();
@@ -262,7 +262,8 @@ namespace gamevault.UserControls
         private void Settings_Click(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
-            //MainWindowViewModel.Instance.AppBarText = "Settings";
+            uiGameSettingsPopup.Child = new GameSettingsUserControl() { Width = 1200, Height = 800 };
+            ((GameSettingsUserControl)uiGameSettingsPopup.Child).DataContext = ((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key;
             uiGameSettingsPopup.IsOpen = true;
         }
         private void InitTimer()
@@ -275,23 +276,11 @@ namespace gamevault.UserControls
         private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
             e.Handled = true;
-            ScrollViewer parent = FindParentScrollViewer((ScrollViewer)sender);
+            ScrollViewer parent = VisualHelper.FindNextParentByType<ScrollViewer>((ScrollViewer)sender);
             var eventArg = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
             eventArg.RoutedEvent = UIElement.MouseWheelEvent;
             eventArg.Source = sender;
             parent.RaiseEvent(eventArg);
-        }
-        public ScrollViewer FindParentScrollViewer(DependencyObject child)
-        {
-            DependencyObject parentDepObj = child;
-            do
-            {
-                parentDepObj = VisualTreeHelper.GetParent(parentDepObj);
-                ScrollViewer parent = parentDepObj as ScrollViewer;
-                if (parent != null) return parent;
-            }
-            while (parentDepObj != null);
-            return null;
         }
 
         private void InstalledGames_Toggled(object sender, RoutedEventArgs e)
