@@ -31,7 +31,7 @@ namespace gamevault.UserControls
     {
         private InputTimer inputTimer { get; set; }
         private List<FileSystemWatcher> m_FileWatcherList = new List<FileSystemWatcher>();
-        private string[]? m_IgnoreList { get; set; }
+        private string[]? IgnoreList { get; set; }
         public NewInstallUserControl()
         {
             InitializeComponent();
@@ -41,7 +41,7 @@ namespace gamevault.UserControls
         }
         public async Task RestoreInstalledGames()
         {
-            m_IgnoreList = GetIgnoreList();
+            IgnoreList = GetIgnoreList();
             Dictionary<int, string> foundGames = new Dictionary<int, string>();
             Game[]? games = await Task<Game[]>.Run(() =>
             {
@@ -256,14 +256,36 @@ namespace gamevault.UserControls
         private void Play_Click(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
-            MainWindowViewModel.Instance.AppBarText = "PLAY";
+            string savedExecutable = Preferences.Get(AppConfigKey.Executable, $"{((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Value}\\gamevault-exec");
+            if (File.Exists(savedExecutable))
+            {
+                try
+                {
+                    ProcessHelper.StartApp(savedExecutable);
+                }
+                catch
+                {
+
+                    try
+                    {
+                        ProcessHelper.StartApp(savedExecutable, true);
+                    }
+                    catch
+                    {
+                        MainWindowViewModel.Instance.AppBarText = $"Can not execute '{savedExecutable}'";
+                    }
+                }
+            }
+            else
+            {
+                MainWindowViewModel.Instance.AppBarText = $"Could not find executable '{savedExecutable}'";
+            }
         }
 
         private void Settings_Click(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
-            uiGameSettingsPopup.Child = new GameSettingsUserControl() { Width = 1200, Height = 800 };
-            ((GameSettingsUserControl)uiGameSettingsPopup.Child).DataContext = ((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key;
+            uiGameSettingsPopup.Child = new GameSettingsUserControl((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext, IgnoreList) { Width = 1200, Height = 800 };
             uiGameSettingsPopup.IsOpen = true;
         }
         private void InitTimer()

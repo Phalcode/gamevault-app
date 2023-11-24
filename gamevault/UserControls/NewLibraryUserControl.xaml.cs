@@ -176,8 +176,7 @@ namespace gamevault.UserControls
 
         private void ScrollToTop_Click(object sender, MouseButtonEventArgs e)
         {
-            ((ScrollViewer)((Grid)((FrameworkElement)sender).Parent).Children[0]).ScrollToTop();
-            //uiMainScrollBar.ScrollToTop();
+            ((ScrollViewer)((Grid)((FrameworkElement)sender).Parent).Children[0]).ScrollToTop();           
         }
 
         private async void OrderBy_Changed(object sender, RoutedEventArgs e)

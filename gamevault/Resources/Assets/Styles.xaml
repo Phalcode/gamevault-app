@@ -65,12 +65,12 @@
                     <BeginStoryboard>
                         <Storyboard>
                             <DoubleAnimation
-                            Duration="0:0:0.15"
+                            Duration="0:0:0.10"
                             
                             Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
                             To="1.2"/>
                             <DoubleAnimation
-                            Duration="0:0:0.15"
+                            Duration="0:0:0.10"
                             
                             Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
                             To="1.2"/>

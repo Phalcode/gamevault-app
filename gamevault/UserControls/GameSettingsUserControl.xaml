@@ -110,21 +110,41 @@
                 <TextBlock FontSize="16">
                     <TextBlock.Text>
                         <MultiBinding StringFormat="{}{0} ({1})">
-                            <Binding Path="Title" />
-                            <Binding Path="ReleaseDate.Year" FallbackValue="?"/>
+                            <Binding Path="Game.Title" />
+                            <Binding Path="Game.ReleaseDate.Year" FallbackValue="?"/>
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>
-                <TextBlock Text="{Binding ID,StringFormat='{}ID {0}'}" FontSize="16"/>
-                <TextBlock Text="{Binding Version,StringFormat='{}Version {0}'}" FontSize="16"/>
+                <TextBlock Text="{Binding Path=Game.ID,StringFormat='{}ID {0}'}" FontSize="16"/>
+                <TextBlock Text="{Binding Path=Game.Version,StringFormat='{}Version {0}'}" FontSize="16"/>
             </StackPanel>
             <Grid Grid.Column="1" Background="{DynamicResource DarkBackground3}">
                 <mah:MetroAnimatedTabControl x:Name="uiSettingsContent" Background="Transparent">
                     <mah:MetroTabItem>
-                        <TextBlock Text="INSTALLATION"/>
+                        <StackPanel Margin="20,80,0,0">
+                            <TextBlock Text="Here you can manage your Game Installation" FontSize="15"/>
+                            <Border CornerRadius="5" Background="{DynamicResource DarkBackground2}" Margin="10" Padding="10">
+                                <TextBlock Text="{Binding Directory}" FontSize="15"/>
+                            </Border>
+                            <Button Content="Open Directory" HorizontalAlignment="Left" FontSize="15" Margin="10" Click="OpenDirectory_Click"/>
+                            <Button Content="Uninstall" HorizontalAlignment="Left" FontSize="15" Margin="10,30,0,0" Click="Uninstall_Click"/>
+                        </StackPanel>
                     </mah:MetroTabItem>
                     <mah:MetroTabItem>
-                        <TextBlock Text="LAUNCH OPTIONS"/>
+                        <StackPanel Margin="20,80,0,0">
+                            <TextBlock Text="Here you can manage you launch options" FontSize="15"/>
+                            <ComboBox x:Name="uiCbExecutables" ItemsSource="{Binding Executables}" DisplayMemberPath="Value" Margin="10,10,10,0" SelectionChanged="Executable_SelectionChanged" DropDownOpened="ExecutableSelection_Opened"/>
+                            <Grid Style="{DynamicResource HoverEffect}" Background="Transparent" HorizontalAlignment="Left" Height="25" Width="32" Cursor="Hand" Margin="10,20,0,0" MouseLeftButtonUp="CreateDesktopShortcut_Click">
+                                <Path Fill="White" Data="{DynamicResource IconGameSettingsLink}" RenderTransformOrigin="0.1,0.5">
+                                    <Path.RenderTransform>
+                                        <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+                                    </Path.RenderTransform>
+                                </Path>
+                                <Grid.RenderTransform>
+                                    <ScaleTransform/>
+                                </Grid.RenderTransform>
+                            </Grid>
+                        </StackPanel>
                     </mah:MetroTabItem>
                     <mah:MetroTabItem>
                         <TextBlock Text="EDIT DETAILS"/>
@@ -137,13 +157,16 @@
                     </mah:MetroTabItem>
                 </mah:MetroAnimatedTabControl>
             </Grid>
-            <Border Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top" Background="#02000000" Margin="0,10,10,0" Cursor="Hand" MouseLeftButtonUp="Close_Click">
+            <Grid Grid.Column="1" Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Top" Background="#02000000" Margin="0,10,10,0" Cursor="Hand" MouseLeftButtonUp="Close_Click">
                 <Path Fill="White" Stroke="White" Data="{DynamicResource IconClose}" RenderTransformOrigin="1.2,1.2">
                     <Path.RenderTransform>
                         <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
                     </Path.RenderTransform>
                 </Path>
-            </Border>
+                <Grid.RenderTransform>
+                    <ScaleTransform/>
+                </Grid.RenderTransform>
+            </Grid>
         </Grid>
     </Border>
 </UserControl>
