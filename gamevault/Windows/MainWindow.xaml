@@ -46,8 +46,13 @@
                 </mah:HamburgerMenuItemCollection>
             </mah:HamburgerMenu.OptionsItemsSource>-->
 			<mah:HamburgerMenu.Content>
-				<mah:TransitioningContentControl RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding ActiveControl}" FocusVisualStyle="{x:Null}"/>
-			</mah:HamburgerMenu.Content>
+                <Grid>
+                    <mah:TransitioningContentControl RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding ActiveControl}" FocusVisualStyle="{x:Null}"/>
+                    <Viewbox>
+                        <mah:TransitioningContentControl RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding Popup}" FocusVisualStyle="{x:Null}"/>
+                    </Viewbox>
+                </Grid>
+            </mah:HamburgerMenu.Content>
 
 
 		</mah:HamburgerMenu>

@@ -31,20 +31,32 @@ namespace gamevault.ViewModels
         }
         #endregion
         #region PrivateMembers      
-        private ObservableCollection<ObservableKeyValuePair> m_InstalledGames { get; set; }
+        private ObservableCollection<KeyValuePair<Game, string>> m_InstalledGames { get; set; }
         #endregion      
-        public ObservableCollection<ObservableKeyValuePair> InstalledGames
+        public ObservableCollection<KeyValuePair<Game, string>> InstalledGames
         {
             get
             {
                 if (m_InstalledGames == null)
                 {
-                    m_InstalledGames = new ObservableCollection<ObservableKeyValuePair>();
+                    m_InstalledGames = new ObservableCollection<KeyValuePair<Game, string>>();
                 }
                 return m_InstalledGames;
             }
             set { m_InstalledGames = value; OnPropertyChanged(); }
         }
-        public ObservableCollection<ObservableKeyValuePair> InstalledGamesOrigin {  get; set; }
+        public ObservableCollection<KeyValuePair<Game, string>> InstalledGamesOrigin { get; set; }
+        public string[]? IgnoreList { get; set; }
+        public void RefreshCard(int gameid, int newImageId)
+        {
+            KeyValuePair<Game, string> gameToRefresh = InstalledGames.Where(g => g.Key.ID == gameid).FirstOrDefault();
+            if (!gameToRefresh.Equals(default(KeyValuePair<Game, string>)))
+            {
+                int index = InstalledGames.IndexOf(gameToRefresh);
+                InstalledGames[index] = new KeyValuePair<Game, string>();
+                gameToRefresh.Key.BoxImage.ID = newImageId;
+                InstalledGames[index] = gameToRefresh;
+            }
+        }
     }
 }

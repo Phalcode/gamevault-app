@@ -92,6 +92,7 @@ namespace gamevault.ViewModels
         private double m_TaskbarProgress = 0;
         private int m_ActiveControlIndex = -1;
         private UserControl m_ActiveControl { get; set; }
+        private UserControl m_Popup { get; set; }
         private LibraryUserControl m_Library { get; set; }
 
         private SettingsUserControl m_Settings { get; set; }
@@ -124,6 +125,23 @@ namespace gamevault.ViewModels
                 }
                 OnPropertyChanged();
             }
+        }
+        public UserControl Popup
+        {
+            get { return m_Popup; }
+            set
+            {
+                m_Popup = value;
+                OnPropertyChanged();
+            }
+        }
+        public void OpenPopup(UserControl userControl)
+        {
+            Popup = userControl;
+        }
+        public void ClosePopup()
+        {
+            Popup = null;
         }
         internal LibraryUserControl Library
         {

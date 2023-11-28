@@ -12,14 +12,20 @@ namespace gamevault.ViewModels
     {
         #region Privates
        
-        private ObservableKeyValuePair game {  get; set; }
+        private Game game {  get; set; }
+        private string directory {  get; set; }
         private ObservableCollection<KeyValuePair<string, string>> m_Executables { get; set; }
         private string launchParameter { get; set; }
         #endregion      
-        public ObservableKeyValuePair Game
+        public Game Game
         {
             get { return game; }
             set { game = value; OnPropertyChanged(); }
+        }
+        public string Directory
+        {
+            get { return directory; }
+            set { directory = value; OnPropertyChanged(); }
         }
         public ObservableCollection<KeyValuePair<string, string>> Executables
         {

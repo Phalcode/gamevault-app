@@ -27,7 +27,7 @@ namespace gamevault.Converter
             }
             else if (parameter.ToString() == "server")
             {
-                if ((LoginManager.Instance.GetCurrentUser() != null && LoginManager.Instance.GetCurrentUser().Role >= PERMISSION_ROLE.EDITOR))
+                if (LoginManager.Instance.IsLoggedIn() && (LoginManager.Instance.GetCurrentUser() != null && LoginManager.Instance.GetCurrentUser().Role >= PERMISSION_ROLE.EDITOR))
                 {
                     return Visibility.Visible;
                 }

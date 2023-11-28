@@ -182,7 +182,19 @@
                                                                     </Style.Triggers>
                                                                 </Style>
                                                             </Border.Style>
-                                                            <TextBlock Text="{Binding Path=Title}" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" TextAlignment="Center" TextWrapping="Wrap"/>
+                                                            <Grid>
+                                                                <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,12,10,0" MouseLeftButtonUp="Settings_Click" Background="#02000000">
+                                                                    <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="White" RenderTransformOrigin="0.5,0.5">
+                                                                        <Path.RenderTransform>
+                                                                            <ScaleTransform ScaleX="1.3" ScaleY="1.3"/>
+                                                                        </Path.RenderTransform>
+                                                                    </Path>
+                                                                    <Grid.RenderTransform>
+                                                                        <ScaleTransform/>
+                                                                    </Grid.RenderTransform>
+                                                                </Grid>
+                                                                <TextBlock Text="{Binding Path=Title}" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" TextAlignment="Center" TextWrapping="Wrap"/>
+                                                            </Grid>
                                                         </Border>
                                                     </Grid>
                                                 </Grid>

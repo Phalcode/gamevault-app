@@ -176,7 +176,7 @@ namespace gamevault.UserControls
 
         private void ScrollToTop_Click(object sender, MouseButtonEventArgs e)
         {
-            ((ScrollViewer)((Grid)((FrameworkElement)sender).Parent).Children[0]).ScrollToTop();           
+            ((ScrollViewer)((Grid)((FrameworkElement)sender).Parent).Children[0]).ScrollToTop();
         }
 
         private async void OrderBy_Changed(object sender, RoutedEventArgs e)
@@ -253,6 +253,31 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(result, true));
             }
             ((FrameworkElement)sender).IsEnabled = true;
+        }
+
+        private void Settings_Click(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+            var installedGame = NewInstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ((Game)((FrameworkElement)sender).DataContext).ID).FirstOrDefault();
+            if (installedGame.Equals(default(KeyValuePair<Game, string>)))
+            {
+                MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(new KeyValuePair<Game, string>((Game)((FrameworkElement)sender).DataContext, "")) { Width = 1200, Height = 800, Margin = new Thickness(50) });
+            }
+            else
+            {
+                MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(installedGame) { Width = 1200, Height = 800, Margin = new Thickness(50) });
+            }
+        }
+        public void RefreshCard(int gameid, int newImageId)
+        {
+            Game? gameToRefresh = ViewModel.GameCards.Where(g => g.ID == gameid).FirstOrDefault();
+            if (gameToRefresh != null)
+            {
+                int index = ViewModel.GameCards.IndexOf(gameToRefresh);
+                ViewModel.GameCards[index] = null;
+                gameToRefresh.BoxImage.ID = newImageId;
+                ViewModel.GameCards[index] = gameToRefresh;
+            }
         }
     }
 }
