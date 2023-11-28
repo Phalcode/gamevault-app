@@ -12,7 +12,18 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-
+using Windows.ApplicationModel.Background;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Text.Json;
+using System.Collections;
+using System.Drawing.Imaging;
+using System.Drawing;
+using System.Reflection.Metadata;
+using System.Text.RegularExpressions;
+using static System.Net.Mime.MediaTypeNames;
+using System.Threading.Tasks;
+using System.Net;
 
 namespace gamevault.UserControls
 {
@@ -34,6 +45,10 @@ namespace gamevault.UserControls
             IgnoreList = ignoreList;
             this.DataContext = ViewModel;
             FindGameExecutables(ViewModel.Directory, true);
+            if (Directory.Exists(ViewModel.Directory))
+            {
+                ViewModel.LaunchParameter = Preferences.Get(AppConfigKey.LaunchParameter, $"{ViewModel.Directory}\\gamevault-exec");
+            }
         }
         private void SettingsTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -118,7 +133,7 @@ namespace gamevault.UserControls
 
                                 try
                                 {
-                                    uninstProcess = ProcessHelper.StartApp(dialog.FileName, true);
+                                    uninstProcess = ProcessHelper.StartApp(dialog.FileName, "", true);
                                 }
                                 catch
                                 {
@@ -212,6 +227,11 @@ namespace gamevault.UserControls
 
         private async void CreateDesktopShortcut_Click(object sender, MouseButtonEventArgs e)
         {
+            if (!File.Exists(SavedExecutable))
+            {
+                MainWindowViewModel.Instance.AppBarText = "No valid Executable set";
+                return;
+            }
             MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Do you want to create a desktop shortcut for the current selected executable?", "",
                 MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
             if (result == MessageDialogResult.Affirmative)
@@ -234,5 +254,117 @@ namespace gamevault.UserControls
                 catch { }
             }
         }
+
+        private void LaunchParameter_Changed(object sender, RoutedEventArgs e)
+        {
+            if (Directory.Exists(ViewModel.Directory))
+            {
+                Preferences.Set(AppConfigKey.LaunchParameter, ViewModel.LaunchParameter, $"{ViewModel.Directory}\\gamevault-exec");
+            }
+        }
+        #region EDIT IMAGE
+        private void BoxImage_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                try
+                {
+                    string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                    uiUploadBoxArtPreview.Source = BitmapHelper.GetBitmapImage(files[0]);
+                }
+                catch (Exception ex)
+                {
+                    MainWindowViewModel.Instance.AppBarText = ex.Message;
+                }
+            }
+            else if (e.Data.GetDataPresent(DataFormats.Html))
+            {
+                string html = (string)e.Data.GetData(DataFormats.Html);
+                string imagePath = ExtractImageUrlFromHtml(html);
+
+                if (!string.IsNullOrEmpty(imagePath))
+                {
+                    try
+                    {
+                        BitmapImage bitmap = new BitmapImage(new Uri(imagePath));
+                        uiUploadBoxArtPreview.Source = bitmap;
+                    }
+                    catch
+                    {
+                        MainWindowViewModel.Instance.AppBarText = "Failed to download image";
+                    }
+                }
+            }
+        }
+        private string ExtractImageUrlFromHtml(string html)
+        {
+            Regex regex = new Regex("<img[^>]+?src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>");
+            Match match = regex.Match(html);
+            if (match.Success)
+            {
+                return match.Groups[1].Value;
+            }
+            return string.Empty;
+        }
+        private void BoxImage_ChooseImage(object sender, MouseButtonEventArgs e)
+        {
+            ((FrameworkElement)sender).Focus();
+            try
+            {
+                using (var dialog = new System.Windows.Forms.OpenFileDialog())
+                {
+                    System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+                    if (result == System.Windows.Forms.DialogResult.OK && File.Exists(dialog.FileName))
+                    {
+                        uiUploadBoxArtPreview.Source = BitmapHelper.GetBitmapImage(dialog.FileName);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MainWindowViewModel.Instance.AppBarText = ex.Message;
+            }
+        }
+
+        private async void BoxImage_Save(object sender, RoutedEventArgs e)
+        {
+            ((Button)sender).IsEnabled = false;
+            try
+            {
+                string resp = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/images", BitmapHelper.BitmapSourceToMemeryStream((BitmapSource)uiUploadBoxArtPreview.Source), "x.png", null);
+                var newImageId = JsonSerializer.Deserialize<gamevault.Models.Image>(resp).ID;
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        dynamic updateObject = new System.Dynamic.ExpandoObject();
+                        updateObject.box_image_id = newImageId;
+                        
+                        WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}", JsonSerializer.Serialize(updateObject));
+                        MainWindowViewModel.Instance.AppBarText = "Successfully updated image";
+                    }
+                    catch (WebException ex)
+                    {
+                        string msg = WebExceptionHelper.GetServerMessage(ex);
+                        MainWindowViewModel.Instance.AppBarText = msg;
+                    }
+                    catch (Exception ex)
+                    {
+                        MainWindowViewModel.Instance.AppBarText = ex.Message;
+                    }
+                });               
+            }
+            catch (WebException ex)
+            {
+                string msg = WebExceptionHelper.GetServerMessage(ex);
+                MainWindowViewModel.Instance.AppBarText = msg;
+            }
+            catch (Exception ex)
+            {
+                MainWindowViewModel.Instance.AppBarText = ex.Message;
+            }
+            ((Button)sender).IsEnabled = true;
+        }
+        #endregion
     }
 }

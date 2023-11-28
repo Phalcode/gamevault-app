@@ -128,6 +128,6 @@
                 </Grid>
             </Border>
         </Expander>
-        <Popup x:Name="uiGameSettingsPopup" Placement="Relative" PlacementRectangle="450,100,0,0" IsOpen="False" StaysOpen="False" AllowsTransparency="True"/>
+        <Popup x:Name="uiGameSettingsPopup" Placement="Relative" PlacementRectangle="450,100,0,0" IsOpen="False" StaysOpen="True" AllowsTransparency="True"/>
     </Grid>
 </UserControl>

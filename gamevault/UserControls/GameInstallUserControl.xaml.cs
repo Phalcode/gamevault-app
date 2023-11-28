@@ -91,9 +91,9 @@ namespace gamevault.UserControls
                     checkForSavedExecutable = false;
                     uiCbExecutables.SelectedItem = currentItem;
                 }
-                else if(lastSelected != string.Empty)
+                else if (lastSelected != string.Empty)
                 {
-                    var result = ViewModel.Executables.Where(e => e.Key == lastSelected).FirstOrDefault();                  
+                    var result = ViewModel.Executables.Where(e => e.Key == lastSelected).FirstOrDefault();
                     if (result.Key != null)
                     {
                         uiCbExecutables.SelectedItem = result;
@@ -131,7 +131,7 @@ namespace gamevault.UserControls
 
                     try
                     {
-                        ProcessHelper.StartApp(m_SavedExecutable, true);
+                        ProcessHelper.StartApp(m_SavedExecutable, "", true);
                     }
                     catch
                     {
@@ -198,7 +198,7 @@ namespace gamevault.UserControls
 
                                 try
                                 {
-                                    uninstProcess = ProcessHelper.StartApp(dialog.FileName, true);
+                                    uninstProcess = ProcessHelper.StartApp(dialog.FileName, "", true);
                                 }
                                 catch
                                 {

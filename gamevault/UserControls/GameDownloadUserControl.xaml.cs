@@ -441,7 +441,7 @@ namespace gamevault.UserControls
                     {
                         try
                         {
-                            setupProcess = ProcessHelper.StartApp(setupEexecutable, true);
+                            setupProcess = ProcessHelper.StartApp(setupEexecutable, "",true);
                         }
                         catch
                         {

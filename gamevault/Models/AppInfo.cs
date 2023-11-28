@@ -20,7 +20,8 @@ namespace gamevault.Models
         ExtractionFinished,
         RunningInTrayMessage,
         DownloadLimit,
-        InstalledGamesOpen
+        InstalledGamesOpen,
+        LaunchParameter
     }
     public static class AppFilePath
     {

@@ -246,7 +246,7 @@ namespace gamevault.UserControls
         private void InputTimerElapsed(object sender, EventArgs e)
         {
             inputTimer.Stop();
-            if (NewInstallViewModel.Instance.InstalledGamesOrigin == null)
+            if (NewInstallViewModel.Instance.InstalledGamesOrigin == null || NewInstallViewModel.Instance.InstalledGamesOrigin.Count < NewInstallViewModel.Instance.InstalledGames.Count)
             {
                 NewInstallViewModel.Instance.InstalledGamesOrigin = NewInstallViewModel.Instance.InstalledGames;
             }
@@ -257,18 +257,23 @@ namespace gamevault.UserControls
         {
             e.Handled = true;
             string savedExecutable = Preferences.Get(AppConfigKey.Executable, $"{((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Value}\\gamevault-exec");
-            if (File.Exists(savedExecutable))
+            string parameter = Preferences.Get(AppConfigKey.LaunchParameter, $"{((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Value}\\gamevault-exec");
+            if (savedExecutable == string.Empty)
+            {
+                MainWindowViewModel.Instance.AppBarText = $"No Executable set";
+            }
+            else if (File.Exists(savedExecutable))
             {
                 try
                 {
-                    ProcessHelper.StartApp(savedExecutable);
+                    ProcessHelper.StartApp(savedExecutable, parameter);
                 }
                 catch
                 {
 
                     try
                     {
-                        ProcessHelper.StartApp(savedExecutable, true);
+                        ProcessHelper.StartApp(savedExecutable, parameter, true);
                     }
                     catch
                     {
@@ -278,7 +283,7 @@ namespace gamevault.UserControls
             }
             else
             {
-                MainWindowViewModel.Instance.AppBarText = $"Could not find executable '{savedExecutable}'";
+                MainWindowViewModel.Instance.AppBarText = $"Could not find Executable '{savedExecutable}'";
             }
         }
 

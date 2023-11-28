@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:conv="clr-namespace:gamevault.Converter"
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
@@ -31,6 +32,7 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+        <conv:GameSettingsTabVisibilityConverter x:Key="tabVisConv"/>
     </UserControl.Resources>
 
     <Border Padding="5" CornerRadius="5">
@@ -58,52 +60,56 @@
             <Grid Grid.Column="0" Background="{DynamicResource DarkBackground2}">
                 <TextBlock Text="Game Settings" FontSize="30" Margin="10" Foreground="White"/>
                 <StackPanel VerticalAlignment="Top" Margin="40,70,0,0">
-                    <TextBlock Text="Your Computer" FontSize="30" Foreground="White"/>
-                    <TabControl x:Name="uiSettingsHeadersLocal" TabStripPlacement="Left" Background="Transparent" SelectionChanged="SettingsTabControl_SelectionChanged">
-                        <TabItem>
-                            <TabItem.Header>
-                                <StackPanel Orientation="Horizontal">
-                                    <Path Style="{StaticResource TabItemHeaderPath}" Data="{DynamicResource IconGameSettingsFolder}" VerticalAlignment="Center"/>
-                                    <TextBlock Style="{StaticResource TabItemHeaderTextBlock}" Text="Installation"/>
-                                </StackPanel>
-                            </TabItem.Header>
-                        </TabItem>
-                        <TabItem>
-                            <TabItem.Header>
-                                <StackPanel Orientation="Horizontal">
-                                    <Path Style="{StaticResource TabItemHeaderPath}" Data="{DynamicResource IconGameSettingsLaunchOptions}" VerticalAlignment="Center"/>
-                                    <TextBlock Style="{StaticResource TabItemHeaderTextBlock}" Text="Launch Options"/>
-                                </StackPanel>
-                            </TabItem.Header>
-                        </TabItem>
-                    </TabControl>
-                    <TextBlock Text="Server" FontSize="30" Margin="0,30,0,0" Foreground="White"/>
-                    <TabControl x:Name="uiSettingsHeadersRemote" TabStripPlacement="Left" Background="Transparent" SelectionChanged="SettingsTabControl_SelectionChanged">
-                        <TabItem>
-                            <TabItem.Header>
-                                <StackPanel Orientation="Horizontal">
-                                    <Path Style="{StaticResource TabItemHeaderPath}" Data="{DynamicResource IconGameSettingsEditDetails}" VerticalAlignment="Center"/>
-                                    <TextBlock Style="{StaticResource TabItemHeaderTextBlock}" Text="Edit Details"/>
-                                </StackPanel>
-                            </TabItem.Header>
-                        </TabItem>
-                        <TabItem>
-                            <TabItem.Header>
-                                <StackPanel Orientation="Horizontal">
-                                    <Path Style="{StaticResource TabItemHeaderPath}" Data="{DynamicResource IconGameSettingsEditImages}" VerticalAlignment="Center"/>
-                                    <TextBlock Style="{StaticResource TabItemHeaderTextBlock}" Text="Edit Images"/>
-                                </StackPanel>
-                            </TabItem.Header>
-                        </TabItem>
-                        <TabItem>
-                            <TabItem.Header>
-                                <StackPanel Orientation="Horizontal">
-                                    <Path Style="{StaticResource TabItemHeaderPath}" Data="{DynamicResource IconGameSettingsRemap}" VerticalAlignment="Center"/>
-                                    <TextBlock Style="{StaticResource TabItemHeaderTextBlock}" Text="Remap Game"/>
-                                </StackPanel>
-                            </TabItem.Header>
-                        </TabItem>
-                    </TabControl>
+                    <StackPanel Visibility="{Binding Game,Converter={StaticResource tabVisConv},ConverterParameter='local'}">
+                        <TextBlock Text="Your Computer" FontSize="30" Foreground="White"/>
+                        <TabControl x:Name="uiSettingsHeadersLocal" TabStripPlacement="Left" Background="Transparent" SelectionChanged="SettingsTabControl_SelectionChanged">
+                            <TabItem>
+                                <TabItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Style="{StaticResource TabItemHeaderPath}" Data="{DynamicResource IconGameSettingsFolder}" VerticalAlignment="Center"/>
+                                        <TextBlock Style="{StaticResource TabItemHeaderTextBlock}" Text="Installation"/>
+                                    </StackPanel>
+                                </TabItem.Header>
+                            </TabItem>
+                            <TabItem>
+                                <TabItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Style="{StaticResource TabItemHeaderPath}" Data="{DynamicResource IconGameSettingsLaunchOptions}" VerticalAlignment="Center"/>
+                                        <TextBlock Style="{StaticResource TabItemHeaderTextBlock}" Text="Launch Options"/>
+                                    </StackPanel>
+                                </TabItem.Header>
+                            </TabItem>
+                        </TabControl>
+                    </StackPanel>
+                    <StackPanel Visibility="{Binding Game,Converter={StaticResource tabVisConv},ConverterParameter='server'}">
+                        <TextBlock Text="Server" FontSize="30" Margin="0,30,0,0" Foreground="White"/>
+                        <TabControl x:Name="uiSettingsHeadersRemote" TabStripPlacement="Left" Background="Transparent" SelectionChanged="SettingsTabControl_SelectionChanged">
+                            <TabItem>
+                                <TabItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Style="{StaticResource TabItemHeaderPath}" Data="{DynamicResource IconGameSettingsEditDetails}" VerticalAlignment="Center"/>
+                                        <TextBlock Style="{StaticResource TabItemHeaderTextBlock}" Text="Edit Details"/>
+                                    </StackPanel>
+                                </TabItem.Header>
+                            </TabItem>
+                            <TabItem>
+                                <TabItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Style="{StaticResource TabItemHeaderPath}" Data="{DynamicResource IconGameSettingsEditImages}" VerticalAlignment="Center"/>
+                                        <TextBlock Style="{StaticResource TabItemHeaderTextBlock}" Text="Edit Images"/>
+                                    </StackPanel>
+                                </TabItem.Header>
+                            </TabItem>
+                            <TabItem>
+                                <TabItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Style="{StaticResource TabItemHeaderPath}" Data="{DynamicResource IconGameSettingsRemap}" VerticalAlignment="Center"/>
+                                        <TextBlock Style="{StaticResource TabItemHeaderTextBlock}" Text="Remap Game"/>
+                                    </StackPanel>
+                                </TabItem.Header>
+                            </TabItem>
+                        </TabControl>
+                    </StackPanel>
                 </StackPanel>
             </Grid>
             <StackPanel Grid.Column="0" VerticalAlignment="Bottom" Margin="10">
@@ -133,6 +139,7 @@
                     <mah:MetroTabItem>
                         <StackPanel Margin="20,80,0,0">
                             <TextBlock Text="Here you can manage you launch options" FontSize="15"/>
+                            <TextBlock Text="Game Executable"/>
                             <ComboBox x:Name="uiCbExecutables" ItemsSource="{Binding Executables}" DisplayMemberPath="Value" Margin="10,10,10,0" SelectionChanged="Executable_SelectionChanged" DropDownOpened="ExecutableSelection_Opened"/>
                             <Grid Style="{DynamicResource HoverEffect}" Background="Transparent" HorizontalAlignment="Left" Height="25" Width="32" Cursor="Hand" Margin="10,20,0,0" MouseLeftButtonUp="CreateDesktopShortcut_Click">
                                 <Path Fill="White" Data="{DynamicResource IconGameSettingsLink}" RenderTransformOrigin="0.1,0.5">
@@ -144,13 +151,65 @@
                                     <ScaleTransform/>
                                 </Grid.RenderTransform>
                             </Grid>
+                            <TextBlock Text="Launch Parameter" FontSize="15"/>
+                            <TextBox Width="100" HorizontalAlignment="Left" Text="{Binding LaunchParameter,UpdateSourceTrigger=PropertyChanged}" LostFocus="LaunchParameter_Changed" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
                         </StackPanel>
                     </mah:MetroTabItem>
                     <mah:MetroTabItem>
                         <TextBlock Text="EDIT DETAILS"/>
                     </mah:MetroTabItem>
                     <mah:MetroTabItem>
-                        <TextBlock Text="EDIT IMAGES"/>
+                        <Grid>
+                            <TextBlock Text="Hero, you can update the background and box images of your game." VerticalAlignment="Top" FontSize="15" Margin="10,10,0,0"/>
+                            <Border CornerRadius="5" Margin="10,50,0,50" Width="425" HorizontalAlignment="Left" Background="{DynamicResource DarkBackground}">
+                                <StackPanel>
+                                    <TextBlock Text="Background" HorizontalAlignment="Center"/>
+                                    <!--<Image Height="150"/>-->
+                                    <Grid Background="Black" Height="250" Margin="10,10,10,0"/>
+                                    <Border CornerRadius="5" BorderThickness="2" BorderBrush="LightGray" Margin="10" Height="100" Background="{DynamicResource DarkBackground2}" Cursor="Hand">
+                                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <TextBlock Text="Click to Upload, Paste or Drag Drop" FontWeight="Bold"/>
+                                            <TextBlock Text="JPG, PNG, GIF, TIF, ICO or BMP" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <Rectangle Fill="White" Width="70" Height="2"/>
+                                        <StackPanel Margin="10,0,10,0">
+                                            <TextBlock Text="OR" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="Upload via URL" FontWeight="Bold"/>
+                                        </StackPanel>
+                                        <Rectangle Fill="White" Width="70" Height="2"/>
+                                    </StackPanel>
+                                    <TextBox Text="https://myurl.com/lol" Margin="10" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
+                                    <Button Content="Save" HorizontalAlignment="Center" Width="120"/>
+                                </StackPanel>
+                            </Border>
+                            <Border CornerRadius="5" Margin="0,50,10,50" Width="425" HorizontalAlignment="Right" Background="{DynamicResource DarkBackground}">
+                                <StackPanel>
+                                    <TextBlock Text="Box Art" HorizontalAlignment="Center"/>
+                                    <Grid>
+                                        <Image x:Name="uiUploadBoxArtPreview" Height="250" Width="167" Margin="10,10,10,0" Panel.ZIndex="1"/>
+                                        <Grid Background="Black" Height="250" Width="167" Margin="10,10,10,0"/>
+                                    </Grid>
+                                    <Border CornerRadius="5" BorderThickness="2" BorderBrush="LightGray" Margin="10" Height="100" Background="{DynamicResource DarkBackground2}" Cursor="Hand" AllowDrop="True" Drop="BoxImage_Drop" MouseLeftButtonUp="BoxImage_ChooseImage">
+                                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <TextBlock Text="Click to Upload, Paste or Drag Drop" FontWeight="Bold"/>
+                                            <TextBlock Text="JPG, PNG, GIF, TIF, ICO or BMP" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <Rectangle Fill="White" Width="70" Height="2"/>
+                                        <StackPanel Margin="10,0,10,0">
+                                            <TextBlock Text="OR" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="Upload via URL" FontWeight="Bold"/>
+                                        </StackPanel>
+                                        <Rectangle Fill="White" Width="70" Height="2"/>
+                                    </StackPanel>
+                                    <TextBox Text="https://myurl.com/lol" Margin="10" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
+                                    <Button Content="Save" HorizontalAlignment="Center" Width="120" Click="BoxImage_Save"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
                     </mah:MetroTabItem>
                     <mah:MetroTabItem>
                         <TextBlock Text="REMAP GAMES"/>

@@ -10,9 +10,13 @@ namespace gamevault.Helper
 {
     internal class ProcessHelper
     {
-        internal static Process StartApp(string fileName, bool asAdmin = false)
+        internal static Process StartApp(string fileName, string parameter = "", bool asAdmin = false)
         {
             ProcessStartInfo app = new ProcessStartInfo();
+            if (parameter != "")
+            {
+                app.Arguments = parameter;
+            }
             app.FileName = fileName;
             app.WorkingDirectory = Path.GetDirectoryName(fileName);
             app.UseShellExecute = true;

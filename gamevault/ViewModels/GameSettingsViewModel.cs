@@ -14,6 +14,7 @@ namespace gamevault.ViewModels
         private string directory {  get; set; }
         private Game game {  get; set; }
         private ObservableCollection<KeyValuePair<string, string>> m_Executables { get; set; }
+        private string launchParameter { get; set; }
         #endregion
         public string Directory
         {
@@ -36,6 +37,11 @@ namespace gamevault.ViewModels
                 return m_Executables;
             }
             set { m_Executables = value; OnPropertyChanged(); }
+        }
+        public string LaunchParameter
+        {
+            get { return launchParameter; }
+            set { launchParameter = value; OnPropertyChanged(); }
         }
     }
 }
