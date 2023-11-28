@@ -16,6 +16,8 @@ namespace gamevault.Converter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (((Game)value) == null)
+                return Visibility.Collapsed;
             if (parameter.ToString() == "local")
             {
                 if (NewInstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ((Game)value).ID).Count() > 0)

@@ -60,7 +60,7 @@
             <Grid Grid.Column="0" Background="{DynamicResource DarkBackground2}">
                 <TextBlock Text="Game Settings" FontSize="30" Margin="10" Foreground="White"/>
                 <StackPanel VerticalAlignment="Top" Margin="40,70,0,0">
-                    <StackPanel Visibility="{Binding Game,Converter={StaticResource tabVisConv},ConverterParameter='local'}">
+                    <StackPanel Visibility="{Binding Game.Key,Converter={StaticResource tabVisConv},ConverterParameter='local'}">
                         <TextBlock Text="Your Computer" FontSize="30" Foreground="White"/>
                         <TabControl x:Name="uiSettingsHeadersLocal" TabStripPlacement="Left" Background="Transparent" SelectionChanged="SettingsTabControl_SelectionChanged">
                             <TabItem>
@@ -81,7 +81,7 @@
                             </TabItem>
                         </TabControl>
                     </StackPanel>
-                    <StackPanel Visibility="{Binding Game,Converter={StaticResource tabVisConv},ConverterParameter='server'}">
+                    <StackPanel Visibility="{Binding Game.Key,Converter={StaticResource tabVisConv},ConverterParameter='server'}">
                         <TextBlock Text="Server" FontSize="30" Margin="0,30,0,0" Foreground="White"/>
                         <TabControl x:Name="uiSettingsHeadersRemote" TabStripPlacement="Left" Background="Transparent" SelectionChanged="SettingsTabControl_SelectionChanged">
                             <TabItem>
@@ -116,13 +116,13 @@
                 <TextBlock FontSize="16">
                     <TextBlock.Text>
                         <MultiBinding StringFormat="{}{0} ({1})">
-                            <Binding Path="Game.Title" />
-                            <Binding Path="Game.ReleaseDate.Year" FallbackValue="?"/>
+                            <Binding Path="Game.Key.Title" />
+                            <Binding Path="Game.Key.ReleaseDate.Year" FallbackValue="?"/>
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>
-                <TextBlock Text="{Binding Path=Game.ID,StringFormat='{}ID {0}'}" FontSize="16"/>
-                <TextBlock Text="{Binding Path=Game.Version,StringFormat='{}Version {0}'}" FontSize="16"/>
+                <TextBlock Text="{Binding Path=Game.Key.ID,StringFormat='{}ID {0}'}" FontSize="16"/>
+                <TextBlock Text="{Binding Path=Game.Key.Version,StringFormat='{}Version {0}'}" FontSize="16"/>
             </StackPanel>
             <Grid Grid.Column="1" Background="{DynamicResource DarkBackground3}">
                 <mah:MetroAnimatedTabControl x:Name="uiSettingsContent" Background="Transparent">
@@ -130,7 +130,7 @@
                         <StackPanel Margin="20,80,0,0">
                             <TextBlock Text="Here you can manage your Game Installation" FontSize="15"/>
                             <Border CornerRadius="5" Background="{DynamicResource DarkBackground2}" Margin="10" Padding="10">
-                                <TextBlock Text="{Binding Directory}" FontSize="15"/>
+                                <TextBlock Text="{Binding Game.Value}" FontSize="15"/>
                             </Border>
                             <Button Content="Open Directory" HorizontalAlignment="Left" FontSize="15" Margin="10" Click="OpenDirectory_Click"/>
                             <Button Content="Uninstall" HorizontalAlignment="Left" FontSize="15" Margin="10,30,0,0" Click="Uninstall_Click"/>
@@ -206,7 +206,17 @@
                                         <Rectangle Fill="White" Width="70" Height="2"/>
                                     </StackPanel>
                                     <TextBox Text="https://myurl.com/lol" Margin="10" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
-                                    <Button Content="Save" HorizontalAlignment="Center" Width="120" Click="BoxImage_Save"/>
+                                    <Button Content="Save" HorizontalAlignment="Center" Width="120" Click="BoxImage_Save">
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding ElementName=uiUploadBoxArtPreview, Path=Source}" Value="{x:Null}">
+                                                        <Setter Property="IsEnabled" Value="False" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
                                 </StackPanel>
                             </Border>
                         </Grid>

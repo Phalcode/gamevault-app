@@ -31,20 +31,20 @@ namespace gamevault.ViewModels
         }
         #endregion
         #region PrivateMembers      
-        private ObservableCollection<KeyValuePair<Game, string>> m_InstalledGames { get; set; }
+        private ObservableCollection<ObservableKeyValuePair> m_InstalledGames { get; set; }
         #endregion      
-        public ObservableCollection<KeyValuePair<Game, string>> InstalledGames
+        public ObservableCollection<ObservableKeyValuePair> InstalledGames
         {
             get
             {
                 if (m_InstalledGames == null)
                 {
-                    m_InstalledGames = new ObservableCollection<KeyValuePair<Game, string>>();
+                    m_InstalledGames = new ObservableCollection<ObservableKeyValuePair>();
                 }
                 return m_InstalledGames;
             }
             set { m_InstalledGames = value; OnPropertyChanged(); }
         }
-        public ObservableCollection<KeyValuePair<Game, string>> InstalledGamesOrigin {  get; set; }
+        public ObservableCollection<ObservableKeyValuePair> InstalledGamesOrigin {  get; set; }
     }
 }

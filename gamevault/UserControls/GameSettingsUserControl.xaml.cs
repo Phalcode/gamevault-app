@@ -36,18 +36,18 @@ namespace gamevault.UserControls
         private GameSettingsViewModel ViewModel { get; set; }
         private string[] IgnoreList { get; set; }
         private string SavedExecutable { get; set; }
-        public GameSettingsUserControl(KeyValuePair<Game, string> gameParam, string[] ignoreList)
+        internal GameSettingsUserControl(ObservableKeyValuePair gameParam, string[] ignoreList)
         {
             InitializeComponent();
             ViewModel = new GameSettingsViewModel();
-            ViewModel.Game = gameParam.Key;
-            ViewModel.Directory = gameParam.Value;
+            ViewModel.Game = gameParam;
+           
             IgnoreList = ignoreList;
             this.DataContext = ViewModel;
-            FindGameExecutables(ViewModel.Directory, true);
-            if (Directory.Exists(ViewModel.Directory))
+            FindGameExecutables(ViewModel.Game.Value, true);
+            if (Directory.Exists(ViewModel.Game.Value))
             {
-                ViewModel.LaunchParameter = Preferences.Get(AppConfigKey.LaunchParameter, $"{ViewModel.Directory}\\gamevault-exec");
+                ViewModel.LaunchParameter = Preferences.Get(AppConfigKey.LaunchParameter, $"{ViewModel.Game.Value}\\gamevault-exec");
             }
         }
         private void SettingsTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -86,24 +86,24 @@ namespace gamevault.UserControls
 
         private void OpenDirectory_Click(object sender, RoutedEventArgs e)
         {
-            if (Directory.Exists(ViewModel.Directory))
-                Process.Start("explorer.exe", ViewModel.Directory);
+            if (Directory.Exists(ViewModel.Game.Value))
+                Process.Start("explorer.exe", ViewModel.Game.Value);
         }
 
         private async void Uninstall_Click(object sender, RoutedEventArgs e)
         {
             ((FrameworkElement)sender).IsEnabled = false;
-            if (ViewModel.Game.Type == GameType.WINDOWS_PORTABLE)
+            if (ViewModel.Game.Key.Type == GameType.WINDOWS_PORTABLE)
             {
-                MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to uninstall '{ViewModel.Game.Title}' ?", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+                MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to uninstall '{ViewModel.Game.Key.Title}' ?", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
                 if (result == MessageDialogResult.Affirmative)
                 {
                     try
                     {
-                        if (Directory.Exists(ViewModel.Directory))
-                            Directory.Delete(ViewModel.Directory, true);
+                        if (Directory.Exists(ViewModel.Game.Value))
+                            Directory.Delete(ViewModel.Game.Value, true);
 
-                        NewInstallViewModel.Instance.InstalledGames.Remove(NewInstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).First());
+                        NewInstallViewModel.Instance.InstalledGames.Remove(NewInstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.Key.ID).First());
                     }
                     catch
                     {
@@ -111,14 +111,14 @@ namespace gamevault.UserControls
                     }
                 }
             }
-            else if (ViewModel.Game.Type == GameType.WINDOWS_SETUP)
+            else if (ViewModel.Game.Key.Type == GameType.WINDOWS_SETUP)
             {
-                MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to uninstall '{ViewModel.Game.Title}' ?\nAs this is a Windows setup, you will need to select an uninstall executable", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+                MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to uninstall '{ViewModel.Game.Key.Title}' ?\nAs this is a Windows setup, you will need to select an uninstall executable", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
                 if (result == MessageDialogResult.Affirmative)
                 {
                     using (var dialog = new System.Windows.Forms.OpenFileDialog())
                     {
-                        dialog.InitialDirectory = ViewModel.Directory;
+                        dialog.InitialDirectory = ViewModel.Game.Value;
                         dialog.Filter = "uninstall|*.exe";
                         System.Windows.Forms.DialogResult fileResult = dialog.ShowDialog();
                         if (fileResult == System.Windows.Forms.DialogResult.OK && File.Exists(dialog.FileName))
@@ -145,11 +145,11 @@ namespace gamevault.UserControls
                                 await uninstProcess.WaitForExitAsync();
                                 try
                                 {
-                                    if (Directory.Exists(ViewModel.Directory))
-                                        Directory.Delete(ViewModel.Directory, true);
+                                    if (Directory.Exists(ViewModel.Game.Value))
+                                        Directory.Delete(ViewModel.Game.Value, true);
                                 }
                                 catch { }
-                                NewInstallViewModel.Instance.InstalledGames.Remove(NewInstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).First());
+                                NewInstallViewModel.Instance.InstalledGames.Remove(NewInstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.Key.ID).First());
                             }
                         }
                     }
@@ -168,7 +168,7 @@ namespace gamevault.UserControls
             ViewModel.Executables.Clear();
             if (true == checkForSavedExecutable)
             {
-                SavedExecutable = Preferences.Get(AppConfigKey.Executable, $"{ViewModel.Directory}\\gamevault-exec");
+                SavedExecutable = Preferences.Get(AppConfigKey.Executable, $"{ViewModel.Game.Value}\\gamevault-exec");
             }
 
             List<string> allExecutables = new List<string>();
@@ -184,7 +184,7 @@ namespace gamevault.UserControls
             {
                 if (ContainsValueFromIgnoreList(allExecutables[count]))
                     continue;
-                var currentItem = new KeyValuePair<string, string>(allExecutables[count], allExecutables[count].Substring(ViewModel.Directory.Length + 1));
+                var currentItem = new KeyValuePair<string, string>(allExecutables[count], allExecutables[count].Substring(ViewModel.Game.Value.Length + 1));
                 ViewModel.Executables.Add(currentItem);
                 if (true == checkForSavedExecutable && allExecutables[count] == SavedExecutable)
                 {
@@ -211,16 +211,16 @@ namespace gamevault.UserControls
         }
         private void ExecutableSelection_Opened(object sender, EventArgs e)
         {
-            FindGameExecutables(ViewModel.Directory, false);
+            FindGameExecutables(ViewModel.Game.Value, false);
         }
         private void Executable_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count > 0)
             {
                 SavedExecutable = ((KeyValuePair<string, string>)e.AddedItems[0]).Key;
-                if (Directory.Exists(ViewModel.Directory))
+                if (Directory.Exists(ViewModel.Game.Value))
                 {
-                    Preferences.Set(AppConfigKey.Executable, SavedExecutable, $"{ViewModel.Directory}\\gamevault-exec");
+                    Preferences.Set(AppConfigKey.Executable, SavedExecutable, $"{ViewModel.Game.Value}\\gamevault-exec");
                 }
             }
         }
@@ -257,9 +257,9 @@ namespace gamevault.UserControls
 
         private void LaunchParameter_Changed(object sender, RoutedEventArgs e)
         {
-            if (Directory.Exists(ViewModel.Directory))
+            if (Directory.Exists(ViewModel.Game.Value))
             {
-                Preferences.Set(AppConfigKey.LaunchParameter, ViewModel.LaunchParameter, $"{ViewModel.Directory}\\gamevault-exec");
+                Preferences.Set(AppConfigKey.LaunchParameter, ViewModel.LaunchParameter, $"{ViewModel.Game.Value}\\gamevault-exec");
             }
         }
         #region EDIT IMAGE
@@ -339,8 +339,8 @@ namespace gamevault.UserControls
                     {
                         dynamic updateObject = new System.Dynamic.ExpandoObject();
                         updateObject.box_image_id = newImageId;
-                        
-                        WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}", JsonSerializer.Serialize(updateObject));
+
+                        WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.Key.ID}", JsonSerializer.Serialize(updateObject));                       
                         MainWindowViewModel.Instance.AppBarText = "Successfully updated image";
                     }
                     catch (WebException ex)
@@ -352,7 +352,12 @@ namespace gamevault.UserControls
                     {
                         MainWindowViewModel.Instance.AppBarText = ex.Message;
                     }
-                });               
+                });
+                //Update Data Context for Library. So that the images are also refreshed there directly
+                var temp = ViewModel.Game.Key;
+                temp.BoxImage = new Models.Image() { ID = newImageId };
+                ViewModel.Game.Key = null;
+                ViewModel.Game.Key = temp;
             }
             catch (WebException ex)
             {

@@ -134,7 +134,7 @@ namespace gamevault.UserControls
                         Game? game = games.Where(x => x.ID == foundGames.ElementAt(count).Key).FirstOrDefault();
                         if (game != null)
                         {
-                            NewInstallViewModel.Instance.InstalledGames.Add(new KeyValuePair<Game, string>(game, foundGames.ElementAt(count).Value));
+                            NewInstallViewModel.Instance.InstalledGames.Add(new ObservableKeyValuePair(game, foundGames.ElementAt(count).Value));
                             if (LoginManager.Instance.IsLoggedIn())
                             {
                                 if (!Preferences.Exists(game.ID.ToString(), AppFilePath.OfflineCache))
@@ -199,7 +199,7 @@ namespace gamevault.UserControls
                 {
                     App.Current.Dispatcher.Invoke((Action)delegate
                     {
-                        NewInstallViewModel.Instance.InstalledGames.Add(new KeyValuePair<Game, string>(game, dir));
+                        NewInstallViewModel.Instance.InstalledGames.Add(new ObservableKeyValuePair(game, dir));
                     });
                 }
             }
@@ -235,7 +235,7 @@ namespace gamevault.UserControls
 
         private void GameCard_Clicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key));
+            MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(((ObservableKeyValuePair)((FrameworkElement)sender).DataContext).Key));
         }
         private void Search_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -250,14 +250,14 @@ namespace gamevault.UserControls
             {
                 NewInstallViewModel.Instance.InstalledGamesOrigin = NewInstallViewModel.Instance.InstalledGames;
             }
-            NewInstallViewModel.Instance.InstalledGames = new System.Collections.ObjectModel.ObservableCollection<KeyValuePair<Game, string>>(NewInstallViewModel.Instance.InstalledGamesOrigin.Where(i => i.Key.Title.Contains(inputTimer.Data, StringComparison.OrdinalIgnoreCase)));
+            NewInstallViewModel.Instance.InstalledGames = new System.Collections.ObjectModel.ObservableCollection<ObservableKeyValuePair>(NewInstallViewModel.Instance.InstalledGamesOrigin.Where(i => i.Key.Title.Contains(inputTimer.Data, StringComparison.OrdinalIgnoreCase)));
         }
 
         private void Play_Click(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
-            string savedExecutable = Preferences.Get(AppConfigKey.Executable, $"{((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Value}\\gamevault-exec");
-            string parameter = Preferences.Get(AppConfigKey.LaunchParameter, $"{((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Value}\\gamevault-exec");
+            string savedExecutable = Preferences.Get(AppConfigKey.Executable, $"{((ObservableKeyValuePair)((FrameworkElement)sender).DataContext).Value}\\gamevault-exec");
+            string parameter = Preferences.Get(AppConfigKey.LaunchParameter, $"{((ObservableKeyValuePair)((FrameworkElement)sender).DataContext).Value}\\gamevault-exec");
             if (savedExecutable == string.Empty)
             {
                 MainWindowViewModel.Instance.AppBarText = $"No Executable set";
@@ -290,7 +290,7 @@ namespace gamevault.UserControls
         private void Settings_Click(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
-            uiGameSettingsPopup.Child = new GameSettingsUserControl((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext, IgnoreList) { Width = 1200, Height = 800 };
+            uiGameSettingsPopup.Child = new GameSettingsUserControl((ObservableKeyValuePair)((FrameworkElement)sender).DataContext, IgnoreList) { Width = 1200, Height = 800 };
             uiGameSettingsPopup.IsOpen = true;
         }
         private void InitTimer()
