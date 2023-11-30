@@ -11,11 +11,12 @@ namespace gamevault.ViewModels
     internal class GameSettingsViewModel : ViewModelBase
     {
         #region Privates
-       
-        private Game game {  get; set; }
-        private string directory {  get; set; }
+
+        private Game game { get; set; }
+        private string directory { get; set; }
         private ObservableCollection<KeyValuePair<string, string>> m_Executables { get; set; }
         private string launchParameter { get; set; }
+        private RawgGame[]? rawgGames { get; set; }
         #endregion      
         public Game Game
         {
@@ -43,6 +44,11 @@ namespace gamevault.ViewModels
         {
             get { return launchParameter; }
             set { launchParameter = value; OnPropertyChanged(); }
+        }
+        public RawgGame[]? RawgGames
+        {
+            get { return rawgGames; }
+            set { rawgGames = value; OnPropertyChanged(); }
         }
     }
 }

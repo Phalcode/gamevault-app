@@ -31,6 +31,12 @@ namespace gamevault.Models
         public Image BackgroundImage { get; set; }
         [JsonPropertyName("release_date")]
         public DateTime? ReleaseDate { get; set; }
+        [JsonPropertyName("rawg_release_date")]
+        public DateTime? RawgReleaseDate { get; set; }
+        [JsonPropertyName("created_at")]
+        public DateTime? CreatedAt { get; set; }
+        [JsonPropertyName("cache_date")]
+        public DateTime? LastCached { get; set; }
         [JsonPropertyName("file_path")]
         public string FilePath { get; set; }
         [JsonPropertyName("size")]

@@ -311,9 +311,6 @@ namespace gamevault.UserControls
             return string.Empty;
         }
 
-
-        #endregion
-
         private void ChooseImage(string tag)
         {
             try
@@ -423,5 +420,47 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.AppBarText = ex.Message;
             }
         }
+        #endregion
+
+        #region RAWG
+        private InputTimer RawgGameSearchTimer { get; set; }
+        private void RawgGameSearch_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            InitRawgGameSearchTimer();
+            RawgGameSearchTimer.Stop();
+            RawgGameSearchTimer.Data = ((TextBox)sender).Text;
+            RawgGameSearchTimer.Start();
+        }
+        private void InitRawgGameSearchTimer()
+        {
+            if (RawgGameSearchTimer != null)
+                return;
+
+            RawgGameSearchTimer = new InputTimer();
+            RawgGameSearchTimer.Interval = TimeSpan.FromMilliseconds(400);
+            RawgGameSearchTimer.Tick += RawgGameSearchTimerElapsed;
+        }
+        private async void RawgGameSearchTimerElapsed(object sender, EventArgs e)
+        {
+            RawgGameSearchTimer?.Stop();
+            await RawgGameSearch();
+        }
+        private async Task RawgGameSearch()
+        {
+            ViewModel.RawgGames = await Task<RawgGame[]>.Run(() =>
+            {
+                try
+                {
+                    string currentShownUser = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/rawg/search?query={RawgGameSearchTimer.Data}");
+                    return JsonSerializer.Deserialize<RawgGame[]>(currentShownUser);
+                }
+                catch (Exception ex)
+                {
+                    MainWindowViewModel.Instance.AppBarText = $"Could not load rawg data. ({ex.Message})";
+                    return null;
+                }
+            });
+        }
+        #endregion
     }
 }
