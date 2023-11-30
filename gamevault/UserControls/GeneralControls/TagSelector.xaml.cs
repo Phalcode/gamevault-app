@@ -105,7 +105,7 @@ namespace gamevault.UserControls
             }
             else
             {
-                data = new Genre_Tag[2] { new Genre_Tag() { Name = "WINDOWS_SETUP" }, new Genre_Tag() { Name = "WINDOWS_PORTABLE" } };
+                data = new Genre_Tag[3] { new Genre_Tag() { Name = "WINDOWS_SETUP" }, new Genre_Tag() { Name = "WINDOWS_PORTABLE" }, new Genre_Tag() { Name = "LINUX_PORTABLE" } };
                 data = data.Where(x => x.Name.Contains(debounceTimer.Data, StringComparison.OrdinalIgnoreCase)).ToArray();
             }
             uiSelectionEntries.ItemsSource = data;

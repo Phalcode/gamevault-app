@@ -403,11 +403,13 @@ namespace gamevault.UserControls
                 //Update Data Context for Library. So that the images are also refreshed there directly
                 if (tag == "box")
                 {
-                    NewInstallViewModel.Instance.RefreshCard(ViewModel.Game.ID, newImageId);
-                    MainWindowViewModel.Instance.NewLibrary.RefreshCard(ViewModel.Game.ID, newImageId);
+                    NewInstallViewModel.Instance.RefreshImage(ViewModel.Game.ID, newImageId, -1);
+                    MainWindowViewModel.Instance.NewLibrary.RefreshImage(ViewModel.Game.ID, newImageId, -1);
                 }
                 else
                 {
+                    NewInstallViewModel.Instance.RefreshImage(ViewModel.Game.ID, -1, newImageId);
+                    MainWindowViewModel.Instance.NewLibrary.RefreshImage(ViewModel.Game.ID, -1, newImageId);
                 }
             }
             catch (WebException ex)
@@ -418,6 +420,34 @@ namespace gamevault.UserControls
             catch (Exception ex)
             {
                 MainWindowViewModel.Instance.AppBarText = ex.Message;
+            }
+        }
+        private void Image_Paste(object sender, KeyEventArgs e)
+        {
+            if (e.KeyboardDevice.Modifiers == ModifierKeys.Control)
+            {
+                if (e.Key == Key.V)
+                {
+                    try
+                    {
+                        if (Clipboard.ContainsImage())
+                        {
+                            var image = Clipboard.GetImage();
+                            if (((FrameworkElement)sender).Tag != null && ((FrameworkElement)sender).Tag.ToString() == "box")
+                            {
+                                uiUploadBoxArtPreview.ImageSource = image;
+                            }
+                            else
+                            {
+                                uiUploadBackgroundPreview.ImageSource = image;
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MainWindowViewModel.Instance.AppBarText = ex.Message;
+                    }
+                }
             }
         }
         #endregion
@@ -461,6 +491,6 @@ namespace gamevault.UserControls
                 }
             });
         }
-        #endregion
+        #endregion      
     }
 }
