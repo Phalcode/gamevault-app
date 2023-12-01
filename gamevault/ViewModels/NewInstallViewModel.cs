@@ -47,22 +47,13 @@ namespace gamevault.ViewModels
         }
         public ObservableCollection<KeyValuePair<Game, string>> InstalledGamesOrigin { get; set; }
         public string[]? IgnoreList { get; set; }
-        public void RefreshImage(int gameId, int boxImageId, int backgroundImageId)
+        public void RefreshGame(Game gameToRefreshParam)
         {
-            KeyValuePair<Game, string> gameToRefresh = InstalledGames.Where(g => g.Key.ID == gameId).FirstOrDefault();
+            KeyValuePair<Game, string> gameToRefresh = InstalledGames.Where(g => g.Key.ID == gameToRefreshParam.ID).FirstOrDefault();
             if (!gameToRefresh.Equals(default(KeyValuePair<Game, string>)))
             {
                 int index = InstalledGames.IndexOf(gameToRefresh);
-                InstalledGames[index] = new KeyValuePair<Game, string>();
-                if (boxImageId != -1)
-                {
-                    gameToRefresh.Key.BoxImage.ID = boxImageId;
-                }
-                if (backgroundImageId != -1)
-                {
-                    gameToRefresh.Key.BackgroundImage.ID = backgroundImageId;
-                }
-                InstalledGames[index] = gameToRefresh;
+                InstalledGames[index] = new KeyValuePair<Game, string>(gameToRefreshParam, gameToRefresh.Value);
             }
         }
     }

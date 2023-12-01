@@ -268,22 +268,14 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(installedGame) { Width = 1200, Height = 800, Margin = new Thickness(50) });
             }
         }
-        public void RefreshImage(int gameId, int boxImageId, int backgroundImageId)
+        public void RefreshGame(Game gameToRefreshParam)
         {
-            Game? gameToRefresh = ViewModel.GameCards.Where(g => g.ID == gameId).FirstOrDefault();
+            Game? gameToRefresh = ViewModel.GameCards.Where(g => g.ID == gameToRefreshParam.ID).FirstOrDefault();
             if (gameToRefresh != null)
             {
                 int index = ViewModel.GameCards.IndexOf(gameToRefresh);
-                ViewModel.GameCards[index] = null;
-                if (boxImageId != -1)
-                {
-                    gameToRefresh.BoxImage.ID = boxImageId;
-                }
-                if (backgroundImageId != -1)
-                {
-                    gameToRefresh.BackgroundImage.ID = backgroundImageId;
-                }
-                ViewModel.GameCards[index] = gameToRefresh;
+                ViewModel.GameCards[index] = null;              
+                ViewModel.GameCards[index] = gameToRefreshParam;
             }
         }
     }

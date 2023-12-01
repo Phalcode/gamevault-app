@@ -387,7 +387,8 @@ namespace gamevault.UserControls
                         {
                             updateObject.background_image_id = newImageId;
                         }
-                        WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}", JsonSerializer.Serialize(updateObject));
+                        string changedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}", JsonSerializer.Serialize(updateObject), true);
+                        ViewModel.Game = JsonSerializer.Deserialize<Game>(changedGame);
                         MainWindowViewModel.Instance.AppBarText = "Successfully updated image";
                     }
                     catch (WebException ex)
@@ -401,16 +402,10 @@ namespace gamevault.UserControls
                     }
                 });
                 //Update Data Context for Library. So that the images are also refreshed there directly
-                if (tag == "box")
-                {
-                    NewInstallViewModel.Instance.RefreshImage(ViewModel.Game.ID, newImageId, -1);
-                    MainWindowViewModel.Instance.NewLibrary.RefreshImage(ViewModel.Game.ID, newImageId, -1);
-                }
-                else
-                {
-                    NewInstallViewModel.Instance.RefreshImage(ViewModel.Game.ID, -1, newImageId);
-                    MainWindowViewModel.Instance.NewLibrary.RefreshImage(ViewModel.Game.ID, -1, newImageId);
-                }
+
+                NewInstallViewModel.Instance.RefreshGame(ViewModel.Game);
+                MainWindowViewModel.Instance.NewLibrary.RefreshGame(ViewModel.Game);
+
             }
             catch (WebException ex)
             {
@@ -491,6 +486,49 @@ namespace gamevault.UserControls
                 }
             });
         }
-        #endregion      
+        private async void Recache_Click(object sender, RoutedEventArgs e)
+        {
+            this.IsEnabled = false;
+            await Task.Run(() =>
+            {
+                try
+                {
+                    WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/rawg/{ViewModel.Game.ID}/recache", string.Empty);
+                    MainWindowViewModel.Instance.AppBarText = $"Sucessfully re-cached {ViewModel.Game.Title}";
+                }
+                catch (WebException ex)
+                {
+                    string msg = WebExceptionHelper.GetServerMessage(ex);
+                    MainWindowViewModel.Instance.AppBarText = msg;
+                }
+            });
+            this.IsEnabled = true;
+        }
+        private async void RawgGameRemap_Click(object sender, RoutedEventArgs e)
+        {
+            this.IsEnabled = false;
+            int? rawgId = ((RawgGame)((FrameworkElement)sender).DataContext).ID;
+            int gameId = ViewModel.Game.ID;
+            await Task.Run(() =>
+            {
+                try
+                {
+                    string remappedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{gameId}", "{\n\"rawg_id\": " + rawgId + "\n}", true);
+                    ViewModel.Game = JsonSerializer.Deserialize<Game>(remappedGame);
+
+                    MainWindowViewModel.Instance.AppBarText = $"Successfully re-mapped {ViewModel.Game.Title}";
+                }
+                catch (WebException ex)
+                {
+                    string errMessage = WebExceptionHelper.GetServerMessage(ex);
+                    if (errMessage == string.Empty) { errMessage = "Failed to re-map game"; }
+                    MainWindowViewModel.Instance.AppBarText = errMessage;
+                }
+            });
+            NewInstallViewModel.Instance.RefreshGame(ViewModel.Game);
+            MainWindowViewModel.Instance.NewLibrary.RefreshGame(ViewModel.Game);
+            this.IsEnabled = true;
+        }
+        #endregion
     }
 }
