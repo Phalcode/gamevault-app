@@ -172,6 +172,7 @@ namespace gamevault
         }
         private void NotifyIcon_DoubleClick(Object sender, EventArgs e)
         {
+            var x = MainWindow.WindowState;
             if (MainWindow == null)
             {
                 MainWindow = new MainWindow();
@@ -180,6 +181,10 @@ namespace gamevault
             else if (MainWindow.IsVisible == false)
             {
                 MainWindow.Show();
+            }
+            else if(MainWindow.WindowState == WindowState.Minimized)
+            {
+                MainWindow.WindowState = WindowState.Normal;
             }
         }
         private async void NotifyIcon_Exit_Click(Object sender, EventArgs e)

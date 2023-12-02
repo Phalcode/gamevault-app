@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:conv="clr-namespace:gamevault.Converter"
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -33,6 +34,13 @@
             </Style.Triggers>
         </Style>
         <conv:GameSettingsTabVisibilityConverter x:Key="tabVisConv"/>
+        <Style TargetType="lvc:DefaultTooltip">
+            <Setter Property="Background" Value="DarkGray"/>
+            <Setter Property="BorderBrush" Value="DarkGray"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
     </UserControl.Resources>
 
     <Border Padding="5" CornerRadius="5">
@@ -84,14 +92,14 @@
                     <StackPanel Visibility="{Binding Game,Converter={StaticResource tabVisConv},ConverterParameter='server'}">
                         <TextBlock Text="Server" FontSize="30" Margin="0,30,0,0" Foreground="White"/>
                         <TabControl x:Name="uiSettingsHeadersRemote" TabStripPlacement="Left" Background="Transparent" SelectionChanged="SettingsTabControl_SelectionChanged">
-                            <TabItem>
+                            <!--<TabItem>
                                 <TabItem.Header>
                                     <StackPanel Orientation="Horizontal">
                                         <Path Style="{StaticResource TabItemHeaderPath}" Data="{DynamicResource IconGameSettingsEditDetails}" VerticalAlignment="Center"/>
                                         <TextBlock Style="{StaticResource TabItemHeaderTextBlock}" Text="Edit Details"/>
                                     </StackPanel>
                                 </TabItem.Header>
-                            </TabItem>
+                            </TabItem>-->
                             <TabItem>
                                 <TabItem.Header>
                                     <StackPanel Orientation="Horizontal">
@@ -127,21 +135,36 @@
             <Grid Grid.Column="1" Background="{DynamicResource DarkBackground3}">
                 <mah:MetroAnimatedTabControl x:Name="uiSettingsContent" Background="Transparent">
                     <mah:MetroTabItem>
-                        <StackPanel Margin="20,80,0,0">
+                        <StackPanel Margin="20,50,0,0">
                             <TextBlock Text="Here you can manage your Game Installation" FontSize="15"/>
-                            <Border CornerRadius="5" Background="{DynamicResource DarkBackground2}" Margin="10" Padding="10">
+                            <TextBlock Text="Installation" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
+                            <TextBlock Text="This Game was installed to:" FontSize="15" FontWeight="Bold" Margin="0,20,0,0"/>
+                            <Border CornerRadius="5" Background="{DynamicResource DarkBackground2}" Margin="0,5,20,10" Padding="10">
                                 <TextBlock Text="{Binding Directory}" FontSize="15"/>
                             </Border>
-                            <Button Content="Open Directory" HorizontalAlignment="Left" FontSize="15" Margin="10" Click="OpenDirectory_Click"/>
-                            <Button Content="Uninstall" HorizontalAlignment="Left" FontSize="15" Margin="10,30,0,0" Click="Uninstall_Click"/>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="Open Directory" HorizontalAlignment="Left" FontSize="15" Margin="0,0,10,0" Click="OpenDirectory_Click"/>
+                                <Button Content="Uninstall" HorizontalAlignment="Left" FontSize="15" Background="Red" Click="Uninstall_Click"/>
+                            </StackPanel>
+                            <TextBlock Text="Disc Usage" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
+                            <lvc:PieChart x:Name="uiDiscUsagePieChart" Width="180" Height="189" StartingRotationAngle="0" HorizontalAlignment="Left" Margin="0,20,0,0">
+                                <lvc:PieChart.Series>
+                                    <lvc:PieSeries Title="{Binding Path=Game.Title}" Values="0" Fill="{DynamicResource MainColor}"/>
+                                    <lvc:PieSeries Title="Other Games" Values="0" Fill="LightGray"/>
+                                </lvc:PieChart.Series>
+                            </lvc:PieChart>
+                            <TextBlock Text="Installed Games" FontSize="15" FontWeight="Bold" Margin="35,0,0,0"/>
+                            <TextBlock x:Name="uiTxtAllInstalledGamesSize" FontSize="15" FontWeight="Bold" Margin="35,0,0,0"/>
                         </StackPanel>
                     </mah:MetroTabItem>
                     <mah:MetroTabItem>
                         <StackPanel Margin="20,80,0,0">
                             <TextBlock Text="Here you can manage you launch options" FontSize="15"/>
-                            <TextBlock Text="Game Executable"/>
-                            <ComboBox x:Name="uiCbExecutables" ItemsSource="{Binding Executables}" DisplayMemberPath="Value" Margin="10,10,10,0" SelectionChanged="Executable_SelectionChanged" DropDownOpened="ExecutableSelection_Opened"/>
-                            <Grid Style="{DynamicResource HoverEffect}" Background="Transparent" HorizontalAlignment="Left" Height="25" Width="32" Cursor="Hand" Margin="10,20,0,0" MouseLeftButtonUp="CreateDesktopShortcut_Click">
+                            <TextBlock Text="Game Executable" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
+                            <ComboBox x:Name="uiCbExecutables" ItemsSource="{Binding Executables}" DisplayMemberPath="Value" Margin="0,10,150,0" SelectionChanged="Executable_SelectionChanged" DropDownOpened="ExecutableSelection_Opened"/>
+                            <TextBlock Text="Launch Parameter" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
+                            <TextBox Text="{Binding LaunchParameter,UpdateSourceTrigger=PropertyChanged}" LostFocus="LaunchParameter_Changed" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" Margin="0,10,150,0"/>
+                            <!--<Grid Style="{DynamicResource HoverEffect}" Background="Transparent" HorizontalAlignment="Left" Height="25" Width="32" Cursor="Hand" Margin="10,20,0,0" MouseLeftButtonUp="CreateDesktopShortcut_Click">
                                 <Path Fill="White" Data="{DynamicResource IconGameSettingsLink}" RenderTransformOrigin="0.1,0.5">
                                     <Path.RenderTransform>
                                         <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
@@ -150,13 +173,10 @@
                                 <Grid.RenderTransform>
                                     <ScaleTransform/>
                                 </Grid.RenderTransform>
-                            </Grid>
-                            <TextBlock Text="Launch Parameter" FontSize="15"/>
-                            <TextBox Width="100" HorizontalAlignment="Left" Text="{Binding LaunchParameter,UpdateSourceTrigger=PropertyChanged}" LostFocus="LaunchParameter_Changed" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
+                            </Grid>-->
+                            <TextBlock Text="Desktop Shortcut" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
+                            <Button Content="Create Desktop Shortcut" HorizontalAlignment="Left" Margin="0,10,0,0" Click="CreateDesktopShortcut_Click"/>
                         </StackPanel>
-                    </mah:MetroTabItem>
-                    <mah:MetroTabItem>
-                        <TextBlock Text="EDIT DETAILS"/>
                     </mah:MetroTabItem>
                     <mah:MetroTabItem>
                         <Grid>

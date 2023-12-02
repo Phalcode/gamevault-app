@@ -49,6 +49,7 @@ namespace gamevault.UserControls
                 {
                     ViewModel.LaunchParameter = Preferences.Get(AppConfigKey.LaunchParameter, $"{ViewModel.Directory}\\gamevault-exec");
                 }
+                InitDiscUsagePieChart();
             }
         }
         private void SettingsTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -80,7 +81,7 @@ namespace gamevault.UserControls
         {
             MainWindowViewModel.Instance.ClosePopup();
         }
-
+        #region INSTALLATION
         private void OpenDirectory_Click(object sender, RoutedEventArgs e)
         {
             if (Directory.Exists(ViewModel.Directory))
@@ -154,7 +155,23 @@ namespace gamevault.UserControls
             }
             ((FrameworkElement)sender).IsEnabled = true;
         }
-
+        private void InitDiscUsagePieChart()
+        {
+            long allGameSizes = 0;
+            foreach (var installedGame in NewInstallViewModel.Instance.InstalledGames)
+            {
+                long.TryParse(installedGame.Key.Size, out long size);
+                allGameSizes += size;
+            }
+            long.TryParse(ViewModel.Game.Size, out long currentGameSize);
+            allGameSizes = allGameSizes - currentGameSize;
+            double percentageOfAllGames = (currentGameSize * 100.0) / allGameSizes;
+            uiDiscUsagePieChart.Series[0].Values[0] = (double)currentGameSize;
+            uiDiscUsagePieChart.Series[1].Values[0] = (double)allGameSizes;
+            uiTxtAllInstalledGamesSize.Text = allGameSizes.ToString();
+        }
+        #endregion
+        #region LAUNCH OPTIONS
         private void FindGameExecutables(string directory, bool checkForSavedExecutable)
         {
             string lastSelected = "";
@@ -222,7 +239,7 @@ namespace gamevault.UserControls
             }
         }
 
-        private async void CreateDesktopShortcut_Click(object sender, MouseButtonEventArgs e)
+        private async void CreateDesktopShortcut_Click(object sender, EventArgs e)
         {
             if (!File.Exists(SavedExecutable))
             {
@@ -259,6 +276,7 @@ namespace gamevault.UserControls
                 Preferences.Set(AppConfigKey.LaunchParameter, ViewModel.LaunchParameter, $"{ViewModel.Directory}\\gamevault-exec");
             }
         }
+        #endregion
         #region EDIT IMAGE      
         private void ImageDrop(DragEventArgs e, string tag)
         {
