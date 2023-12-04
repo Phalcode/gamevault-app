@@ -24,6 +24,8 @@ using System.Text.RegularExpressions;
 using static System.Net.Mime.MediaTypeNames;
 using System.Threading.Tasks;
 using System.Net;
+using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
 
 namespace gamevault.UserControls
 {
@@ -166,9 +168,11 @@ namespace gamevault.UserControls
             long.TryParse(ViewModel.Game.Size, out long currentGameSize);
             allGameSizes = allGameSizes - currentGameSize;
             double percentageOfAllGames = (currentGameSize * 100.0) / allGameSizes;
-            uiDiscUsagePieChart.Series[0].Values[0] = (double)currentGameSize;
-            uiDiscUsagePieChart.Series[1].Values[0] = (double)allGameSizes;
             uiTxtAllInstalledGamesSize.Text = allGameSizes.ToString();
+            uiDiscUsagePieChart.Series = new ISeries[] {
+                new PieSeries<double> {Values = new double[] { (double)currentGameSize } },
+                new PieSeries<double> {Values = new double[] {(double)allGameSizes}}
+                };
         }
         #endregion
         #region LAUNCH OPTIONS

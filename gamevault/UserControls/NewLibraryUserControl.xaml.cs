@@ -32,6 +32,7 @@ namespace gamevault.UserControls
         private InputTimer inputTimer { get; set; }
 
         private bool scrollBlocked = false;
+        private bool loaded = false;
         public NewLibraryUserControl()
         {
             InitializeComponent();
@@ -40,7 +41,17 @@ namespace gamevault.UserControls
             InitTimer();
             uiFilterYearTo.Text = DateTime.Now.Year.ToString();
         }
+        private async void Library_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (loaded)
+                return;
 
+            loaded = true;
+            if (Preferences.Get(AppConfigKey.LibStartup, AppFilePath.UserFile) == "1")
+            {
+                await Search();
+            }
+        }
         private void Search_TextChanged(object sender, TextChangedEventArgs e)
         {
             inputTimer.Stop();
@@ -274,7 +285,7 @@ namespace gamevault.UserControls
             if (gameToRefresh != null)
             {
                 int index = ViewModel.GameCards.IndexOf(gameToRefresh);
-                ViewModel.GameCards[index] = null;              
+                ViewModel.GameCards[index] = null;
                 ViewModel.GameCards[index] = gameToRefreshParam;
             }
         }

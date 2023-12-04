@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:conv="clr-namespace:gamevault.Converter"
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-             xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -34,13 +34,6 @@
             </Style.Triggers>
         </Style>
         <conv:GameSettingsTabVisibilityConverter x:Key="tabVisConv"/>
-        <Style TargetType="lvc:DefaultTooltip">
-            <Setter Property="Background" Value="DarkGray"/>
-            <Setter Property="BorderBrush" Value="DarkGray"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="5"/>
-            <Setter Property="Foreground" Value="Black"/>
-        </Style>
     </UserControl.Resources>
 
     <Border Padding="5" CornerRadius="5">
@@ -147,11 +140,8 @@
                                 <Button Content="Uninstall" HorizontalAlignment="Left" FontSize="15" Background="Red" Click="Uninstall_Click"/>
                             </StackPanel>
                             <TextBlock Text="Disc Usage" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
-                            <lvc:PieChart x:Name="uiDiscUsagePieChart" Width="180" Height="189" StartingRotationAngle="0" HorizontalAlignment="Left" Margin="0,20,0,0">
-                                <lvc:PieChart.Series>
-                                    <lvc:PieSeries Title="{Binding Path=Game.Title}" Values="0" Fill="{DynamicResource MainColor}"/>
-                                    <lvc:PieSeries Title="Other Games" Values="0" Fill="LightGray"/>
-                                </lvc:PieChart.Series>
+                            <lvc:PieChart x:Name="uiDiscUsagePieChart" Width="180" Height="189" InitialRotation="0" HorizontalAlignment="Left" Margin="0,20,0,0">
+                               
                             </lvc:PieChart>
                             <TextBlock Text="Installed Games" FontSize="15" FontWeight="Bold" Margin="35,0,0,0"/>
                             <TextBlock x:Name="uiTxtAllInstalledGamesSize" FontSize="15" FontWeight="Bold" Margin="35,0,0,0"/>

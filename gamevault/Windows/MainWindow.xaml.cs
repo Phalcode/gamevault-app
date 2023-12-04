@@ -40,7 +40,7 @@ namespace gamevault.Windows
             {
                 case MainControl.Library:
                     {
-                        MainWindowViewModel.Instance.ActiveControl = MainWindowViewModel.Instance.Library;
+                        MainWindowViewModel.Instance.ActiveControl = MainWindowViewModel.Instance.NewLibrary;
                         break;
                     }
                 case MainControl.Settings:
@@ -55,7 +55,7 @@ namespace gamevault.Windows
                     }
                 case MainControl.NewLibrary:
                     {
-                        MainWindowViewModel.Instance.ActiveControl = MainWindowViewModel.Instance.NewLibrary;
+                        MainWindowViewModel.Instance.ActiveControl = MainWindowViewModel.Instance.Library;
                         break;
                     }
                 case MainControl.Community:
