@@ -199,7 +199,7 @@ namespace gamevault.UserControls
                 {
                     App.Current.Dispatcher.Invoke((Action)delegate
                     {
-                        NewInstallViewModel.Instance.InstalledGames.Add(new KeyValuePair<Game,string>(game, dir));
+                        NewInstallViewModel.Instance.InstalledGames.Add(new KeyValuePair<Game, string>(game, dir));
                     });
                 }
             }
@@ -235,7 +235,7 @@ namespace gamevault.UserControls
 
         private void GameCard_Clicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key));
+            MainWindowViewModel.Instance.SetActiveControl(new NewGameViewUserControl(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key));
         }
         private void Search_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -290,7 +290,7 @@ namespace gamevault.UserControls
         private void Settings_Click(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
-            MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl((KeyValuePair<Game,string>)((FrameworkElement)sender).DataContext) { Width = 1200, Height = 800, Margin = new Thickness(50) });
+            MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext) { Width = 1200, Height = 800, Margin = new Thickness(50) });
         }
         private void InitTimer()
         {

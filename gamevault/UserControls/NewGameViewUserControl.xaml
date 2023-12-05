@@ -1,0 +1,261 @@
+﻿<UserControl x:Class="gamevault.UserControls.NewGameViewUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:conv="clr-namespace:gamevault.Converter"
+             xmlns:helper="clr-namespace:gamevault.Helper"
+             xmlns:local="clr-namespace:gamevault.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded" Focusable="True">
+    <UserControl.Resources>
+        <conv:GameSizeConverter x:Key="sizeConv"/>
+        <conv:GameTimeConverter x:Key="timeConv"/>
+        <conv:EnumDescriptionConverter x:Key="enumDescConv"/>
+        <conv:InverseNullConverter x:Key="inverseNullConv"/>
+        <conv:StringToColorConverter x:Key="nameColorConv"/>
+    </UserControl.Resources>
+    <UserControl.InputBindings>
+        <KeyBinding Key="Esc">
+            <KeyBinding.Command>
+                <helper:CommandHelper Executed="KeyBindingEscape_OnExecuted"/>
+            </KeyBinding.Command>
+        </KeyBinding>
+    </UserControl.InputBindings>
+    <Grid>
+        <local:CacheImage Data="{Binding Game}" ImageCacheType="GameBackground">
+            <local:CacheImage.Effect>
+                <BlurEffect Radius="20"/>
+            </local:CacheImage.Effect>
+        </local:CacheImage>
+        <Grid Background="#99000000"/>
+        <Grid VerticalAlignment="Top" Margin="20">
+            <Viewbox>
+                <Grid Width="2000">
+                    <Border Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Left" Visibility="{Binding ScrollToTopVisibility}" Background="#B2574EB9" CornerRadius="5" Cursor="Hand" Width="40" Height="40" Margin="0,0,0,0" Padding="0,0,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="Back_Click">
+                        <Path Data="{StaticResource IconGameViewBack}" Fill="White" RenderTransformOrigin="0.0,-0.09">
+                            <Path.RenderTransform>
+                                <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+                            </Path.RenderTransform>
+                        </Path>
+                        <Border.RenderTransform>
+                            <ScaleTransform/>
+                        </Border.RenderTransform>
+                    </Border>
+                    <TextBlock FontSize="50" FontWeight="Bold" Margin="60,-15,0,0" VerticalAlignment="Top">
+                        <TextBlock.ToolTip>
+                            <TextBlock Text="{Binding Path=Game.RawgTitle,StringFormat='{}RAWG Title: {0}'}"/>
+                        </TextBlock.ToolTip>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0} ({1})">
+                                <Binding Path="Game.Title" />
+                                <Binding Path="Game.ReleaseDate.Year" FallbackValue="?"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <local:CacheImage Data="{Binding Game}" ImageCacheType="BoxArt" CornerRadius="5" VerticalAlignment="Top" HorizontalAlignment="Left" Height="600" Width="400" Margin="0,70,0,0"/>
+
+                    <StackPanel Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="420,70,0,0" Orientation="Horizontal">
+                        <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Left" Visibility="{Binding ScrollToTopVisibility}" Background="Transparent" Cursor="Hand" Width="50" Height="50" Margin="00,0,0,0" RenderTransformOrigin="0.5,0.5">
+                            <Path Data="{StaticResource IconInstalledGamesPlay}" Fill="White" RenderTransformOrigin="0.12,0.11">
+                                <Path.RenderTransform>
+                                    <ScaleTransform ScaleX="3" ScaleY="3"/>
+                                </Path.RenderTransform>
+                            </Path>
+                            <Grid.RenderTransform>
+                                <ScaleTransform/>
+                            </Grid.RenderTransform>
+                        </Grid>
+                        <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Left" Visibility="{Binding ScrollToTopVisibility}" Background="Transparent" Cursor="Hand" Width="50" Height="50" Margin="20,0,0,0" RenderTransformOrigin="0.5,0.5">
+                            <Path Data="{StaticResource IconDownload}" Fill="White" RenderTransformOrigin="0.06,0.04">
+                                <Path.RenderTransform>
+                                    <ScaleTransform ScaleX="2.5" ScaleY="2.5"/>
+                                </Path.RenderTransform>
+                            </Path>
+                            <Grid.RenderTransform>
+                                <ScaleTransform/>
+                            </Grid.RenderTransform>
+                        </Grid>
+                        <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Left" Visibility="{Binding ScrollToTopVisibility}" Background="Transparent" Cursor="Hand" Width="50" Height="50" Margin="20,0,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="GameSettings_Click">
+                            <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="White" RenderTransformOrigin="-0.03,-0.03">
+                                <Path.RenderTransform>
+                                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                </Path.RenderTransform>
+                            </Path>
+                            <Grid.RenderTransform>
+                                <ScaleTransform/>
+                            </Grid.RenderTransform>
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="430,150,0,10">
+                        <Border CornerRadius="5" Background="Gainsboro" Margin="0,10,10,10">
+                            <Border.Style>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=Game.Type}" Value="UNDETECTABLE">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <TextBlock Text="{Binding Path=Game.Type,Converter={StaticResource enumDescConv}}" VerticalAlignment="Center" Margin="15,8,15,8" FontSize="15" FontWeight="Bold" Foreground="#FF424242"/>
+                        </Border>
+                        <ItemsControl ItemsSource="{Binding Path=Game.Genres}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border CornerRadius="5" Background="{Binding Name,Converter={StaticResource nameColorConv}}" Padding="0" Margin="0,10,10,10">
+                                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="10,10,10,10" FontSize="15" FontWeight="Bold"/>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <ScrollViewer Background="Transparent" Margin="430,240,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="430" Width="1000" VerticalScrollBarVisibility="Auto">
+                        <TextBlock Text="{Binding Path=Game.Description}" TextWrapping="Wrap" FontSize="20" />
+                    </ScrollViewer>
+
+                    <StackPanel Background="Transparent" Margin="0,710,0,0" HorizontalAlignment="Left">
+                        <Grid>
+                            <Path Fill="White" Data="{DynamicResource IconGameViewCalendar}" RenderTransformOrigin="0,0">
+                                <Path.RenderTransform>
+                                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                </Path.RenderTransform>
+                            </Path>
+                            <TextBlock Text="Release Year" FontWeight="Bold" FontSize="20" Margin="50,0,0,0"/>
+                            <TextBlock Text="{Binding Path=Game.ReleaseDate.Year}" FontSize="20" Margin="50,24,0,0"/>
+                        </Grid>
+                        <Grid Margin="0,10,0,0">
+                            <Image Source="pack://application:,,,/gamevault;component/Resources/Images/gameView_Metacritic.png" Height="50" HorizontalAlignment="Left"/>
+                            <TextBlock Text="Metacritic Rating" FontWeight="Bold" FontSize="20" Margin="50,0,0,0"/>
+                            <TextBlock Text="{Binding Path=Game.Rating,StringFormat={}{0}%,TargetNullValue='N/A'}" FontSize="20" Margin="50,24,0,0"/>
+                        </Grid>
+                        <Grid Margin="0,10,0,0">
+                            <Path Fill="White" Data="{DynamicResource IconGameViewVersion}" RenderTransformOrigin="0,0">
+                                <Path.RenderTransform>
+                                    <ScaleTransform ScaleX="2" ScaleY="2.4"/>
+                                </Path.RenderTransform>
+                            </Path>
+                            <TextBlock Text="Version" FontWeight="Bold" FontSize="20" Margin="50,0,0,0"/>
+                            <TextBlock Text="{Binding Path=Game.Version,TargetNullValue='N/A'}" FontSize="20" Margin="50,24,0,0"/>
+                        </Grid>
+                        <Grid Margin="0,10,0,0">
+                            <Path Fill="White" Data="{DynamicResource IconGameViewWebsite}" RenderTransformOrigin="0,0">
+                                <Path.RenderTransform>
+                                    <ScaleTransform ScaleX="2" ScaleY="2.0"/>
+                                </Path.RenderTransform>
+                            </Path>
+                            <TextBlock Text="Website" FontWeight="Bold" FontSize="20" Margin="50,0,0,0"/>
+                            <TextBlock FontSize="20" Margin="50,24,0,0">
+                                <Hyperlink TextDecorations="None" NavigateUri="{Binding Path=Game.WebsiteUrl}" RequestNavigate="Website_Navigate">
+                                <Hyperlink.Inlines>
+                                    <Run Text="{Binding Path=Game.WebsiteUrl}"/>
+                                </Hyperlink.Inlines>
+                            </Hyperlink>
+                            </TextBlock>
+                        </Grid>
+                        <Grid>
+                            <Path Fill="White" Data="{DynamicResource IconGameViewDeveloper}" RenderTransformOrigin="0,0">
+                                <Path.RenderTransform>
+                                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                </Path.RenderTransform>
+                            </Path>
+                            <TextBlock Text="Developer" FontWeight="Bold" FontSize="20" Margin="50,0,0,0"/>
+                            <ItemsControl ItemsSource="{Binding Path=Game.Developers}" Margin="50,24,0,0">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontSize="20"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                        <Grid>
+                            <Path Fill="White" Data="{DynamicResource IconGameViewPublisher}" RenderTransformOrigin="0,0">
+                                <Path.RenderTransform>
+                                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                </Path.RenderTransform>
+                            </Path>
+                            <TextBlock Text="Publisher" FontWeight="Bold" FontSize="20" Margin="50,0,0,0"/>
+                            <ItemsControl ItemsSource="{Binding Path=Game.Publishers}" Margin="50,24,0,0">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontSize="20"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </StackPanel>
+
+
+                    <StackPanel HorizontalAlignment="Right" Margin="0,80,0,0">
+                        <ComboBox/>
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                            <StackPanel>
+                                <TextBlock Text="PLAYTIME" FontWeight="Bold" FontSize="20" />
+                                <TextBlock Text="{Binding Path=Progress.MinutesPlayed,Converter={StaticResource timeConv}}" FontSize="20" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel Margin="20,0,0,0">
+                                <StackPanel.ToolTip>
+                                    <TextBlock HorizontalAlignment="Center">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{}{0}:{1} h">
+                                                <Binding Path="Progress.LastPlayedAt.Hour"/>
+                                                <Binding Path="Progress.LastPlayedAt.Minute"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </StackPanel.ToolTip>
+                                <TextBlock Text="LAST PLAYED" FontWeight="Bold" FontSize="20"/>
+                                <TextBlock FontSize="20" HorizontalAlignment="Center">
+                                    <TextBlock.Style>
+                                        <Style TargetType="{x:Type TextBlock}">
+                                            <Style.Setters>
+                                                <Setter Property="Text">
+                                                    <Setter.Value>
+                                                        <MultiBinding StringFormat="{}{0}.{1}.{2}">
+                                                            <Binding Path="Progress.LastPlayedAt.Day"/>
+                                                            <Binding Path="Progress.LastPlayedAt.Month"/>
+                                                            <Binding Path="Progress.LastPlayedAt.Year"/>
+                                                        </MultiBinding>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style.Setters>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=Progress.LastPlayedAt}" Value="{x:Null}">
+                                                    <DataTrigger.Setters>
+                                                        <Setter Property="Text" Value="never"/>
+                                                    </DataTrigger.Setters>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+                            <StackPanel Margin="20,0,0,0">
+                                <TextBlock Text="AVG. PLAYTIME" FontWeight="Bold" FontSize="20"/>
+                                <TextBlock Text="{Binding Path=Game.AveragePlaytime,Converter={StaticResource timeConv}}" FontSize="20" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </Viewbox>
+        </Grid>
+    </Grid>
+</UserControl>

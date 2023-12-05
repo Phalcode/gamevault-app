@@ -152,7 +152,7 @@ namespace gamevault.UserControls
 
         private void GameCard_Clicked(object sender, MouseButtonEventArgs e)
         {
-            MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl((Game)((FrameworkElement)sender).DataContext));
+            MainWindowViewModel.Instance.SetActiveControl(new NewGameViewUserControl((Game)((FrameworkElement)sender).DataContext));
         }
 
         private void Filter_Click(object sender, MouseButtonEventArgs e)
@@ -261,7 +261,7 @@ namespace gamevault.UserControls
             });
             if (result != null)
             {
-                MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(result, true));
+                MainWindowViewModel.Instance.SetActiveControl(new NewGameViewUserControl(result, true));
             }
             ((FrameworkElement)sender).IsEnabled = true;
         }
