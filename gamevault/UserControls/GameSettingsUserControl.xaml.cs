@@ -26,6 +26,11 @@ using System.Threading.Tasks;
 using System.Net;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.SkiaSharpView.Extensions;
+using LiveChartsCore.SkiaSharpView.Painting;
+using SkiaSharp;
+using System.Reflection;
+using System.Xml.Linq;
 
 namespace gamevault.UserControls
 {
@@ -84,13 +89,13 @@ namespace gamevault.UserControls
             MainWindowViewModel.Instance.ClosePopup();
         }
         #region INSTALLATION
-        private void OpenDirectory_Click(object sender, RoutedEventArgs e)
+        private void OpenDirectory_Click(object sender, MouseButtonEventArgs e)
         {
             if (Directory.Exists(ViewModel.Directory))
                 Process.Start("explorer.exe", ViewModel.Directory);
         }
 
-        private async void Uninstall_Click(object sender, RoutedEventArgs e)
+        private async void Uninstall_Click(object sender, MouseButtonEventArgs e)
         {
             ((FrameworkElement)sender).IsEnabled = false;
             if (ViewModel.Game.Type == GameType.WINDOWS_PORTABLE)
@@ -169,10 +174,31 @@ namespace gamevault.UserControls
             allGameSizes = allGameSizes - currentGameSize;
             double percentageOfAllGames = (currentGameSize * 100.0) / allGameSizes;
             uiTxtAllInstalledGamesSize.Text = allGameSizes.ToString();
-            uiDiscUsagePieChart.Series = new ISeries[] {
-                new PieSeries<double> {Values = new double[] { (double)currentGameSize } },
-                new PieSeries<double> {Values = new double[] {(double)allGameSizes}}
-                };
+
+            //var drive = DriveInfo.GetDrives().Where(d => d.Name == Path.GetPathRoot(ViewModel.Directory)).FirstOrDefault();
+            long totalDriveSize = 100000000;
+            //if (drive != null)
+            //{
+            //    totalDriveSize = drive.TotalSize;
+            //}
+              int _index = 0;
+          string[] _names = new[] { "Total Drive Size", "All Game Size", "Current Game Size"};
+        IEnumerable<ISeries> Series =
+            new[] { currentGameSize, allGameSizes, totalDriveSize }.AsPieSeries((value, series) =>
+            {
+                series.MaxRadialColumnWidth = 60;
+
+                series.Name = _names[_index++ % _names.Length];
+                //series.DataLabelsPosition = LiveChartsCore.Measure.PolarLabelsPosition.Middle;
+                //series.DataLabelsSize = 15;
+                //series.DataLabelsPaint = new SolidColorPaint(new SKColor(30, 30, 30));
+                //series.DataLabelsFormatter =
+                //   point =>
+                //       $"This slide takes {point.Coordinate.PrimaryValue} " +
+                //       $"out of {point.StackedValue!.Total} parts";
+                series.ToolTipLabelFormatter = point => $"{point.StackedValue!.Share:P2}";
+            });
+            uiDiscUsagePieChart.Series = Series;
         }
         #endregion
         #region LAUNCH OPTIONS
@@ -243,7 +269,7 @@ namespace gamevault.UserControls
             }
         }
 
-        private async void CreateDesktopShortcut_Click(object sender, EventArgs e)
+        private async void CreateDesktopShortcut_Click(object sender, MouseButtonEventArgs e)
         {
             if (!File.Exists(SavedExecutable))
             {
@@ -551,6 +577,8 @@ namespace gamevault.UserControls
             MainWindowViewModel.Instance.NewLibrary.RefreshGame(ViewModel.Game);
             this.IsEnabled = true;
         }
+
         #endregion
+
     }
 }

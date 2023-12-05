@@ -279,6 +279,11 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(installedGame) { Width = 1200, Height = 800, Margin = new Thickness(50) });
             }
         }
+        private void Download_Click(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+            MainWindowViewModel.Instance.AppBarText = "Download Click";
+        }
         public void RefreshGame(Game gameToRefreshParam)
         {
             Game? gameToRefresh = ViewModel.GameCards.Where(g => g.ID == gameToRefreshParam.ID).FirstOrDefault();

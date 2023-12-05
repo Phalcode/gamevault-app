@@ -10,7 +10,9 @@ namespace gamevault.Models
         [Description("🖥⚙️ Windows Setup")]
         WINDOWS_SETUP,
         [Description("🖥🎮 Windows Portable")]
-        WINDOWS_PORTABLE
+        WINDOWS_PORTABLE,
+        [Description("🐧🎮 Linux Portable")]
+        LINUX_PORTABLE
     }
     public class Game
     {

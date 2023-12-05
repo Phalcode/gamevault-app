@@ -136,11 +136,11 @@
                                 <TextBlock Text="{Binding Directory}" FontSize="15"/>
                             </Border>
                             <StackPanel Orientation="Horizontal">
-                                <Button Content="Open Directory" HorizontalAlignment="Left" FontSize="15" Margin="0,0,10,0" Click="OpenDirectory_Click"/>
-                                <Button Content="Uninstall" HorizontalAlignment="Left" FontSize="15" Background="Red" Click="Uninstall_Click"/>
+                                <local:IconButton Content="Open Directory" Icon="{DynamicResource IconGameSettingsFolder}" Width="145" Height="33" MouseLeftButtonUp="OpenDirectory_Click"/>
+                                <local:IconButton Content="Uninstall Game" Icon="{DynamicResource IconTrash}" Background="Red" Width="142" Height="33" Margin="10,0,0,0" MouseLeftButtonUp="Uninstall_Click"/>
                             </StackPanel>
-                            <TextBlock Text="Disc Usage" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
-                            <lvc:PieChart x:Name="uiDiscUsagePieChart" Width="180" Height="189" InitialRotation="0" HorizontalAlignment="Left" Margin="0,20,0,0">
+                            <TextBlock Text="Disk Usage" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
+                            <lvc:PieChart x:Name="uiDiscUsagePieChart" Width="300" Height="200" InitialRotation="0" IsClockwise="True" HorizontalAlignment="Left" Margin="0,20,0,0">
                                
                             </lvc:PieChart>
                             <TextBlock Text="Installed Games" FontSize="15" FontWeight="Bold" Margin="35,0,0,0"/>
@@ -154,18 +154,8 @@
                             <ComboBox x:Name="uiCbExecutables" ItemsSource="{Binding Executables}" DisplayMemberPath="Value" Margin="0,10,150,0" SelectionChanged="Executable_SelectionChanged" DropDownOpened="ExecutableSelection_Opened"/>
                             <TextBlock Text="Launch Parameter" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
                             <TextBox Text="{Binding LaunchParameter,UpdateSourceTrigger=PropertyChanged}" LostFocus="LaunchParameter_Changed" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" Margin="0,10,150,0"/>
-                            <!--<Grid Style="{DynamicResource HoverEffect}" Background="Transparent" HorizontalAlignment="Left" Height="25" Width="32" Cursor="Hand" Margin="10,20,0,0" MouseLeftButtonUp="CreateDesktopShortcut_Click">
-                                <Path Fill="White" Data="{DynamicResource IconGameSettingsLink}" RenderTransformOrigin="0.1,0.5">
-                                    <Path.RenderTransform>
-                                        <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
-                                    </Path.RenderTransform>
-                                </Path>
-                                <Grid.RenderTransform>
-                                    <ScaleTransform/>
-                                </Grid.RenderTransform>
-                            </Grid>-->
                             <TextBlock Text="Desktop Shortcut" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
-                            <Button Content="Create Desktop Shortcut" HorizontalAlignment="Left" Margin="0,10,0,0" Click="CreateDesktopShortcut_Click"/>
+                            <local:IconButton Content="Create" Icon="{DynamicResource IconGameSettingsLink}" Width="83" Height="33" Margin="0,10,0,0" HorizontalAlignment="Left" MouseLeftButtonUp="CreateDesktopShortcut_Click"/>
                         </StackPanel>
                     </mah:MetroTabItem>
                     <mah:MetroTabItem>
@@ -176,7 +166,6 @@
                                     <TextBlock Text="Background" HorizontalAlignment="Center" FontSize="15" Margin="0,5,0,0"/>
                                     <Grid>
                                         <local:CacheImage ImageCacheType="GameBackground" Data="{Binding Game}" CornerRadius="5" Stretch="Fill" Height="250" Margin="10,10,10,0"/>
-                                        <!--<Border CornerRadius="5" Background="Black" Height="250" Margin="10,10,10,0"/>-->
                                         <Border CornerRadius="5" Height="250" Margin="10,10,10,0">
                                             <Border.Background>
                                                 <ImageBrush x:Name="uiUploadBackgroundPreview" Stretch="Fill"/>
@@ -228,7 +217,6 @@
                                     <TextBlock Text="Box Art" HorizontalAlignment="Center" FontSize="15" Margin="0,5,0,0"/>
                                     <Grid>
                                         <local:CacheImage ImageCacheType="BoxArt" Data="{Binding Game}" CornerRadius="5" Stretch="Fill" Height="250" Width="167" Margin="10,10,10,0"/>
-                                        <!--<Border CornerRadius="5" Background="Black" Height="250" Width="167" Margin="10,10,10,0"/>-->
                                         <Border CornerRadius="5" Height="250" Width="167" Margin="10,10,10,0">
                                             <Border.Background>
                                                 <ImageBrush x:Name="uiUploadBoxArtPreview" Stretch="Fill"/>

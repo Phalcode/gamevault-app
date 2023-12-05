@@ -194,6 +194,16 @@
                                                                     </Grid.RenderTransform>
                                                                 </Grid>
                                                                 <TextBlock Text="{Binding Path=Title}" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" TextAlignment="Center" TextWrapping="Wrap"/>
+                                                                <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,30" Background="Transparent" Height="53" Width="50" MouseLeftButtonUp="Download_Click">
+                                                                    <Path Data="{StaticResource IconDownload}" Fill="White" RenderTransformOrigin="0.1,0.08">
+                                                                        <Path.RenderTransform>
+                                                                            <ScaleTransform ScaleX="3" ScaleY="3"/>
+                                                                        </Path.RenderTransform>
+                                                                    </Path>
+                                                                    <Grid.RenderTransform>
+                                                                        <ScaleTransform/>
+                                                                    </Grid.RenderTransform>
+                                                                </Grid>
                                                             </Grid>
                                                         </Border>
                                                     </Grid>

@@ -388,7 +388,7 @@ namespace gamevault.UserControls
         {
             ((FrameworkElement)sender).IsEnabled = false;
             uiBtnExtract.IsEnabled = false;
-            if (ViewModel.Game.Type == GameType.WINDOWS_PORTABLE)
+            if (ViewModel.Game.Type == GameType.WINDOWS_PORTABLE || ViewModel.Game.Type == GameType.LINUX_PORTABLE)
             {
                 bool error = false;
                 uiProgressRingInstall.IsActive = true;
