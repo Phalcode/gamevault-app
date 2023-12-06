@@ -60,7 +60,7 @@
             </Viewbox>
             <Grid.Style>
                 <Style TargetType="Grid">
-                    <Setter Property="Background" Value="#33FFFFFF"/>
+                    <Setter Property="Background" Value="#4CFFFFFF"/>
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding Popup}" Value="{x:Null}">
                             <Setter Property="Background" Value="{x:Null}"/>

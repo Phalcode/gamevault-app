@@ -55,7 +55,7 @@ namespace gamevault.UserControls
                     ViewModel.LaunchParameter = Preferences.Get(AppConfigKey.LaunchParameter, $"{ViewModel.Directory}\\gamevault-exec");
                 }
                 InitDiscUsagePieChart();
-            }          
+            }
             this.DataContext = ViewModel;
         }
         private bool IsGameInstalled(Game game)
@@ -117,6 +117,7 @@ namespace gamevault.UserControls
                             Directory.Delete(ViewModel.Directory, true);
 
                         NewInstallViewModel.Instance.InstalledGames.Remove(NewInstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).First());
+                        MainWindowViewModel.Instance.ClosePopup();
                     }
                     catch
                     {
@@ -168,7 +169,7 @@ namespace gamevault.UserControls
                     }
                 }
             }
-            else if(ViewModel.Game.Type == GameType.UNDETECTABLE)
+            else if (ViewModel.Game.Type == GameType.UNDETECTABLE)
             {
                 MainWindowViewModel.Instance.AppBarText = "Game Type cannot be determined";
             }

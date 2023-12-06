@@ -4,6 +4,7 @@ using gamevault.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -72,7 +73,41 @@ namespace gamevault.UserControls
         }
         private void GamePlay_Click(object sender, MouseButtonEventArgs e)
         {
-            MainWindowViewModel.Instance.AppBarText = "Hentai Game detected. FBI was alerted!";
+            string path = "";
+            KeyValuePair<Game, string> result = NewInstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).FirstOrDefault();
+            if (!result.Equals(default(KeyValuePair<Game, string>)))
+            {
+                path = result.Value;
+            }
+            string savedExecutable = Preferences.Get(AppConfigKey.Executable, $"{path}\\gamevault-exec");
+            string parameter = Preferences.Get(AppConfigKey.LaunchParameter, $"{path}\\gamevault-exec");
+            if (savedExecutable == string.Empty)
+            {
+                MainWindowViewModel.Instance.AppBarText = $"No Executable set";
+            }
+            else if (File.Exists(savedExecutable))
+            {
+                try
+                {
+                    ProcessHelper.StartApp(savedExecutable, parameter);
+                }
+                catch
+                {
+
+                    try
+                    {
+                        ProcessHelper.StartApp(savedExecutable, parameter, true);
+                    }
+                    catch
+                    {
+                        MainWindowViewModel.Instance.AppBarText = $"Can not execute '{savedExecutable}'";
+                    }
+                }
+            }
+            else
+            {
+                MainWindowViewModel.Instance.AppBarText = $"Could not find Executable '{savedExecutable}'";
+            }
         }
         private void GameSettings_Click(object sender, MouseButtonEventArgs e)
         {
@@ -120,6 +155,6 @@ namespace gamevault.UserControls
                     catch { }
                 });
             }
-        }      
+        }
     }
 }

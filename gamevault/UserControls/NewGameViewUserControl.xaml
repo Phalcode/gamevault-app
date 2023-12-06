@@ -55,7 +55,7 @@
                     </TextBlock>
                     <local:CacheImage Data="{Binding Game}" ImageCacheType="BoxArt" CornerRadius="5" VerticalAlignment="Top" HorizontalAlignment="Left" Height="600" Width="400" Margin="0,70,0,0"/>
 
-                    <TextBlock Text="{Binding Path=Game.Size,Converter={StaticResource sizeConv}}" Margin="0,3,0,0.8" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="50" FontWeight="Bold"/>
+                    
                     <StackPanel Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="420,70,0,0" Orientation="Horizontal">
                         <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Left" Visibility="{Binding ScrollToTopVisibility}" Background="Transparent" Cursor="Hand" Width="50" Height="50" Margin="00,0,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="GamePlay_Click">
                             <Path Data="{StaticResource IconInstalledGamesPlay}" Fill="White" RenderTransformOrigin="0.12,0.11">
@@ -214,8 +214,8 @@
                         </Grid>
                     </StackPanel>
 
-
-                    <StackPanel HorizontalAlignment="Right" Margin="0,80,0,0">
+                    <TextBlock Text="{Binding Path=Game.Size,Converter={StaticResource sizeConv}}" Margin="0,-15,0,0.8" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="50" FontWeight="Bold"/>
+                    <StackPanel HorizontalAlignment="Right" Margin="0,135,0,0">
                         <TextBlock Text="State" FontSize="15" FontWeight="Bold"/>
                         <ComboBox ItemsSource="{Binding GameStates}" SelectedValue="{Binding Path=Progress.State}" FontSize="30" SelectionChanged="GameState_SelectionChanged">
                             <ComboBox.ItemContainerStyle>

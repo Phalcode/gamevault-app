@@ -171,7 +171,7 @@ namespace gamevault.UserControls
             {
                 Directory.CreateDirectory(ViewModel.InstallPath);
             }
-            //MainWindowViewModel.Instance.Installs.AddSystemFileWatcher(ViewModel.InstallPath);
+            MainWindowViewModel.Instance.NewLibrary.GetGameInstalls().AddSystemFileWatcher(ViewModel.InstallPath);
             if (SettingsViewModel.Instance.AutoExtract)
             {
                 App.Current.Dispatcher.Invoke((Action)async delegate
@@ -441,7 +441,7 @@ namespace gamevault.UserControls
                     {
                         try
                         {
-                            setupProcess = ProcessHelper.StartApp(setupEexecutable, "",true);
+                            setupProcess = ProcessHelper.StartApp(setupEexecutable, "", true);
                         }
                         catch
                         {
