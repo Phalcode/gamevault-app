@@ -23,7 +23,7 @@
         </KeyBinding>
     </UserControl.InputBindings>
     <Grid>
-        <local:CacheImage Data="{Binding Game}" ImageCacheType="GameBackground">
+        <local:CacheImage Data="{Binding Game}" ClipToBounds="True" ImageCacheType="GameBackground">
             <local:CacheImage.Effect>
                 <BlurEffect Radius="20"/>
             </local:CacheImage.Effect>
@@ -130,7 +130,7 @@
                                 </Path.RenderTransform>
                             </Path>
                             <TextBlock Text="Release Year" FontWeight="Bold" FontSize="20" Margin="50,0,0,0"/>
-                            <TextBlock Text="{Binding Path=Game.ReleaseDate.Year}" FontSize="20" Margin="50,24,0,0"/>
+                            <TextBlock Text="{Binding Path=Game.ReleaseDate.Year,TargetNullValue='N/A'}" FontSize="20" Margin="50,24,0,0"/>
                         </Grid>
                         <Grid Margin="0,10,0,0">
                             <Image Source="pack://application:,,,/gamevault;component/Resources/Images/gameView_Metacritic.png" Height="50" HorizontalAlignment="Left"/>
@@ -154,11 +154,21 @@
                             </Path>
                             <TextBlock Text="Website" FontWeight="Bold" FontSize="20" Margin="50,0,0,0"/>
                             <TextBlock FontSize="20" Margin="50,24,0,0">
+                                <TextBlock.Style>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=Game.WebsiteUrl}" Value="">
+                                                <Setter Property="Visibility" Value="Hidden"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
                                 <Hyperlink TextDecorations="None" NavigateUri="{Binding Path=Game.WebsiteUrl}" RequestNavigate="Website_Navigate">
-                                <Hyperlink.Inlines>
-                                    <Run Text="{Binding Path=Game.WebsiteUrl}"/>
-                                </Hyperlink.Inlines>
-                            </Hyperlink>
+                                    <Hyperlink.Inlines>
+                                        <Run Text="{Binding Path=Game.WebsiteUrl}"/>
+                                    </Hyperlink.Inlines>
+                                </Hyperlink>
                             </TextBlock>
                         </Grid>
                         <Grid>
@@ -205,7 +215,14 @@
 
 
                     <StackPanel HorizontalAlignment="Right" Margin="0,80,0,0">
-                        <ComboBox/>
+                        <TextBlock Text="State" FontSize="15" FontWeight="Bold"/>
+                        <ComboBox ItemsSource="{Binding GameStates}" SelectedValue="{Binding Path=Progress.State}" FontSize="30" SelectionChanged="GameState_SelectionChanged">
+                            <ComboBox.ItemContainerStyle>
+                                <Style TargetType="{x:Type ComboBoxItem}" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
+                                    <Setter Property="FontSize" Value="20"/>
+                                </Style>
+                            </ComboBox.ItemContainerStyle>
+                        </ComboBox>
                         <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                             <StackPanel>
                                 <TextBlock Text="PLAYTIME" FontWeight="Bold" FontSize="20" />

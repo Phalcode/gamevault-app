@@ -333,10 +333,20 @@
                     </mah:MetroTabItem>
                 </mah:MetroAnimatedTabControl>
             </Grid>
-            <Grid Grid.Column="1" Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Top" Background="#02000000" Margin="0,10,10,0" Cursor="Hand" MouseLeftButtonUp="Close_Click">
+            <Grid Grid.Column="1" Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" Margin="0,10,10,0" Cursor="Hand" MouseLeftButtonUp="Close_Click">
                 <Path Fill="White" Stroke="White" Data="{DynamicResource IconClose}" RenderTransformOrigin="1.2,1.2">
                     <Path.RenderTransform>
                         <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                    </Path.RenderTransform>
+                </Path>
+                <Grid.RenderTransform>
+                    <ScaleTransform/>
+                </Grid.RenderTransform>
+            </Grid>
+            <Grid Grid.Column="1" Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" Margin="0,8,50,0" Cursor="Hand">
+                <Path Fill="White" Data="{DynamicResource IconGameSettingsHelp}">
+                    <Path.RenderTransform>
+                        <ScaleTransform ScaleX="1" ScaleY="1"/>
                     </Path.RenderTransform>
                 </Path>
                 <Grid.RenderTransform>

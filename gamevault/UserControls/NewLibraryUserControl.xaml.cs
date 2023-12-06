@@ -270,14 +270,8 @@ namespace gamevault.UserControls
         {
             e.Handled = true;
             var installedGame = NewInstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ((Game)((FrameworkElement)sender).DataContext).ID).FirstOrDefault();
-            if (installedGame.Equals(default(KeyValuePair<Game, string>)))
-            {
-                MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(new KeyValuePair<Game, string>((Game)((FrameworkElement)sender).DataContext, "")) { Width = 1200, Height = 800, Margin = new Thickness(50) });
-            }
-            else
-            {
-                MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(installedGame) { Width = 1200, Height = 800, Margin = new Thickness(50) });
-            }
+
+            MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl((Game)((FrameworkElement)sender).DataContext) { Width = 1200, Height = 800, Margin = new Thickness(50) });
         }
         private void Download_Click(object sender, MouseButtonEventArgs e)
         {

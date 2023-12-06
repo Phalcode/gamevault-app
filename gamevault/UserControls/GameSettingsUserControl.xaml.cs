@@ -42,14 +42,12 @@ namespace gamevault.UserControls
         private bool startup = true;
         private GameSettingsViewModel ViewModel { get; set; }
         private string SavedExecutable { get; set; }
-        internal GameSettingsUserControl(KeyValuePair<Game, string> gameParam)
+        internal GameSettingsUserControl(Game game)
         {
             InitializeComponent();
             ViewModel = new GameSettingsViewModel();
-            ViewModel.Game = gameParam.Key;
-            ViewModel.Directory = gameParam.Value;
-            this.DataContext = ViewModel;
-            if (Directory.Exists(gameParam.Value))
+            ViewModel.Game = game;
+            if (IsGameInstalled(game))
             {
                 FindGameExecutables(ViewModel.Directory, true);
                 if (Directory.Exists(ViewModel.Directory))
@@ -57,7 +55,17 @@ namespace gamevault.UserControls
                     ViewModel.LaunchParameter = Preferences.Get(AppConfigKey.LaunchParameter, $"{ViewModel.Directory}\\gamevault-exec");
                 }
                 InitDiscUsagePieChart();
-            }
+            }          
+            this.DataContext = ViewModel;
+        }
+        private bool IsGameInstalled(Game game)
+        {
+            KeyValuePair<Game, string> result = NewInstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == game.ID).FirstOrDefault();
+            if (result.Equals(default(KeyValuePair<Game, string>)))
+                return false;
+
+            ViewModel.Directory = result.Value;
+            return true;
         }
         private void SettingsTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -71,7 +79,7 @@ namespace gamevault.UserControls
             }
             else if (sender == uiSettingsHeadersRemote)
             {
-                if (startup && ViewModel.Directory != "")
+                if (startup && ViewModel.Directory != null)
                 {
                     startup = false;
                     uiSettingsHeadersRemote.SelectedIndex = -1;
@@ -181,23 +189,23 @@ namespace gamevault.UserControls
             //{
             //    totalDriveSize = drive.TotalSize;
             //}
-              int _index = 0;
-          string[] _names = new[] { "Total Drive Size", "All Game Size", "Current Game Size"};
-        IEnumerable<ISeries> Series =
-            new[] { currentGameSize, allGameSizes, totalDriveSize }.AsPieSeries((value, series) =>
-            {
-                series.MaxRadialColumnWidth = 60;
+            int _index = 0;
+            string[] _names = new[] { "Total Drive Size", "All Game Size", "Current Game Size" };
+            IEnumerable<ISeries> Series =
+                new[] { currentGameSize, allGameSizes, totalDriveSize }.AsPieSeries((value, series) =>
+                {
+                    series.MaxRadialColumnWidth = 60;
 
-                series.Name = _names[_index++ % _names.Length];
-                //series.DataLabelsPosition = LiveChartsCore.Measure.PolarLabelsPosition.Middle;
-                //series.DataLabelsSize = 15;
-                //series.DataLabelsPaint = new SolidColorPaint(new SKColor(30, 30, 30));
-                //series.DataLabelsFormatter =
-                //   point =>
-                //       $"This slide takes {point.Coordinate.PrimaryValue} " +
-                //       $"out of {point.StackedValue!.Total} parts";
-                series.ToolTipLabelFormatter = point => $"{point.StackedValue!.Share:P2}";
-            });
+                    series.Name = _names[_index++ % _names.Length];
+                    //series.DataLabelsPosition = LiveChartsCore.Measure.PolarLabelsPosition.Middle;
+                    //series.DataLabelsSize = 15;
+                    //series.DataLabelsPaint = new SolidColorPaint(new SKColor(30, 30, 30));
+                    //series.DataLabelsFormatter =
+                    //   point =>
+                    //       $"This slide takes {point.Coordinate.PrimaryValue} " +
+                    //       $"out of {point.StackedValue!.Total} parts";
+                    series.ToolTipLabelFormatter = point => $"{point.StackedValue!.Share:P2}";
+                });
             uiDiscUsagePieChart.Series = Series;
         }
         #endregion

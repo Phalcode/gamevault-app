@@ -12,6 +12,7 @@ namespace gamevault.ViewModels
         #region PrivateMembers
         private Game? game { get; set; }
         private Progress? progress { get; set; }
+        private string[]? gameStates { get; set; }
         #endregion
         public Game? Game
         {
@@ -22,6 +23,11 @@ namespace gamevault.ViewModels
         {
             get { return progress; }
             set { progress = value; OnPropertyChanged(); }
+        }
+        public string[]? GameStates
+        {
+            get { if (gameStates == null) { gameStates = Enum.GetNames(typeof(State)); } return gameStates; }
+            set { gameStates = value; OnPropertyChanged(); }
         }
     }
 }

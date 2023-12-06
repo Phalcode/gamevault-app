@@ -290,7 +290,7 @@ namespace gamevault.UserControls
         private void Settings_Click(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
-            MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext) { Width = 1200, Height = 800, Margin = new Thickness(50) });
+            MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key) { Width = 1200, Height = 800, Margin = new Thickness(50) });
         }
         private void InitTimer()
         {

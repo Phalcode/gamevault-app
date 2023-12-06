@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -72,7 +73,7 @@ namespace gamevault.UserControls
 
         private void GameSettings_Click(object sender, MouseButtonEventArgs e)
         {
-            MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(new KeyValuePair<Game, string>(ViewModel.Game, "")) { Width = 1200, Height = 800, Margin = new Thickness(50) });
+            MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(ViewModel.Game) { Width = 1200, Height = 800, Margin = new Thickness(50) });
         }
 
         private void KeyBindingEscape_OnExecuted(object sender, object e)
@@ -86,6 +87,33 @@ namespace gamevault.UserControls
             url = url.Replace("&", "^&");
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
             e.Handled = true;
+        }
+
+        private async void GameState_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.RemovedItems.Count == 0)
+                return;
+
+            if (e.AddedItems.Count > 0)
+            {
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{gameID}", System.Text.Json.JsonSerializer.Serialize(new Progress() { State = ViewModel.Progress.State }));
+                    }
+                    catch (WebException webEx)
+                    {
+                        string msg = WebExceptionHelper.GetServerMessage(webEx);
+                        if (msg == string.Empty)
+                        {
+                            msg = "Could not connect to server";
+                        }
+                        MainWindowViewModel.Instance.AppBarText = msg;
+                    }
+                    catch { }
+                });
+            }
         }
     }
 }

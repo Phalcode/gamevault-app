@@ -13,54 +13,64 @@
         <TaskbarItemInfo ProgressValue="{Binding TaskbarProgress}" ProgressState="Normal"/>
     </mah:MetroWindow.TaskbarItemInfo>
     <mah:MetroWindow.Resources>
-		<conv:PermissionRoleConverter x:Key="permissionRoleConv"/>
-	</mah:MetroWindow.Resources>
-	<mah:MetroWindow.RightWindowCommands>
-		<mah:WindowCommands>
-			<Button Click="WindowCommand_Clicked" Content="💸 Kofi" FontSize="18" Cursor="Hand" Tag="https://ko-fi.com/phalcode"/>
-			<Button Click="WindowCommand_Clicked" Content="💬 Discord" FontSize="18" Cursor="Hand" Tag="https://discord.com/invite/NEdNen2dSu"/>
-			<Button Click="WindowCommand_Clicked" Content="📜 Documentation" FontSize="18" Cursor="Hand" Tag="https://gamevau.lt/docs/intro"/>
-		</mah:WindowCommands>
-	</mah:MetroWindow.RightWindowCommands>
-	<Grid>
-		<Grid HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="1" Width="48" Height="50">
-			<Border MouseLeftButtonUp="UserIcon_Clicked" Cursor="Hand">
-				<uc:CacheImage ImageCacheType="UserIcon" Data="{Binding Path=UserIcon}"/>
-			</Border>
-		</Grid>
-		<mah:HamburgerMenu HamburgerVisibility="Hidden" ItemInvoked="HamburgerMenuControl_OnItemInvoked" SelectedIndex="{Binding ActiveControlIndex}">
-			<mah:HamburgerMenu.ItemsSource>
-				<mah:HamburgerMenuItemCollection>
-					<mah:HamburgerMenuGlyphItem Glyph="pack://application:,,,/gamevault;component/Resources/Images/glyph_server.png"/>
-					<mah:HamburgerMenuGlyphItem Glyph="pack://application:,,,/gamevault;component/Resources/Images/glyph_download.png"/>
-					<mah:HamburgerMenuGlyphItem Glyph="pack://application:,,,/gamevault;component/Resources/Images/glyph_server.png"/>
-					<mah:HamburgerMenuGlyphItem Glyph="pack://application:,,,/gamevault;component/Resources/Images/glyph_community.png"/>
-					<mah:HamburgerMenuGlyphItem Glyph="pack://application:,,,/gamevault;component/Resources/Images/glyph_settings.png"/>
-					<mah:HamburgerMenuGlyphItem Glyph="pack://application:,,,/gamevault;component/Resources/Images/glyph_admin.png" IsVisible="{Binding Path=UserIcon, Converter={StaticResource permissionRoleConv}}"/>
-				</mah:HamburgerMenuItemCollection>
-			</mah:HamburgerMenu.ItemsSource>
+        <conv:PermissionRoleConverter x:Key="permissionRoleConv"/>
+    </mah:MetroWindow.Resources>
+    <mah:MetroWindow.RightWindowCommands>
+        <mah:WindowCommands>
+            <Button Click="WindowCommand_Clicked" Content="💸 Kofi" FontSize="18" Cursor="Hand" Tag="https://ko-fi.com/phalcode"/>
+            <Button Click="WindowCommand_Clicked" Content="💬 Discord" FontSize="18" Cursor="Hand" Tag="https://discord.com/invite/NEdNen2dSu"/>
+            <Button Click="WindowCommand_Clicked" Content="📜 Documentation" FontSize="18" Cursor="Hand" Tag="https://gamevau.lt/docs/intro"/>
+        </mah:WindowCommands>
+    </mah:MetroWindow.RightWindowCommands>
+    <Grid>
+        <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="1" Width="48" Height="50">
+            <Border MouseLeftButtonUp="UserIcon_Clicked" Cursor="Hand">
+                <uc:CacheImage ImageCacheType="UserIcon" Data="{Binding Path=UserIcon}"/>
+            </Border>
+        </Grid>
+        <mah:HamburgerMenu HamburgerVisibility="Hidden" ItemInvoked="HamburgerMenuControl_OnItemInvoked" SelectedIndex="{Binding ActiveControlIndex}">
+            <mah:HamburgerMenu.ItemsSource>
+                <mah:HamburgerMenuItemCollection>
+                    <mah:HamburgerMenuGlyphItem Glyph="pack://application:,,,/gamevault;component/Resources/Images/glyph_server.png"/>
+                    <mah:HamburgerMenuGlyphItem Glyph="pack://application:,,,/gamevault;component/Resources/Images/glyph_download.png"/>
+                    <mah:HamburgerMenuGlyphItem Glyph="pack://application:,,,/gamevault;component/Resources/Images/glyph_server.png"/>
+                    <mah:HamburgerMenuGlyphItem Glyph="pack://application:,,,/gamevault;component/Resources/Images/glyph_community.png"/>
+                    <mah:HamburgerMenuGlyphItem Glyph="pack://application:,,,/gamevault;component/Resources/Images/glyph_settings.png"/>
+                    <mah:HamburgerMenuGlyphItem Glyph="pack://application:,,,/gamevault;component/Resources/Images/glyph_admin.png" IsVisible="{Binding Path=UserIcon, Converter={StaticResource permissionRoleConv}}"/>
+                </mah:HamburgerMenuItemCollection>
+            </mah:HamburgerMenu.ItemsSource>
 
-			<!--<mah:HamburgerMenu.OptionsItemsSource>
+            <!--<mah:HamburgerMenu.OptionsItemsSource>
                 <mah:HamburgerMenuItemCollection>
                     <mah:HamburgerMenuGlyphItem Glyph="pack://application:,,,/gamevault;component/Resources/Images/glyph_community.png" Tag="Community"/>
                 </mah:HamburgerMenuItemCollection>
             </mah:HamburgerMenu.OptionsItemsSource>-->
-			<mah:HamburgerMenu.Content>
-                <Grid>
-                    <mah:TransitioningContentControl RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding ActiveControl}" FocusVisualStyle="{x:Null}"/>
-                    <Viewbox>
-                        <mah:TransitioningContentControl RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding Popup}" FocusVisualStyle="{x:Null}"/>
-                    </Viewbox>
-                </Grid>
+            <mah:HamburgerMenu.Content>
+                <mah:TransitioningContentControl RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding ActiveControl}" FocusVisualStyle="{x:Null}"/>
             </mah:HamburgerMenu.Content>
 
 
-		</mah:HamburgerMenu>
-		<mah:Flyout IsOpen="{Binding IsAppBarOpen,UpdateSourceTrigger=PropertyChanged}" Background="{StaticResource DarkBackground2}" Height="80" IsAutoCloseEnabled="True" AutoCloseInterval="4000" Focusable="False"
+        </mah:HamburgerMenu>
+        <Grid Panel.ZIndex="1">
+            <Viewbox>
+                <mah:TransitioningContentControl RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding Popup}" FocusVisualStyle="{x:Null}"/>
+            </Viewbox>
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Background" Value="#33FFFFFF"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Popup}" Value="{x:Null}">
+                            <Setter Property="Background" Value="{x:Null}"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+        </Grid>
+        <mah:Flyout IsOpen="{Binding IsAppBarOpen,UpdateSourceTrigger=PropertyChanged}" Background="{StaticResource DarkBackground2}" Height="80" IsAutoCloseEnabled="True" AutoCloseInterval="4000" Focusable="False"
                         CloseButtonVisibility="Collapsed"
                         Position="Bottom"
                         TitleVisibility="Collapsed">
-			<TextBlock VerticalAlignment="Center" Text="{Binding AppBarText}" FontSize="25" Margin="10,0,0,0"/>
-		</mah:Flyout>
-	</Grid>
+            <TextBlock VerticalAlignment="Center" Text="{Binding AppBarText}" FontSize="25" Margin="10,0,0,0"/>
+        </mah:Flyout>
+    </Grid>
 </mah:MetroWindow>
