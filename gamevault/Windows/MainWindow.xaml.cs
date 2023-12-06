@@ -53,11 +53,11 @@ namespace gamevault.Windows
                         MainWindowViewModel.Instance.ActiveControl = MainWindowViewModel.Instance.Downloads;
                         break;
                     }
-                case MainControl.NewLibrary:
-                    {
-                        MainWindowViewModel.Instance.ActiveControl = MainWindowViewModel.Instance.Library;
-                        break;
-                    }
+                //case MainControl.NewLibrary:
+                //    {
+                //        MainWindowViewModel.Instance.ActiveControl = MainWindowViewModel.Instance.Library;
+                //        break;
+                //    }
                 case MainControl.Community:
                     {
                         MainWindowViewModel.Instance.ActiveControl = MainWindowViewModel.Instance.Community;

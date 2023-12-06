@@ -183,7 +183,7 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.AppBarText = "Cannot open unknown game";
                 return;
             }
-            MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(((Progress)((FrameworkElement)sender).DataContext).Game));
+            MainWindowViewModel.Instance.SetActiveControl(new NewGameViewUserControl(((Progress)((FrameworkElement)sender).DataContext).Game));
         }
         private async void ReloadUser_Clicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {

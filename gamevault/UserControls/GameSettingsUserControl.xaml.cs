@@ -168,6 +168,10 @@ namespace gamevault.UserControls
                     }
                 }
             }
+            else if(ViewModel.Game.Type == GameType.UNDETECTABLE)
+            {
+                MainWindowViewModel.Instance.AppBarText = "Game Type cannot be determined";
+            }
             ((FrameworkElement)sender).IsEnabled = true;
         }
         private void InitDiscUsagePieChart()

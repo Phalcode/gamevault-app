@@ -276,7 +276,7 @@ namespace gamevault.UserControls
         private void Download_Click(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
-            MainWindowViewModel.Instance.AppBarText = "Download Click";
+            MainWindowViewModel.Instance.Downloads.TryStartDownload((Game)(((FrameworkElement)sender).DataContext));
         }
         public void RefreshGame(Game gameToRefreshParam)
         {

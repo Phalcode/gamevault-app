@@ -249,7 +249,7 @@ namespace gamevault.UserControls
 
         private void GameImage_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(ViewModel.Game, LoginManager.Instance.IsLoggedIn()));
+            MainWindowViewModel.Instance.SetActiveControl(new NewGameViewUserControl(ViewModel.Game, LoginManager.Instance.IsLoggedIn()));
         }
 
         private void ExtractionProgress(object sender, SevenZipProgressEventArgs e)

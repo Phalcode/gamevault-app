@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 
@@ -16,10 +17,10 @@ namespace gamevault.ViewModels
     {
         Library = 0,
         Downloads = 1,
-        NewLibrary = 2,
-        Community = 3,
-        Settings = 4,
-        AdminConsole = 5
+        //NewLibrary = 2,
+        Community = 2,
+        Settings = 3,
+        AdminConsole = 4
     }
     internal class MainWindowViewModel : ViewModelBase
     {
@@ -91,6 +92,7 @@ namespace gamevault.ViewModels
         #region PrivateMembers     
         private double m_TaskbarProgress = 0;
         private int m_ActiveControlIndex = -1;
+        private Visibility onlineState = Visibility.Collapsed;
         private UserControl m_ActiveControl { get; set; }
         private UserControl m_Popup { get; set; }
         private LibraryUserControl m_Library { get; set; }
@@ -111,6 +113,11 @@ namespace gamevault.ViewModels
         {
             get { return m_ActiveControlIndex; }
             set { m_ActiveControlIndex = value; OnPropertyChanged(); }
+        }
+        public Visibility OnlineState
+        {
+            get { return onlineState; }
+            set { onlineState = value; OnPropertyChanged(); }
         }
         public UserControl ActiveControl
         {

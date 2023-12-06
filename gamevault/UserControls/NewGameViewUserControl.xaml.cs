@@ -70,12 +70,18 @@ namespace gamevault.UserControls
         {
             MainWindowViewModel.Instance.UndoActiveControl();
         }
-
+        private void GamePlay_Click(object sender, MouseButtonEventArgs e)
+        {
+            MainWindowViewModel.Instance.AppBarText = "Hentai Game detected. FBI was alerted!";
+        }
         private void GameSettings_Click(object sender, MouseButtonEventArgs e)
         {
             MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(ViewModel.Game) { Width = 1200, Height = 800, Margin = new Thickness(50) });
         }
-
+        private void GameDownload_Click(object sender, MouseButtonEventArgs e)
+        {
+            MainWindowViewModel.Instance.Downloads.TryStartDownload(ViewModel.Game);
+        }
         private void KeyBindingEscape_OnExecuted(object sender, object e)
         {
             MainWindowViewModel.Instance.UndoActiveControl();
@@ -114,6 +120,6 @@ namespace gamevault.UserControls
                     catch { }
                 });
             }
-        }
+        }      
     }
 }
