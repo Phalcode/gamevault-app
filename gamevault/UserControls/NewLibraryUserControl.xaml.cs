@@ -40,6 +40,12 @@ namespace gamevault.UserControls
             this.DataContext = ViewModel;
             InitTimer();
             uiFilterYearTo.Text = DateTime.Now.Year.ToString();
+#if RELEASE
+            if (Preferences.Get(AppConfigKey.LibStartup, AppFilePath.UserFile) == "1")
+            {
+                Search();
+            }
+#endif
         }
         private async void Library_Loaded(object sender, RoutedEventArgs e)
         {
