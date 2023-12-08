@@ -31,6 +31,8 @@ namespace gamevault.Models
         public DateTime? LastPlayedAt { get; set; }
         [JsonPropertyName("game")]
         public Game? Game { get; set; }
+        [JsonPropertyName("user")]
+        public User? User { get; set; }
 
     }
 

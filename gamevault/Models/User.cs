@@ -14,7 +14,7 @@ namespace gamevault.Models
         EDITOR,
         ADMIN
     }
-    internal class User
+    public class User
     {
         [JsonPropertyName("id")]
         public int ID { get; set; }

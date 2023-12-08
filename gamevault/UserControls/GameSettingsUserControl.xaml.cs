@@ -58,6 +58,14 @@ namespace gamevault.UserControls
             }
             this.DataContext = ViewModel;
         }
+        private void GameSettings_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.Focus();
+        }
+        private void KeyBindingEscape_OnExecuted(object sender, object e)
+        {
+            MainWindowViewModel.Instance.ClosePopup();
+        }
         private bool IsGameInstalled(Game game)
         {
             KeyValuePair<Game, string> result = NewInstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == game.ID).FirstOrDefault();
@@ -591,7 +599,6 @@ namespace gamevault.UserControls
             this.IsEnabled = true;
         }
 
-        #endregion
-
+        #endregion       
     }
 }

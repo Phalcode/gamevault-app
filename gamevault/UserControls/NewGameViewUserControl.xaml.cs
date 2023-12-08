@@ -61,6 +61,12 @@ namespace gamevault.UserControls
                             string result = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{gameID}");
                             return System.Text.Json.JsonSerializer.Deserialize<Progress>(result);
                         });
+
+                        ViewModel.UserProgress = await Task<Progress[]>.Run(() =>
+                        {
+                            string result = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/game/{gameID}");
+                            return System.Text.Json.JsonSerializer.Deserialize<Progress[]>(result);
+                        });
                     }
                     catch (Exception ex) { }
                 }
