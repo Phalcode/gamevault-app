@@ -14,6 +14,7 @@
         <conv:EnumDescriptionConverter x:Key="enumDescConv"/>
         <conv:InverseNullConverter x:Key="inverseNullConv"/>
         <conv:StringToColorConverter x:Key="nameColorConv"/>
+        <conv:StringToColorConverter x:Key="colorConv"/>
     </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Key="Esc">
@@ -120,6 +121,27 @@
                         </ItemsControl>
                     </StackPanel>
                     <Border BorderThickness="2" CornerRadius="5" Background="{DynamicResource DarkBackground2}" Height="50" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1300,150,0,0" Cursor="Hand">
+                        <Grid>
+                            <Popup Name="TagPopup" StaysOpen="False" AllowsTransparency="True">
+                                <Border Background="{DynamicResource DarkBackground4}" CornerRadius="5">
+                                    <ItemsControl ItemsSource="{Binding Path=Game.Tags}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <UniformGrid/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border CornerRadius="5" Background="{Binding Name,Converter={StaticResource colorConv}}" Padding="0" Margin="10">
+                                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="15,8,15,8" FontSize="15" FontWeight="Bold"/>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Border>
+                            </Popup>
+                            <TextBlock Text="View Tags" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Grid>
                         <Border.Style>
                             <Style TargetType="Border">
                                 <Style.Triggers>
@@ -129,25 +151,19 @@
                                 </Style.Triggers>
                             </Style>
                         </Border.Style>
-                        <Border.ToolTip>
-                            <ToolTip>
-                                <ItemsControl ItemsSource="{Binding Path=Game.Tags}">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <UniformGrid/>
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Border CornerRadius="5" Background="{DynamicResource MainColor}" Padding="0" Margin="10">
-                                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="15,8,15,8" FontSize="15" FontWeight="Bold"/>
-                                            </Border>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </ToolTip>
-                        </Border.ToolTip>
-                        <TextBlock Text="View Tags" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <Border.Triggers>
+                            <EventTrigger RoutedEvent="Border.MouseLeftButtonUp">
+                                <EventTrigger.Actions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <BooleanAnimationUsingKeyFrames Storyboard.TargetName="TagPopup" Storyboard.TargetProperty="IsOpen">
+                                                <DiscreteBooleanKeyFrame KeyTime="0:0:0" Value="True" />
+                                            </BooleanAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger.Actions>
+                            </EventTrigger>
+                        </Border.Triggers>
                     </Border>
                     <ScrollViewer Background="Transparent" Margin="400,240,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="381" Width="1000" VerticalScrollBarVisibility="Auto">
                         <TextBlock Text="{Binding Path=Game.Description}" TextWrapping="Wrap" FontSize="20" />

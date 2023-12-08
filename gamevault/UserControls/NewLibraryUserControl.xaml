@@ -5,9 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:vwp="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
+             xmlns:conv="clr-namespace:gamevault.Converter"
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Loaded="Library_Loaded">
+    <UserControl.Resources>
+        <conv:GameSizeConverter x:Key="sizeConv"/>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
@@ -194,12 +198,13 @@
                                                                     </Grid.RenderTransform>
                                                                 </Grid>
                                                                 <TextBlock Text="{Binding Path=Title}" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" TextAlignment="Center" TextWrapping="Wrap"/>
-                                                                <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,30" Background="Transparent" Height="53" Width="50" MouseLeftButtonUp="Download_Click">
+                                                                <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,30" Background="Transparent" Height="61" Width="50" MouseLeftButtonUp="Download_Click">
                                                                     <Path Data="{StaticResource IconDownload}" Fill="White" RenderTransformOrigin="0.1,0.08">
                                                                         <Path.RenderTransform>
                                                                             <ScaleTransform ScaleX="3" ScaleY="3"/>
                                                                         </Path.RenderTransform>
                                                                     </Path>
+                                                                    <TextBlock FontSize="10" FontWeight="Bold" Text="{Binding Path=Size,Converter={StaticResource sizeConv}}" Margin="0,50,0,0" HorizontalAlignment="Center"/>
                                                                     <Grid.RenderTransform>
                                                                         <ScaleTransform/>
                                                                     </Grid.RenderTransform>
