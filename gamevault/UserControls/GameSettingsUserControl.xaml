@@ -219,7 +219,7 @@
                                         </StackPanel>
                                         <Rectangle Fill="White" Width="70" Height="2"/>
                                     </StackPanel>
-                                    <TextBox Margin="10" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="https://imageurl/" TextChanged="BackgoundImageUrl_TextChanged"/>
+                                    <TextBox Margin="10" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="https://example.com/example.png" TextChanged="BackgoundImageUrl_TextChanged"/>
                                     <Grid Margin="10,95,10,0">
                                         <local:IconButton Content="Save" Icon="{DynamicResource IconGameSettingsSave}" Width="70" Height="33" HorizontalAlignment="Right" MouseLeftButtonUp="BackgroundImage_Save">
                                             <local:IconButton.Style>
@@ -232,7 +232,7 @@
                                                 </Style>
                                             </local:IconButton.Style>
                                         </local:IconButton>
-                                        <local:IconButton Content="Find Images" Icon="{DynamicResource IconGameSettingsGoogle}" HorizontalAlignment="Left" Height="33" Width="115" Tag="Background Image" MouseLeftButtonUp="FindImages_Click"/>
+                                        <local:IconButton Content="Find Images" Icon="{DynamicResource IconGameSettingsGoogle}" HorizontalAlignment="Left" Height="33" Width="115" Tag="Game Background Art" MouseLeftButtonUp="FindImages_Click"/>
                                     </Grid>
                                 </StackPanel>
                             </Border>
@@ -275,7 +275,7 @@
                                         </StackPanel>
                                         <Rectangle Fill="White" Width="70" Height="2"/>
                                     </StackPanel>
-                                    <TextBox Margin="10" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="https://imageurl/" TextChanged="BoxImageUrl_TextChanged"/>
+                                    <TextBox Margin="10" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="https://example.com/example.png" TextChanged="BoxImageUrl_TextChanged"/>
                                     <Grid Margin="10,95,10,0">
                                         <local:IconButton Content="Save" Icon="{DynamicResource IconGameSettingsSave}" Width="70" Height="33" HorizontalAlignment="Right" MouseLeftButtonUp="BoxImage_Save">
                                             <local:IconButton.Style>
@@ -288,7 +288,7 @@
                                                 </Style>
                                             </local:IconButton.Style>
                                         </local:IconButton>
-                                        <local:IconButton Content="Find Images" Icon="{DynamicResource IconGameSettingsGoogle}" HorizontalAlignment="Left" Height="33" Width="115" Tag="Box Art Image" MouseLeftButtonUp="FindImages_Click"/>
+                                        <local:IconButton Content="Find Images" Icon="{DynamicResource IconGameSettingsGoogle}" HorizontalAlignment="Left" Height="33" Width="115" Tag="Game Box Art" MouseLeftButtonUp="FindImages_Click"/>
                                     </Grid>
                                 </StackPanel>
                             </Border>

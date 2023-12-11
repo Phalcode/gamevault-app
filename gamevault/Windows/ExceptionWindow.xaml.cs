@@ -23,6 +23,7 @@ namespace gamevault.Windows
     /// </summary>
     public partial class ExceptionWindow
     {
+        public string UserMessage {  get; set; }
         public ExceptionWindow()
         {
             InitializeComponent();
@@ -55,11 +56,13 @@ namespace gamevault.Windows
         }
         private void Close_Click(object sender, RoutedEventArgs e)
         {
+            UserMessage = uiUserMessage.Text;
             DialogResult = uiSendCrashReport.IsChecked;
             this.Close();
         }
         private void On_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            UserMessage = uiUserMessage.Text;
             DialogResult = uiSendCrashReport.IsChecked;
         }
     }

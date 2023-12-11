@@ -503,6 +503,7 @@ namespace gamevault.UserControls
 
         private async Task SaveImage(string tag)
         {
+            bool success = false;
             try
             {
                 BitmapSource bitmapSource = tag == "box" ? (BitmapSource)uiUploadBoxArtPreview.ImageSource : (BitmapSource)uiUploadBackgroundPreview.ImageSource;
@@ -523,6 +524,7 @@ namespace gamevault.UserControls
                         }
                         string changedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}", JsonSerializer.Serialize(updateObject), true);
                         ViewModel.Game = JsonSerializer.Deserialize<Game>(changedGame);
+                        success = true;
                         MainWindowViewModel.Instance.AppBarText = "Successfully updated image";
                     }
                     catch (WebException ex)
@@ -536,12 +538,14 @@ namespace gamevault.UserControls
                     }
                 });
                 //Update Data Context for Library. So that the images are also refreshed there directly
-
-                NewInstallViewModel.Instance.RefreshGame(ViewModel.Game);
-                MainWindowViewModel.Instance.NewLibrary.RefreshGame(ViewModel.Game);
-                if (MainWindowViewModel.Instance.ActiveControl.GetType() == typeof(NewGameViewUserControl))
+                if (success)
                 {
-                    ((NewGameViewUserControl)MainWindowViewModel.Instance.ActiveControl).RefreshGame(ViewModel.Game);
+                    NewInstallViewModel.Instance.RefreshGame(ViewModel.Game);
+                    MainWindowViewModel.Instance.NewLibrary.RefreshGame(ViewModel.Game);
+                    if (MainWindowViewModel.Instance.ActiveControl.GetType() == typeof(NewGameViewUserControl))
+                    {
+                        ((NewGameViewUserControl)MainWindowViewModel.Instance.ActiveControl).RefreshGame(ViewModel.Game);
+                    }
                 }
             }
             catch (WebException ex)

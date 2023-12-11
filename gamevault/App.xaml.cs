@@ -34,7 +34,7 @@ namespace gamevault
         private async void Application_Startup(object sender, StartupEventArgs e)
         {
 
-            Application.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(AppDispatcherUnhandledException);           
+            Application.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(AppDispatcherUnhandledException);
 
 #if DEBUG
             AppFilePath.InitDebugPaths();
@@ -111,8 +111,10 @@ namespace gamevault
                 File.Create(errorLogPath).Close();
             }
             File.WriteAllText(errorLogPath, errorMessage + "\n" + errorStackTrace);
-            if (new ExceptionWindow().ShowDialog() == true)
+            ExceptionWindow exWin = new ExceptionWindow();
+            if (exWin.ShowDialog() == true)
             {
+                errorMessage += $"\nUSER_MESSAGE:{exWin.UserMessage}";
                 CrashReportHelper.SendCrashReport(errorMessage, errorStackTrace, $"Type: {e.GetType().ToString()}");
             }
             ShutdownApp();
@@ -182,7 +184,7 @@ namespace gamevault
             {
                 MainWindow.Show();
             }
-            else if(MainWindow.WindowState == WindowState.Minimized)
+            else if (MainWindow.WindowState == WindowState.Minimized)
             {
                 MainWindow.WindowState = WindowState.Normal;
             }
