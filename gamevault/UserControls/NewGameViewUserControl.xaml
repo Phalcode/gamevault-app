@@ -54,7 +54,7 @@
                             </MultiBinding>
                         </TextBlock.Text>
                     </TextBlock>
-                    <local:CacheImage Data="{Binding Game}" ImageCacheType="BoxArt" CornerRadius="5" VerticalAlignment="Top" HorizontalAlignment="Left" Height="550" Width="367" Margin="0,70,0,0"/>
+                    <local:CacheImage Data="{Binding Game}" ImageCacheType="BoxArt" Stretch="Fill" CornerRadius="5" VerticalAlignment="Top" HorizontalAlignment="Left" Height="550" Width="367" Margin="0,70,0,0"/>
 
                     <!--ACTION BUTTONS-->
                     <StackPanel Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="390,70,0,0" Orientation="Horizontal">
@@ -120,10 +120,13 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </StackPanel>
-                    <Border BorderThickness="2" CornerRadius="5" Background="{DynamicResource DarkBackground2}" Height="50" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1300,150,0,0" Cursor="Hand">
+                    <Border BorderThickness="2" CornerRadius="5" Background="{DynamicResource DarkBackground2}" Height="50" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1400,150,0,0" Cursor="Hand">
                         <Grid>
                             <Popup Name="TagPopup" StaysOpen="False" AllowsTransparency="True">
-                                <Border Background="{DynamicResource DarkBackground4}" CornerRadius="5">
+                                <Border Background="{DynamicResource DarkBackground4}" CornerRadius="5" Margin="5">
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="7" Direction="0" ShadowDepth="0"/>
+                                    </Border.Effect>
                                     <ItemsControl ItemsSource="{Binding Path=Game.Tags}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
@@ -165,7 +168,7 @@
                             </EventTrigger>
                         </Border.Triggers>
                     </Border>
-                    <ScrollViewer Background="Transparent" Margin="400,240,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="381" Width="1000" VerticalScrollBarVisibility="Auto">
+                    <ScrollViewer Background="Transparent" Margin="400,240,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="381" Width="1100" VerticalScrollBarVisibility="Auto">
                         <TextBlock Text="{Binding Path=Game.Description}" TextWrapping="Wrap" FontSize="20" />
                     </ScrollViewer>
                     <!--DETAILS-->

@@ -3,6 +3,7 @@ using gamevault.Models;
 using gamevault.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -144,11 +145,14 @@ namespace gamevault.UserControls
                                 }
                             }
                         }
+                        NewInstallViewModel.Instance.InstalledGamesFilter = CollectionViewSource.GetDefaultView(NewInstallViewModel.Instance.InstalledGames);
                     }
                     catch { }
                 }
             }
         }
+
+
         public void AddSystemFileWatcher(string path)
         {
             if (m_FileWatcherList.Where(x => x.Path == path).Count() > 0)
@@ -246,11 +250,10 @@ namespace gamevault.UserControls
         private void InputTimerElapsed(object sender, EventArgs e)
         {
             inputTimer.Stop();
-            if (NewInstallViewModel.Instance.InstalledGamesOrigin == null || NewInstallViewModel.Instance.InstalledGamesOrigin.Count < NewInstallViewModel.Instance.InstalledGames.Count)
+            NewInstallViewModel.Instance.InstalledGamesFilter.Filter = item =>
             {
-                NewInstallViewModel.Instance.InstalledGamesOrigin = NewInstallViewModel.Instance.InstalledGames;
-            }
-            NewInstallViewModel.Instance.InstalledGames = new System.Collections.ObjectModel.ObservableCollection<KeyValuePair<Game, string>>(NewInstallViewModel.Instance.InstalledGamesOrigin.Where(i => i.Key.Title.Contains(inputTimer.Data, StringComparison.OrdinalIgnoreCase)));
+                return ((KeyValuePair<Game, string>)item).Key.Title.Contains(inputTimer.Data, StringComparison.OrdinalIgnoreCase);
+            };
         }
 
         private void Play_Click(object sender, MouseButtonEventArgs e)

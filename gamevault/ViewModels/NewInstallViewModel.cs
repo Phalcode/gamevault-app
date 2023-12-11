@@ -3,6 +3,7 @@ using gamevault.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,7 +46,7 @@ namespace gamevault.ViewModels
             }
             set { m_InstalledGames = value; OnPropertyChanged(); }
         }
-        public ObservableCollection<KeyValuePair<Game, string>> InstalledGamesOrigin { get; set; }
+        public ICollectionView? InstalledGamesFilter { get; set; }
         public string[]? IgnoreList { get; set; }
         public void RefreshGame(Game gameToRefreshParam)
         {

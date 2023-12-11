@@ -24,7 +24,7 @@ namespace gamevault.Helper
             image.EndInit();
             return image;
         }
-        public static MemoryStream BitmapSourceToMemeryStream(BitmapSource src)
+        public static MemoryStream BitmapSourceToMemoryStream(BitmapSource src)
         {
             System.Drawing.Bitmap bitmap;
             MemoryStream pasteStream = new MemoryStream();

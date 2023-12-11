@@ -10,27 +10,15 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using Windows.ApplicationModel.Background;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Text.Json;
-using System.Collections;
-using System.Drawing.Imaging;
-using System.Drawing;
-using System.Reflection.Metadata;
 using System.Text.RegularExpressions;
-using static System.Net.Mime.MediaTypeNames;
 using System.Threading.Tasks;
 using System.Net;
 using LiveChartsCore;
-using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Extensions;
-using LiveChartsCore.SkiaSharpView.Painting;
-using SkiaSharp;
-using System.Reflection;
-using System.Xml.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace gamevault.UserControls
 {
@@ -42,6 +30,7 @@ namespace gamevault.UserControls
         private bool startup = true;
         private GameSettingsViewModel ViewModel { get; set; }
         private string SavedExecutable { get; set; }
+
         internal GameSettingsUserControl(Game game)
         {
             InitializeComponent();
@@ -328,7 +317,24 @@ namespace gamevault.UserControls
             }
         }
         #endregion
-        #region EDIT IMAGE      
+        #region EDIT IMAGE    
+        private InputTimer backgroundImageUrldebounceTimer { get; set; }
+        private InputTimer boxImageUrldebounceTimer { get; set; }
+        private void InitImageUrlTimer()
+        {
+            if (backgroundImageUrldebounceTimer == null)
+            {
+                backgroundImageUrldebounceTimer = new InputTimer() { Data = string.Empty };
+                backgroundImageUrldebounceTimer.Interval = TimeSpan.FromMilliseconds(400);
+                backgroundImageUrldebounceTimer.Tick += BackgroundImageDebounceTimerElapsed;
+            }
+            if (boxImageUrldebounceTimer == null)
+            {
+                boxImageUrldebounceTimer = new InputTimer() { Data = string.Empty };
+                boxImageUrldebounceTimer.Interval = TimeSpan.FromMilliseconds(400);
+                boxImageUrldebounceTimer.Tick += BoxImageDebounceTimerElapsed;
+            }
+        }
         private void ImageDrop(DragEventArgs e, string tag)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -405,7 +411,42 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.AppBarText = ex.Message;
             }
         }
-        #region Events
+        private void LoadImageUrl(string url, string tag)
+        {
+            try
+            {
+                if (tag == "box")
+                {
+                    uiUploadBoxArtPreview.ImageSource = BitmapHelper.GetBitmapImage(url);
+                }
+                else
+                {
+                    uiUploadBackgroundPreview.ImageSource = BitmapHelper.GetBitmapImage(url);
+                }
+            }
+            catch (Exception ex)
+            {
+                MainWindowViewModel.Instance.AppBarText = ex.Message;
+            }
+        }
+        private void FindImages_Click(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                string query = ((FrameworkElement)sender).Tag.ToString();
+                string googleSearchUrl = $"https://www.google.com/search?q={ViewModel.Game.Title} {query}&tbm=isch";
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = googleSearchUrl,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                MainWindowViewModel.Instance.AppBarText = ex.Message;
+            }
+        }
+        #region Generic Events
         private void BoxImage_ChooseImage(object sender, MouseButtonEventArgs e)
         {
             ChooseImage("box");
@@ -422,17 +463,41 @@ namespace gamevault.UserControls
         {
             ImageDrop(e, "");
         }
-        private async void BoxImage_Save(object sender, RoutedEventArgs e)
+        private async void BoxImage_Save(object sender, MouseButtonEventArgs e)
         {
-            ((Button)sender).IsEnabled = false;
+            ((FrameworkElement)sender).IsEnabled = false;
             await SaveImage("box");
-            ((Button)sender).IsEnabled = true;
+            ((FrameworkElement)sender).IsEnabled = true;
         }
-        private async void BackgroundImage_Save(object sender, RoutedEventArgs e)
+        private async void BackgroundImage_Save(object sender, MouseButtonEventArgs e)
         {
-            ((Button)sender).IsEnabled = false;
+            ((FrameworkElement)sender).IsEnabled = false;
             await SaveImage("");
-            ((Button)sender).IsEnabled = true;
+            ((FrameworkElement)sender).IsEnabled = true;
+        }
+        private void BackgoundImageUrl_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            InitImageUrlTimer();
+            backgroundImageUrldebounceTimer.Stop();
+            backgroundImageUrldebounceTimer.Data = ((TextBox)sender).Text;
+            backgroundImageUrldebounceTimer.Start();
+        }
+        private void BoxImageUrl_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            InitImageUrlTimer();
+            boxImageUrldebounceTimer.Stop();
+            boxImageUrldebounceTimer.Data = ((TextBox)sender).Text;
+            boxImageUrldebounceTimer.Start();
+        }
+        private void BackgroundImageDebounceTimerElapsed(object? sender, EventArgs e)
+        {
+            backgroundImageUrldebounceTimer.Stop();
+            LoadImageUrl(backgroundImageUrldebounceTimer.Data, "");
+        }
+        private void BoxImageDebounceTimerElapsed(object? sender, EventArgs e)
+        {
+            boxImageUrldebounceTimer.Stop();
+            LoadImageUrl(boxImageUrldebounceTimer.Data, "box");
         }
         #endregion
 
@@ -441,7 +506,7 @@ namespace gamevault.UserControls
             try
             {
                 BitmapSource bitmapSource = tag == "box" ? (BitmapSource)uiUploadBoxArtPreview.ImageSource : (BitmapSource)uiUploadBackgroundPreview.ImageSource;
-                string resp = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/images", BitmapHelper.BitmapSourceToMemeryStream(bitmapSource), "x.png", null);
+                string resp = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/images", BitmapHelper.BitmapSourceToMemoryStream(bitmapSource), "x.png", null);
                 var newImageId = JsonSerializer.Deserialize<Models.Image>(resp).ID;
                 await Task.Run(() =>
                 {
@@ -474,7 +539,10 @@ namespace gamevault.UserControls
 
                 NewInstallViewModel.Instance.RefreshGame(ViewModel.Game);
                 MainWindowViewModel.Instance.NewLibrary.RefreshGame(ViewModel.Game);
-
+                if (MainWindowViewModel.Instance.ActiveControl.GetType() == typeof(NewGameViewUserControl))
+                {
+                    ((NewGameViewUserControl)MainWindowViewModel.Instance.ActiveControl).RefreshGame(ViewModel.Game);
+                }
             }
             catch (WebException ex)
             {
@@ -599,6 +667,6 @@ namespace gamevault.UserControls
             this.IsEnabled = true;
         }
 
-        #endregion       
+        #endregion      
     }
 }

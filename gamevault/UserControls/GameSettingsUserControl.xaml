@@ -121,7 +121,7 @@
                 </StackPanel>
             </Grid>
             <StackPanel Grid.Column="0" VerticalAlignment="Bottom" Margin="10">
-                <TextBlock FontSize="16">
+                <TextBlock FontSize="16" TextWrapping="Wrap">
                     <TextBlock.Text>
                         <MultiBinding StringFormat="{}{0} ({1})">
                             <Binding Path="Game.Title" />
@@ -183,15 +183,7 @@
                             <Border CornerRadius="5" Margin="10,70,0,50" Width="425" HorizontalAlignment="Left" Background="{DynamicResource DarkBackground}">
                                 <StackPanel>
                                     <TextBlock Text="Background" HorizontalAlignment="Center" FontSize="15" Margin="0,5,0,0"/>
-                                    <Grid>
-                                        <local:CacheImage ImageCacheType="GameBackground" Data="{Binding Game}" CornerRadius="5" Stretch="Fill" Height="250" Margin="10,10,10,0"/>
-                                        <Border CornerRadius="5" Height="250" Margin="10,10,10,0">
-                                            <Border.Background>
-                                                <ImageBrush x:Name="uiUploadBackgroundPreview" Stretch="Fill"/>
-                                            </Border.Background>
-                                        </Border>
-                                    </Grid>
-                                    <Border CornerRadius="5" BorderThickness="2" Margin="10" Height="100" Background="{DynamicResource DarkBackground2}" Cursor="Hand" AllowDrop="True" Drop="BackgroundImage_Drop" MouseLeftButtonUp="BackgroundImage_ChooseImage" Focusable="True" KeyDown="Image_Paste">
+                                    <Border CornerRadius="5" BorderThickness="2" Margin="10" Height="380" Background="{DynamicResource DarkBackground2}" Cursor="Hand" AllowDrop="True" Drop="BackgroundImage_Drop" MouseLeftButtonUp="BackgroundImage_ChooseImage" Focusable="True" KeyDown="Image_Paste">
                                         <Border.Style>
                                             <Style TargetType="Border">
                                                 <Setter Property="BorderBrush" Value="LightGray"/>
@@ -204,9 +196,19 @@
                                                 </Style.Triggers>
                                             </Style>
                                         </Border.Style>
-                                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                            <TextBlock Text="Click to Upload, Paste or Drag and Drop" FontWeight="Bold"/>
-                                            <TextBlock Text="JPG, PNG, GIF, TIF, ICO or BMP" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                                        <StackPanel>
+                                            <Grid HorizontalAlignment="Center" Margin="0,20,0,0">
+                                                <local:CacheImage ImageCacheType="GameBackground" Data="{Binding Game}" CornerRadius="5" Stretch="Fill" Height="214" Width="380" Margin="10,10,10,0"/>
+                                                <Border CornerRadius="5" Height="215" Width="382" Margin="10,10,10,0">
+                                                    <Border.Background>
+                                                        <ImageBrush x:Name="uiUploadBackgroundPreview" Stretch="Fill"/>
+                                                    </Border.Background>
+                                                </Border>
+                                            </Grid>
+                                            <StackPanel HorizontalAlignment="Center" Margin="0,65,0,0">
+                                                <TextBlock Text="Click to Upload, Paste or Drag and Drop" FontWeight="Bold"/>
+                                                <TextBlock Text="JPG, PNG, GIF, TIF, ICO or BMP" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                                            </StackPanel>
                                         </StackPanel>
                                     </Border>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -217,32 +219,27 @@
                                         </StackPanel>
                                         <Rectangle Fill="White" Width="70" Height="2"/>
                                     </StackPanel>
-                                    <TextBox Text="https://myurl.com/lol" Margin="10" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
-                                    <Button Content="Save" HorizontalAlignment="Center" Width="120" Click="BackgroundImage_Save">
-                                        <Button.Style>
-                                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding ElementName=uiUploadBackgroundPreview, Path=ImageSource}" Value="{x:Null}">
-                                                        <Setter Property="IsEnabled" Value="False" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Button.Style>
-                                    </Button>
+                                    <TextBox Margin="10" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="https://imageurl/" TextChanged="BackgoundImageUrl_TextChanged"/>
+                                    <Grid Margin="10,95,10,0">
+                                        <local:IconButton Content="Save" Icon="{DynamicResource IconGameSettingsSave}" Width="70" Height="33" HorizontalAlignment="Right" MouseLeftButtonUp="BackgroundImage_Save">
+                                            <local:IconButton.Style>
+                                                <Style TargetType="local:IconButton">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding ElementName=uiUploadBackgroundPreview, Path=ImageSource}" Value="{x:Null}">
+                                                            <Setter Property="IsEnabled" Value="False" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </local:IconButton.Style>
+                                        </local:IconButton>
+                                        <local:IconButton Content="Find Images" Icon="{DynamicResource IconGameSettingsGoogle}" HorizontalAlignment="Left" Height="33" Width="115" Tag="Background Image" MouseLeftButtonUp="FindImages_Click"/>
+                                    </Grid>
                                 </StackPanel>
                             </Border>
                             <Border CornerRadius="5" Margin="0,70,10,50" Width="425" HorizontalAlignment="Right" Background="{DynamicResource DarkBackground}">
                                 <StackPanel>
                                     <TextBlock Text="Box Art" HorizontalAlignment="Center" FontSize="15" Margin="0,5,0,0"/>
-                                    <Grid>
-                                        <local:CacheImage ImageCacheType="BoxArt" Data="{Binding Game}" CornerRadius="5" Stretch="Fill" Height="250" Width="167" Margin="10,10,10,0"/>
-                                        <Border CornerRadius="5" Height="250" Width="167" Margin="10,10,10,0">
-                                            <Border.Background>
-                                                <ImageBrush x:Name="uiUploadBoxArtPreview" Stretch="Fill"/>
-                                            </Border.Background>
-                                        </Border>
-                                    </Grid>
-                                    <Border CornerRadius="5" BorderThickness="2" Margin="10" Height="100" Background="{DynamicResource DarkBackground2}" Cursor="Hand" AllowDrop="True" Drop="BoxImage_Drop" MouseLeftButtonUp="BoxImage_ChooseImage" Focusable="True" KeyDown="Image_Paste" Tag="box">
+                                    <Border CornerRadius="5" BorderThickness="2" Margin="10" Height="380" Background="{DynamicResource DarkBackground2}" Cursor="Hand" AllowDrop="True" Drop="BoxImage_Drop" MouseLeftButtonUp="BoxImage_ChooseImage" Focusable="True" KeyDown="Image_Paste" Tag="box">
                                         <Border.Style>
                                             <Style TargetType="Border">
                                                 <Setter Property="BorderBrush" Value="LightGray"/>
@@ -255,9 +252,19 @@
                                                 </Style.Triggers>
                                             </Style>
                                         </Border.Style>
-                                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                            <TextBlock Text="Click to Upload, Paste or Drag and Drop" FontWeight="Bold"/>
-                                            <TextBlock Text="JPG, PNG, GIF, TIF, ICO or BMP" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                                        <StackPanel>
+                                            <Grid HorizontalAlignment="Center">
+                                                <local:CacheImage ImageCacheType="BoxArt" Data="{Binding Game}" CornerRadius="5" Stretch="Fill" Height="250" Width="167" Margin="10,10,10,0"/>
+                                                <Border CornerRadius="5" Height="250" Width="167" Margin="10,10,10,0">
+                                                    <Border.Background>
+                                                        <ImageBrush x:Name="uiUploadBoxArtPreview" Stretch="Fill"/>
+                                                    </Border.Background>
+                                                </Border>
+                                            </Grid>
+                                            <StackPanel HorizontalAlignment="Center" Margin="0,50,0,0">
+                                                <TextBlock Text="Click to Upload, Paste or Drag and Drop" FontWeight="Bold"/>
+                                                <TextBlock Text="JPG, PNG, GIF, TIF, ICO or BMP" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                                            </StackPanel>
                                         </StackPanel>
                                     </Border>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -268,18 +275,21 @@
                                         </StackPanel>
                                         <Rectangle Fill="White" Width="70" Height="2"/>
                                     </StackPanel>
-                                    <TextBox Text="https://myurl.com/lol" Margin="10" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
-                                    <Button Content="Save" HorizontalAlignment="Center" Width="120" Click="BoxImage_Save">
-                                        <Button.Style>
-                                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding ElementName=uiUploadBoxArtPreview, Path=ImageSource}" Value="{x:Null}">
-                                                        <Setter Property="IsEnabled" Value="False" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Button.Style>
-                                    </Button>
+                                    <TextBox Margin="10" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="https://imageurl/" TextChanged="BoxImageUrl_TextChanged"/>
+                                    <Grid Margin="10,95,10,0">
+                                        <local:IconButton Content="Save" Icon="{DynamicResource IconGameSettingsSave}" Width="70" Height="33" HorizontalAlignment="Right" MouseLeftButtonUp="BoxImage_Save">
+                                            <local:IconButton.Style>
+                                                <Style TargetType="local:IconButton">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding ElementName=uiUploadBoxArtPreview, Path=ImageSource}" Value="{x:Null}">
+                                                            <Setter Property="IsEnabled" Value="False" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </local:IconButton.Style>
+                                        </local:IconButton>
+                                        <local:IconButton Content="Find Images" Icon="{DynamicResource IconGameSettingsGoogle}" HorizontalAlignment="Left" Height="33" Width="115" Tag="Box Art Image" MouseLeftButtonUp="FindImages_Click"/>
+                                    </Grid>
                                 </StackPanel>
                             </Border>
                         </Grid>

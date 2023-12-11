@@ -162,5 +162,9 @@ namespace gamevault.UserControls
                 });
             }
         }
+        public void RefreshGame(Game game)
+        {
+            ViewModel.Game = game;
+        }
     }
 }
