@@ -40,13 +40,8 @@
             <Viewbox Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left">
                 <Grid>
                     <Grid>
-                        <Border CornerRadius="100" Height="130" Width="130" Margin="-340,5,0,0">
-                            <local:CacheImage ImageCacheType="UserIcon" Data="{Binding Path=CurrentShownUser}">
-                                <local:CacheImage.Clip>
-                                    <EllipseGeometry RadiusX="65" RadiusY="65" Center="65,65"/>
-                                </local:CacheImage.Clip>
-                            </local:CacheImage>
-                        </Border>
+                        <local:CacheImage Height="130" Width="130" Margin="-340,5,0,0" ImageCacheType="UserIcon" CornerRadius="5" Data="{Binding Path=CurrentShownUser}">
+                        </local:CacheImage>
                         <Border Background="{StaticResource MahApps.Brushes.Accent}" Width="46" Height="23" Padding="3" CornerRadius="10" Margin="145,70,0,0" HorizontalAlignment="Left">
                             <TextBlock Text="{Binding Path=CurrentShownUser.Role}" TextAlignment="Center"/>
                         </Border>
@@ -59,7 +54,7 @@
 
                         <TextBlock Text="✏️" Cursor="Hand" ToolTip="Edit User" MouseLeftButtonUp="UserEdit_Clicked" Visibility="{Binding SelectedIndex,ElementName=uiSelectUser,Converter={StaticResource roleToVisConv}}" HorizontalAlignment="Right"  Margin="0,2,5,0"/>
                         <TextBlock Text="↻" Cursor="Hand" ToolTip="Reload user" MouseLeftButtonUp="ReloadUser_Clicked" HorizontalAlignment="Right" Margin="0,-8,25,0" FontSize="24"/>
-                      
+
                         <Canvas x:Name="uiUserEditPopup" Margin="48,0,0,0"/>
                     </Grid>
                     <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="320,0,10,0">
