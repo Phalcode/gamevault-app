@@ -17,7 +17,7 @@ namespace gamevault.Converter
                 brush.Freeze();
                 return brush;
             }
-            return Brushes.Transparent;
+            return Brushes.Black;
         }
 
         private Color GenerateColor(int numericValue)
