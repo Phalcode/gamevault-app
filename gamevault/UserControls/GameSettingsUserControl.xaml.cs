@@ -18,8 +18,9 @@ using System.Threading.Tasks;
 using System.Net;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView.Extensions;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using gamevault.Converter;
+using System.Windows.Media;
+using LiveChartsCore.SkiaSharpView.Painting;
 
 namespace gamevault.UserControls
 {
@@ -31,12 +32,14 @@ namespace gamevault.UserControls
         private bool startup = true;
         private GameSettingsViewModel ViewModel { get; set; }
         private string SavedExecutable { get; set; }
+        private GameSizeConverter gameSizeConverter { get; set; }
 
         internal GameSettingsUserControl(Game game)
         {
             InitializeComponent();
             ViewModel = new GameSettingsViewModel();
             ViewModel.Game = game;
+            gameSizeConverter = new GameSizeConverter();
             if (IsGameInstalled(game))
             {
                 FindGameExecutables(ViewModel.Directory, true);
@@ -44,7 +47,7 @@ namespace gamevault.UserControls
                 {
                     ViewModel.LaunchParameter = Preferences.Get(AppConfigKey.LaunchParameter, $"{ViewModel.Directory}\\gamevault-exec");
                 }
-                InitDiscUsagePieChart();
+                InitDiskUsagePieChart();
             }
             this.DataContext = ViewModel;
         }
@@ -219,7 +222,7 @@ namespace gamevault.UserControls
             }
             ((FrameworkElement)sender).IsEnabled = true;
         }
-        private void InitDiscUsagePieChart()
+        private void InitDiskUsagePieChart()
         {
             var drive = DriveInfo.GetDrives().Where(d => d.Name == Path.GetPathRoot(ViewModel.Directory)).FirstOrDefault();
             if (drive == null)
@@ -239,13 +242,12 @@ namespace gamevault.UserControls
             long unmanagedDiskSize = totalDiskSize - currentGameSize - otherGamesSize - drive.TotalFreeSpace;
 
             double percentageOfAllGames = (currentGameSize * 100.0) / otherGamesSize;
-            GameSizeConverter conv = new GameSizeConverter();
-            uiTxtAllInstalledGamesSize.Text = conv.Convert(drive.TotalSize, null, null, null).ToString();
+            uiTxtAllInstalledGamesSize.Text = gameSizeConverter.Convert(drive.TotalSize, null, null, null).ToString();
 
             double freeSpacePercentage = ((double)drive.TotalFreeSpace / (double)totalDiskSize) * 100;
-            double otherGamesPercentage = ((double)otherGamesSize / totalDiskSize) * 100;
-            double currentGamePercentage = ((double)currentGameSize / totalDiskSize) * 100;
-            double unmanagedSpacePercentage = ((double)unmanagedDiskSize / totalDiskSize) * 100;
+            double otherGamesPercentage = ((double)otherGamesSize / (double)totalDiskSize) * 100;
+            double currentGamePercentage = ((double)currentGameSize / (double)totalDiskSize) * 100;
+            double unmanagedSpacePercentage = ((double)unmanagedDiskSize / (double)totalDiskSize) * 100;
 
 
             double[] percentages = new double[] { currentGamePercentage, otherGamesPercentage, unmanagedSpacePercentage, freeSpacePercentage };
@@ -260,16 +262,19 @@ namespace gamevault.UserControls
 
 
             int _index = 0;
-            string[] _names = new[] { ViewModel.Game.Title, "Other GameVault Games", "Unmanaged Data", "Free Space" };
+            string[] _names = new[] { $"This Game ({ViewModel.Game.Title})", "Other installed GameVault Games", "Unmanaged Data", "Free Space" };
             long[] tooltips = new[] { currentGameSize, otherGamesSize, unmanagedDiskSize, drive.TotalFreeSpace };
-
+            Color[] colors = new[] { Colors.DeepPink, Colors.LightSeaGreen, Colors.PaleVioletRed, Colors.DarkGray };
             IEnumerable<ISeries> SliceSeries =
                 percentages.AsPieSeries((value, series) =>
                 {
-                    series.MaxRadialColumnWidth = 60;
-
-                    series.Name = _names[_index++ % _names.Length];
-                    series.ToolTipLabelFormatter = (chartPoint) => $"{conv.Convert(tooltips[_index++ % tooltips.Length], null, null, null)}";
+                    series.MaxRadialColumnWidth = 80;
+                    series.Name = _names[_index % _names.Length];
+                    series.Fill = new SolidColorPaint(new SkiaSharp.SKColor(colors[_index % colors.Length].R, colors[_index % colors.Length].G, colors[_index % colors.Length].B));
+                    var size = tooltips[_index % tooltips.Length];
+                    var humanreadableSize = gameSizeConverter.Convert(size, null, null, null);
+                    series.ToolTipLabelFormatter = (chartPoint) => $"{humanreadableSize}";
+                    _index++;
                 });
             uiDiscUsagePieChart.Series = SliceSeries;
         }

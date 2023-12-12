@@ -161,12 +161,10 @@
                                 <local:IconButton Content="Uninstall Game" Icon="{DynamicResource IconTrash}" Background="Red" Width="142" Height="33" Margin="10,0,0,0" MouseLeftButtonUp="Uninstall_Click"/>
                             </StackPanel>
                             <TextBlock Text="Disk Usage" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
-                            <lvc:PieChart x:Name="uiDiscUsagePieChart" Width="200" Height="200" InitialRotation="0" IsClockwise="True" HorizontalAlignment="Left" Margin="0,20,0,0"/>
-                            
-                            <StackPanel Margin="50,0,0,0" HorizontalAlignment="Left">
-                                <TextBlock Text="Total Disk Size" FontSize="15" FontWeight="Bold"/>
-                                <TextBlock x:Name="uiTxtAllInstalledGamesSize" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center"/>
-                            </StackPanel>
+                            <lvc:PieChart x:Name="uiDiscUsagePieChart" Width="600" Height="300" InitialRotation="-90" IsClockwise="True" HorizontalAlignment="Left" Margin="0,20,0,0">
+                            </lvc:PieChart>
+                            <TextBlock Text="Total Disk Size" FontSize="15" FontWeight="Bold" Margin="225,0,0,0"/>
+                            <TextBlock x:Name="uiTxtAllInstalledGamesSize" FontSize="15" FontWeight="Bold" Margin="225,0,0,0"/>
                         </StackPanel>
                     </mah:MetroTabItem>
                     <mah:MetroTabItem>
