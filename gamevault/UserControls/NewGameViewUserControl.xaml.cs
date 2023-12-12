@@ -162,6 +162,16 @@ namespace gamevault.UserControls
                 });
             }
         }
+
+        private void ShowProgressUser_Click(object sender, MouseButtonEventArgs e)
+        {
+            Progress selectedProgress = ((FrameworkElement)sender).DataContext as Progress;
+            if (selectedProgress != null)
+            {
+                MainWindowViewModel.Instance.Community.ShowUser(selectedProgress.User);
+            }
+        }
+
         public void RefreshGame(Game game)
         {
             ViewModel.Game = game;

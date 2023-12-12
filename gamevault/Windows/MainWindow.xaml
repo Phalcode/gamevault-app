@@ -20,6 +20,8 @@
             <Button Click="WindowCommand_Clicked" Content="💸 Kofi" FontSize="18" Cursor="Hand" Tag="https://ko-fi.com/phalcode"/>
             <Button Click="WindowCommand_Clicked" Content="💬 Discord" FontSize="18" Cursor="Hand" Tag="https://discord.com/invite/NEdNen2dSu"/>
             <Button Click="WindowCommand_Clicked" Content="📜 Documentation" FontSize="18" Cursor="Hand" Tag="https://gamevau.lt/docs/intro"/>
+            <Button Click="WindowCommand_Clicked" Content="🧑‍💻 Github" FontSize="18" Cursor="Hand" Tag="https://github.com/orgs/Phalcode/repositories"/>
+            <Button Click="WindowCommand_Clicked" Content="⚠️ Bug Report" FontSize="18" Cursor="Hand" Tag="https://github.com/Phalcode/gamevault-app/issues/new/choose"/>
         </mah:WindowCommands>
     </mah:MetroWindow.RightWindowCommands>
     <Grid>

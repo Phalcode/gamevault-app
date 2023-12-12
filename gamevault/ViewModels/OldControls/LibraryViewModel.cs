@@ -48,12 +48,12 @@ namespace gamevault.ViewModels
             {
                 var dict = new Dictionary<string, string>
                 {
-                    {"Game title","title"},
-                    {"Game size","size" },
-                    {"Game release date","rawg_release_date" },
-                    {"Game rating","metacritic_rating" },
-                    {"Game average playtime","average_playtime" },
-                    {"Recently added","created_at" }
+                    {"Title","title"},
+                    {"Size","size" },
+                    {"Recently Added","created_at" },
+                    {"Release Date","release_date" },
+                    {"Metacritic Rating","metacritic_rating" },
+                    {"Average Playtime","average_playtime" },
                 };
                 return dict;
             }

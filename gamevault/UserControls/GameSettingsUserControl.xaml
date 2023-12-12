@@ -111,8 +111,8 @@
                             <TabItem>
                                 <TabItem.Header>
                                     <StackPanel Orientation="Horizontal">
-                                        <Path Style="{StaticResource TabItemHeaderPath}" Data="{DynamicResource IconGameSettingsRemap}" VerticalAlignment="Center"/>
-                                        <TextBlock Style="{StaticResource TabItemHeaderTextBlock}" Text="Remap Game"/>
+                                        <Path Style="{StaticResource TabItemHeaderPath}" Data="{DynamicResource IconGameSettingsRawg}" VerticalAlignment="Center"/>
+                                        <TextBlock Style="{StaticResource TabItemHeaderTextBlock}" Text="RAWG Integration"/>
                                     </StackPanel>
                                 </TabItem.Header>
                             </TabItem>
@@ -298,8 +298,8 @@
                     <mah:MetroTabItem>
                         <StackPanel Margin="20,20,0,0">
                             <StackPanel Orientation="Horizontal">
-                                <Path Data="{DynamicResource IconGameSettingsRemap}" Fill="White" VerticalAlignment="Center"/>
-                                <TextBlock Text="Remap Game" FontSize="20" FontWeight="Bold" Margin="5,0,0,0"/>
+                                <Path Data="{DynamicResource IconGameSettingsRawg}" Fill="White" VerticalAlignment="Center"/>
+                                <TextBlock Text="RAWG Integration" FontSize="20" FontWeight="Bold" Margin="5,0,0,0"/>
                             </StackPanel>
                             <TextBlock Text="Here, you can remap your games to other RAWG games or recache all information for them from the RAWG database." FontSize="15"  Margin="0,5,0,0"/>
                             <StackPanel Margin="0,10,0,0">
