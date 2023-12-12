@@ -86,7 +86,7 @@
                                     <ComboBox ItemsSource="{Binding Path=DataContext.PermissionRoleEnumTypes,RelativeSource={RelativeSource AncestorType=UserControl}}" SelectedItem="{Binding Path=Role}" SelectionChanged="PermissionRole_SelectionChanged"/>
                                 </Viewbox>
 
-                                <TextBlock FontSize="2" Margin="0,0,5,0" Text="✏️" HorizontalAlignment="Right" VerticalAlignment="Center" Cursor="Hand" ToolTip="Edit user" MouseLeftButtonUp="EditUser_Clicked"/>
+                                <TextBlock FontSize="2" Margin="0,0,5,0" Text="⚙️" HorizontalAlignment="Right" VerticalAlignment="Center" Cursor="Hand" ToolTip="Edit user" MouseLeftButtonUp="EditUser_Clicked"/>
 
                                 <TextBlock FontSize="2" Margin="0,0,1,0" HorizontalAlignment="Right" VerticalAlignment="Center" Cursor="Hand" MouseLeftButtonUp="DeleteUser_Clicked">
                                     <TextBlock.Style>
