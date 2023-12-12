@@ -5,13 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800" Name="parent">
     <Border CornerRadius="5" Cursor="Hand">
         <Border.Style>
             <Style TargetType="Border">
-                <Setter Property="Background" Value="{Binding Background}"/>
+                <Setter Property="Background" Value="{Binding ElementName=parent,Path=Background}"/>
                 <Style.Triggers>
-                    <DataTrigger Binding="{Binding Background}" Value="{x:Null}">
+                    <DataTrigger Binding="{Binding ElementName=parent,Path=Background}" Value="{x:Null}">
                         <Setter Property="Background" Value="{DynamicResource MainColor}"/>
                     </DataTrigger>
                     <Trigger Property="IsMouseOver" Value="True">
@@ -24,8 +24,8 @@
             </Style>
         </Border.Style>
         <StackPanel Orientation="Horizontal">
-            <Path Data="{Binding Icon}" Fill="White" VerticalAlignment="Center" Margin="4,0,0,4"/>
-            <TextBlock Text="{Binding Content}" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" Margin="4,0,0,3"/>
+            <Path Data="{Binding ElementName=parent,Path=Icon}" Fill="White" VerticalAlignment="Center" Margin="4,0,0,4"/>
+            <TextBlock Text="{Binding ElementName=parent,Path=Content}" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" Margin="4,0,0,3"/>
         </StackPanel>
     </Border>
 </UserControl>

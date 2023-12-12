@@ -28,8 +28,7 @@ namespace gamevault.UserControls
             DependencyProperty.Register("Background", typeof(Brush), typeof(IconButton));
         public IconButton()
         {
-            InitializeComponent();
-            this.DataContext = this;
+            InitializeComponent();         
         }
         public Geometry Icon
         {

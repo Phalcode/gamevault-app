@@ -131,14 +131,16 @@ namespace gamevault.UserControls
 
         private void EditUser_Clicked(object sender, MouseButtonEventArgs e)
         {
-            uiUserEditPopup.Visibility = Visibility.Visible;
-            var obj = new UserEditUserControl((User)((FrameworkElement)sender).DataContext);
-            obj.UserSaved += UserSaved;
-            if (uiUserEditPopup.Children.Count != 0)
-            {
-                uiUserEditPopup.Children.Clear();
-            }
-            uiUserEditPopup.Children.Add(obj);
+            //uiUserEditPopup.Visibility = Visibility.Visible;
+            //var obj = new UserEditUserControl((User)((FrameworkElement)sender).DataContext);
+            //obj.UserSaved += UserSaved;
+            //if (uiUserEditPopup.Children.Count != 0)
+            //{
+            //    uiUserEditPopup.Children.Clear();
+            //}
+            //uiUserEditPopup.Children.Add(obj);
+            User user = JsonSerializer.Deserialize<User>(JsonSerializer.Serialize((User)((FrameworkElement)sender).DataContext));
+            MainWindowViewModel.Instance.OpenPopup(new UserSettingsUserControl(user) { Width = 1200, Height = 800, Margin = new Thickness(50) });
         }
         private void BackupRestore_Click(object sender, RoutedEventArgs e)
         {
