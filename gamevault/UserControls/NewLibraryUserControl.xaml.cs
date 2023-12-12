@@ -182,6 +182,20 @@ namespace gamevault.UserControls
                     scrollBlocked = false;
 
                 }
+                if (((ScrollViewer)sender).VerticalOffset == ((ScrollViewer)sender).ScrollableHeight)
+                {
+                    uiMainScrollBar.RaiseEvent(e);
+                }
+            }
+        }
+        private void Library_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (e.Delta < 0 && ViewModel.NextPage == null && ((ScrollViewer)sender).VerticalOffset == ((ScrollViewer)sender).ScrollableHeight)
+            {
+                var eventArg = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
+                eventArg.RoutedEvent = UIElement.MouseWheelEvent;
+                eventArg.Source = sender;
+                uiMainScrollBar.RaiseEvent(eventArg);
             }
         }
 
@@ -288,5 +302,7 @@ namespace gamevault.UserControls
                 ViewModel.GameCards[index] = gameToRefreshParam;
             }
         }
+
+
     }
 }

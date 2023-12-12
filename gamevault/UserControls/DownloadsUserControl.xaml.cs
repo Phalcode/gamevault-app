@@ -105,7 +105,7 @@ namespace gamevault.UserControls
             {
                 MainWindowViewModel.Instance.AppBarText = "Could not connect to server";
                 return;
-            }                    
+            }
             if (SettingsViewModel.Instance.RootPath == string.Empty)
             {
                 MainWindowViewModel.Instance.AppBarText = "Root path is not set! Go to ⚙️Settings->Data";
@@ -118,6 +118,11 @@ namespace gamevault.UserControls
             }
             if (IsEnoughDriveSpaceAvailable(Convert.ToInt64(game.Size)))
             {
+                GameDownloadUserControl? oldDownloadEntry = DownloadsViewModel.Instance.DownloadedGames.Where(g => g.GetGameId() == game.ID).FirstOrDefault();
+                if (oldDownloadEntry != null)
+                {
+                    DownloadsViewModel.Instance.DownloadedGames.Remove(oldDownloadEntry);
+                }
                 DownloadsViewModel.Instance.DownloadedGames.Insert(0, new GameDownloadUserControl(game, true));
                 MainWindowViewModel.Instance.AppBarText = $"'{game.Title}' has been added to the download queue";
             }
