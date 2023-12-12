@@ -58,7 +58,7 @@
 
                     <!--ACTION BUTTONS-->
                     <StackPanel Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="390,70,0,0" Orientation="Horizontal">
-                        <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Left" Visibility="{Binding ScrollToTopVisibility}" Background="Transparent" Cursor="Hand" Width="50" Height="50" Margin="00,0,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="GamePlay_Click">
+                        <Grid VerticalAlignment="Top" HorizontalAlignment="Left" Background="Transparent" Cursor="Hand" Width="50" Height="50" Margin="0,0,20,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="GamePlay_Click">
                             <Path Data="{StaticResource IconInstalledGamesPlay}" Fill="White" RenderTransformOrigin="0.12,0.11">
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="3" ScaleY="3"/>
@@ -67,8 +67,18 @@
                             <Grid.RenderTransform>
                                 <ScaleTransform/>
                             </Grid.RenderTransform>
+                            <Grid.Style>
+                                <Style TargetType="Grid" BasedOn="{StaticResource HoverEffect}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsInstalled}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
                         </Grid>
-                        <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Left" Visibility="{Binding ScrollToTopVisibility}" Background="Transparent" Cursor="Hand" Width="50" Height="60" Margin="20,0,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="GameDownload_Click">
+                        <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Left" Visibility="{Binding ScrollToTopVisibility}" Background="Transparent" Cursor="Hand" Width="50" Height="60" Margin="0,0,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="GameDownload_Click">
                             <Path Data="{StaticResource IconDownload}" Fill="White" RenderTransformOrigin="0.06,0.04">
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="2.5" ScaleY="2.5"/>

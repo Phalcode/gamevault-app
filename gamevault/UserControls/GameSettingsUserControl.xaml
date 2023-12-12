@@ -21,6 +21,16 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+        <Style x:Key="TabItemHeaderPathStroke" TargetType="Path">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="True">
+                    <Setter Property="Stroke" Value="{DynamicResource MainColor}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="False">
+                    <Setter Property="Stroke" Value="White"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
         <Style x:Key="TabItemHeaderTextBlock" TargetType="TextBlock">
             <Setter Property="FontSize" Value="22"/>
             <Setter Property="FontWeight" Value="Bold"/>
@@ -111,7 +121,7 @@
                             <TabItem>
                                 <TabItem.Header>
                                     <StackPanel Orientation="Horizontal">
-                                        <Path Style="{StaticResource TabItemHeaderPath}" Data="{DynamicResource IconGameSettingsRawg}" VerticalAlignment="Center"/>
+                                        <Path Style="{StaticResource TabItemHeaderPathStroke}" StrokeThickness="2" Data="{DynamicResource IconGameSettingsRawg}" VerticalAlignment="Center"/>
                                         <TextBlock Style="{StaticResource TabItemHeaderTextBlock}" Text="RAWG Integration"/>
                                     </StackPanel>
                                 </TabItem.Header>
@@ -298,7 +308,7 @@
                     <mah:MetroTabItem>
                         <StackPanel Margin="20,20,0,0">
                             <StackPanel Orientation="Horizontal">
-                                <Path Data="{DynamicResource IconGameSettingsRawg}" Fill="White" VerticalAlignment="Center"/>
+                                <Path Data="{DynamicResource IconGameSettingsRawg}" Stroke="White" StrokeThickness="2" VerticalAlignment="Center"/>
                                 <TextBlock Text="RAWG Integration" FontSize="20" FontWeight="Bold" Margin="5,0,0,0"/>
                             </StackPanel>
                             <TextBlock Text="Here, you can remap your games to other RAWG games or recache all information for them from the RAWG database." FontSize="15"  Margin="0,5,0,0"/>

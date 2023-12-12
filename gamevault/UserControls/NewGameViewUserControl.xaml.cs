@@ -70,9 +70,19 @@ namespace gamevault.UserControls
                     }
                     catch (Exception ex) { }
                 }
+                ViewModel.IsInstalled = IsGameInstalled(ViewModel.Game);
             }
         }
+        private bool IsGameInstalled(Game? game)
+        {
+            if (game == null)
+                return false;
+            KeyValuePair<Game, string> result = NewInstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == game.ID).FirstOrDefault();
+            if (result.Equals(default(KeyValuePair<Game, string>)))
+                return false;
 
+            return true;
+        }
         private void Back_Click(object sender, MouseButtonEventArgs e)
         {
             MainWindowViewModel.Instance.UndoActiveControl();

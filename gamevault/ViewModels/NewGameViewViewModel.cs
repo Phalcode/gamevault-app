@@ -14,6 +14,7 @@ namespace gamevault.ViewModels
         private Progress? progress { get; set; }
         private Progress[]? userProgress { get; set; }
         private string[]? gameStates { get; set; }
+        private bool isInstalled { get; set; }
         #endregion
         public Game? Game
         {
@@ -34,6 +35,11 @@ namespace gamevault.ViewModels
         {
             get { if (gameStates == null) { gameStates = Enum.GetNames(typeof(State)); } return gameStates; }
             set { gameStates = value; OnPropertyChanged(); }
+        }
+        public bool IsInstalled
+        {
+            get { return isInstalled; }
+            set { isInstalled = value; OnPropertyChanged(); }
         }
     }
 }
