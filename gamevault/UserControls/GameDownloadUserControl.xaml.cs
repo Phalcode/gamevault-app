@@ -1,4 +1,5 @@
-﻿using gamevault.Helper;
+﻿using gamevault.Converter;
+using gamevault.Helper;
 using gamevault.Models;
 using gamevault.ViewModels;
 using ImageMagick.Formats;
@@ -29,6 +30,9 @@ namespace gamevault.UserControls
         private DateTime startTime;
 
         private SevenZipHelper sevenZipHelper { get; set; }
+
+        private GameSizeConverter gameSizeConverter { get; set; }
+
         public GameDownloadUserControl(Game game, bool download)
         {
             InitializeComponent();
@@ -44,6 +48,7 @@ namespace gamevault.UserControls
             ViewModel.InstallPath = $"{SettingsViewModel.Instance.RootPath}\\GameVault\\Installations\\({ViewModel.Game.ID}){ViewModel.Game.Title}";
             ViewModel.InstallPath = ViewModel.InstallPath.Replace(@"\\", @"\");
             sevenZipHelper = new SevenZipHelper();
+            gameSizeConverter = new GameSizeConverter();
             if (download)
             {
                 DownloadGame();
@@ -147,16 +152,17 @@ namespace gamevault.UserControls
             App.Current.Dispatcher.Invoke((Action)delegate
             {
 
-                ViewModel.DownloadInfo = $"{CalculateSpeed(totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds)} - {CalculateSize(totalBytesDownloaded)} of {CalculateSize((double)totalFileSize)} | Time left: {CalculateTimeLeft(totalFileSize, totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds)}";
-                if (ViewModel.GameDownloadProgress != (int)progressPercentage)
+                ViewModel.DownloadInfo = $"{$"{FormatBytesHumanReadable(totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds, 1000)}/s"} - {FormatBytesHumanReadable(totalBytesDownloaded)} of {FormatBytesHumanReadable((double)totalFileSize)} | Time left: {CalculateTimeLeft(totalFileSize, totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds)}";
+                if (ViewModel.GameDownloadProgress == (int)progressPercentage)
                 {
-                    ViewModel.GameDownloadProgress = (int)progressPercentage;
-                    if (ViewModel.GameDownloadProgress == 100)
-                    {
-                        DownloadCompleted();
-                    }
-                    MainWindowViewModel.Instance.UpdateTaskbarProgress();
+                    return;
                 }
+                ViewModel.GameDownloadProgress = (int)progressPercentage;
+                if (ViewModel.GameDownloadProgress == 100)
+                {
+                    DownloadCompleted();
+                }
+                MainWindowViewModel.Instance.UpdateTaskbarProgress();
             });
         }
 
@@ -190,19 +196,16 @@ namespace gamevault.UserControls
             extractionCancelled = true;
             sevenZipHelper.Cancel();
         }
-        private string CalculateSpeed(double size, double tspan)
+        private string FormatBytesHumanReadable(double size, double tspan = 1, int baseVal = 1024)
         {
-            if (size / tspan > 1024 * 1024) // MB
+            try
             {
-                return $"{Math.Round(size / (1024 * 1204) / tspan, 2)} MB/s";
+                double value = size / tspan;
+                return (string)gameSizeConverter.Convert(value.ToString(), null, baseVal, null);
             }
-            else if (size / tspan > 1024) // KB
+            catch (Exception ex)
             {
-                return $"{Math.Round(size / (1024) / tspan, 2)} KB/s";
-            }
-            else
-            {
-                return $"{Math.Round(size / tspan, 2)} B/s";
+                return "ERR";
             }
         }
 
@@ -255,7 +258,7 @@ namespace gamevault.UserControls
         private void ExtractionProgress(object sender, SevenZipProgressEventArgs e)
         {
             long totalBytesDownloaded = (Convert.ToInt64(ViewModel.Game.Size) / 100) * e.PercentageDone;
-            ViewModel.ExtractionInfo = $"{CalculateSpeed(totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds)} - {CalculateSize(totalBytesDownloaded)} of {CalculateSize(Convert.ToInt64(ViewModel.Game.Size))} | Time left: {CalculateTimeLeft(Convert.ToInt64(ViewModel.Game.Size), totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds)}";
+            ViewModel.ExtractionInfo = $"{$"{FormatBytesHumanReadable(totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds, 1000)}/s"} - {FormatBytesHumanReadable(totalBytesDownloaded)} of {FormatBytesHumanReadable(Convert.ToInt64(ViewModel.Game.Size))} | Time left: {CalculateTimeLeft(Convert.ToInt64(ViewModel.Game.Size), totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds)}";
             ViewModel.GameExtractionProgress = e.PercentageDone;
         }
 
@@ -318,25 +321,6 @@ namespace gamevault.UserControls
                     ViewModel.State = "Something went wrong during extraction";
                 }
                 ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
-            }
-        }
-        private string CalculateSize(double size)
-        {
-            try
-            {
-                size = size / 1000000;
-                if (size > 1000)
-                {
-                    size = size / 1000;
-                    size = Math.Round(size, 2);
-                    return $"{size} GB";
-                }
-                size = Math.Round(size, 2);
-                return $"{size} MB";
-            }
-            catch (Exception ex)
-            {
-                return "?";
             }
         }
 
