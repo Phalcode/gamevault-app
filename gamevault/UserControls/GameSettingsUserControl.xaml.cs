@@ -19,6 +19,7 @@ using System.Net;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView.Extensions;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
+using gamevault.Converter;
 
 namespace gamevault.UserControls
 {
@@ -174,41 +175,57 @@ namespace gamevault.UserControls
         }
         private void InitDiscUsagePieChart()
         {
-            long allGameSizes = 0;
+            var drive = DriveInfo.GetDrives().Where(d => d.Name == Path.GetPathRoot(ViewModel.Directory)).FirstOrDefault();
+            if (drive == null)
+            {
+                //Throw error
+                return;
+            }
+            long totalDiskSize = drive.TotalSize;
+            long otherGamesSize = 0;
+            long.TryParse(ViewModel.Game.Size, out long currentGameSize);
             foreach (var installedGame in NewInstallViewModel.Instance.InstalledGames)
             {
                 long.TryParse(installedGame.Key.Size, out long size);
-                allGameSizes += size;
+                otherGamesSize += size;
             }
-            long.TryParse(ViewModel.Game.Size, out long currentGameSize);
-            allGameSizes = allGameSizes - currentGameSize;
-            double percentageOfAllGames = (currentGameSize * 100.0) / allGameSizes;
-            uiTxtAllInstalledGamesSize.Text = allGameSizes.ToString();
+            otherGamesSize = otherGamesSize - currentGameSize;
+            long unmanagedDiskSize = totalDiskSize - currentGameSize - otherGamesSize - drive.TotalFreeSpace;
 
-            //var drive = DriveInfo.GetDrives().Where(d => d.Name == Path.GetPathRoot(ViewModel.Directory)).FirstOrDefault();
-            long totalDriveSize = 100000000;
-            //if (drive != null)
-            //{
-            //    totalDriveSize = drive.TotalSize;
-            //}
+            double percentageOfAllGames = (currentGameSize * 100.0) / otherGamesSize;
+            GameSizeConverter conv = new GameSizeConverter();
+            uiTxtAllInstalledGamesSize.Text = conv.Convert(drive.TotalSize,null,null,null).ToString();
+
+            double freeSpacePercentage = ((double)drive.TotalFreeSpace / (double)totalDiskSize) * 100;
+            double otherGamesPercentage = ((double)otherGamesSize / totalDiskSize) * 100;
+            double currentGamePercentage = ((double)currentGameSize / totalDiskSize) * 100;
+            double unmanagedSpacePercentage = ((double)unmanagedDiskSize / totalDiskSize) * 100;
+
+
+            double[] percentages = new double[] { currentGamePercentage, otherGamesPercentage, unmanagedSpacePercentage, freeSpacePercentage };
+            for (int index = 0; index < percentages.Length; index++)
+            {
+                if (percentages[index] > 5)
+                    continue;
+
+                freeSpacePercentage -= (5 - percentages[index]);
+                percentages[index] = 5;
+            }
+
+
             int _index = 0;
-            string[] _names = new[] { "Total Drive Size", "All Game Size", "Current Game Size" };
-            IEnumerable<ISeries> Series =
-                new[] { currentGameSize, allGameSizes, totalDriveSize }.AsPieSeries((value, series) =>
+            string[] _names = new[] { ViewModel.Game.Title, "Other GameVault Games", "Unmanaged Data", "Free Space" };
+            long[] tooltips = new[] { currentGameSize, otherGamesSize, unmanagedDiskSize, drive.TotalFreeSpace };
+          
+            IEnumerable<ISeries> SliceSeries =
+                percentages.AsPieSeries((value, series) =>
                 {
                     series.MaxRadialColumnWidth = 60;
 
                     series.Name = _names[_index++ % _names.Length];
-                    //series.DataLabelsPosition = LiveChartsCore.Measure.PolarLabelsPosition.Middle;
-                    //series.DataLabelsSize = 15;
-                    //series.DataLabelsPaint = new SolidColorPaint(new SKColor(30, 30, 30));
-                    //series.DataLabelsFormatter =
-                    //   point =>
-                    //       $"This slide takes {point.Coordinate.PrimaryValue} " +
-                    //       $"out of {point.StackedValue!.Total} parts";
-                    series.ToolTipLabelFormatter = point => $"{point.StackedValue!.Share:P2}";
+                    series.ToolTipLabelFormatter = (chartPoint) => $"{conv.Convert(tooltips[_index++ % tooltips.Length],null,null,null)}";
                 });
-            uiDiscUsagePieChart.Series = Series;
+            uiDiscUsagePieChart.Series = SliceSeries;
         }
         #endregion
         #region LAUNCH OPTIONS
