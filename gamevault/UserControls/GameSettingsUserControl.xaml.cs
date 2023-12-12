@@ -56,6 +56,52 @@ namespace gamevault.UserControls
         {
             MainWindowViewModel.Instance.ClosePopup();
         }
+        private void Help_Click(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                string url = "";
+                int currentIndex = 0;
+                if (uiSettingsHeadersLocal.SelectedIndex == -1)
+                    currentIndex = uiSettingsHeadersLocal.Items.Count + uiSettingsHeadersRemote.SelectedIndex;
+                if (uiSettingsHeadersRemote.SelectedIndex == -1)
+                    currentIndex = uiSettingsHeadersLocal.SelectedIndex;
+
+                Debug.WriteLine(currentIndex);
+                switch (currentIndex)
+                {
+                    case 0:
+                        {
+                            url = "https://gamevau.lt/docs/client-docs/gui#installation";
+                            break;
+                        }
+                    case 1:
+                        {
+                            url = "https://gamevau.lt/docs/client-docs/gui#launch-options";
+                            break;
+                        }
+                    case 2:
+                        {
+                            url = "https://gamevau.lt/docs/client-docs/gui#edit-images";
+                            break;
+                        }
+                    case 3:
+                        {
+                            url = "https://gamevau.lt/docs/client-docs/gui#rawg-integration";
+                            break;
+                        }
+                }
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                MainWindowViewModel.Instance.AppBarText = ex.Message;
+            }
+        }
         private bool IsGameInstalled(Game game)
         {
             KeyValuePair<Game, string> result = NewInstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == game.ID).FirstOrDefault();
@@ -194,7 +240,7 @@ namespace gamevault.UserControls
 
             double percentageOfAllGames = (currentGameSize * 100.0) / otherGamesSize;
             GameSizeConverter conv = new GameSizeConverter();
-            uiTxtAllInstalledGamesSize.Text = conv.Convert(drive.TotalSize,null,null,null).ToString();
+            uiTxtAllInstalledGamesSize.Text = conv.Convert(drive.TotalSize, null, null, null).ToString();
 
             double freeSpacePercentage = ((double)drive.TotalFreeSpace / (double)totalDiskSize) * 100;
             double otherGamesPercentage = ((double)otherGamesSize / totalDiskSize) * 100;
@@ -216,14 +262,14 @@ namespace gamevault.UserControls
             int _index = 0;
             string[] _names = new[] { ViewModel.Game.Title, "Other GameVault Games", "Unmanaged Data", "Free Space" };
             long[] tooltips = new[] { currentGameSize, otherGamesSize, unmanagedDiskSize, drive.TotalFreeSpace };
-          
+
             IEnumerable<ISeries> SliceSeries =
                 percentages.AsPieSeries((value, series) =>
                 {
                     series.MaxRadialColumnWidth = 60;
 
                     series.Name = _names[_index++ % _names.Length];
-                    series.ToolTipLabelFormatter = (chartPoint) => $"{conv.Convert(tooltips[_index++ % tooltips.Length],null,null,null)}";
+                    series.ToolTipLabelFormatter = (chartPoint) => $"{conv.Convert(tooltips[_index++ % tooltips.Length], null, null, null)}";
                 });
             uiDiscUsagePieChart.Series = SliceSeries;
         }
@@ -688,6 +734,6 @@ namespace gamevault.UserControls
             this.IsEnabled = true;
         }
 
-        #endregion      
+        #endregion
     }
 }

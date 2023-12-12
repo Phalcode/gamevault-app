@@ -387,7 +387,7 @@
                     <ScaleTransform/>
                 </Grid.RenderTransform>
             </Grid>
-            <Grid Grid.Column="1" Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" Margin="0,8,50,0" Cursor="Hand">
+            <Grid Grid.Column="1" Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" Margin="0,8,50,0" Cursor="Hand" MouseLeftButtonUp="Help_Click">
                 <Path Fill="White" Data="{DynamicResource IconGameSettingsHelp}">
                     <Path.RenderTransform>
                         <ScaleTransform ScaleX="1" ScaleY="1"/>
