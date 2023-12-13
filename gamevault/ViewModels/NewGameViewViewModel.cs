@@ -15,6 +15,7 @@ namespace gamevault.ViewModels
         private Progress[]? userProgress { get; set; }
         private string[]? gameStates { get; set; }
         private bool isInstalled { get; set; }
+        private bool showRawgTitle { get; set; }
         #endregion
         public Game? Game
         {
@@ -40,6 +41,11 @@ namespace gamevault.ViewModels
         {
             get { return isInstalled; }
             set { isInstalled = value; OnPropertyChanged(); }
+        }
+        public bool ShowRawgTitle
+        {
+            get { return showRawgTitle; }
+            set { showRawgTitle = value; OnPropertyChanged(); }
         }
     }
 }

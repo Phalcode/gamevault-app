@@ -28,6 +28,9 @@ namespace gamevault.Helper
             string errMessage = string.Empty;
             try
             {
+                if (ex.Response == null)
+                    return string.Empty;
+
                 var resp = new StreamReader(ex.Response.GetResponseStream()).ReadToEnd();
                 JsonObject obj = JsonNode.Parse(resp).AsObject();
                 errMessage = obj["statusCode"].ToString().Replace("\n", " ").Replace("\r", "");

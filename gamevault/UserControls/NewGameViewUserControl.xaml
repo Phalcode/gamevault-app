@@ -43,17 +43,25 @@
                             <ScaleTransform/>
                         </Border.RenderTransform>
                     </Border>
-                    <TextBlock FontSize="50" FontWeight="Bold" Margin="60,-15,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
-                        <TextBlock.ToolTip>
-                            <TextBlock Text="{Binding Path=Game.RawgTitle,StringFormat='{}RAWG Title: {0}'}"/>
-                        </TextBlock.ToolTip>
-                        <TextBlock.Text>
-                            <MultiBinding StringFormat="{}{0} ({1})">
-                                <Binding Path="Game.Title" />
-                                <Binding Path="Game.ReleaseDate.Year" FallbackValue="?"/>
-                            </MultiBinding>
-                        </TextBlock.Text>
-                    </TextBlock>
+                    <StackPanel Orientation="Horizontal" Margin="60,-15,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Cursor="Hand" MouseLeftButtonUp="GameTitle_Click">
+                        <TextBlock FontSize="50" FontWeight="Bold">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ShowRawgTitle}" Value="True">
+                                            <Setter Property="Text" Value="{Binding Path=Game.RawgTitle}" />
+                                            <Setter Property="ToolTip" Value="Click to show File Title" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding ShowRawgTitle}" Value="False">
+                                            <Setter Property="Text" Value="{Binding Path=Game.Title}" />
+                                            <Setter Property="ToolTip" Value="Click to show RAWG Title" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock Text="{Binding Path=Game.ReleaseDate.Year,FallbackValue='?',StringFormat='{} ({0})'}" FontSize="50" FontWeight="Bold"/>
+                    </StackPanel>
                     <local:CacheImage Data="{Binding Game}" ImageCacheType="BoxArt" Stretch="Fill" CornerRadius="5" VerticalAlignment="Top" HorizontalAlignment="Left" Height="550" Width="367" Margin="0,70,0,0"/>
 
                     <!--ACTION BUTTONS-->

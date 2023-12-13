@@ -42,6 +42,9 @@ namespace gamevault.Helper
         internal static string GetRequest(string uri)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+#if DEBUG
+            request.Timeout = 3000;
+#endif
             request.UserAgent = $"GameVault/{SettingsViewModel.Instance.Version}";
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             var authenticationString = $"{m_UserName}:{m_Password}";

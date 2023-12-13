@@ -71,6 +71,7 @@ namespace gamevault.UserControls
                     catch (Exception ex) { }
                 }
                 ViewModel.IsInstalled = IsGameInstalled(ViewModel.Game);
+                ViewModel.ShowRawgTitle = Preferences.Get(AppConfigKey.ShowRawgTitle, AppFilePath.UserFile) == "1";
             }
         }
         private bool IsGameInstalled(Game? game)
@@ -148,7 +149,7 @@ namespace gamevault.UserControls
 
         private async void GameState_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (e.RemovedItems.Count == 0)
+            if (e.RemovedItems.Count == 0 || !LoginManager.Instance.IsLoggedIn())
                 return;
 
             if (e.AddedItems.Count > 0)
@@ -185,6 +186,16 @@ namespace gamevault.UserControls
         public void RefreshGame(Game game)
         {
             ViewModel.Game = game;
+        }
+
+        private void GameTitle_Click(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                ViewModel.ShowRawgTitle = !ViewModel.ShowRawgTitle;
+                Preferences.Set(AppConfigKey.ShowRawgTitle, ViewModel.ShowRawgTitle ? "1" : "0", AppFilePath.UserFile);
+            }
+            catch { }
         }
     }
 }
