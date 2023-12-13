@@ -3,8 +3,10 @@ using gamevault.Models;
 using gamevault.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Security.Policy;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -147,5 +149,36 @@ namespace gamevault.UserControls
             }
             await MainWindowViewModel.Instance.AdminConsole.InitUserList();
         }
+
+        private void Help_Click(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                string url = "";
+                switch (uiSettingsContent.SelectedIndex)
+                {
+                    case 0:
+                        {
+                            url = "https://gamevau.lt/docs/client-docs/gui#edit-images-1";
+                            break;
+                        }
+                    case 1:
+                        {
+                            url = "https://gamevau.lt/docs/client-docs/gui#edit-details";
+                            break;
+                        }
+                }
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                MainWindowViewModel.Instance.AppBarText = ex.Message;
+            }
+        }
     }
 }
+

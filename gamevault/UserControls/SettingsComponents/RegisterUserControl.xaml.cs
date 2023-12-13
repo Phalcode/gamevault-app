@@ -70,6 +70,8 @@ namespace gamevault.UserControls.SettingsComponents
                         WebHelper.Post($"{SettingsViewModel.Instance.ServerUrl}/api/users/register", jsonObject);
                         message = "Successfully registered";
                         SettingsViewModel.Instance.RegistrationUser = new User();
+                        uiPwReg.Password = string.Empty;
+                        uiPwRegRepeat.Password = string.Empty;
                     }
                     else
                     {
