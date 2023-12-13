@@ -23,8 +23,8 @@
                 </Style.Triggers>
             </Style>
         </Border.Style>
-        <StackPanel Orientation="Horizontal">
-            <Path Data="{Binding ElementName=parent,Path=Icon}" Fill="White" VerticalAlignment="Center" Margin="4,0,0,4"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Path Data="{Binding ElementName=parent,Path=Icon}" Fill="White" VerticalAlignment="Center" Margin="0,0,0,4"/>
             <TextBlock Text="{Binding ElementName=parent,Path=Content}" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" Margin="4,0,0,3"/>
         </StackPanel>
     </Border>

@@ -33,6 +33,7 @@ namespace gamevault.ViewModels
         #endregion
         #region PrivateMembers      
         private ObservableCollection<KeyValuePair<Game, string>> m_InstalledGames { get; set; }
+        public ICollectionView? installedGamesFilter { get; set; }
         #endregion      
         public ObservableCollection<KeyValuePair<Game, string>> InstalledGames
         {
@@ -46,7 +47,11 @@ namespace gamevault.ViewModels
             }
             set { m_InstalledGames = value; OnPropertyChanged(); }
         }
-        public ICollectionView? InstalledGamesFilter { get; set; }
+        public ICollectionView? InstalledGamesFilter
+        {
+            get { return installedGamesFilter; }
+            set { installedGamesFilter = value; OnPropertyChanged(); }
+        }
         public string[]? IgnoreList { get; set; }
         public void RefreshGame(Game gameToRefreshParam)
         {

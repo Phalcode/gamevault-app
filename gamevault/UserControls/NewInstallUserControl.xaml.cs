@@ -223,9 +223,13 @@ namespace gamevault.UserControls
         }
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
-            string url = e.Uri.OriginalString;
-            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-            e.Handled = true;
+            try
+            {
+                string url = e.Uri.OriginalString;
+                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                e.Handled = true;
+            }
+            catch (Exception ex) { MainWindowViewModel.Instance.AppBarText = ex.Message; }
         }
         private string[]? GetIgnoreList()
         {

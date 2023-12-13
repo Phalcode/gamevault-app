@@ -231,7 +231,7 @@
                                     </StackPanel>
                                     <TextBox Margin="10" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="https://example.com/example.png" TextChanged="BackgoundImageUrl_TextChanged"/>
                                     <Grid Margin="10,95,10,0">
-                                        <local:IconButton Content="Save" Icon="{DynamicResource IconGameSettingsSave}" Width="70" Height="33" HorizontalAlignment="Right" MouseLeftButtonUp="BackgroundImage_Save">
+                                        <local:IconButton Content="Save" Icon="{DynamicResource IconGameSettingsSave}" Width="115" Height="33" HorizontalAlignment="Right" MouseLeftButtonUp="BackgroundImage_Save">
                                             <local:IconButton.Style>
                                                 <Style TargetType="local:IconButton">
                                                     <Style.Triggers>
@@ -287,7 +287,7 @@
                                     </StackPanel>
                                     <TextBox Margin="10" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="https://example.com/example.png" TextChanged="BoxImageUrl_TextChanged"/>
                                     <Grid Margin="10,95,10,0">
-                                        <local:IconButton Content="Save" Icon="{DynamicResource IconGameSettingsSave}" Width="70" Height="33" HorizontalAlignment="Right" MouseLeftButtonUp="BoxImage_Save">
+                                        <local:IconButton Content="Save" Icon="{DynamicResource IconGameSettingsSave}" Width="115" Height="33" HorizontalAlignment="Right" MouseLeftButtonUp="BoxImage_Save">
                                             <local:IconButton.Style>
                                                 <Style TargetType="local:IconButton">
                                                     <Style.Triggers>
