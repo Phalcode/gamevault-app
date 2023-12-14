@@ -4,6 +4,11 @@
 
 # ArpaRec Neo Fork
 
+## Features
+
+- Install Drive Selection
+- Hard-Coded Server Address
+
 ## Library Technical Decision Matrix
 
 > This is probably irrelevant to you if you are not a developer.
