@@ -66,6 +66,7 @@ namespace gamevault.UserControls.SettingsComponents
                             MainWindowViewModel.Instance.AppBarText = "Password must be equal";
                             return;
                         }
+                        Preferences.Set(AppConfigKey.Email, SettingsViewModel.Instance.RegistrationUser.EMail, AppFilePath.UserFile);
                         string jsonObject = JsonSerializer.Serialize(SettingsViewModel.Instance.RegistrationUser);
                         WebHelper.Post($"{SettingsViewModel.Instance.ServerUrl}/api/users/register", jsonObject);
                         message = "Successfully registered";

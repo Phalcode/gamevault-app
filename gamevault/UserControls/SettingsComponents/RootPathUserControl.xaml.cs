@@ -24,9 +24,6 @@ namespace gamevault.UserControls.SettingsComponents
         public RootPathUserControl()
         {
             InitializeComponent();
-        }
-        private void RootPath_Click(object sender, RoutedEventArgs e)
-        {
             SettingsViewModel.Instance.SelectDownloadPath();
         }
     }

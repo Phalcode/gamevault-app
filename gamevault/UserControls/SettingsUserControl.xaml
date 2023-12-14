@@ -35,14 +35,18 @@
                             <mah:ToggleSwitch Header="Auto-Extract Downloaded Games" Margin="10,10,0,0" IsOn="{Binding AutoExtract}"/>
                         </StackPanel>
                         <StackPanel Margin="0,10,0,0">
-                            <TextBlock Text="Server Settings" FontSize="20" FontWeight="Bold"/>
-                            <settingsComponents:ServerUrlUserControl Margin="10,10,0,0" HorizontalAlignment="Left"/>
-                            <GroupBox Header="Download Limit" Margin="10,10,0,0" Width="510" HorizontalAlignment="Left" mah:ControlsHelper.CornerRadius="4">
-                                <StackPanel>
-                                    <TextBox Text="{Binding DownloadLimitUIValue,UpdateSourceTrigger=PropertyChanged}" Margin="0,10,0,5" MaxLength="8" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="{Binding DownloadLimitUIValue,Converter={StaticResource downloadLimitConv}}" PreviewTextInput="DownloadLimit_InputValidation" TextChanged="DownloadLimit_InputValidation" KeyDown="DownloadLimit_Save"/>
-                                    <Button Content="Save" FontSize="15" Width="80" HorizontalAlignment="Left" Click="DownloadLimit_Save"/>
-                                </StackPanel>
-                            </GroupBox>
+                            <TextBlock Text="Your Data" FontSize="20" FontWeight="Bold"/>
+                            <settingsComponents:ServerUrlUserControl Margin="10,10,0,0" HorizontalAlignment="Left" Visibility="Collapsed"/>
+                            <Button Content="Request a copy of your user data" FontSize="15" Width="592" Click="DownloadLimit_Save"/>
+                            <TextBlock TextWrapping="Wrap" Text="When you request a copy of your data, a request will be sent to an admin, and all of your data will be collected from our server. Please allow up to 4 days for data to be collected, and you will be notified by email when your data is ready. If you do not receive an email within 4 days, send an email to 'realtechside@gmail.com'. Please only click this button once, otherwise it is considered spam. If you spam the request button, your account will be placed on hold and an email will be sent to you with further information." Foreground="White" TextAlignment="Center"/>
+                            <TabControl Height="0" Width="110">
+                                <TabItem Header="TabItem">
+                                    <Grid Background="#FFE5E5E5"/>
+                                </TabItem>
+                                <TabItem Header="TabItem">
+                                    <Grid Background="#FFE5E5E5"/>
+                                </TabItem>
+                            </TabControl>
                         </StackPanel>
                         <StackPanel Margin="0,10,0,0">
                             <TextBlock Text="Startup" FontSize="20" FontWeight="Bold"/>
@@ -53,12 +57,18 @@
                 </TabItem>
                 <TabItem Header="User">
                     <StackPanel Margin="20,0,0,0">
-                        <StackPanel Margin="0,0,0,0">
+                        <StackPanel Height="27" Width="606">
                             <TextBlock Text="Account" FontSize="20" FontWeight="Bold"/>
-                            <settingsComponents:LoginUserControl  Margin="10,10,0,0" HorizontalAlignment="Left"/>
-                            <Button Content="Logout" VerticalAlignment="Bottom" Height="32" Margin="10,10,0,0" HorizontalAlignment="Left" Width="205" FontSize="15" Click="Logout_Click"/>
-                            <settingsComponents:RegisterUserControl Margin="10,10,0,0" HorizontalAlignment="Left"/>
                         </StackPanel>
+                        <StackPanel Margin="0,0,0,0" Orientation="Horizontal">
+                            <settingsComponents:LoginUserControl/>
+                            <settingsComponents:RegisterUserControl/>
+                            <StackPanel Width="196">
+                                <Button Content="Logout" Height="32" Width="195" FontSize="15" Click="Logout_Click"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Height="10"/>
+                        <StackPanel Height="32"/>
                     </StackPanel>
                 </TabItem>
                 <TabItem Header="Data">
@@ -76,6 +86,12 @@
                             <StackPanel Orientation="Horizontal" Margin="10,10,0,0">
                                 <Button Content="Clear offline cache" FontSize="15" Width="175" HorizontalAlignment="Left" Click="ClearOfflineCache_Clicked" ToolTip="Clears the entire offline cache"/>
                                 <TextBlock Text="{Binding OfflineCacheSize,Converter={StaticResource sizeConv},StringFormat={}({0})}" FontSize="20" Margin="10,0,0,0"/>
+                            </StackPanel>
+                            <StackPanel Height="13"/>
+                            <StackPanel Height="191">
+                                <TextBlock Text="Storage Drive" FontSize="20" FontWeight="Bold"/>
+                                <ListBox x:Name="uiDriveListBox" Height="79" d:ItemsSource="{d:SampleData ItemCount=5}"/>
+                                <Button Content="Select Drive" FontSize="15" Width="606" Click="SetStorageDrive" ToolTip="Clears the entire offline cache"/>
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>

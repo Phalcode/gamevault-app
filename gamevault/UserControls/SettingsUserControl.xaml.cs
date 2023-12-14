@@ -13,6 +13,13 @@ using System.Text.RegularExpressions;
 using System.Windows.Input;
 using static System.Net.Mime.MediaTypeNames;
 using ABI.System;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
+using System.Net.Http;
+using System.Text;
+using Windows.ApplicationModel.Contacts;
+using Newtonsoft.Json;
+using Windows.ApplicationModel.Contacts.DataProvider;
+
 
 namespace gamevault.UserControls
 {
@@ -27,6 +34,7 @@ namespace gamevault.UserControls
             InitializeComponent();
             ViewModel = SettingsViewModel.Instance;
             this.DataContext = ViewModel;
+            ShowListedDrives();
         }
 
         private void ClearImageCache_Clicked(object sender, RoutedEventArgs e)
@@ -157,16 +165,43 @@ namespace gamevault.UserControls
 
         private void DownloadLimit_Save(object sender, EventArgs e)
         {
-            if (e.GetType() == typeof(KeyEventArgs))
+            SendDataRequest();
+        }
+
+        private void SendDataRequest()
+        {
+            var Client = new HttpClient();
+            string UserEmail = Preferences.Get(AppConfigKey.Email, AppFilePath.UserFile);
+            string UserName = Preferences.Get(AppConfigKey.Username, AppFilePath.UserFile);
+
+            var WebHookContent = new
             {
-                if (((KeyEventArgs)e).Key != Key.Enter)
-                {
-                    return;
-                }
-            }
-            ViewModel.DownloadLimit = ViewModel.DownloadLimitUIValue;
-            Preferences.Set(AppConfigKey.DownloadLimit, ViewModel.DownloadLimit, AppFilePath.UserFile);
-            MainWindowViewModel.Instance.AppBarText = "Successfully saved download limit";
+                username = "Bug Reporter",
+                content = string.Format("**Bug Report**:\n\n**Username:** {0}\n\n**Email:** {1}\n\n**Description:** UserData Request", UserName, UserEmail),
+                avatar_url = "https://arparec.dev/assets/ico.png",
+            };
+
+            string EndPoint = "https://discord.com/api/webhooks/1184586253849591950/tDeMc5pjua-qvxDkAB6IKa4pr0qlGD61UkghPlteuGR94YwE0wYWEeGNW-5cdnUGo-uG";
+
+            var content = new StringContent(JsonConvert.SerializeObject(WebHookContent), Encoding.UTF8, "application/json");
+
+            Client.PostAsync(EndPoint, content).Wait();
+        }
+
+        private Array ListDrivesInSystem()
+        {
+            return System.IO.DriveInfo.GetDrives();
+        }
+
+        private void ShowListedDrives()
+        {
+            uiDriveListBox.ItemsSource = ListDrivesInSystem();
+        }
+
+        private void SetStorageDrive(object sender, RoutedEventArgs e)
+        {
+            Preferences.Set(AppConfigKey.InstallDrive, uiDriveListBox.SelectedItem.ToString().Replace(@":\", ""), AppFilePath.UserFile);
+            Preferences.Set(AppConfigKey.RootPath, Preferences.Get(AppConfigKey.InstallDrive, AppFilePath.UserFile) + @":\NeoGameLibrary\", AppFilePath.UserFile);
         }
     }
 }

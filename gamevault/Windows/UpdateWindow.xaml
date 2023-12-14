@@ -6,12 +6,12 @@
         xmlns:local="clr-namespace:gamevault.Windows"
         xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d"
-        Title="UpdateWindow" Height="200" Width="200" UseNoneWindowStyle="True" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Loaded="MetroWindow_Loaded">
+        Title="Update" Height="200" Width="200" UseNoneWindowStyle="True" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Loaded="MetroWindow_Loaded">
     <mah:MetroWindow.Resources>
 
     </mah:MetroWindow.Resources>
     <Grid Background="{StaticResource DarkBackground3}">
-        <Image x:Name="RotateImage" Source="pack://application:,,,/gamevault;component/Resources/Images/icon.ico" Height="130" VerticalAlignment="Top" Margin="15" RenderTransformOrigin="0.5,0.5">
+        <Image x:Name="RotateImage" Source="/Windows/logo.png" Height="130" VerticalAlignment="Top" Margin="15" RenderTransformOrigin="0.5,0.5">
             <Image.RenderTransform>
                 <RotateTransform CenterX="0" CenterY="0" />
             </Image.RenderTransform>

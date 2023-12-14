@@ -1,5 +1,6 @@
 ﻿using gamevault.Helper;
 using gamevault.Models;
+using System;
 using System.IO;
 
 namespace gamevault.ViewModels
@@ -161,17 +162,18 @@ namespace gamevault.ViewModels
         }
         public System.Windows.Forms.DialogResult SelectDownloadPath()
         {
-            using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
+            string DefaultDrive;
+            if (Preferences.Get(AppConfigKey.InstallDrive, AppFilePath.UserFile) != "")
             {
-                System.Windows.Forms.DialogResult result = dialog.ShowDialog();
-                if (result == System.Windows.Forms.DialogResult.OK && Directory.Exists(dialog.SelectedPath))
-                {
-                    Preferences.Set(AppConfigKey.RootPath, dialog.SelectedPath, AppFilePath.UserFile);
-                    RootPath = dialog.SelectedPath.Replace(@"\\", @"\");
-                    return System.Windows.Forms.DialogResult.OK;
-                }
-                return System.Windows.Forms.DialogResult.Cancel;
+                DefaultDrive = Preferences.Get(AppConfigKey.InstallDrive, AppFilePath.UserFile);
+                Preferences.Set(AppConfigKey.RootPath, DefaultDrive + @":\NeoGameLibrary\", AppFilePath.UserFile);
+            } else
+            {
+                DefaultDrive = "C";
+                Preferences.Set(AppConfigKey.InstallDrive, "C", AppFilePath.UserFile);
+                Preferences.Set(AppConfigKey.RootPath, DefaultDrive + @":\NeoGameLibrary\", AppFilePath.UserFile);
             }
+            return System.Windows.Forms.DialogResult.OK;
         }
         public bool SetupCompleted()
         {

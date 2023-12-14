@@ -20,6 +20,7 @@ namespace gamevault.UserControls.SettingsComponents
         public ServerUrlUserControl()
         {
             InitializeComponent();
+            SaveServerURL();
         }
         private void SaveServerUrl_Click(object sender, RoutedEventArgs e)
         {
@@ -35,16 +36,8 @@ namespace gamevault.UserControls.SettingsComponents
         }
         private void SaveServerURL()
         {
-            if (SettingsViewModel.Instance.ServerUrl.EndsWith("/"))
-            {
-                SettingsViewModel.Instance.ServerUrl = SettingsViewModel.Instance.ServerUrl.Substring(0, SettingsViewModel.Instance.ServerUrl.Length - 1);
-            }
-            if (!SettingsViewModel.Instance.ServerUrl.Contains(System.Uri.UriSchemeHttp))
-            {
-                SettingsViewModel.Instance.ServerUrl = $"{System.Uri.UriSchemeHttps}://{SettingsViewModel.Instance.ServerUrl}";
-            }
+            SettingsViewModel.Instance.ServerUrl = "https://neo.arparec.dev";
             Preferences.Set(AppConfigKey.ServerUrl, SettingsViewModel.Instance.ServerUrl, AppFilePath.UserFile, true);
-            MainWindowViewModel.Instance.AppBarText = "Server URL saved";
         }
     }
 }

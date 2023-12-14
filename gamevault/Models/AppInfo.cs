@@ -11,6 +11,8 @@ namespace gamevault.Models
     {
         Username,
         Password,
+        Email,
+        InstallDrive,
         RootPath,
         Executable,
         BackgroundStart,
@@ -23,24 +25,24 @@ namespace gamevault.Models
     }
     public static class AppFilePath
     {
-        internal static string ImageCache = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/cache/images";
-        internal static string OfflineProgress = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/cache/prgs";
-        internal static string OfflineCache = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/cache/local";
-        internal static string ConfigDir = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/config";
-        internal static string UserFile = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/config/user";
-        internal static string IgnoreList = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/cache/ignorelist";
-        internal static string ErrorLog = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/errorlog";
+        internal static string ImageCache = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/neo/cache/images";
+        internal static string OfflineProgress = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/neo/cache/prgs";
+        internal static string OfflineCache = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/neo/cache/local";
+        internal static string ConfigDir = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/neo/config";
+        internal static string UserFile = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/neo/config/user";
+        internal static string IgnoreList = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/neo/cache/ignorelist";
+        internal static string ErrorLog = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/neo/errorlog";
 
 
         internal static void InitDebugPaths()
         {
-            ImageCache = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/debug/cache/images";
-            OfflineProgress = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/debug/cache/prgs";
-            OfflineCache = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/debug/cache/local";
-            ConfigDir = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/debug/config";
-            UserFile = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/debug/config/user";
-            IgnoreList = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/debug/cache/ignorelist";
-            ErrorLog = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/debug/errorlog";
+            ImageCache = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/neo/debug/cache/images";
+            OfflineProgress = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/neo/debug/cache/prgs";
+            OfflineCache = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/neo/debug/cache/local";
+            ConfigDir = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/neo/debug/config";
+            UserFile = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/neo/debug/config/user";
+            IgnoreList = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/neo/debug/cache/ignorelist";
+            ErrorLog = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/neo/debug/errorlog";
         }
     }
     public static class Globals

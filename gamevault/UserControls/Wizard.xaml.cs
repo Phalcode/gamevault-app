@@ -19,6 +19,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using UserControl = System.Windows.Controls.UserControl;
+using gamevault.Models;
 
 namespace gamevault.UserControls
 {
@@ -31,6 +32,7 @@ namespace gamevault.UserControls
         {
             InitializeComponent();
             this.DataContext = SettingsViewModel.Instance;
+            Preferences.Set(AppConfigKey.InstallDrive, "C", AppFilePath.UserFile);
         }
 
         private void Next_Clicked(object sender, RoutedEventArgs e)

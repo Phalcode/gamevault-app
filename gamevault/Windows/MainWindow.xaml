@@ -8,7 +8,7 @@
         xmlns:uc="clr-namespace:gamevault.UserControls"
 		xmlns:conv="clr-namespace:gamevault.Converter"
         mc:Ignorable="d" Icon="/Resources/Images/icon.ico"
-        Title="GameVault" Height="450" Width="800" WindowStartupLocation="CenterScreen" WindowState="Maximized" MinWidth="600" MinHeight="345" Loaded="MetroWindow_Loaded" Closing="MetroWindow_Closing">
+        Title="ArpaRec Neo" Height="450" Width="800" WindowStartupLocation="CenterScreen" WindowState="Maximized" MinWidth="600" MinHeight="345" Loaded="MetroWindow_Loaded" Closing="MetroWindow_Closing">
     <mah:MetroWindow.TaskbarItemInfo>
         <TaskbarItemInfo ProgressValue="{Binding TaskbarProgress}" ProgressState="Normal"/>
     </mah:MetroWindow.TaskbarItemInfo>
@@ -17,10 +17,9 @@
 	</mah:MetroWindow.Resources>
 	<mah:MetroWindow.RightWindowCommands>
 		<mah:WindowCommands>
-			<Button Click="WindowCommand_Clicked" Content="💸 Kofi" FontSize="18" Cursor="Hand" Tag="https://ko-fi.com/phalcode"/>
-			<Button Click="WindowCommand_Clicked" Content="💬 Discord" FontSize="18" Cursor="Hand" Tag="https://discord.com/invite/NEdNen2dSu"/>
-			<Button Click="WindowCommand_Clicked" Content="📜 Documentation" FontSize="18" Cursor="Hand" Tag="https://gamevau.lt/docs/intro"/>
-		</mah:WindowCommands>
+			<Button Click="WindowCommand_Clicked" Content="Website" FontSize="18" Cursor="Hand" Tag="https://arparec.dev"/>
+            <Button Click="WindowCommand_Clicked" Content="Discord" FontSize="18" Cursor="Hand" Tag="https://discord.gg/4uBtXXyepY"/>
+        </mah:WindowCommands>
 	</mah:MetroWindow.RightWindowCommands>
 	<Grid>
 		<Grid HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="1" Width="48" Height="50">
