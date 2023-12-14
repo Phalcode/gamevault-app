@@ -193,7 +193,7 @@
                             <Border CornerRadius="5" Margin="10,70,0,50" Width="425" HorizontalAlignment="Left" Background="{DynamicResource DarkBackground}">
                                 <StackPanel>
                                     <TextBlock Text="Background" HorizontalAlignment="Center" FontSize="15" Margin="0,5,0,0"/>
-                                    <Border CornerRadius="5" BorderThickness="2" Margin="10" Height="380" Background="{DynamicResource DarkBackground2}" Cursor="Hand" AllowDrop="True" Drop="BackgroundImage_Drop" MouseLeftButtonUp="BackgroundImage_ChooseImage" Focusable="True" KeyDown="Image_Paste">
+                                    <Border CornerRadius="5" BorderThickness="2" Margin="10" Height="380" Background="{DynamicResource DarkBackground2}" Cursor="Hand" AllowDrop="True" Drop="Image_Drop" MouseLeftButtonUp="ChooseImage" Focusable="True" KeyDown="Image_Paste">
                                         <Border.Style>
                                             <Style TargetType="Border">
                                                 <Setter Property="BorderBrush" Value="LightGray"/>
@@ -229,7 +229,7 @@
                                         </StackPanel>
                                         <Rectangle Fill="White" Width="70" Height="2"/>
                                     </StackPanel>
-                                    <TextBox Margin="10" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="https://example.com/example.png" TextChanged="BackgoundImageUrl_TextChanged"/>
+                                    <TextBox Margin="10" Height="28" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="https://example.com/example.png" TextChanged="BackgoundImageUrl_TextChanged"/>
                                     <Grid Margin="10,95,10,0">
                                         <local:IconButton Content="Save" Icon="{DynamicResource IconGameSettingsSave}" Width="115" Height="33" HorizontalAlignment="Right" MouseLeftButtonUp="BackgroundImage_Save">
                                             <local:IconButton.Style>
@@ -249,7 +249,7 @@
                             <Border CornerRadius="5" Margin="0,70,10,50" Width="425" HorizontalAlignment="Right" Background="{DynamicResource DarkBackground}">
                                 <StackPanel>
                                     <TextBlock Text="Box Art" HorizontalAlignment="Center" FontSize="15" Margin="0,5,0,0"/>
-                                    <Border CornerRadius="5" BorderThickness="2" Margin="10" Height="380" Background="{DynamicResource DarkBackground2}" Cursor="Hand" AllowDrop="True" Drop="BoxImage_Drop" MouseLeftButtonUp="BoxImage_ChooseImage" Focusable="True" KeyDown="Image_Paste" Tag="box">
+                                    <Border CornerRadius="5" BorderThickness="2" Margin="10" Height="380" Background="{DynamicResource DarkBackground2}" Cursor="Hand" AllowDrop="True" Drop="Image_Drop" MouseLeftButtonUp="ChooseImage" Focusable="True" KeyDown="Image_Paste" Tag="box">
                                         <Border.Style>
                                             <Style TargetType="Border">
                                                 <Setter Property="BorderBrush" Value="LightGray"/>
@@ -285,7 +285,7 @@
                                         </StackPanel>
                                         <Rectangle Fill="White" Width="70" Height="2"/>
                                     </StackPanel>
-                                    <TextBox Margin="10" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="https://example.com/example.png" TextChanged="BoxImageUrl_TextChanged"/>
+                                    <TextBox Margin="10" Height="28" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="https://example.com/example.png" TextChanged="BoxImageUrl_TextChanged"/>
                                     <Grid Margin="10,95,10,0">
                                         <local:IconButton Content="Save" Icon="{DynamicResource IconGameSettingsSave}" Width="115" Height="33" HorizontalAlignment="Right" MouseLeftButtonUp="BoxImage_Save">
                                             <local:IconButton.Style>

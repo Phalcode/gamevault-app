@@ -386,31 +386,23 @@ namespace gamevault.UserControls
         }
         #endregion
         #region EDIT IMAGE    
-        private InputTimer backgroundImageUrldebounceTimer { get; set; }
-        private InputTimer boxImageUrldebounceTimer { get; set; }
-        private void InitImageUrlTimer()
+       
+        private void Image_Drop(object sender, DragEventArgs e)
         {
-            if (backgroundImageUrldebounceTimer == null)
-            {
-                backgroundImageUrldebounceTimer = new InputTimer() { Data = string.Empty };
-                backgroundImageUrldebounceTimer.Interval = TimeSpan.FromMilliseconds(400);
-                backgroundImageUrldebounceTimer.Tick += BackgroundImageDebounceTimerElapsed;
-            }
-            if (boxImageUrldebounceTimer == null)
-            {
-                boxImageUrldebounceTimer = new InputTimer() { Data = string.Empty };
-                boxImageUrldebounceTimer.Interval = TimeSpan.FromMilliseconds(400);
-                boxImageUrldebounceTimer.Tick += BoxImageDebounceTimerElapsed;
-            }
-        }
-        private void ImageDrop(DragEventArgs e, string tag)
-        {
+            string tag = ((FrameworkElement)sender).Tag as string;
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 try
                 {
                     string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                    uiUploadBoxArtPreview.ImageSource = BitmapHelper.GetBitmapImage(files[0]);
+                    if (tag == "box")
+                    {
+                        uiUploadBoxArtPreview.ImageSource = BitmapHelper.GetBitmapImage(files[0]);
+                    }
+                    else
+                    {
+                        uiUploadBackgroundPreview.ImageSource = BitmapHelper.GetBitmapImage(files[0]);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -454,10 +446,11 @@ namespace gamevault.UserControls
             return string.Empty;
         }
 
-        private void ChooseImage(string tag)
+        private void ChooseImage(object sender, MouseButtonEventArgs e)
         {
             try
             {
+                string tag = ((FrameworkElement)sender).Tag as string;
                 using (var dialog = new System.Windows.Forms.OpenFileDialog())
                 {
                     System.Windows.Forms.DialogResult result = dialog.ShowDialog();
@@ -514,22 +507,23 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.AppBarText = ex.Message;
             }
         }
-        #region Generic Events
-        private void BoxImage_ChooseImage(object sender, MouseButtonEventArgs e)
+        #region Generic Events       
+        private InputTimer backgroundImageUrldebounceTimer { get; set; }
+        private InputTimer boxImageUrldebounceTimer { get; set; }
+        private void InitImageUrlTimer()
         {
-            ChooseImage("box");
-        }
-        private void BackgroundImage_ChooseImage(object sender, MouseButtonEventArgs e)
-        {
-            ChooseImage("");
-        }
-        private void BoxImage_Drop(object sender, DragEventArgs e)
-        {
-            ImageDrop(e, "box");
-        }
-        private void BackgroundImage_Drop(object sender, DragEventArgs e)
-        {
-            ImageDrop(e, "");
+            if (backgroundImageUrldebounceTimer == null)
+            {
+                backgroundImageUrldebounceTimer = new InputTimer() { Data = string.Empty };
+                backgroundImageUrldebounceTimer.Interval = TimeSpan.FromMilliseconds(400);
+                backgroundImageUrldebounceTimer.Tick += BackgroundImageDebounceTimerElapsed;
+            }
+            if (boxImageUrldebounceTimer == null)
+            {
+                boxImageUrldebounceTimer = new InputTimer() { Data = string.Empty };
+                boxImageUrldebounceTimer.Interval = TimeSpan.FromMilliseconds(400);
+                boxImageUrldebounceTimer.Tick += BoxImageDebounceTimerElapsed;
+            }
         }
         private async void BoxImage_Save(object sender, MouseButtonEventArgs e)
         {

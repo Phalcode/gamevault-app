@@ -86,24 +86,41 @@
                                     <ComboBox ItemsSource="{Binding Path=DataContext.PermissionRoleEnumTypes,RelativeSource={RelativeSource AncestorType=UserControl}}" SelectedItem="{Binding Path=Role}" SelectionChanged="PermissionRole_SelectionChanged"/>
                                 </Viewbox>
 
-                                <TextBlock FontSize="2" Margin="0,0,5,0" Text="⚙️" HorizontalAlignment="Right" VerticalAlignment="Center" Cursor="Hand" ToolTip="Edit user" MouseLeftButtonUp="EditUser_Clicked"/>
-
-                                <TextBlock FontSize="2" Margin="0,0,1,0" HorizontalAlignment="Right" VerticalAlignment="Center" Cursor="Hand" MouseLeftButtonUp="DeleteUser_Clicked">
-                                    <TextBlock.Style>
-                                        <Style TargetType="{x:Type TextBlock}">
-                                            <Setter Property="Text" Value="↩ "/>
-                                            <Setter Property="Foreground" Value="LightBlue"/>
-                                            <Setter Property="ToolTip" Value="Recover user"/>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Path=DeletedAt}" Value="{x:Null}">
-                                                    <Setter Property="Text" Value="🗑️"/>
-                                                    <Setter Property="Foreground" Value="Red"/>
-                                                    <Setter Property="ToolTip" Value="Delete user"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
+                                <!--<TextBlock FontSize="2" Margin="0,0,5,0" Text="⚙️" HorizontalAlignment="Right" VerticalAlignment="Center" Cursor="Hand" ToolTip="Edit user" MouseLeftButtonUp="EditUser_Clicked"/>-->
+                                <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Cursor="Hand" Width="2.5" Height="2.5" Margin="0,1.8,5,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="EditUser_Clicked">
+                                    <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="White" Margin="0,0,-20,-20">
+                                        <Path.RenderTransform>
+                                            <ScaleTransform ScaleX="0.1" ScaleY="0.1"/>
+                                        </Path.RenderTransform>
+                                    </Path>
+                                    <Grid.RenderTransform>
+                                        <ScaleTransform/>
+                                    </Grid.RenderTransform>
+                                </Grid>
+                                <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Cursor="Hand" Width="2.5" Height="2.5" Margin="0,1.8,1,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="DeleteUser_Clicked">
+                                    <Path Margin="0,0,-20,-20">
+                                        <Path.Style>
+                                            <Style TargetType="{x:Type Path}">
+                                                <Setter Property="Data" Value="{DynamicResource IconReload}"/>
+                                                <Setter Property="Fill" Value="LightBlue"/>
+                                                <Setter Property="ToolTip" Value="Recover user"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Path=DeletedAt}" Value="{x:Null}">
+                                                        <Setter Property="Data" Value="{DynamicResource IconTrash}"/>
+                                                        <Setter Property="Fill" Value="IndianRed"/>
+                                                        <Setter Property="ToolTip" Value="Delete user"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Path.Style>
+                                        <Path.RenderTransform>
+                                            <ScaleTransform ScaleX="0.1" ScaleY="0.1"/>
+                                        </Path.RenderTransform>
+                                    </Path>
+                                    <Grid.RenderTransform>
+                                        <ScaleTransform/>
+                                    </Grid.RenderTransform>
+                                </Grid>
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

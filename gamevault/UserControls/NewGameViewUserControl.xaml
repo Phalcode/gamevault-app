@@ -33,7 +33,7 @@
         <Grid VerticalAlignment="Top" Margin="20">
             <Viewbox>
                 <Grid Width="2000">
-                    <Border Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Left" Visibility="{Binding ScrollToTopVisibility}" Background="#B2574EB9" CornerRadius="5" Cursor="Hand" Width="40" Height="40" Margin="0,0,0,0" Padding="0,0,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="Back_Click">
+                    <Border Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Left" Background="#B2574EB9" CornerRadius="5" Cursor="Hand" Width="40" Height="40" Margin="0,0,0,0" Padding="0,0,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="Back_Click">
                         <Path Data="{StaticResource IconGameViewBack}" Fill="White" RenderTransformOrigin="0.0,-0.09">
                             <Path.RenderTransform>
                                 <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
@@ -86,7 +86,7 @@
                                 </Style>
                             </Grid.Style>
                         </Grid>
-                        <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Left" Visibility="{Binding ScrollToTopVisibility}" Background="Transparent" Cursor="Hand" Width="50" Height="60" Margin="0,0,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="GameDownload_Click">
+                        <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Left" Background="Transparent" Cursor="Hand" Width="50" Height="60" Margin="0,0,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="GameDownload_Click">
                             <Path Data="{StaticResource IconDownload}" Fill="White" RenderTransformOrigin="0.06,0.04">
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="2.5" ScaleY="2.5"/>
@@ -97,7 +97,7 @@
                                 <ScaleTransform/>
                             </Grid.RenderTransform>
                         </Grid>
-                        <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Left" Visibility="{Binding ScrollToTopVisibility}" Background="Transparent" Cursor="Hand" Width="50" Height="50" Margin="20,0,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="GameSettings_Click">
+                        <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Left" Background="Transparent" Cursor="Hand" Width="50" Height="50" Margin="20,0,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="GameSettings_Click">
                             <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="White" RenderTransformOrigin="-0.03,-0.03">
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="2" ScaleY="2"/>
