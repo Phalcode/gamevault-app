@@ -12,11 +12,17 @@ namespace gamevault.Models
 {
     public enum State
     {
+        [Description("Unplayed")]
         UNPLAYED,
+        [Description("Infinite")]
         INFINITE,
+        [Description("Playing")]
         PLAYING,
+        [Description("Completed")]
         COMPLETED,
+        [Description("Aborted temporary")]
         ABORTED_TEMPORARY,
+        [Description("Aborted permanent")]
         ABORTED_PERMANENT
     }
     public class Progress

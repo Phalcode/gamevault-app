@@ -158,7 +158,7 @@
                             </Border>
                             <StackPanel Orientation="Horizontal">
                                 <local:IconButton Content="Open Directory" Icon="{DynamicResource IconGameSettingsFolder}" Width="145" Height="33" MouseLeftButtonUp="OpenDirectory_Click"/>
-                                <local:IconButton Content="Uninstall Game" Icon="{DynamicResource IconTrash}" Background="Red" Width="142" Height="33" Margin="10,0,0,0" MouseLeftButtonUp="Uninstall_Click"/>
+                                <local:IconButton Content="Uninstall Game" Icon="{DynamicResource IconTrash}" Background="IndianRed" Width="142" Height="33" Margin="10,0,0,0" MouseLeftButtonUp="Uninstall_Click"/>
                             </StackPanel>
                             <TextBlock Text="Disk Usage" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
                             <lvc:PieChart x:Name="uiDiscUsagePieChart" Width="600" Height="300" InitialRotation="-90" IsClockwise="True" HorizontalAlignment="Left" Margin="0,20,0,0"/>

@@ -224,60 +224,55 @@ namespace gamevault.UserControls
         }
         private void InitDiskUsagePieChart()
         {
-            var drive = DriveInfo.GetDrives().Where(d => d.Name == Path.GetPathRoot(ViewModel.Directory)).FirstOrDefault();
+            var drive = DriveInfo.GetDrives().FirstOrDefault(d => d.Name == Path.GetPathRoot(ViewModel.Directory));
+
             if (drive == null)
             {
-                //Throw error
+                // Throw error
                 return;
             }
             long totalDiskSize = drive.TotalSize;
-            long otherGamesSize = 0;
-            long.TryParse(ViewModel.Game.Size, out long currentGameSize);
-            foreach (var installedGame in NewInstallViewModel.Instance.InstalledGames)
-            {
-                long.TryParse(installedGame.Key.Size, out long size);
-                otherGamesSize += size;
-            }
-            otherGamesSize = otherGamesSize - currentGameSize;
+            long currentGameSize = long.TryParse(ViewModel.Game.Size, out var size) ? size : 0;
+
+            long otherGamesSize = NewInstallViewModel.Instance.InstalledGames
+                .Sum(installedGame => long.TryParse(installedGame.Key.Size, out var gameSize) ? gameSize : 0) - currentGameSize;
+
             long unmanagedDiskSize = totalDiskSize - currentGameSize - otherGamesSize - drive.TotalFreeSpace;
 
             double percentageOfAllGames = (currentGameSize * 100.0) / otherGamesSize;
             uiTxtAllInstalledGamesSize.Text = gameSizeConverter.Convert(drive.TotalSize, null, null, null).ToString();
 
-            double freeSpacePercentage = ((double)drive.TotalFreeSpace / (double)totalDiskSize) * 100;
-            double otherGamesPercentage = ((double)otherGamesSize / (double)totalDiskSize) * 100;
-            double currentGamePercentage = ((double)currentGameSize / (double)totalDiskSize) * 100;
-            double unmanagedSpacePercentage = ((double)unmanagedDiskSize / (double)totalDiskSize) * 100;
+            double totalFreeSpacePercentage = ((double)drive.TotalFreeSpace / totalDiskSize) * 100;
+            double otherGamesPercentage = ((double)otherGamesSize / totalDiskSize) * 100;
+            double currentGamePercentage = ((double)currentGameSize / totalDiskSize) * 100;
+            double unmanagedSpacePercentage = ((double)unmanagedDiskSize / totalDiskSize) * 100;
 
-
-            double[] percentages = new double[] { currentGamePercentage, otherGamesPercentage, unmanagedSpacePercentage, freeSpacePercentage };
-            for (int index = 0; index < percentages.Length; index++)
+            double[] percentages = { currentGamePercentage, otherGamesPercentage, unmanagedSpacePercentage, totalFreeSpacePercentage };
+            for (int i = 0; i < percentages.Length; i++)
             {
-                if (percentages[index] > 5)
+                if (percentages[i] > 5)
                     continue;
 
-                freeSpacePercentage -= (5 - percentages[index]);
-                percentages[index] = 5;
+                totalFreeSpacePercentage -= (5 - percentages[i]);
+                percentages[i] = 5;
             }
-
-
-            int _index = 0;
-            string[] _names = new[] { $"This Game ({ViewModel.Game.Title})", "Other installed GameVault Games", "Unmanaged Data", "Free Space" };
-            long[] tooltips = new[] { currentGameSize, otherGamesSize, unmanagedDiskSize, drive.TotalFreeSpace };
-            Color[] colors = new[] { Colors.DeepPink, Colors.LightSeaGreen, Colors.PaleVioletRed, Colors.DarkGray };
-            IEnumerable<ISeries> SliceSeries =
-                percentages.AsPieSeries((value, series) =>
-                {
-                    series.MaxRadialColumnWidth = 80;
-                    series.Name = _names[_index % _names.Length];
-                    series.Fill = new SolidColorPaint(new SkiaSharp.SKColor(colors[_index % colors.Length].R, colors[_index % colors.Length].G, colors[_index % colors.Length].B));
-                    var size = tooltips[_index % tooltips.Length];
-                    var humanreadableSize = gameSizeConverter.Convert(size, null, null, null);
-                    series.ToolTipLabelFormatter = (chartPoint) => $"{humanreadableSize}";
-                    _index++;
-                });
-            uiDiscUsagePieChart.Series = SliceSeries;
+            int index = 0;
+            string[] names = { $"This Game ({ViewModel.Game.Title})", "Other installed GameVault Games", "Unmanaged Data", "Free Space" };
+            long[] tooltips = { currentGameSize, otherGamesSize, unmanagedDiskSize, drive.TotalFreeSpace };
+            Color[] colors = { Colors.DeepPink, Colors.LightSeaGreen, Colors.PaleVioletRed, Colors.DarkGray };
+            IEnumerable<ISeries> sliceSeries = percentages.AsPieSeries((value, series) =>
+            {
+                series.MaxRadialColumnWidth = 80;
+                series.Name = names[index % names.Length];
+                series.Fill = new SolidColorPaint(new SkiaSharp.SKColor(colors[index % colors.Length].R, colors[index % colors.Length].G, colors[index % colors.Length].B));
+                var size = tooltips[index % tooltips.Length];
+                var humanReadableSize = gameSizeConverter.Convert(size, null, null, null);
+                series.ToolTipLabelFormatter = (chartPoint) => $"{humanReadableSize}";
+                index++;
+            });
+            uiDiscUsagePieChart.Series = sliceSeries;
         }
+
         #endregion
         #region LAUNCH OPTIONS
         private void FindGameExecutables(string directory, bool checkForSavedExecutable)

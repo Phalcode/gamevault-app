@@ -1,7 +1,9 @@
 ﻿using gamevault.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,7 +15,7 @@ namespace gamevault.ViewModels
         private Game? game { get; set; }
         private Progress? progress { get; set; }
         private Progress[]? userProgress { get; set; }
-        private string[]? gameStates { get; set; }
+        private Dictionary<string, string> gameStates { get; set; }
         private bool isInstalled { get; set; }
         private bool showRawgTitle { get; set; }
         #endregion
@@ -32,11 +34,16 @@ namespace gamevault.ViewModels
             get { return userProgress; }
             set { userProgress = value; OnPropertyChanged(); }
         }
-        public string[]? GameStates
+        public Dictionary<string, string>? GameStates
         {
-            get { if (gameStates == null) { gameStates = Enum.GetNames(typeof(State)); } return gameStates; }
+            get => gameStates ?? (gameStates = Enum.GetValues(typeof(State))
+                .Cast<State>()
+                .ToDictionary(state => GetEnumDescription(state), state => state.ToString()));
             set { gameStates = value; OnPropertyChanged(); }
         }
+
+        private static string GetEnumDescription(State value) =>
+            (Attribute.GetCustomAttribute(value.GetType().GetField(value.ToString()), typeof(DescriptionAttribute)) is DescriptionAttribute attribute) ? attribute.Description : value.ToString();
         public bool IsInstalled
         {
             get { return isInstalled; }

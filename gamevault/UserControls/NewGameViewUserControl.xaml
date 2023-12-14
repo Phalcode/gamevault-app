@@ -283,7 +283,7 @@
                     <!--PROGRESS-->
                     <StackPanel HorizontalAlignment="Right" Margin="0,135,0,0">
                         <TextBlock Text="State" FontSize="15" FontWeight="Bold"/>
-                        <ComboBox ItemsSource="{Binding GameStates}" SelectedValue="{Binding Path=Progress.State}" FontSize="30" SelectionChanged="GameState_SelectionChanged">
+                        <ComboBox ItemsSource="{Binding GameStates}" DisplayMemberPath="Key" SelectedValue="{Binding Path=Progress.State}" SelectedValuePath="Value" FontSize="30" SelectionChanged="GameState_SelectionChanged">
                             <ComboBox.ItemContainerStyle>
                                 <Style TargetType="{x:Type ComboBoxItem}" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
                                     <Setter Property="FontSize" Value="20"/>
