@@ -18,7 +18,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Border Background="{StaticResource DarkBackground4}" Grid.Row="0">
-            <TextBlock Text="New Library" FontSize="35" Margin="20,0,0,0" Foreground="White"/>
+            <TextBlock Text="Library" FontSize="35" Margin="20,0,0,0" Foreground="White"/>
         </Border>
         <ScrollViewer x:Name="uiMainScrollBar" Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <StackPanel>
@@ -173,7 +173,7 @@
                                                                 </Style.Triggers>
                                                             </Style>
                                                         </Grid.Style>
-                                                        <Border Background="{StaticResource DarkBackground3}" CornerRadius="8">
+                                                        <Border Background="{StaticResource DarkBackground2}" CornerRadius="8">
                                                             <local:CacheImage Stretch="Fill" ImageCacheType="BoxArt" Data="{Binding}" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                         </Border>
                                                         <Border VerticalAlignment="Stretch" Background="#B2000000" CornerRadius="8">

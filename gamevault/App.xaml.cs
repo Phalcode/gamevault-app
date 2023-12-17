@@ -40,22 +40,24 @@ namespace gamevault
             AppFilePath.InitDebugPaths();
             await CacheHelper.OptimizeCache();
 #else
-
-            int pcount = Process.GetProcessesByName(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name).Count();
-            //System.Windows.MessageBox.Show("pcount: "+pcount);
-            if (pcount != 1)
+            try
             {
-                var client = new NamedPipeClientStream("GameVault");
-                client.Connect();
-                StreamWriter writer = new StreamWriter(client);
-                writer.WriteLine("ShowMainWindow");
-                writer.Flush();
-                ShutdownApp();
+                int pcount = Process.GetProcessesByName(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name).Count();
+                if (pcount != 1)
+                {
+                    var client = new NamedPipeClientStream("GameVault");
+                    client.Connect();
+                    StreamWriter writer = new StreamWriter(client);
+                    writer.WriteLine("ShowMainWindow");
+                    writer.Flush();
+                    ShutdownApp();
+                }
+                else
+                {
+                    StartServer();
+                }
             }
-            else
-            {
-                StartServer();
-            }
+            catch (Exception ex) { MainWindowViewModel.Instance.AppBarText = "Could not connect to background pipe due to UAC remote restrictions"; }
             try
             {
                 UpdateWindow updateWindow = new UpdateWindow();
@@ -174,7 +176,6 @@ namespace gamevault
         }
         private void NotifyIcon_DoubleClick(Object sender, EventArgs e)
         {
-            var x = MainWindow.WindowState;
             if (MainWindow == null)
             {
                 MainWindow = new MainWindow();

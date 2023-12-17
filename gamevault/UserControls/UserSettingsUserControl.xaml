@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:helper="clr-namespace:gamevault.Helper"
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:conv="clr-namespace:gamevault.Converter"
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Focusable="True" Loaded="UserControl_Loaded" FocusVisualStyle="{x:Null}">
@@ -42,6 +43,7 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+        <conv:InverseNullConverter x:Key="invNullConv"/>
     </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Key="Esc">
@@ -139,10 +141,20 @@
                                         </Border.Style>
                                         <StackPanel>
                                             <Grid HorizontalAlignment="Center" Margin="0,20,0,0">
-                                                <local:CacheImage ImageCacheType="UserBackground" Data="{Binding User}" CornerRadius="5" Stretch="Fill" Height="214" Width="380" Margin="10,10,10,0"/>
+                                                <local:CacheImage ImageCacheType="UserBackground" Data="{Binding User}" CornerRadius="5" Stretch="Fill" Height="214" Width="380" Margin="10,10,10,0">
+                                                    <local:CacheImage.Style>
+                                                        <Style TargetType="local:CacheImage">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding BackgroundImageSource,Converter={StaticResource invNullConv}}" Value="False">
+                                                                    <Setter Property="Visibility" Value="Hidden" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </local:CacheImage.Style>
+                                                </local:CacheImage>
                                                 <Border CornerRadius="5" Height="215" Width="382" Margin="10,10,10,0">
                                                     <Border.Background>
-                                                        <ImageBrush x:Name="uiUploadBackgroundPreview" Stretch="Fill"/>
+                                                        <ImageBrush ImageSource="{Binding BackgroundImageSource}" Stretch="Fill"/>
                                                     </Border.Background>
                                                 </Border>
                                             </Grid>
@@ -162,17 +174,8 @@
                                     </StackPanel>
                                     <TextBox Margin="10" Height="28" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="https://example.com/example.png" TextChanged="BackgoundImageUrl_TextChanged"/>
                                     <Grid Margin="10,95,10,0">
-                                        <local:IconButton Content="Save" Icon="{DynamicResource IconGameSettingsSave}" Width="70" Height="33" HorizontalAlignment="Right" MouseLeftButtonUp="BackgroundImage_Save">
-                                            <local:IconButton.Style>
-                                                <Style TargetType="local:IconButton">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding ElementName=uiUploadBackgroundPreview, Path=ImageSource}" Value="{x:Null}">
-                                                            <Setter Property="IsEnabled" Value="False" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </local:IconButton.Style>
-                                        </local:IconButton>
+                                        <local:IconButton Content="Save" Icon="{DynamicResource IconGameSettingsSave}" IsEnabled="{Binding BackgroundImageChanged}" Width="70" Height="33" HorizontalAlignment="Right" MouseLeftButtonUp="BackgroundImage_Save"/>
+
                                         <!--<local:IconButton Content="Find Images" Icon="{DynamicResource IconGameSettingsGoogle}" HorizontalAlignment="Left" Height="33" Width="115" Tag="Game Background Art" MouseLeftButtonUp="FindImages_Click"/>-->
                                     </Grid>
                                 </StackPanel>
@@ -195,10 +198,20 @@
                                         </Border.Style>
                                         <StackPanel>
                                             <Grid HorizontalAlignment="Center">
-                                                <local:CacheImage ImageCacheType="UserIcon" Data="{Binding User}" CornerRadius="5" Stretch="Fill" Height="214" Width="214" Margin="0,30,0,0"/>
+                                                <local:CacheImage ImageCacheType="UserIcon" Data="{Binding User}" CornerRadius="5" Stretch="Fill" Height="214" Width="214" Margin="0,30,0,0">
+                                                    <local:CacheImage.Style>
+                                                        <Style TargetType="local:CacheImage">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding AvatarImageSource,Converter={StaticResource invNullConv}}" Value="False">
+                                                                    <Setter Property="Visibility" Value="Hidden" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </local:CacheImage.Style>
+                                                </local:CacheImage>
                                                 <Border CornerRadius="5" Height="214" Width="214" Margin="0,30,0,0">
                                                     <Border.Background>
-                                                        <ImageBrush x:Name="uiUploadAvatarPreview" Stretch="Fill"/>
+                                                        <ImageBrush ImageSource="{Binding AvatarImageSource}" Stretch="Fill"/>
                                                     </Border.Background>
                                                 </Border>
                                             </Grid>
@@ -218,17 +231,7 @@
                                     </StackPanel>
                                     <TextBox Margin="10" Height="28" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="https://example.com/example.png" TextChanged="AvatarImageUrl_TextChanged"/>
                                     <Grid Margin="10,95,10,0">
-                                        <local:IconButton Content="Save" Icon="{DynamicResource IconGameSettingsSave}" Width="70" Height="33" HorizontalAlignment="Right" MouseLeftButtonUp="AvatarImage_Save">
-                                            <local:IconButton.Style>
-                                                <Style TargetType="local:IconButton">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding ElementName=uiUploadAvatarPreview, Path=ImageSource}" Value="{x:Null}">
-                                                            <Setter Property="IsEnabled" Value="False" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </local:IconButton.Style>
-                                        </local:IconButton>
+                                        <local:IconButton Content="Save" Icon="{DynamicResource IconGameSettingsSave}" IsEnabled="{Binding AvatarImageChanged}" Width="70" Height="33" HorizontalAlignment="Right" MouseLeftButtonUp="AvatarImage_Save"/>
                                         <!--<local:IconButton Content="Find Images" Icon="{DynamicResource IconGameSettingsGoogle}" HorizontalAlignment="Left" Height="33" Width="115" Tag="Game Box Art" MouseLeftButtonUp="FindImages_Click"/>-->
                                     </Grid>
                                 </StackPanel>

@@ -97,12 +97,16 @@ namespace gamevault.UserControls
                                     string objectFromFile = Preferences.Get(id, AppFilePath.OfflineCache);
                                     if (objectFromFile != string.Empty)
                                     {
-                                        string decompressedObject = StringCompressor.DecompressString(objectFromFile);
-                                        Game? deserializedObject = JsonSerializer.Deserialize<Game>(decompressedObject);
-                                        if (deserializedObject != null)
+                                        try
                                         {
-                                            offlineCacheGames.Add(deserializedObject);
+                                            string decompressedObject = StringCompressor.DecompressString(objectFromFile);
+                                            Game? deserializedObject = JsonSerializer.Deserialize<Game>(decompressedObject);
+                                            if (deserializedObject != null)
+                                            {
+                                                offlineCacheGames.Add(deserializedObject);
+                                            }
                                         }
+                                        catch (FormatException exFormat) { }
                                     }
                                 }
                                 return offlineCacheGames.ToArray();
@@ -119,9 +123,10 @@ namespace gamevault.UserControls
                         MainWindowViewModel.Instance.AppBarText = exJson.Message;
                         return null;
                     }
-                    catch (FormatException exFormat)
+                    catch (Exception ex)
                     {
-                        MainWindowViewModel.Instance.AppBarText = "The offline cache is corrupted";
+                        MainWindowViewModel.Instance.AppBarText = ex.Message;
+                        return null;
                     }
                 }
                 return null;

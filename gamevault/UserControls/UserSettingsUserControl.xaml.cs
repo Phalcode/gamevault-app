@@ -62,11 +62,11 @@ namespace gamevault.UserControls
                     string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                     if (tag == "avatar")
                     {
-                        uiUploadAvatarPreview.ImageSource = BitmapHelper.GetBitmapImage(files[0]);
+                        ViewModel.AvatarImageSource = BitmapHelper.GetBitmapImage(files[0]);
                     }
                     else
                     {
-                        uiUploadBackgroundPreview.ImageSource = BitmapHelper.GetBitmapImage(files[0]);
+                        ViewModel.BackgroundImageSource = BitmapHelper.GetBitmapImage(files[0]);
                     }
                 }
                 catch (Exception ex)
@@ -86,11 +86,11 @@ namespace gamevault.UserControls
                         BitmapImage bitmap = new BitmapImage(new Uri(imagePath));
                         if (tag == "avatar")
                         {
-                            uiUploadAvatarPreview.ImageSource = bitmap;
+                            ViewModel.AvatarImageSource = bitmap;
                         }
                         else
                         {
-                            uiUploadBackgroundPreview.ImageSource = bitmap;
+                            ViewModel.BackgroundImageSource = bitmap;
                         }
                     }
                     catch
@@ -122,11 +122,11 @@ namespace gamevault.UserControls
                     {
                         if (tag == "avatar")
                         {
-                            uiUploadAvatarPreview.ImageSource = BitmapHelper.GetBitmapImage(dialog.FileName);
+                            ViewModel.AvatarImageSource = BitmapHelper.GetBitmapImage(dialog.FileName);
                         }
                         else
                         {
-                            uiUploadBackgroundPreview.ImageSource = BitmapHelper.GetBitmapImage(dialog.FileName);
+                            ViewModel.BackgroundImageSource = BitmapHelper.GetBitmapImage(dialog.FileName);
                         }
                     }
                 }
@@ -150,11 +150,11 @@ namespace gamevault.UserControls
                             var image = Clipboard.GetImage();
                             if (((FrameworkElement)sender).Tag != null && ((FrameworkElement)sender).Tag.ToString() == "avatar")
                             {
-                                uiUploadAvatarPreview.ImageSource = image;
+                                ViewModel.AvatarImageSource = image;
                             }
                             else
                             {
-                                uiUploadBackgroundPreview.ImageSource = image;
+                                ViewModel.BackgroundImageSource = image;
                             }
                         }
                     }
@@ -172,11 +172,11 @@ namespace gamevault.UserControls
             {
                 if (tag == "avatar")
                 {
-                    uiUploadAvatarPreview.ImageSource = BitmapHelper.GetBitmapImage(url);
+                    ViewModel.AvatarImageSource = BitmapHelper.GetBitmapImage(url);
                 }
                 else
                 {
-                    uiUploadBackgroundPreview.ImageSource = BitmapHelper.GetBitmapImage(url);
+                    ViewModel.BackgroundImageSource = BitmapHelper.GetBitmapImage(url);
                 }
             }
             catch (Exception ex)
@@ -229,22 +229,20 @@ namespace gamevault.UserControls
         #endregion
         private async void BackgroundImage_Save(object sender, MouseButtonEventArgs e)
         {
-            ((FrameworkElement)sender).IsEnabled = false;
+            ViewModel.BackgroundImageChanged = false;
             await SaveImage("");
-            ((FrameworkElement)sender).IsEnabled = true;
         }
         private async void AvatarImage_Save(object sender, MouseButtonEventArgs e)
         {
-            ((FrameworkElement)sender).IsEnabled = false;
+            ViewModel.AvatarImageChanged = false;
             await SaveImage("avatar");
-            ((FrameworkElement)sender).IsEnabled = true;
         }
         private async Task SaveImage(string tag)
         {
             bool success = false;
             try
             {
-                BitmapSource bitmapSource = tag == "avatar" ? (BitmapSource)uiUploadAvatarPreview.ImageSource : (BitmapSource)uiUploadBackgroundPreview.ImageSource;
+                BitmapSource bitmapSource = tag == "avatar" ? (BitmapSource)ViewModel.AvatarImageSource : (BitmapSource)ViewModel.BackgroundImageSource;
                 string resp = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/images", BitmapHelper.BitmapSourceToMemoryStream(bitmapSource), "x.png", null);
                 var newImageId = JsonSerializer.Deserialize<Models.Image>(resp).ID;
                 await Task.Run(() =>

@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace gamevault.ViewModels
 {
@@ -17,6 +18,10 @@ namespace gamevault.ViewModels
         private ObservableCollection<KeyValuePair<string, string>> m_Executables { get; set; }
         private string launchParameter { get; set; }
         private RawgGame[]? rawgGames { get; set; }
+        private bool backgroundImageChanged { get; set; }
+        private bool boxArtImageChanged { get; set; }
+        private ImageSource backgroundImageSource { get; set; }
+        private ImageSource boxArtImageSource { get; set; }
         #endregion      
         public Game Game
         {
@@ -49,6 +54,26 @@ namespace gamevault.ViewModels
         {
             get { return rawgGames; }
             set { rawgGames = value; OnPropertyChanged(); }
+        }
+        public bool BackgroundImageChanged
+        {
+            get { return backgroundImageChanged; }
+            set { backgroundImageChanged = value; OnPropertyChanged(); }
+        }
+        public bool BoxArtImageChanged
+        {
+            get { return boxArtImageChanged; }
+            set { boxArtImageChanged = value; OnPropertyChanged(); }
+        }
+        public ImageSource BackgroundImageSource
+        {
+            get { return backgroundImageSource; }
+            set { backgroundImageSource = value; OnPropertyChanged(); BackgroundImageChanged = true; }
+        }
+        public ImageSource BoxArtImageSource
+        {
+            get { return boxArtImageSource; }
+            set { boxArtImageSource = value; OnPropertyChanged(); BoxArtImageChanged = true; }
         }
     }
 }

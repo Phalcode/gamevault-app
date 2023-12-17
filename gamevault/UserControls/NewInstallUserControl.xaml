@@ -82,7 +82,7 @@
                                                 </Style.Triggers>
                                             </Style>
                                         </Grid.Style>
-                                        <Border Background="{StaticResource DarkBackground3}" CornerRadius="8">
+                                        <Border Background="{StaticResource DarkBackground2}" CornerRadius="8">
                                             <local:CacheImage Stretch="Fill" ImageCacheType="BoxArt" Data="{Binding Key}" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <Border Name="banner" VerticalAlignment="Stretch" Background="#B2000000" CornerRadius="8">

@@ -47,7 +47,7 @@ namespace gamevault.UserControls
                 {
                     ViewModel.LaunchParameter = Preferences.Get(AppConfigKey.LaunchParameter, $"{ViewModel.Directory}\\gamevault-exec");
                 }
-                InitDiskUsagePieChart();
+                InitDiskUsagePieChart();//Task
             }
             this.DataContext = ViewModel;
         }
@@ -224,53 +224,59 @@ namespace gamevault.UserControls
         }
         private void InitDiskUsagePieChart()
         {
-            var drive = DriveInfo.GetDrives().FirstOrDefault(d => d.Name == Path.GetPathRoot(ViewModel.Directory));
-
-            if (drive == null)
+            Task.Run(() =>
             {
-                // Throw error
-                return;
-            }
-            long totalDiskSize = drive.TotalSize;
-            long currentGameSize = long.TryParse(ViewModel.Game.Size, out var size) ? size : 0;
+                var drive = DriveInfo.GetDrives().FirstOrDefault(d => d.Name == Path.GetPathRoot(ViewModel.Directory));
 
-            long otherGamesSize = NewInstallViewModel.Instance.InstalledGames
-                .Sum(installedGame => long.TryParse(installedGame.Key.Size, out var gameSize) ? gameSize : 0) - currentGameSize;
+                if (drive == null)
+                {
+                    // Throw error
+                    return;
+                }
+                long totalDiskSize = drive.TotalSize;
+                long currentGameSize = long.TryParse(ViewModel.Game.Size, out var size) ? size : 0;
 
-            long unmanagedDiskSize = totalDiskSize - currentGameSize - otherGamesSize - drive.TotalFreeSpace;
+                long otherGamesSize = NewInstallViewModel.Instance.InstalledGames
+                    .Sum(installedGame => long.TryParse(installedGame.Key.Size, out var gameSize) ? gameSize : 0) - currentGameSize;
 
-            double percentageOfAllGames = (currentGameSize * 100.0) / otherGamesSize;
-            uiTxtAllInstalledGamesSize.Text = gameSizeConverter.Convert(drive.TotalSize, null, null, null).ToString();
+                long unmanagedDiskSize = totalDiskSize - currentGameSize - otherGamesSize - drive.TotalFreeSpace;
 
-            double totalFreeSpacePercentage = ((double)drive.TotalFreeSpace / totalDiskSize) * 100;
-            double otherGamesPercentage = ((double)otherGamesSize / totalDiskSize) * 100;
-            double currentGamePercentage = ((double)currentGameSize / totalDiskSize) * 100;
-            double unmanagedSpacePercentage = ((double)unmanagedDiskSize / totalDiskSize) * 100;
+                double percentageOfAllGames = (currentGameSize * 100.0) / otherGamesSize;
 
-            double[] percentages = { currentGamePercentage, otherGamesPercentage, unmanagedSpacePercentage, totalFreeSpacePercentage };
-            for (int i = 0; i < percentages.Length; i++)
-            {
-                if (percentages[i] > 5)
-                    continue;
+                double totalFreeSpacePercentage = ((double)drive.TotalFreeSpace / totalDiskSize) * 100;
+                double otherGamesPercentage = ((double)otherGamesSize / totalDiskSize) * 100;
+                double currentGamePercentage = ((double)currentGameSize / totalDiskSize) * 100;
+                double unmanagedSpacePercentage = ((double)unmanagedDiskSize / totalDiskSize) * 100;
 
-                totalFreeSpacePercentage -= (5 - percentages[i]);
-                percentages[i] = 5;
-            }
-            int index = 0;
-            string[] names = { $"This Game ({ViewModel.Game.Title})", "Other installed GameVault Games", "Unmanaged Data", "Free Space" };
-            long[] tooltips = { currentGameSize, otherGamesSize, unmanagedDiskSize, drive.TotalFreeSpace };
-            Color[] colors = { Colors.DeepPink, Colors.LightSeaGreen, Colors.PaleVioletRed, Colors.DarkGray };
-            IEnumerable<ISeries> sliceSeries = percentages.AsPieSeries((value, series) =>
-            {
-                series.MaxRadialColumnWidth = 80;
-                series.Name = names[index % names.Length];
-                series.Fill = new SolidColorPaint(new SkiaSharp.SKColor(colors[index % colors.Length].R, colors[index % colors.Length].G, colors[index % colors.Length].B));
-                var size = tooltips[index % tooltips.Length];
-                var humanReadableSize = gameSizeConverter.Convert(size, null, null, null);
-                series.ToolTipLabelFormatter = (chartPoint) => $"{humanReadableSize}";
-                index++;
+                double[] percentages = { currentGamePercentage, otherGamesPercentage, unmanagedSpacePercentage, totalFreeSpacePercentage };
+                for (int i = 0; i < percentages.Length; i++)
+                {
+                    if (percentages[i] > 5)
+                        continue;
+
+                    totalFreeSpacePercentage -= (5 - percentages[i]);
+                    percentages[i] = 5;
+                }
+                int index = 0;
+                string[] names = { $"This Game ({ViewModel.Game.Title})", "Other installed GameVault Games", "Unmanaged Data", "Free Space" };
+                long[] tooltips = { currentGameSize, otherGamesSize, unmanagedDiskSize, drive.TotalFreeSpace };
+                Color[] colors = { Colors.DeepPink, Colors.LightSeaGreen, Colors.PaleVioletRed, Colors.DarkGray };
+                IEnumerable<ISeries> sliceSeries = percentages.AsPieSeries((value, series) =>
+                {
+                    series.MaxRadialColumnWidth = 80;
+                    series.Name = names[index % names.Length];
+                    series.Fill = new SolidColorPaint(new SkiaSharp.SKColor(colors[index % colors.Length].R, colors[index % colors.Length].G, colors[index % colors.Length].B));
+                    var size = tooltips[index % tooltips.Length];
+                    var humanReadableSize = gameSizeConverter.Convert(size, null, null, null);
+                    series.ToolTipLabelFormatter = (chartPoint) => $"{humanReadableSize}";
+                    index++;
+                });
+                App.Current.Dispatcher.Invoke((Action)delegate
+                {
+                    uiTxtAllInstalledGamesSize.Text = gameSizeConverter.Convert(drive.TotalSize, null, null, null).ToString();
+                    uiDiscUsagePieChart.Series = sliceSeries;
+                });
             });
-            uiDiscUsagePieChart.Series = sliceSeries;
         }
 
         #endregion
@@ -381,7 +387,7 @@ namespace gamevault.UserControls
         }
         #endregion
         #region EDIT IMAGE    
-       
+
         private void Image_Drop(object sender, DragEventArgs e)
         {
             string tag = ((FrameworkElement)sender).Tag as string;
@@ -392,11 +398,11 @@ namespace gamevault.UserControls
                     string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                     if (tag == "box")
                     {
-                        uiUploadBoxArtPreview.ImageSource = BitmapHelper.GetBitmapImage(files[0]);
+                        ViewModel.BoxArtImageSource = BitmapHelper.GetBitmapImage(files[0]);
                     }
                     else
                     {
-                        uiUploadBackgroundPreview.ImageSource = BitmapHelper.GetBitmapImage(files[0]);
+                        ViewModel.BackgroundImageSource = BitmapHelper.GetBitmapImage(files[0]);
                     }
                 }
                 catch (Exception ex)
@@ -416,11 +422,11 @@ namespace gamevault.UserControls
                         BitmapImage bitmap = new BitmapImage(new Uri(imagePath));
                         if (tag == "box")
                         {
-                            uiUploadBoxArtPreview.ImageSource = bitmap;
+                            ViewModel.BoxArtImageSource = bitmap;
                         }
                         else
                         {
-                            uiUploadBackgroundPreview.ImageSource = bitmap;
+                            ViewModel.BackgroundImageSource = bitmap;
                         }
                     }
                     catch
@@ -453,11 +459,11 @@ namespace gamevault.UserControls
                     {
                         if (tag == "box")
                         {
-                            uiUploadBoxArtPreview.ImageSource = BitmapHelper.GetBitmapImage(dialog.FileName);
+                            ViewModel.BoxArtImageSource = BitmapHelper.GetBitmapImage(dialog.FileName);
                         }
                         else
                         {
-                            uiUploadBackgroundPreview.ImageSource = BitmapHelper.GetBitmapImage(dialog.FileName);
+                            ViewModel.BackgroundImageSource = BitmapHelper.GetBitmapImage(dialog.FileName);
                         }
                     }
                 }
@@ -473,11 +479,11 @@ namespace gamevault.UserControls
             {
                 if (tag == "box")
                 {
-                    uiUploadBoxArtPreview.ImageSource = BitmapHelper.GetBitmapImage(url);
+                    ViewModel.BoxArtImageSource = BitmapHelper.GetBitmapImage(url);
                 }
                 else
                 {
-                    uiUploadBackgroundPreview.ImageSource = BitmapHelper.GetBitmapImage(url);
+                    ViewModel.BackgroundImageSource = BitmapHelper.GetBitmapImage(url);
                 }
             }
             catch (Exception ex)
@@ -522,15 +528,13 @@ namespace gamevault.UserControls
         }
         private async void BoxImage_Save(object sender, MouseButtonEventArgs e)
         {
-            ((FrameworkElement)sender).IsEnabled = false;
+            ViewModel.BoxArtImageChanged = false;
             await SaveImage("box");
-            ((FrameworkElement)sender).IsEnabled = true;
         }
         private async void BackgroundImage_Save(object sender, MouseButtonEventArgs e)
         {
-            ((FrameworkElement)sender).IsEnabled = false;
+            ViewModel.BackgroundImageChanged = false;
             await SaveImage("");
-            ((FrameworkElement)sender).IsEnabled = true;
         }
         private void BackgoundImageUrl_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -563,7 +567,7 @@ namespace gamevault.UserControls
             bool success = false;
             try
             {
-                BitmapSource bitmapSource = tag == "box" ? (BitmapSource)uiUploadBoxArtPreview.ImageSource : (BitmapSource)uiUploadBackgroundPreview.ImageSource;
+                BitmapSource bitmapSource = tag == "box" ? (BitmapSource)ViewModel.BoxArtImageSource : (BitmapSource)ViewModel.BackgroundImageSource;
                 string resp = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/images", BitmapHelper.BitmapSourceToMemoryStream(bitmapSource), "x.png", null);
                 var newImageId = JsonSerializer.Deserialize<Models.Image>(resp).ID;
                 await Task.Run(() =>
@@ -628,11 +632,11 @@ namespace gamevault.UserControls
                             var image = Clipboard.GetImage();
                             if (((FrameworkElement)sender).Tag != null && ((FrameworkElement)sender).Tag.ToString() == "box")
                             {
-                                uiUploadBoxArtPreview.ImageSource = image;
+                                ViewModel.BoxArtImageSource = image;
                             }
                             else
                             {
-                                uiUploadBackgroundPreview.ImageSource = image;
+                                ViewModel.BackgroundImageSource = image;
                             }
                         }
                     }

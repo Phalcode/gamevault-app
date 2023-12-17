@@ -184,11 +184,6 @@ namespace gamevault.UserControls
                     ViewModel.NextPage = gameResult?.Links.Next;
                     await ProcessGamesData(gameResult);
                     scrollBlocked = false;
-
-                }
-                if (((ScrollViewer)sender).VerticalOffset == ((ScrollViewer)sender).ScrollableHeight)
-                {
-                    uiMainScrollBar.RaiseEvent(e);
                 }
             }
         }

@@ -45,6 +45,7 @@
             </Style.Triggers>
         </Style>
         <conv:GameSettingsTabVisibilityConverter x:Key="tabVisConv"/>
+        <conv:InverseNullConverter x:Key="invNullConv"/>
     </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Key="Esc">
@@ -208,10 +209,20 @@
                                         </Border.Style>
                                         <StackPanel>
                                             <Grid HorizontalAlignment="Center" Margin="0,20,0,0">
-                                                <local:CacheImage ImageCacheType="GameBackground" Data="{Binding Game}" CornerRadius="5" Stretch="Fill" Height="214" Width="380" Margin="10,10,10,0"/>
+                                                <local:CacheImage ImageCacheType="GameBackground" Data="{Binding Game}" CornerRadius="5" Stretch="Fill" Height="214" Width="380" Margin="10,10,10,0">
+                                                    <local:CacheImage.Style>
+                                                        <Style TargetType="local:CacheImage">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding BackgroundImageSource,Converter={StaticResource invNullConv}}" Value="False">
+                                                                    <Setter Property="Visibility" Value="Hidden" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </local:CacheImage.Style>
+                                                </local:CacheImage>
                                                 <Border CornerRadius="5" Height="215" Width="382" Margin="10,10,10,0">
                                                     <Border.Background>
-                                                        <ImageBrush x:Name="uiUploadBackgroundPreview" Stretch="Fill"/>
+                                                        <ImageBrush ImageSource="{Binding BackgroundImageSource}" Stretch="Fill"/>
                                                     </Border.Background>
                                                 </Border>
                                             </Grid>
@@ -231,17 +242,7 @@
                                     </StackPanel>
                                     <TextBox Margin="10" Height="28" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="https://example.com/example.png" TextChanged="BackgoundImageUrl_TextChanged"/>
                                     <Grid Margin="10,95,10,0">
-                                        <local:IconButton Content="Save" Icon="{DynamicResource IconGameSettingsSave}" Width="115" Height="33" HorizontalAlignment="Right" MouseLeftButtonUp="BackgroundImage_Save">
-                                            <local:IconButton.Style>
-                                                <Style TargetType="local:IconButton">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding ElementName=uiUploadBackgroundPreview, Path=ImageSource}" Value="{x:Null}">
-                                                            <Setter Property="IsEnabled" Value="False" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </local:IconButton.Style>
-                                        </local:IconButton>
+                                        <local:IconButton Content="Save" Icon="{DynamicResource IconGameSettingsSave}" IsEnabled="{Binding BackgroundImageChanged}" Width="115" Height="33" HorizontalAlignment="Right" MouseLeftButtonUp="BackgroundImage_Save"/>
                                         <local:IconButton Content="Find Images" Icon="{DynamicResource IconGameSettingsGoogle}" HorizontalAlignment="Left" Height="33" Width="115" Tag="Game Background Art" MouseLeftButtonUp="FindImages_Click"/>
                                     </Grid>
                                 </StackPanel>
@@ -264,10 +265,20 @@
                                         </Border.Style>
                                         <StackPanel>
                                             <Grid HorizontalAlignment="Center">
-                                                <local:CacheImage ImageCacheType="BoxArt" Data="{Binding Game}" CornerRadius="5" Stretch="Fill" Height="250" Width="167" Margin="10,10,10,0"/>
+                                                <local:CacheImage ImageCacheType="BoxArt" Data="{Binding Game}" CornerRadius="5" Stretch="Fill" Height="250" Width="167" Margin="10,10,10,0">
+                                                    <local:CacheImage.Style>
+                                                        <Style TargetType="local:CacheImage">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding BoxArtImageSource,Converter={StaticResource invNullConv}}" Value="False">
+                                                                    <Setter Property="Visibility" Value="Hidden" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </local:CacheImage.Style>
+                                                </local:CacheImage>
                                                 <Border CornerRadius="5" Height="250" Width="167" Margin="10,10,10,0">
                                                     <Border.Background>
-                                                        <ImageBrush x:Name="uiUploadBoxArtPreview" Stretch="Fill"/>
+                                                        <ImageBrush ImageSource="{Binding BoxArtImageSource}" Stretch="Fill"/>
                                                     </Border.Background>
                                                 </Border>
                                             </Grid>
@@ -287,17 +298,7 @@
                                     </StackPanel>
                                     <TextBox Margin="10" Height="28" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="https://example.com/example.png" TextChanged="BoxImageUrl_TextChanged"/>
                                     <Grid Margin="10,95,10,0">
-                                        <local:IconButton Content="Save" Icon="{DynamicResource IconGameSettingsSave}" Width="115" Height="33" HorizontalAlignment="Right" MouseLeftButtonUp="BoxImage_Save">
-                                            <local:IconButton.Style>
-                                                <Style TargetType="local:IconButton">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding ElementName=uiUploadBoxArtPreview, Path=ImageSource}" Value="{x:Null}">
-                                                            <Setter Property="IsEnabled" Value="False" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </local:IconButton.Style>
-                                        </local:IconButton>
+                                        <local:IconButton Content="Save" Icon="{DynamicResource IconGameSettingsSave}" IsEnabled="{Binding BoxArtImageChanged}" Width="115" Height="33" HorizontalAlignment="Right" MouseLeftButtonUp="BoxImage_Save"/>
                                         <local:IconButton Content="Find Images" Icon="{DynamicResource IconGameSettingsGoogle}" HorizontalAlignment="Left" Height="33" Width="115" Tag="Game Box Art" MouseLeftButtonUp="FindImages_Click"/>
                                     </Grid>
                                 </StackPanel>
