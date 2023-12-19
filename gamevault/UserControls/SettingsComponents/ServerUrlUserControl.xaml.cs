@@ -37,6 +37,7 @@ namespace gamevault.UserControls.SettingsComponents
         private void SaveServerURL()
         {
             SettingsViewModel.Instance.ServerUrl = "https://neo.arparec.dev"; // USE HTTPS FOR CLOUDFLARE
+
             Preferences.Set(AppConfigKey.ServerUrl, SettingsViewModel.Instance.ServerUrl, AppFilePath.UserFile, true);
         }
     }
