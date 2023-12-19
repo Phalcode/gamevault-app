@@ -41,7 +41,7 @@
                 </Grid.RenderTransform>
             </Grid>
 
-            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="56,10,0,0" Text="{Binding State,StringFormat={}State: {0}}" FontSize="4" Width="122"/>
+            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="56,10,0,0" Text="{Binding State,StringFormat={}State: {0}}" ToolTip="{Binding State}" FontSize="4" Width="122"/>
 
             <TextBlock Text="📥" FontSize="9" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="55,17,0,0"/>
             <Border Visibility="{Binding DownloadFailedVisibility}" Background="{StaticResource MahApps.Brushes.Accent}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="70,21,2,0" CornerRadius="2" Padding="1" Cursor="Hand" ToolTip="Download Game" MouseLeftButtonUp="RetryDownload_Click">

@@ -1,6 +1,8 @@
 ﻿using gamevault.Helper;
 using gamevault.Models;
 using gamevault.ViewModels;
+using MahApps.Metro.Controls.Dialogs;
+using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -99,7 +101,7 @@ namespace gamevault.UserControls
             }
         }
 
-        public void TryStartDownload(Game game)
+        public async Task TryStartDownload(Game game)
         {
             if (LoginManager.Instance.IsLoggedIn() == false)
             {
@@ -114,6 +116,10 @@ namespace gamevault.UserControls
             if (IsAlreadyDownloading(game.ID))
             {
                 MainWindowViewModel.Instance.AppBarText = $"'{game.Title}' is already in the download queue";
+                return;
+            }
+            if (await IsAlreadyDownloaded(game.ID))
+            {
                 return;
             }
             if (IsEnoughDriveSpaceAvailable(Convert.ToInt64(game.Size)))
@@ -132,6 +138,20 @@ namespace gamevault.UserControls
                 string? driveName = Path.GetPathRoot(f.FullName);
                 MainWindowViewModel.Instance.AppBarText = $"Not enough space available for drive {driveName}";
             }
+        }
+        private async Task<bool> IsAlreadyDownloaded(int id)
+        {
+            if (DownloadsViewModel.Instance.DownloadedGames.Where(gameUC => gameUC.GetGameId() == id).Count() > 0)
+            {
+                MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"This game was already downloaded. Do you want to overwrite this file?",
+                    "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+                if (result == MessageDialogResult.Affirmative)
+                {
+                    return false;
+                }
+                return true;
+            }
+            return false;
         }
         private bool IsAlreadyDownloading(int id)
         {

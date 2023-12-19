@@ -286,10 +286,10 @@ namespace gamevault.UserControls
 
             MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl((Game)((FrameworkElement)sender).DataContext) { Width = 1200, Height = 800, Margin = new Thickness(50) });
         }
-        private void Download_Click(object sender, MouseButtonEventArgs e)
+        private async void Download_Click(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
-            MainWindowViewModel.Instance.Downloads.TryStartDownload((Game)(((FrameworkElement)sender).DataContext));
+            await MainWindowViewModel.Instance.Downloads.TryStartDownload((Game)(((FrameworkElement)sender).DataContext));
         }
         public void RefreshGame(Game gameToRefreshParam)
         {

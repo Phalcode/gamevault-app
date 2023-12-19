@@ -200,9 +200,11 @@ namespace gamevault.UserControls
                     string currentShownUser = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/{currentUserId}");
                     return JsonSerializer.Deserialize<User>(currentShownUser);
                 });
+
+                SortBy_SelectionChanged(null, new SelectionChangedEventArgs(System.Windows.Controls.Primitives.Selector.SelectionChangedEvent, new List<string>(), new List<string> { uiSortBy.SelectedValue.ToString() }));
+
             }
             catch (Exception ex) { }
-            SortBy_SelectionChanged(null, new SelectionChangedEventArgs(System.Windows.Controls.Primitives.Selector.SelectionChangedEvent, new List<string>(), new List<string> { uiSortBy.SelectedValue.ToString() }));
             ((FrameworkElement)sender).IsEnabled = true;
         }
         private void UserEdit_Clicked(object sender, RoutedEventArgs e)

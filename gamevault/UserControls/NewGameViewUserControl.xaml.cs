@@ -130,9 +130,9 @@ namespace gamevault.UserControls
         {
             MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(ViewModel.Game) { Width = 1200, Height = 800, Margin = new Thickness(50) });
         }
-        private void GameDownload_Click(object sender, MouseButtonEventArgs e)
+        private async void GameDownload_Click(object sender, MouseButtonEventArgs e)
         {
-            MainWindowViewModel.Instance.Downloads.TryStartDownload(ViewModel.Game);
+            await MainWindowViewModel.Instance.Downloads.TryStartDownload(ViewModel.Game);
         }
         private void KeyBindingEscape_OnExecuted(object sender, object e)
         {
