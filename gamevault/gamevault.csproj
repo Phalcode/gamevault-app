@@ -20,8 +20,6 @@
 
 	<ItemGroup>
 		<None Remove="Resources\Images\com_NoUserIcon.png" />
-		<None Remove="Resources\Images\gameView_Back.png" />
-		<None Remove="Resources\Images\gameView_Metacritic.png" />
 		<None Remove="Resources\Images\gameView_NoBackground.png" />
 		<None Remove="Resources\Images\glyph_admin.png" />
 		<None Remove="Resources\Images\glyph_community.png" />
@@ -48,8 +46,6 @@
 
 	<ItemGroup>
 		<Resource Include="Resources\Images\com_NoUserIcon.png" />
-		<Resource Include="Resources\Images\gameView_Back.png" />
-		<Resource Include="Resources\Images\gameView_Metacritic.png" />
 		<Resource Include="Resources\Images\gameView_NoBackground.png" />
 		<Resource Include="Resources\Images\glyph_admin.png" />
 		<Resource Include="Resources\Images\glyph_community.png" />

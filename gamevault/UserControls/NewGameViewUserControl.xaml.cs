@@ -7,17 +7,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace gamevault.UserControls
 {
@@ -65,7 +59,12 @@ namespace gamevault.UserControls
                         ViewModel.UserProgress = await Task<Progress[]>.Run(() =>
                         {
                             string result = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/game/{gameID}");
-                            return System.Text.Json.JsonSerializer.Deserialize<Progress[]>(result);
+                            Progress[] progresses = System.Text.Json.JsonSerializer.Deserialize<Progress[]>(result);
+                            if (LoginManager.Instance.IsLoggedIn())
+                            {
+                                progresses = progresses.Where(p => p.User.ID != LoginManager.Instance.GetCurrentUser().ID).ToArray();
+                            }
+                            return progresses;
                         });
                     }
                     catch (Exception ex) { }

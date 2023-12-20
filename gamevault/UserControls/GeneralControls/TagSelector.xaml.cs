@@ -29,7 +29,7 @@ namespace gamevault.UserControls
     }
     public partial class TagSelector : UserControl
     {
-        public static readonly DependencyProperty SelectionTypeProperty = DependencyProperty.Register(name: "SelectionType", propertyType: typeof(Selection), ownerType: typeof(ListSplitSelector));
+        public static readonly DependencyProperty SelectionTypeProperty = DependencyProperty.Register(name: "SelectionType", propertyType: typeof(Selection), ownerType: typeof(TagSelector));
         public Selection SelectionType
         {
             get => (Selection)GetValue(SelectionTypeProperty);

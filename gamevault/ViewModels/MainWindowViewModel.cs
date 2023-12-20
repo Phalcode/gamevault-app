@@ -26,7 +26,6 @@ namespace gamevault.ViewModels
     {
         public MainWindowViewModel()
         {
-            m_Library = new LibraryUserControl();
             m_Settings = new SettingsUserControl();
             m_Downloads = new DownloadsUserControl();
             m_NewLibrary = new NewLibraryUserControl();
@@ -95,8 +94,6 @@ namespace gamevault.ViewModels
         private Visibility onlineState = Visibility.Collapsed;
         private UserControl m_ActiveControl { get; set; }
         private UserControl m_Popup { get; set; }
-        private LibraryUserControl m_Library { get; set; }
-
         private SettingsUserControl m_Settings { get; set; }
         private DownloadsUserControl m_Downloads { get; set; }
         private NewLibraryUserControl m_NewLibrary { get; set; }
@@ -149,11 +146,6 @@ namespace gamevault.ViewModels
         public void ClosePopup()
         {
             Popup = null;
-        }
-        internal LibraryUserControl Library
-        {
-            get { return m_Library; }
-            private set { m_Library = value; }
         }
         internal SettingsUserControl Settings
         {

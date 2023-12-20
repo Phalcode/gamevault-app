@@ -12,6 +12,7 @@
         <conv:PermissionRoleToVisibilityConverter x:Key="roleToVisConv"/>
         <conv:UrlImageConverter x:Key="urlImgConv"/>
         <conv:GameStateColorConverter x:Key="gameStateColorConv"/>
+        <conv:GameStateDescriptionConverter x:Key="gameStateDescConv"/>
         <conv:GameTimeConverter x:Key="gameTimeConv"/>
     </UserControl.Resources>
     <Grid>
@@ -140,7 +141,7 @@
                                             </StackPanel>
                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Margin="1,0,0,3">
                                                 <TextBlock Text="State: " FontSize="2"/>
-                                                <TextBlock Text="{Binding Path=State}" Foreground="{Binding Path=State,Converter={StaticResource gameStateColorConv}}" FontSize="2" />
+                                                <TextBlock Text="{Binding Path=State,Converter={StaticResource gameStateDescConv}}" Foreground="{Binding Path=State,Converter={StaticResource gameStateColorConv}}" FontSize="2" />
                                             </StackPanel>
                                         </Grid>
                                     </DockPanel>

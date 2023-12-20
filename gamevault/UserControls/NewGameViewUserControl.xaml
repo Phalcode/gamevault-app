@@ -12,9 +12,11 @@
         <conv:GameSizeConverter x:Key="sizeConv"/>
         <conv:GameTimeConverter x:Key="timeConv"/>
         <conv:EnumDescriptionConverter x:Key="enumDescConv"/>
+        <conv:GameStateDescriptionConverter x:Key="gameStateDescConv"/>
         <conv:InverseNullConverter x:Key="inverseNullConv"/>
         <conv:StringToColorConverter x:Key="nameColorConv"/>
         <conv:StringToColorConverter x:Key="colorConv"/>
+        <conv:GameViewSettingsPermissionRoleToVisibilityConverter x:Key="settingsPermRoleVisConv"/>
     </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Key="Esc">
@@ -97,7 +99,7 @@
                                 <ScaleTransform/>
                             </Grid.RenderTransform>
                         </Grid>
-                        <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Left" Background="Transparent" Cursor="Hand" Width="70" Height="70" Margin="48,-2.7,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="GameSettings_Click">
+                        <Grid Style="{DynamicResource HoverEffect}" Visibility="{Binding IsInstalled,Converter={StaticResource settingsPermRoleVisConv}}" VerticalAlignment="Top" HorizontalAlignment="Left" Background="Transparent" Cursor="Hand" Width="70" Height="70" Margin="48,-2.7,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="GameSettings_Click">
                             <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="White" RenderTransformOrigin="-0.00,0.01">
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="2.95" ScaleY="2.95"/>
@@ -141,11 +143,13 @@
                     <Border BorderThickness="2" CornerRadius="5" Background="{DynamicResource DarkBackground2}" Height="44" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1460,158,0,0" Cursor="Hand">
                         <Grid>
                             <Popup Name="TagPopup" StaysOpen="False" AllowsTransparency="True">
-                                <Border Background="{DynamicResource DarkBackground4}" CornerRadius="5" Margin="5">
-                                    <Border.Effect>
-                                        <DropShadowEffect BlurRadius="7" Direction="0" ShadowDepth="0"/>
-                                    </Border.Effect>
-                                    <ItemsControl ItemsSource="{Binding Path=Game.Tags}">
+                                <Grid>
+                                    <Border Background="{DynamicResource DarkBackground4}" CornerRadius="5" Margin="5">
+                                        <Border.Effect>
+                                            <DropShadowEffect BlurRadius="7" Direction="0" ShadowDepth="0"/>
+                                        </Border.Effect>
+                                    </Border>
+                                    <ItemsControl ItemsSource="{Binding Path=Game.Tags}" Margin="5">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
                                                 <UniformGrid/>
@@ -159,7 +163,7 @@
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
-                                </Border>
+                                </Grid>
                             </Popup>
                             <TextBlock Text="View Tags" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </Grid>
@@ -190,63 +194,69 @@
                         <TextBlock Text="{Binding Path=Game.Description}" TextWrapping="Wrap" FontSize="20" />
                     </ScrollViewer>
                     <!--DETAILS-->
-                    <StackPanel Background="Transparent" Margin="0,660,0,0" HorizontalAlignment="Left">
-                        <Grid>
+                    <StackPanel Background="Transparent" Margin="0,650,0,0" HorizontalAlignment="Left">
+                        <Grid Height="50">
                             <Path Fill="White" Data="{DynamicResource IconGameViewCalendar}" RenderTransformOrigin="0,0">
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="2" ScaleY="2"/>
                                 </Path.RenderTransform>
                             </Path>
-                            <TextBlock Text="Release Year" FontWeight="Bold" FontSize="20" Margin="50,0,0,0"/>
-                            <TextBlock Text="{Binding Path=Game.ReleaseDate.Year,TargetNullValue='N/A'}" FontSize="20" Margin="50,24,0,0"/>
+                            <TextBlock Text="Release Year" FontWeight="Bold" FontSize="20" Margin="55,0,0,0"/>
+                            <TextBlock Text="{Binding Path=Game.ReleaseDate.Year,TargetNullValue='N/A'}" FontSize="20" Margin="55,24,0,0"/>
                         </Grid>
-                        <Grid Margin="0,10,0,0">
-                            <Image Source="pack://application:,,,/gamevault;component/Resources/Images/gameView_Metacritic.png" Height="50" HorizontalAlignment="Left"/>
-                            <TextBlock Text="Metacritic Rating" FontWeight="Bold" FontSize="20" Margin="50,0,0,0"/>
-                            <TextBlock Text="{Binding Path=Game.Rating,StringFormat={}{0}%,TargetNullValue='N/A'}" FontSize="20" Margin="50,24,0,0"/>
+                        <Grid Height="50" Margin="0,20,0,0">
+                            <Path Fill="White" Data="{DynamicResource IconGameViewMetacritic}" RenderTransformOrigin="0,0">
+                                <Path.RenderTransform>
+                                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                </Path.RenderTransform>
+                            </Path>
+                            <TextBlock Text="Metacritic Rating" FontWeight="Bold" FontSize="20" Margin="55,0,0,0"/>
+                            <TextBlock Text="{Binding Path=Game.Rating,StringFormat={}{0}%,TargetNullValue='N/A'}" FontSize="20" Margin="55,24,0,0"/>
                         </Grid>
-                        <Grid Margin="0,10,0,0">
+                        <Grid Height="50" Margin="0,20,0,0">
                             <Path Fill="White" Data="{DynamicResource IconGameViewVersion}" RenderTransformOrigin="0,0">
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="2" ScaleY="2.4"/>
                                 </Path.RenderTransform>
                             </Path>
-                            <TextBlock Text="Version" FontWeight="Bold" FontSize="20" Margin="50,0,0,0"/>
-                            <TextBlock Text="{Binding Path=Game.Version,TargetNullValue='N/A'}" FontSize="20" Margin="50,24,0,0"/>
+                            <TextBlock Text="Version" FontWeight="Bold" FontSize="20" Margin="55,0,0,0"/>
+                            <TextBlock Text="{Binding Path=Game.Version,TargetNullValue='N/A'}" FontSize="20" Margin="55,24,0,0"/>
                         </Grid>
-                        <Grid Margin="0,10,0,0">
+                        <Grid Height="50" Margin="0,20,0,0">
                             <Path Fill="White" Data="{DynamicResource IconGameViewWebsite}" RenderTransformOrigin="0,0">
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="2" ScaleY="2.0"/>
                                 </Path.RenderTransform>
                             </Path>
-                            <TextBlock Text="Website" FontWeight="Bold" FontSize="20" Margin="50,0,0,0"/>
-                            <TextBlock FontSize="20" Margin="50,24,0,0">
-                                <TextBlock.Style>
-                                    <Style TargetType="{x:Type TextBlock}">
-                                        <Setter Property="Visibility" Value="Visible"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Path=Game.WebsiteUrl}" Value="">
-                                                <Setter Property="Visibility" Value="Hidden"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
+                            <TextBlock Text="Website" FontWeight="Bold" FontSize="20" Margin="55,0,0,0"/>
+                            <TextBlock FontSize="20" Margin="55,24,0,0">                              
                                 <Hyperlink TextDecorations="None" NavigateUri="{Binding Path=Game.WebsiteUrl}" RequestNavigate="Website_Navigate">
                                     <Hyperlink.Inlines>
                                         <Run Text="{Binding Path=Game.WebsiteUrl}"/>
                                     </Hyperlink.Inlines>
                                 </Hyperlink>
                             </TextBlock>
+                            <TextBlock Text="N/A" FontSize="20" Margin="55,24,0,0">
+                                <TextBlock.Style>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=Game.WebsiteUrl}" Value="">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
                         </Grid>
-                        <Grid>
+                        <Grid Height="50" Margin="0,20,0,0">
                             <Path Fill="White" Data="{DynamicResource IconGameViewDeveloper}" RenderTransformOrigin="0,0">
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="2" ScaleY="2"/>
                                 </Path.RenderTransform>
                             </Path>
-                            <TextBlock Text="Developer" FontWeight="Bold" FontSize="20" Margin="50,0,0,0"/>
-                            <ItemsControl ItemsSource="{Binding Path=Game.Developers}" Margin="50,24,0,0">
+                            <TextBlock Text="Developer" FontWeight="Bold" FontSize="20" Margin="55,0,0,0"/>
+                            <ItemsControl ItemsSource="{Binding Path=Game.Developers}" Margin="55,24,0,0">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <StackPanel Orientation="Horizontal"/>
@@ -258,15 +268,27 @@
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
+                            <TextBlock Text="N/A" FontSize="20" Margin="55,24,0,0">
+                                <TextBlock.Style>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=Game.Developers.Count}" Value="0">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
                         </Grid>
-                        <Grid>
+                        <Grid Height="50" Margin="0,20,0,0">
                             <Path Fill="White" Data="{DynamicResource IconGameViewPublisher}" RenderTransformOrigin="0,0">
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="2" ScaleY="2"/>
                                 </Path.RenderTransform>
                             </Path>
-                            <TextBlock Text="Publisher" FontWeight="Bold" FontSize="20" Margin="50,0,0,0"/>
-                            <ItemsControl ItemsSource="{Binding Path=Game.Publishers}" Margin="50,24,0,0">
+                            <TextBlock Text="Publisher" FontWeight="Bold" FontSize="20" Margin="55,0,0,0"/>
+                            <ItemsControl ItemsSource="{Binding Path=Game.Publishers}" Margin="55,24,0,0">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <StackPanel Orientation="Horizontal"/>
@@ -278,6 +300,18 @@
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
+                            <TextBlock Text="N/A" FontSize="20" Margin="55,24,0,0">
+                                <TextBlock.Style>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=Game.Publishers.Count}" Value="0">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
                         </Grid>
                     </StackPanel>
                     <!--PROGRESS-->
@@ -329,7 +363,7 @@
                                 <TextBlock Text="{Binding Path=Game.AveragePlaytime,Converter={StaticResource timeConv}}" FontSize="20" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </StackPanel>
-                        <ComboBox ItemsSource="{Binding GameStates}" DisplayMemberPath="Key" SelectedValue="{Binding Path=Progress.State}" SelectedValuePath="Value" Margin="0,23,0,0" FontSize="30" FontWeight="Bold" SelectionChanged="GameState_SelectionChanged">
+                        <ComboBox ItemsSource="{Binding GameStates}" DisplayMemberPath="Key" SelectedValue="{Binding Path=Progress.State}" SelectedValuePath="Value" Margin="0,23,0,0" Height="60" FontSize="36" FontWeight="Bold" SelectionChanged="GameState_SelectionChanged">
                             <ComboBox.ItemContainerStyle>
                                 <Style TargetType="{x:Type ComboBoxItem}" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
                                     <Setter Property="FontSize" Value="20"/>
@@ -377,7 +411,7 @@
                                                 </TextBlock>
                                             </TextBlock.ToolTip>                                        
                                         </TextBlock>
-                                        <TextBlock Text="{Binding State}" FontSize="10" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,0,0"/>
+                                        <TextBlock Text="{Binding State,Converter={StaticResource gameStateDescConv}}" FontSize="10" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,0,0"/>
                                     </Grid>
                                 </Border>
                             </DataTemplate>
