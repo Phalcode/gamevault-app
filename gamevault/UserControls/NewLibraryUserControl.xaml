@@ -53,8 +53,8 @@
                                     </TextBlock.Text>
                                 </TextBlock>
                                 <TextBox HorizontalAlignment="Center" Width="375" Margin="0,4,41,4" Style="{DynamicResource SearchTextBox}" TextChanged="Search_TextChanged"/>
-                                <Image Source="pack://application:,,,/gamevault;component/Resources/Images/library_dice.png" Margin="400,0,0,0" Height="25" Cursor="Hand" ToolTip="Random Game" MouseLeftButtonDown="RandomGame_Click" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
-                                <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" Width="30" Margin="0,0,5,0" Cursor="Hand" Background="Transparent" MouseLeftButtonDown="Filter_Click">
+                                <Image Source="pack://application:,,,/gamevault;component/Resources/Images/library_dice.png" Margin="400,0,0,0" Height="25" Cursor="Hand" ToolTip="I'm Feeling Lucky" MouseLeftButtonDown="RandomGame_Click" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" Width="30" Margin="0,0,5,0" Cursor="Hand" ToolTip="Toggle Filters &amp; Sorting" Background="Transparent" MouseLeftButtonDown="Filter_Click">
                                     <Path Data="{StaticResource IconOpenFilter}" Fill="White" RenderTransformOrigin="0.2,0.2">
                                         <Path.RenderTransform>
                                             <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
@@ -69,11 +69,10 @@
                         <StackPanel>
                             <Grid Visibility="{Binding FilterVisibility}">
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                    <local:TagSelector x:Name="uiFilterGameTypeSelector" SelectionType="GameType" Margin="0,0,100,0" EntriesUpdated="FilterUpdated"/>
-                                    <local:TagSelector x:Name="uiFilterTagSelector" SelectionType="Tags" Margin="0,0,100,0" EntriesUpdated="FilterUpdated"/>
-                                    <local:TagSelector x:Name="uiFilterGenreSelector" SelectionType="Genres" Margin="0,0,100,0" EntriesUpdated="FilterUpdated"/>
-                                    <mah:ToggleSwitch x:Name="uiFilterEarlyAccess" VerticalAlignment="Top" Header="Early Access Only"  Margin="0,0,100,0" Toggled="FilterUpdated"/>
-                                    <StackPanel LostFocus="FilterUpdated">
+                                    <local:TagSelector x:Name="uiFilterGameTypeSelector" SelectionType="GameType" Margin="7,0,22,0" Width="175" EntriesUpdated="FilterUpdated"/>
+                                    <local:TagSelector x:Name="uiFilterTagSelector" SelectionType="Tags" Margin="0,0,26,0" Width="175" EntriesUpdated="FilterUpdated"/>
+                                    <local:TagSelector x:Name="uiFilterGenreSelector" SelectionType="Genres" Margin="0,0,23,0" Width="175" EntriesUpdated="FilterUpdated"/>
+                                    <StackPanel LostFocus="FilterUpdated" Margin="0,0,95,0">
                                         <TextBlock Text="Release Year" FontSize="15"/>
                                         <StackPanel Orientation="Horizontal">
                                             <TextBox x:Name="uiFilterYearFrom" Text="1980" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" Background="{DynamicResource MainColor}" Width="42" MaxLength="4" PreviewTextInput="YearSelector_Changed"/>
@@ -81,6 +80,7 @@
                                             <TextBox x:Name="uiFilterYearTo" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" Background="{DynamicResource MainColor}" Width="42" MaxLength="4" PreviewTextInput="YearSelector_Changed"/>
                                         </StackPanel>
                                     </StackPanel>
+                                    <mah:ToggleSwitch x:Name="uiFilterEarlyAccess" VerticalAlignment="Top" Header="Early Access Only"   Toggled="FilterUpdated"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
                                     <ToggleButton Width="45" Cursor="Hand" Checked="OrderBy_Changed" Unchecked="OrderBy_Changed">
