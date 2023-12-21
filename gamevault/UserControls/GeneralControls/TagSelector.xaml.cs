@@ -1,4 +1,5 @@
 ﻿using ControlzEx.Standard;
+using gamevault.Converter;
 using gamevault.Helper;
 using gamevault.Models;
 using gamevault.ViewModels;
@@ -105,6 +106,15 @@ namespace gamevault.UserControls
             }
             else
             {
+                //EnumDescriptionConverter conv = new EnumDescriptionConverter();
+                //List<Genre_Tag> list = new List<Genre_Tag>();
+                //foreach (GameType type in Enum.GetValues(typeof(GameType)))
+                //{
+                //    if (type == GameType.UNDETECTABLE)
+                //        continue;
+
+                //    list.Add(new Genre_Tag() { DisplayName = type.ToString(), Name = (string)conv.Convert(type, null, null, null) });
+                //}
                 data = new Genre_Tag[3] { new Genre_Tag() { Name = "WINDOWS_SETUP" }, new Genre_Tag() { Name = "WINDOWS_PORTABLE" }, new Genre_Tag() { Name = "LINUX_PORTABLE" } };
                 data = data.Where(x => x.Name.Contains(debounceTimer.Data, StringComparison.OrdinalIgnoreCase)).ToArray();
             }

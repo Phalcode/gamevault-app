@@ -283,6 +283,9 @@ namespace gamevault.UserControls
         #region LAUNCH OPTIONS
         private void FindGameExecutables(string directory, bool checkForSavedExecutable)
         {
+            if (!Directory.Exists(directory))
+                return;
+
             string lastSelected = "";
             if (uiCbExecutables.SelectedItem != null)
             {
@@ -688,7 +691,7 @@ namespace gamevault.UserControls
                 }
             });
         }
-        private async void Recache_Click(object sender, RoutedEventArgs e)
+        private async void Recache_Click(object sender, MouseButtonEventArgs e)
         {
             this.IsEnabled = false;
             await Task.Run(() =>
@@ -733,5 +736,7 @@ namespace gamevault.UserControls
         }
 
         #endregion
+
+
     }
 }

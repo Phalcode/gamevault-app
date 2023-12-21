@@ -229,24 +229,23 @@
                                 </Path.RenderTransform>
                             </Path>
                             <TextBlock Text="Website" FontWeight="Bold" FontSize="20" Margin="55,0,0,0"/>
-                            <TextBlock FontSize="20" Margin="55,24,0,0">                              
+                            <TextBlock FontSize="20" Margin="55,24,0,0" ToolTip="{Binding Path=Game.WebsiteUrl}">                              
                                 <Hyperlink TextDecorations="None" NavigateUri="{Binding Path=Game.WebsiteUrl}" RequestNavigate="Website_Navigate">
                                     <Hyperlink.Inlines>
-                                        <Run Text="{Binding Path=Game.WebsiteUrl}"/>
+                                        <Run>
+                                            <Run.Style>
+                                                <Style TargetType="{x:Type Run}">
+                                                    <Setter Property="Text" Value="Open in Browser"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Path=Game.WebsiteUrl}" Value="">
+                                                            <Setter Property="Text" Value="N/A"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Run.Style>
+                                        </Run>
                                     </Hyperlink.Inlines>
                                 </Hyperlink>
-                            </TextBlock>
-                            <TextBlock Text="N/A" FontSize="20" Margin="55,24,0,0">
-                                <TextBlock.Style>
-                                    <Style TargetType="{x:Type TextBlock}">
-                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Path=Game.WebsiteUrl}" Value="">
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
                             </TextBlock>
                         </Grid>
                         <Grid Height="50" Margin="0,20,0,0">
@@ -382,9 +381,9 @@
                                 <Border CornerRadius="5" Background="#33000000" Padding="0" Margin="0,0,0,10" Height="50">
                                     <Grid Margin="5">
                                         <local:CacheImage Data="{Binding User}" Stretch="Fill" ImageCacheType="UserIcon" CornerRadius="5" HorizontalAlignment="Left" VerticalAlignment="Center" Width="40" Cursor="Hand" MouseLeftButtonUp="ShowProgressUser_Click"/>
-                                        <TextBlock Text="{Binding Path=User.Username}" FontSize="10" HorizontalAlignment="Left" Margin="50,0,0,0" VerticalAlignment="Center"/>
-                                        <TextBlock Text="{Binding MinutesPlayed,Converter={StaticResource timeConv}}" FontSize="10" HorizontalAlignment="Left" Margin="135,0,0,0" VerticalAlignment="Center"/>
-                                        <TextBlock FontSize="10" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,140,0">
+                                        <TextBlock Text="{Binding Path=User.Username}" FontSize="12" HorizontalAlignment="Left" Margin="50,0,0,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{Binding MinutesPlayed,Converter={StaticResource timeConv}}" FontSize="12" HorizontalAlignment="Left" Margin="135,0,0,0" VerticalAlignment="Center"/>
+                                        <TextBlock FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,135,0">
                                             <TextBlock.Style>
                                                 <Style TargetType="{x:Type TextBlock}">
                                                     <Style.Setters>
@@ -411,7 +410,7 @@
                                                 </TextBlock>
                                             </TextBlock.ToolTip>                                        
                                         </TextBlock>
-                                        <TextBlock Text="{Binding State,Converter={StaticResource gameStateDescConv}}" FontSize="10" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,0,0"/>
+                                        <TextBlock Text="{Binding State,Converter={StaticResource gameStateDescConv}}" FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,2,0"/>
                                     </Grid>
                                 </Border>
                             </DataTemplate>

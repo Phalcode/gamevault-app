@@ -24,7 +24,6 @@
 		<None Remove="Resources\Images\glyph_admin.png" />
 		<None Remove="Resources\Images\glyph_community.png" />
 		<None Remove="Resources\Images\glyph_download.png" />
-		<None Remove="Resources\Images\glyph_installs.png" />
 		<None Remove="Resources\Images\glyph_installs_NoInstalls.png" />
 		<None Remove="Resources\Images\glyph_settings.png" />
 		<None Remove="Resources\Images\icon.ico" />
@@ -50,7 +49,6 @@
 		<Resource Include="Resources\Images\glyph_admin.png" />
 		<Resource Include="Resources\Images\glyph_community.png" />
 		<Resource Include="Resources\Images\glyph_download.png" />
-		<Resource Include="Resources\Images\glyph_installs.png" />
 		<Resource Include="Resources\Images\glyph_server.png" />
 		<Resource Include="Resources\Images\glyph_settings.png" />
 		<Resource Include="Resources\Images\icon.ico" />

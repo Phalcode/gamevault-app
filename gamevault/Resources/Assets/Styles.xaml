@@ -298,25 +298,23 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Grid Margin="1">
-                                <Path Name="Arrow" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M2 0 L16 14 L30 0 L32 0 L16 16 L0 0 Z" RenderTransformOrigin="0.5, 0.5" SnapsToDevicePixels="false" Stroke="{TemplateBinding Foreground}" StrokeThickness="2">
-                                    <Path.RenderTransform>
-                                        <ScaleTransform ScaleX="0.7" ScaleY="0.7"/>
-                                    </Path.RenderTransform>
-                                </Path>
-                            </Grid>
+                            <Path Name="Arrow" Margin="0,0,12,12" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M12 14.95q-.2 0-.375-.062t-.325-.213l-4.6-4.6q-.275-.275-.275-.7t.275-.7q.275-.275.7-.275t.7.275l3.9 3.9l3.9-3.9q.275-.275.7-.275t.7.275q.275.275.275.7t-.275.7l-4.6 4.6q-.15.15-.325.213T12 14.95" RenderTransformOrigin="0.5, 0.5" SnapsToDevicePixels="false" Fill="{TemplateBinding Foreground}" >
+                                <Path.RenderTransform>
+                                    <ScaleTransform ScaleX="1.8" ScaleY="1.8"/>
+                                </Path.RenderTransform>
+                            </Path>
                             <mah:ContentControlEx Grid.Column="1" Margin="4 0 0 0" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}" RecognizesAccessKey="False" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" ContentCharacterCasing="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(mah:ControlsHelper.ContentCharacterCasing)}" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="ToggleButton.IsChecked" Value="true">
-                            <Setter TargetName="Arrow" Property="Data" Value="M0 16 L16 0 L32 16 L30 16 L16 2 L2 16 Z" />
+                            <Setter TargetName="Arrow" Property="Data" Value="m12 10.775l-3.9 3.9q-.275.275-.7.275t-.7-.275q-.275-.275-.275-.7t.275-.7l4.6-4.6q.15-.15.325-.213T12 8.4q.2 0 .375.063t.325.212l4.6 4.6q.275.275.275.7t-.275.7q-.275.275-.7.275t-.7-.275z" />
                         </Trigger>
                         <Trigger Property="UIElement.IsMouseOver" Value="true">
-                            <Setter TargetName="Arrow" Value="{DynamicResource MahApps.Brushes.Gray2}" Property="Stroke" />
+                            <Setter TargetName="Arrow" Value="{DynamicResource MahApps.Brushes.Gray2}" Property="Fill" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="true">
-                            <Setter TargetName="Arrow" Value="{DynamicResource MahApps.Brushes.ThemeForeground}" Property="Stroke" />
+                            <Setter TargetName="Arrow" Value="{DynamicResource MahApps.Brushes.ThemeForeground}" Property="Fill" />
                         </Trigger>
                     </ControlTemplate.Triggers>
 
@@ -366,7 +364,7 @@
         <Setter Property="Padding" Value="4" />
         <Setter Property="TextBoxBase.SelectionBrush" Value="{DynamicResource MahApps.Brushes.Highlight}" />
         <Setter Property="UIElement.SnapsToDevicePixels" Value="True" />
-        
+
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TextBox}">
@@ -397,7 +395,7 @@
                             <Setter TargetName="PART_ClearText" Value="LightGray" Property="Background" />
                             <Setter TargetName="PART_ClearText" Value="white" Property="Foreground" />
                             <Setter TargetName="PART_ClearTextBorder" Value="LightGray" Property="BorderBrush" />
-                            
+
                         </Trigger>
                         <Trigger Property="UIElement.IsFocused" Value="True">
                             <Setter TargetName="PART_Message" Property="Foreground" Value="#7F000000"/>
@@ -419,7 +417,7 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-       
+
     </Style>
 
 

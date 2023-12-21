@@ -52,7 +52,7 @@
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>
-                                <TextBox HorizontalAlignment="Center" Width="375" Margin="0,4,41,4" Style="{DynamicResource SearchTextBox}" TextChanged="Search_TextChanged"/>
+                                <TextBox HorizontalAlignment="Center" Width="379" Margin="0,4,47,4" Style="{DynamicResource SearchTextBox}" TextChanged="Search_TextChanged"/>
                                 <Image Source="pack://application:,,,/gamevault;component/Resources/Images/library_dice.png" Margin="400,0,0,0" Height="25" Cursor="Hand" ToolTip="I'm Feeling Lucky" MouseLeftButtonDown="RandomGame_Click" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
                                 <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" Width="30" Margin="0,0,5,0" Cursor="Hand" ToolTip="Toggle Filters &amp; Sorting" Background="Transparent" MouseLeftButtonDown="Filter_Click">
                                     <Path Data="{StaticResource IconOpenFilter}" Fill="White" RenderTransformOrigin="0.2,0.2">

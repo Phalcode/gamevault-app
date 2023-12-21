@@ -162,8 +162,8 @@
                                 <local:IconButton Content="Uninstall Game" Icon="{DynamicResource IconTrash}" Background="IndianRed" Width="142" Height="33" Margin="10,0,0,0" MouseLeftButtonUp="Uninstall_Click"/>
                             </StackPanel>
                             <TextBlock Text="Disk Usage" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
-                            <lvc:PieChart x:Name="uiDiscUsagePieChart" Width="600" Height="300" InitialRotation="-90" IsClockwise="True" HorizontalAlignment="Left" Margin="0,20,0,0"/>
-                            <StackPanel Margin="250,0,0,0" HorizontalAlignment="Left">
+                            <lvc:PieChart x:Name="uiDiscUsagePieChart" Width="300" Height="300" InitialRotation="-90" IsClockwise="True" HorizontalAlignment="Left" Margin="0,10,0,0"/>
+                            <StackPanel Margin="100,0,0,0" HorizontalAlignment="Left">
                                 <TextBlock Text="Total Disk Size" FontSize="15" FontWeight="Bold" />
                                 <TextBlock x:Name="uiTxtAllInstalledGamesSize" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center"/>
                             </StackPanel>
@@ -175,13 +175,16 @@
                                 <Path Data="{DynamicResource IconGameSettingsLaunchOptions}" Fill="White" Margin="0,1,0,0"/>
                                 <TextBlock Text="Launch Options" FontSize="20" FontWeight="Bold" Margin="5,0,0,0"/>
                             </StackPanel>
-                            <TextBlock Text="Here you can manage you launch options" FontSize="15" Margin="0,5,0,0"/>
-                            <TextBlock Text="Game Executable" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
-                            <ComboBox x:Name="uiCbExecutables" ItemsSource="{Binding Executables}" DisplayMemberPath="Value" Margin="0,10,150,0" SelectionChanged="Executable_SelectionChanged" DropDownOpened="ExecutableSelection_Opened"/>
+                            <TextBlock Text="Here, you can customize your game launch settings, such as adding launch parameter or creating a desktop icon." FontSize="15" Margin="0,5,0,0"/>
+                            <TextBlock Text="Launch Executable" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
+                            <TextBlock Text="Select which executable should be started when you press the play button." FontSize="15" Margin="0,5,0,0"/>
+                            <ComboBox x:Name="uiCbExecutables" ItemsSource="{Binding Executables}" DisplayMemberPath="Value" Margin="0,10,20,0" SelectionChanged="Executable_SelectionChanged" DropDownOpened="ExecutableSelection_Opened"/>
                             <TextBlock Text="Launch Parameter" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
-                            <TextBox Text="{Binding LaunchParameter,UpdateSourceTrigger=PropertyChanged}" LostFocus="LaunchParameter_Changed" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" Margin="0,10,150,0"/>
-                            <TextBlock Text="Desktop Shortcut" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
-                            <local:IconButton Content="Create" Icon="{DynamicResource IconGameSettingsLink}" Width="83" Height="33" Margin="0,10,0,0" HorizontalAlignment="Left" MouseLeftButtonUp="CreateDesktopShortcut_Click"/>
+                            <TextBlock Text="Advanced Users can modify the launch parameters of the executable above here." FontSize="15" Margin="0,5,0,0"/>
+                            <TextBox Text="{Binding LaunchParameter,UpdateSourceTrigger=PropertyChanged}" LostFocus="LaunchParameter_Changed" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.Watermark="e.g. -fullscreen" BorderThickness="2" FontSize="17" Margin="0,10,20,0"/>
+                            <TextBlock Text="Desktop Icon" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
+                            <TextBlock Text="Your can press this button to create a desktop shortcut for the selected game executable. Please note that this shortcut does not launch GameVault, nor does it update when you change your launch executable or modify your launch parameters." FontSize="15" Margin="0,5,0,0" TextWrapping="Wrap"/>
+                            <local:IconButton Content="Create Desktop Icon" Icon="{DynamicResource IconGameSettingsLink}" Width="180" Height="33" Margin="0,10,0,0" HorizontalAlignment="Left" MouseLeftButtonUp="CreateDesktopShortcut_Click"/>
                         </StackPanel>
                     </mah:MetroTabItem>
                     <mah:MetroTabItem>
@@ -342,7 +345,7 @@
                             </StackPanel>
                             <TextBlock Text="Recache Game" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
                             <TextBlock Text="When pressed, this Button will re-fetch all data for the mapped RAWG Game from RAWG.IO and cache it on the Server." FontSize="15" Margin="0,5,0,0"/>
-                            <Button Content="Recache Game" HorizontalAlignment="Left" Margin="0,5,0,0" Width="130" Click="Recache_Click"/>
+                            <local:IconButton Content="Recache Game" Icon="{DynamicResource IconReload}" HorizontalAlignment="Left" Margin="0,5,0,0" Width="140" Height="33" MouseLeftButtonUp="Recache_Click"/>
 
                             <TextBlock Text="Remap Game" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
                             <TextBlock Text="Is the currently mapped Game incorrect or missing? Manually search the RAWG API and re-map your Game here." FontSize="15" Margin="0,5,0,0"/>

@@ -12,7 +12,7 @@
             <Expander.Header>
                 <Grid Height="35">
                     <TextBlock Text="{Binding Path=InstalledGames.Count,StringFormat='{}Installed Games ({0})'}" FontWeight="Bold" HorizontalAlignment="Left" FontSize="20" VerticalAlignment="Center"/>
-                    <TextBox HorizontalAlignment="Center" Width="375" Margin="0,4,41,4" Style="{DynamicResource SearchTextBox}" TextChanged="Search_TextChanged"/>
+                    <TextBox HorizontalAlignment="Center" Width="379" Margin="0,4,35,4" Style="{DynamicResource SearchTextBox}" TextChanged="Search_TextChanged"/>
                 </Grid>
             </Expander.Header>
             <Border Background="{StaticResource DarkBackground4}" CornerRadius="5" Margin="-6,5,-6,0" VerticalAlignment="Top">

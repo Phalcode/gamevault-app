@@ -35,12 +35,11 @@
                 </Grid>
             </Border>
         </Grid>
-        <mah:HamburgerMenu HamburgerVisibility="Hidden" ItemInvoked="HamburgerMenuControl_OnItemInvoked" SelectedIndex="{Binding ActiveControlIndex}">
+        <mah:HamburgerMenu HamburgerVisibility="Hidden" ItemInvoked="HamburgerMenuControl_OnItemInvoked" SelectedIndex="{Binding ActiveControlIndex}" RenderOptions.BitmapScalingMode="HighQuality">
             <mah:HamburgerMenu.ItemsSource>
                 <mah:HamburgerMenuItemCollection>
                     <mah:HamburgerMenuGlyphItem Glyph="pack://application:,,,/gamevault;component/Resources/Images/glyph_server.png"/>
                     <mah:HamburgerMenuGlyphItem Glyph="pack://application:,,,/gamevault;component/Resources/Images/glyph_download.png"/>
-                    <!--<mah:HamburgerMenuGlyphItem Glyph="pack://application:,,,/gamevault;component/Resources/Images/glyph_server.png"/>-->
                     <mah:HamburgerMenuGlyphItem Glyph="pack://application:,,,/gamevault;component/Resources/Images/glyph_community.png"/>
                     <mah:HamburgerMenuGlyphItem Glyph="pack://application:,,,/gamevault;component/Resources/Images/glyph_settings.png"/>
                     <mah:HamburgerMenuGlyphItem Glyph="pack://application:,,,/gamevault;component/Resources/Images/glyph_admin.png" IsVisible="{Binding Path=UserIcon, Converter={StaticResource permissionRoleConv}}"/>

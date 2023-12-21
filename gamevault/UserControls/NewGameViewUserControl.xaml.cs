@@ -140,10 +140,14 @@ namespace gamevault.UserControls
 
         private void Website_Navigate(object sender, RequestNavigateEventArgs e)
         {
-            string url = e.Uri.OriginalString;
-            url = url.Replace("&", "^&");
-            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-            e.Handled = true;
+            try
+            {
+                string url = e.Uri.OriginalString;
+                url = url.Replace("&", "^&");
+                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                e.Handled = true;
+            }
+            catch { }
         }
 
         private async void GameState_SelectionChanged(object sender, SelectionChangedEventArgs e)

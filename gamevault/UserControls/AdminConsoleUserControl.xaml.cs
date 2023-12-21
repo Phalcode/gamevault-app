@@ -226,9 +226,9 @@ namespace gamevault.UserControls
                     string currentServerVersion = JsonSerializer.Deserialize<ServerInfo>(serverResonse).Version;
                     if (Convert.ToInt32(newestServerVersion.Replace(".", "")) > Convert.ToInt32(currentServerVersion.Replace(".", "")))
                     {
-                        return new KeyValuePair<string, string>($"v{currentServerVersion}", (string)gitObj[0]["html_url"]);
+                        return new KeyValuePair<string, string>($"Server Version: {currentServerVersion}", (string)gitObj[0]["html_url"]);
                     }
-                    return new KeyValuePair<string, string>($"v{currentServerVersion}", "");
+                    return new KeyValuePair<string, string>($"Server Version: {currentServerVersion}", "");
                 }
             }
             catch
