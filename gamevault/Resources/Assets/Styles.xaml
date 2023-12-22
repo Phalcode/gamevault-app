@@ -298,7 +298,7 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Path Name="Arrow" Margin="0,0,12,12" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M12 14.95q-.2 0-.375-.062t-.325-.213l-4.6-4.6q-.275-.275-.275-.7t.275-.7q.275-.275.7-.275t.7.275l3.9 3.9l3.9-3.9q.275-.275.7-.275t.7.275q.275.275.275.7t-.275.7l-4.6 4.6q-.15.15-.325.213T12 14.95" RenderTransformOrigin="0.5, 0.5" SnapsToDevicePixels="false" Fill="{TemplateBinding Foreground}" >
+                            <Path Name="Arrow" Margin="10,0,12,12" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M12 14.95q-.2 0-.375-.062t-.325-.213l-4.6-4.6q-.275-.275-.275-.7t.275-.7q.275-.275.7-.275t.7.275l3.9 3.9l3.9-3.9q.275-.275.7-.275t.7.275q.275.275.275.7t-.275.7l-4.6 4.6q-.15.15-.325.213T12 14.95" RenderTransformOrigin="0.5, 0.5" SnapsToDevicePixels="false" Fill="{TemplateBinding Foreground}" >
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="1.8" ScaleY="1.8"/>
                                 </Path.RenderTransform>
@@ -348,6 +348,46 @@
                         <Border Name="Background" Background="{TemplateBinding Background}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5"/>
                         <Border Name="MouseOverRectangle" Background="{DynamicResource MahApps.Brushes.ThemeForeground}" Opacity="0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5"/>
                         <Border Name="PressedRectangle" Background="{DynamicResource MahApps.Brushes.ThemeForeground}" Opacity="0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="SecondaryScrollView" TargetType="{x:Type ScrollViewer}">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <ScrollContentPresenter Grid.ColumnSpan="2" Grid.RowSpan="2"/>
+                        <ScrollBar Name="PART_VerticalScrollBar"
+                                
+                                 HorizontalAlignment="Right"
+                                 Opacity="0.5" 
+                                 Grid.Column="1"
+                                 Value="{TemplateBinding VerticalOffset}"
+                                 Maximum="{TemplateBinding ScrollableHeight}"
+                                 ViewportSize="{TemplateBinding ViewportHeight}"
+                                 Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" />
+                        <ScrollBar Name="PART_HorizontalScrollBar"
+                                                                                               
+                                 VerticalAlignment="Bottom"
+                                 Orientation="Horizontal"
+                                 Opacity="0.5"
+                                 Grid.Row="1"
+                                 Value="{TemplateBinding HorizontalOffset}"
+                                 Maximum="{TemplateBinding ScrollableWidth}"
+                                 ViewportSize="{TemplateBinding ViewportWidth}"
+                                 Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

@@ -20,9 +20,9 @@ namespace gamevault.Models
         PLAYING,
         [Description("Completed")]
         COMPLETED,
-        [Description("Aborted Temporary")]
+        [Description("Temporarily Aborted")]
         ABORTED_TEMPORARY,
-        [Description("Aborted Permanent")]
+        [Description("Permanently Aborted")]
         ABORTED_PERMANENT
     }
     public class Progress

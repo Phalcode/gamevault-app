@@ -27,7 +27,7 @@
                     <local:NewInstallUserControl x:Name="uiGameInstalls" Width="2000"/>
                 </Viewbox>
                 <Viewbox>
-                    <Expander x:Name="uiExpanderGameCards" Width="2000" Margin="10" mah:ExpanderHelper.HeaderDownStyle="{StaticResource CustomExpanderToggleButton}" BorderBrush="{x:Null}">
+                    <Expander x:Name="uiExpanderGameCards" Width="2000" Margin="10,0,10,10" mah:ExpanderHelper.HeaderDownStyle="{StaticResource CustomExpanderToggleButton}" BorderBrush="{x:Null}">
                         <Expander.Header>
                             <Grid Height="35">
                                 <TextBlock Text="Server Games" FontWeight="Bold" HorizontalAlignment="Left" FontSize="20" VerticalAlignment="Center"/>
@@ -52,9 +52,9 @@
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>
-                                <TextBox HorizontalAlignment="Center" Width="379" Margin="0,4,47,4" Style="{DynamicResource SearchTextBox}" TextChanged="Search_TextChanged"/>
+                                <TextBox HorizontalAlignment="Center" Width="378" Margin="0,4,45,4" Style="{DynamicResource SearchTextBox}" TextChanged="Search_TextChanged"/>
                                 <Image Source="pack://application:,,,/gamevault;component/Resources/Images/library_dice.png" Margin="400,0,0,0" Height="25" Cursor="Hand" ToolTip="I'm Feeling Lucky" MouseLeftButtonDown="RandomGame_Click" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
-                                <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" Width="30" Margin="0,0,5,0" Cursor="Hand" ToolTip="Toggle Filters &amp; Sorting" Background="Transparent" MouseLeftButtonDown="Filter_Click">
+                                <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" Width="30" Margin="0,0,7,0" Cursor="Hand" ToolTip="Toggle Filters &amp; Sorting" Background="Transparent" MouseLeftButtonDown="Filter_Click">
                                     <Path Data="{StaticResource IconOpenFilter}" Fill="White" RenderTransformOrigin="0.2,0.2">
                                         <Path.RenderTransform>
                                             <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
@@ -69,10 +69,10 @@
                         <StackPanel>
                             <Grid Visibility="{Binding FilterVisibility}">
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                    <local:TagSelector x:Name="uiFilterGameTypeSelector" SelectionType="GameType" Margin="7,0,22,0" Width="175" EntriesUpdated="FilterUpdated"/>
-                                    <local:TagSelector x:Name="uiFilterTagSelector" SelectionType="Tags" Margin="0,0,26,0" Width="175" EntriesUpdated="FilterUpdated"/>
+                                    <local:TagSelector x:Name="uiFilterGameTypeSelector" SelectionType="GameType" Margin="12,0,24,0" Width="175" EntriesUpdated="FilterUpdated"/>
+                                    <local:TagSelector x:Name="uiFilterTagSelector" SelectionType="Tags" Margin="0,0,24,0" Width="175" EntriesUpdated="FilterUpdated"/>
                                     <local:TagSelector x:Name="uiFilterGenreSelector" SelectionType="Genres" Margin="0,0,23,0" Width="175" EntriesUpdated="FilterUpdated"/>
-                                    <StackPanel LostFocus="FilterUpdated" Margin="0,0,95,0">
+                                    <StackPanel LostFocus="FilterUpdated" Margin="0,0,99,0">
                                         <TextBlock Text="Release Year" FontSize="15"/>
                                         <StackPanel Orientation="Horizontal">
                                             <TextBox x:Name="uiFilterYearFrom" Text="1980" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" Background="{DynamicResource MainColor}" Width="42" MaxLength="4" PreviewTextInput="YearSelector_Changed"/>
@@ -109,7 +109,7 @@
                                             </Style>
                                         </ToggleButton.Style>
                                     </ToggleButton>
-                                    <ComboBox Height="20" Width="180" Margin="30,10,0,0" DisplayMemberPath="Key" SelectedIndex="0" SelectedItem="{Binding SelectedGameFilterSortBy}" ItemsSource="{Binding GameFilterSortByValues}" SelectionChanged="SelectedGameFilterSortBy_SelectionChanged"/>
+                                    <ComboBox Height="20" Width="175" Margin="25,10,10,0" DisplayMemberPath="Key" SelectedIndex="0" SelectedItem="{Binding SelectedGameFilterSortBy}" ItemsSource="{Binding GameFilterSortByValues}" SelectionChanged="SelectedGameFilterSortBy_SelectionChanged"/>
                                 </StackPanel>
                             </Grid>
                             <Border Background="{StaticResource DarkBackground4}" CornerRadius="5" Margin="-6,5,-6,0" VerticalAlignment="Top">
@@ -137,15 +137,15 @@
                                         </TextBlock>
                                     </StackPanel>
                                     <!--Games found-->
-                                    <vwp:VirtualizingItemsControl x:Name="uiServerGamesItemsControl" ItemsSource="{Binding Path=GameCards}" Background="Transparent" IsTabStop="False" MaxHeight="891">
+                                    <vwp:VirtualizingItemsControl x:Name="uiServerGamesItemsControl" ItemsSource="{Binding Path=GameCards}" Margin="0,0,0,0" Background="Transparent" IsTabStop="False" MaxHeight="891">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
-                                                <UniformGrid Background="Transparent" Columns="10"/>
+                                                <UniformGrid Background="Transparent" Columns="10" Margin="0,5,0,5"/>
                                             </ItemsPanelTemplate>
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Grid Cursor="Hand" Background="Transparent" Name="ParentGrid" MaxHeight="267" MaxWidth="178" Height="267" Width="178" Margin="10,10,10,10" MouseLeftButtonUp="GameCard_Clicked">
+                                                <Grid Cursor="Hand" Background="Transparent" Name="ParentGrid" MaxHeight="267" MaxWidth="178" Height="267" Width="178" Margin="0,10,0,10" MouseLeftButtonUp="GameCard_Clicked">
                                                     <Grid RenderTransformOrigin="0.5,0.5">
                                                         <Grid.RenderTransform>
                                                             <ScaleTransform/>
@@ -219,8 +219,9 @@
                                         <ItemsControl.Template>
                                             <ControlTemplate TargetType="vwp:VirtualizingItemsControl">
                                                 <Grid>
-                                                    <ScrollViewer Name="PART_ItemsScroll" CanContentScroll="True" Padding="{TemplateBinding Padding}" Focusable="False" ScrollChanged="Library_ScrollChanged" PreviewMouseWheel="Library_PreviewMouseWheel">
-                                                        <ItemsPresenter/>
+                                                    <ScrollViewer Name="PART_ItemsScroll" Style="{DynamicResource SecondaryScrollView}" CanContentScroll="True" Padding="{TemplateBinding Padding}" Focusable="False" ScrollChanged="Library_ScrollChanged" PreviewMouseWheel="Library_PreviewMouseWheel">
+                                                 
+                                                        <ItemsPresenter Margin="5,0,5,0"/>
                                                     </ScrollViewer>
                                                     <Border Style="{DynamicResource HoverEffect}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Visibility="{Binding ScrollToTopVisibility}" Background="#B2574EB9" CornerRadius="5" Cursor="Hand" Width="50" Height="50" Margin="1800,0,15,15" Padding="18,20,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="ScrollToTop_Click">
                                                         <Path Data="{StaticResource IconLibraryScrollToTop}" Fill="White" RenderTransformOrigin="0.5,0.5">
