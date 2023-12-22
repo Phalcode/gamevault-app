@@ -16,7 +16,7 @@
             <RowDefinition Height="50"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Border Background="{StaticResource DarkBackground2}" Grid.Row="0">
+        <Border Background="{StaticResource DarkBackground4}" Grid.Row="0">
             <Grid>
                 <TextBlock Text="Admin Console" FontSize="35" Margin="20,0,0,0" Foreground="White"/>
                 <StackPanel Orientation="Horizontal" Margin="270,0,0,0" HorizontalAlignment="Left">

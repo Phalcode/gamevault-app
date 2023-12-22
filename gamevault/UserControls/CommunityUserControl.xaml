@@ -20,7 +20,7 @@
             <RowDefinition Height="50"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Border Background="{StaticResource DarkBackground2}" Grid.Row="0">
+        <Border Background="{StaticResource DarkBackground4}" Grid.Row="0">
             <Grid>
                 <TextBlock Text="Community" FontSize="35" Margin="20,0,0,0" Foreground="White"/>
                 <ComboBox x:Name="uiSelectUser" ItemsSource="{Binding Users}" DisplayMemberPath="Username" Margin="5" HorizontalAlignment="Right" SelectionChanged="Users_SelectionChanged"/>
