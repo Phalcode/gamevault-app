@@ -2,7 +2,7 @@
 ![logo](https://gamevau.lt/img/logo-text-and-image-sbs.png)
 [You can find the official Website/Documentation here](https://gamevau.lt)
 
-## Library Technical Decision Matrix
+## Library Technical Decision Matrix 
 
 > This is probably irrelevant to you if you are not a developer.
 > GameVault internally needs to behave different in each of the following scenarios.
