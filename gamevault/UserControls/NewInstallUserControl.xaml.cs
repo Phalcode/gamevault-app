@@ -2,40 +2,47 @@
 using gamevault.Models;
 using gamevault.ViewModels;
 using System;
-using System.CodeDom;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using Windows.UI.Composition;
 
 namespace gamevault.UserControls
 {
-    /// <summary>
-    /// Interaction logic for InstallUserControl.xaml
-    /// </summary>
-    public partial class InstallUserControl : UserControl
+    public partial class NewInstallUserControl : UserControl
     {
+        private InputTimer inputTimer { get; set; }
         private List<FileSystemWatcher> m_FileWatcherList = new List<FileSystemWatcher>();
-        private string[]? m_IgnoreList { get; set; }
-        public InstallUserControl()
+
+        public NewInstallUserControl()
         {
             InitializeComponent();
-            this.DataContext = InstallViewModel.Instance;
+            this.DataContext = NewInstallViewModel.Instance;
+            InitTimer();
+            uiInstalledGames.IsExpanded = Preferences.Get(AppConfigKey.InstalledGamesOpen, AppFilePath.UserFile) == "1" ? true : false;
         }
-        public async Task StartInstalledGamesTracker()
+        public async Task RestoreInstalledGames()
         {
-            m_IgnoreList = GetIgnoreList();
+            NewInstallViewModel.Instance.IgnoreList = GetIgnoreList();
             Dictionary<int, string> foundGames = new Dictionary<int, string>();
             Game[]? games = await Task<Game[]>.Run(() =>
             {
@@ -54,7 +61,7 @@ namespace gamevault.UserControls
                         {
                             int id = GetGameIdByDirectory(dir);
                             if (id == -1) continue;
-                            if (InstallViewModel.Instance.InstalledGames.Where(x => x.GetGameId() == id).Count() > 0)
+                            if (NewInstallViewModel.Instance.InstalledGames.Where(x => x.Key.ID == id).Count() > 0)
                                 continue;
                             if (!foundGames.ContainsKey(id))
                             {
@@ -90,12 +97,16 @@ namespace gamevault.UserControls
                                     string objectFromFile = Preferences.Get(id, AppFilePath.OfflineCache);
                                     if (objectFromFile != string.Empty)
                                     {
-                                        string decompressedObject = StringCompressor.DecompressString(objectFromFile);
-                                        Game? deserializedObject = JsonSerializer.Deserialize<Game>(decompressedObject);
-                                        if (deserializedObject != null)
+                                        try
                                         {
-                                            offlineCacheGames.Add(deserializedObject);
+                                            string decompressedObject = StringCompressor.DecompressString(objectFromFile);
+                                            Game? deserializedObject = JsonSerializer.Deserialize<Game>(decompressedObject);
+                                            if (deserializedObject != null)
+                                            {
+                                                offlineCacheGames.Add(deserializedObject);
+                                            }
                                         }
+                                        catch (FormatException exFormat) { }
                                     }
                                 }
                                 return offlineCacheGames.ToArray();
@@ -112,9 +123,10 @@ namespace gamevault.UserControls
                         MainWindowViewModel.Instance.AppBarText = exJson.Message;
                         return null;
                     }
-                    catch(FormatException exFormat)
+                    catch (Exception ex)
                     {
-                        MainWindowViewModel.Instance.AppBarText = "The offline cache is corrupted";
+                        MainWindowViewModel.Instance.AppBarText = ex.Message;
+                        return null;
                     }
                 }
                 return null;
@@ -128,7 +140,7 @@ namespace gamevault.UserControls
                         Game? game = games.Where(x => x.ID == foundGames.ElementAt(count).Key).FirstOrDefault();
                         if (game != null)
                         {
-                            InstallViewModel.Instance.InstalledGames.Add(new GameInstallUserControl(game, foundGames.ElementAt(count).Value, m_IgnoreList));
+                            NewInstallViewModel.Instance.InstalledGames.Add(new KeyValuePair<Game, string>(game, foundGames.ElementAt(count).Value));
                             if (LoginManager.Instance.IsLoggedIn())
                             {
                                 if (!Preferences.Exists(game.ID.ToString(), AppFilePath.OfflineCache))
@@ -141,8 +153,11 @@ namespace gamevault.UserControls
                     }
                     catch { }
                 }
+                NewInstallViewModel.Instance.InstalledGamesFilter = CollectionViewSource.GetDefaultView(NewInstallViewModel.Instance.InstalledGames);
             }
         }
+
+
         public void AddSystemFileWatcher(string path)
         {
             if (m_FileWatcherList.Where(x => x.Path == path).Count() > 0)
@@ -167,7 +182,7 @@ namespace gamevault.UserControls
             if (id == -1)
                 return;
 
-            if (InstallViewModel.Instance.InstalledGames.Where(x => x.GetGameId() == id).Count() > 0)
+            if (NewInstallViewModel.Instance.InstalledGames.Where(x => x.Key.ID == id).Count() > 0)
                 return;
 
             try
@@ -193,7 +208,7 @@ namespace gamevault.UserControls
                 {
                     App.Current.Dispatcher.Invoke((Action)delegate
                     {
-                        InstallViewModel.Instance.InstalledGames.Add(new GameInstallUserControl(game, dir, m_IgnoreList));
+                        NewInstallViewModel.Instance.InstalledGames.Add(new KeyValuePair<Game, string>(game, dir));
                     });
                 }
             }
@@ -213,9 +228,13 @@ namespace gamevault.UserControls
         }
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
-            string url = e.Uri.OriginalString;
-            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-            e.Handled = true;
+            try
+            {
+                string url = e.Uri.OriginalString;
+                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                e.Handled = true;
+            }
+            catch (Exception ex) { MainWindowViewModel.Instance.AppBarText = ex.Message; }
         }
         private string[]? GetIgnoreList()
         {
@@ -225,6 +244,86 @@ namespace gamevault.UserControls
                 return JsonSerializer.Deserialize<string[]>(result);
             }
             catch { return null; }
+        }
+
+        private void GameCard_Clicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            MainWindowViewModel.Instance.SetActiveControl(new NewGameViewUserControl(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key, LoginManager.Instance.IsLoggedIn()));
+        }
+        private void Search_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            inputTimer.Stop();
+            inputTimer.Data = ((TextBox)sender).Text;
+            inputTimer.Start();
+        }
+        private void InputTimerElapsed(object sender, EventArgs e)
+        {
+            inputTimer.Stop();
+            NewInstallViewModel.Instance.InstalledGamesFilter.Filter = item =>
+            {
+                return ((KeyValuePair<Game, string>)item).Key.Title.Contains(inputTimer.Data, StringComparison.OrdinalIgnoreCase);
+            };
+        }
+
+        private void Play_Click(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+            string savedExecutable = Preferences.Get(AppConfigKey.Executable, $"{((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Value}\\gamevault-exec");
+            string parameter = Preferences.Get(AppConfigKey.LaunchParameter, $"{((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Value}\\gamevault-exec");
+            if (savedExecutable == string.Empty)
+            {
+                MainWindowViewModel.Instance.AppBarText = $"No Executable set";
+            }
+            else if (File.Exists(savedExecutable))
+            {
+                try
+                {
+                    ProcessHelper.StartApp(savedExecutable, parameter);
+                }
+                catch
+                {
+
+                    try
+                    {
+                        ProcessHelper.StartApp(savedExecutable, parameter, true);
+                    }
+                    catch
+                    {
+                        MainWindowViewModel.Instance.AppBarText = $"Can not execute '{savedExecutable}'";
+                    }
+                }
+            }
+            else
+            {
+                MainWindowViewModel.Instance.AppBarText = $"Could not find Executable '{savedExecutable}'";
+            }
+        }
+
+        private void Settings_Click(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+            MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key) { Width = 1200, Height = 800, Margin = new Thickness(50) });
+        }
+        private void InitTimer()
+        {
+            inputTimer = new InputTimer();
+            inputTimer.Interval = TimeSpan.FromMilliseconds(400);
+            inputTimer.Tick += InputTimerElapsed;
+        }
+
+        private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            e.Handled = true;
+            ScrollViewer parent = VisualHelper.FindNextParentByType<ScrollViewer>((ScrollViewer)sender);
+            var eventArg = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
+            eventArg.RoutedEvent = UIElement.MouseWheelEvent;
+            eventArg.Source = sender;
+            parent.RaiseEvent(eventArg);
+        }
+
+        private void InstalledGames_Toggled(object sender, RoutedEventArgs e)
+        {
+            Preferences.Set(AppConfigKey.InstalledGamesOpen, uiInstalledGames.IsExpanded ? "1" : "0", AppFilePath.UserFile);
         }
     }
 }

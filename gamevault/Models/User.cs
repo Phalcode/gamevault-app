@@ -14,7 +14,7 @@ namespace gamevault.Models
         EDITOR,
         ADMIN
     }
-    internal class User
+    public class User
     {
         [JsonPropertyName("id")]
         public int ID { get; set; }
@@ -49,5 +49,7 @@ namespace gamevault.Models
         public bool? Activated { get; set; }
         [JsonPropertyName("deleted_at")]
         public string DeletedAt { get; set; }
+        [JsonPropertyName("created_at")]
+        public DateTime? CreatedAt { get; set; }
     }
 }

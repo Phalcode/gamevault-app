@@ -19,9 +19,29 @@
             <local:CacheImage HorizontalAlignment="Left" VerticalAlignment="Top" MaxWidth="52" Margin="2,2,120,2" ImageCacheType="BoxArt" Data="{Binding Path=Game}" CornerRadius="2" Cursor="Hand" MouseLeftButtonUp="GameImage_MouseLeftButtonUp"/>
 
             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="56,2,0,0" Text="{Binding Path=Game.Title}" MaxWidth="106" FontSize="6" FontWeight="Bold"/>
-            <TextBlock Text="🗑️" FontSize="6" Foreground="IndianRed" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,2,2,0" Cursor="Hand" ToolTip="Delete File" MouseLeftButtonUp="DeleteFile_MouseLeftButtonUp"/>
-            <TextBlock Text="📁" FontSize="6" Foreground="LightBlue" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,2,10,0" Cursor="Hand" ToolTip="Open Directory" MouseLeftButtonUp="OpenDirectory_MouseLeftButtonUp"/>
-            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="56,10,0,0" Text="{Binding State,StringFormat={}State: {0}}" FontSize="4" Width="122"/>
+
+            <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Cursor="Hand" Width="8" Height="9" Margin="0,2,2,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="DeleteFile_MouseLeftButtonUp">
+                <Path Data="{StaticResource IconTrash}" Fill="IndianRed" Margin="0,0,-13,-13">
+                    <Path.RenderTransform>
+                        <ScaleTransform ScaleX="0.35" ScaleY="0.35"/>
+                    </Path.RenderTransform>
+                </Path>
+                <Grid.RenderTransform>
+                    <ScaleTransform/>
+                </Grid.RenderTransform>
+            </Grid>
+            <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Cursor="Hand" Width="8" Height="9" Margin="0,2,12,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="OpenDirectory_MouseLeftButtonUp">
+                <Path Data="{StaticResource IconGameSettingsFolder}" Fill="LightBlue" Margin="0,0,-14,-13">
+                    <Path.RenderTransform>
+                        <ScaleTransform ScaleX="0.35" ScaleY="0.35"/>
+                    </Path.RenderTransform>
+                </Path>
+                <Grid.RenderTransform>
+                    <ScaleTransform/>
+                </Grid.RenderTransform>
+            </Grid>
+
+            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="56,10,0,0" Text="{Binding State,StringFormat={}State: {0}}" ToolTip="{Binding State}" FontSize="4" Width="122"/>
 
             <TextBlock Text="📥" FontSize="9" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="55,17,0,0"/>
             <Border Visibility="{Binding DownloadFailedVisibility}" Background="{StaticResource MahApps.Brushes.Accent}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="70,21,2,0" CornerRadius="2" Padding="1" Cursor="Hand" ToolTip="Download Game" MouseLeftButtonUp="RetryDownload_Click">

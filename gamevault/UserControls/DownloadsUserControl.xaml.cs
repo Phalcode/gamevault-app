@@ -1,6 +1,8 @@
 ﻿using gamevault.Helper;
 using gamevault.Models;
 using gamevault.ViewModels;
+using MahApps.Metro.Controls.Dialogs;
+using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -97,6 +99,84 @@ namespace gamevault.UserControls
             {
                 download.CancelDownload();
             }
+        }
+
+        public async Task TryStartDownload(Game game)
+        {
+            if (LoginManager.Instance.IsLoggedIn() == false)
+            {
+                MainWindowViewModel.Instance.AppBarText = "Could not connect to server";
+                return;
+            }
+            if (SettingsViewModel.Instance.RootPath == string.Empty)
+            {
+                MainWindowViewModel.Instance.AppBarText = "Root path is not set! Go to ⚙️Settings->Data";
+                return;
+            }
+            if (IsAlreadyDownloading(game.ID))
+            {
+                MainWindowViewModel.Instance.AppBarText = $"'{game.Title}' is already in the download queue";
+                return;
+            }
+            if (await IsAlreadyDownloaded(game.ID))
+            {
+                return;
+            }
+            if (IsEnoughDriveSpaceAvailable(Convert.ToInt64(game.Size)))
+            {
+                GameDownloadUserControl? oldDownloadEntry = DownloadsViewModel.Instance.DownloadedGames.Where(g => g.GetGameId() == game.ID).FirstOrDefault();
+                if (oldDownloadEntry != null)
+                {
+                    DownloadsViewModel.Instance.DownloadedGames.Remove(oldDownloadEntry);
+                }
+                DownloadsViewModel.Instance.DownloadedGames.Insert(0, new GameDownloadUserControl(game, true));
+                MainWindowViewModel.Instance.AppBarText = $"'{game.Title}' has been added to the download queue";
+            }
+            else
+            {
+                FileInfo f = new FileInfo(SettingsViewModel.Instance.RootPath);
+                string? driveName = Path.GetPathRoot(f.FullName);
+                MainWindowViewModel.Instance.AppBarText = $"Not enough space available for drive {driveName}";
+            }
+        }
+        private async Task<bool> IsAlreadyDownloaded(int id)
+        {
+            if (DownloadsViewModel.Instance.DownloadedGames.Where(gameUC => gameUC.GetGameId() == id).Count() > 0)
+            {
+                MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"This game was already downloaded. Do you want to overwrite this file?",
+                    "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+                if (result == MessageDialogResult.Affirmative)
+                {
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        }
+        private bool IsAlreadyDownloading(int id)
+        {
+            if (DownloadsViewModel.Instance.DownloadedGames.Where(gameUC => gameUC.IsGameIdDownloading(id) == true).Count() > 0)
+            {
+                return true;
+            }
+            return false;
+        }
+        private bool IsEnoughDriveSpaceAvailable(long gameSize)
+        {
+            FileInfo f = new FileInfo(SettingsViewModel.Instance.RootPath);
+            string? driveName = Path.GetPathRoot(f.FullName);
+            foreach (DriveInfo drive in DriveInfo.GetDrives())
+            {
+                if (drive.IsReady && drive.Name == driveName)
+                {
+                    if ((drive.AvailableFreeSpace - 1000) > gameSize)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            return false;
         }
     }
 }

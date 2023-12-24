@@ -1,0 +1,248 @@
+﻿<UserControl x:Class="gamevault.UserControls.NewLibraryUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:vwp="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
+             xmlns:conv="clr-namespace:gamevault.Converter"
+             xmlns:local="clr-namespace:gamevault.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" Loaded="Library_Loaded">
+    <UserControl.Resources>
+        <conv:GameSizeConverter x:Key="sizeConv"/>
+        <conv:LibraryPermissionRoleToVisibilityConverter x:Key="libCardsPermVisConv"/>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Border Background="{StaticResource DarkBackground4}" Grid.Row="0">
+            <TextBlock Text="Library" FontSize="35" Margin="20,0,0,0" Foreground="White"/>
+        </Border>
+        <ScrollViewer x:Name="uiMainScrollBar" Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <Viewbox>
+                    <local:NewInstallUserControl x:Name="uiGameInstalls" Width="2000"/>
+                </Viewbox>
+                <Viewbox>
+                    <Expander x:Name="uiExpanderGameCards" Width="2000" Margin="10,0,10,10" mah:ExpanderHelper.HeaderDownStyle="{StaticResource CustomExpanderToggleButton}" BorderBrush="{x:Null}">
+                        <Expander.Header>
+                            <Grid Height="35">
+                                <TextBlock Text="Server Games" FontWeight="Bold" HorizontalAlignment="Left" FontSize="20" VerticalAlignment="Center"/>
+                                <TextBlock FontWeight="Bold" HorizontalAlignment="Left" FontSize="20" VerticalAlignment="Center" Margin="135,0,0,0">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding TotalGamesCount}" Value="0">
+                                                    <Setter Property="Visibility" Value="Hidden" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding TotalGamesCount}" Value="-1">
+                                                    <Setter Property="Visibility" Value="Hidden" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}({0} of {1})">
+                                            <Binding Path="GameCards.Count"/>
+                                            <Binding Path="TotalGamesCount"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                                <TextBox HorizontalAlignment="Center" Width="378" Margin="0,4,45,4" Style="{DynamicResource SearchTextBox}" TextChanged="Search_TextChanged"/>
+                                <Image Source="pack://application:,,,/gamevault;component/Resources/Images/library_dice.png" Margin="400,0,0,0" Height="25" Cursor="Hand" ToolTip="I'm Feeling Lucky" MouseLeftButtonDown="RandomGame_Click" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" Width="30" Margin="0,0,7,0" Cursor="Hand" ToolTip="Toggle Filters &amp; Sorting" Background="Transparent" MouseLeftButtonDown="Filter_Click">
+                                    <Path Data="{StaticResource IconOpenFilter}" Fill="White" RenderTransformOrigin="0.2,0.2">
+                                        <Path.RenderTransform>
+                                            <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+                                        </Path.RenderTransform>
+                                    </Path>
+                                    <Grid.RenderTransform>
+                                        <ScaleTransform/>
+                                    </Grid.RenderTransform>
+                                </Grid>
+                            </Grid>
+                        </Expander.Header>
+                        <StackPanel>
+                            <Grid Visibility="{Binding FilterVisibility}">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                    <local:TagSelector x:Name="uiFilterGameTypeSelector" SelectionType="GameType" Margin="12,0,24,0" Width="175" EntriesUpdated="FilterUpdated"/>
+                                    <local:TagSelector x:Name="uiFilterTagSelector" SelectionType="Tags" Margin="0,0,24,0" Width="175" EntriesUpdated="FilterUpdated"/>
+                                    <local:TagSelector x:Name="uiFilterGenreSelector" SelectionType="Genres" Margin="0,0,23,0" Width="175" EntriesUpdated="FilterUpdated"/>
+                                    <StackPanel LostFocus="FilterUpdated" Margin="0,0,99,0">
+                                        <TextBlock Text="Release Year" FontSize="15"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBox x:Name="uiFilterYearFrom" Text="1980" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" Background="{DynamicResource MainColor}" Width="42" MaxLength="4" PreviewTextInput="YearSelector_Changed"/>
+                                            <Rectangle Fill="White" Stroke="White" StrokeThickness="4" Height="3" Width="7" Margin="5"/>
+                                            <TextBox x:Name="uiFilterYearTo" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" Background="{DynamicResource MainColor}" Width="42" MaxLength="4" PreviewTextInput="YearSelector_Changed"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <mah:ToggleSwitch x:Name="uiFilterEarlyAccess" VerticalAlignment="Top" Header="Early Access Only"   Toggled="FilterUpdated"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+                                    <ToggleButton Width="45" Cursor="Hand" Checked="OrderBy_Changed" Unchecked="OrderBy_Changed">
+                                        <ToggleButton.Style>
+                                            <Style TargetType="ToggleButton">
+                                                <Style.Setters>
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="ToggleButton">
+                                                                <Grid Background="Transparent" Width="{TemplateBinding Width}">
+                                                                    <Path Name="PART_Icon" Data="{StaticResource IconFilterOrderByDESC}" Fill="White" RenderTransformOrigin="0.0,-0.05">
+                                                                        <Path.RenderTransform>
+                                                                            <ScaleTransform ScaleX="2.8" ScaleY="2.8"/>
+                                                                        </Path.RenderTransform>
+                                                                    </Path>
+                                                                </Grid>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsChecked" Value="True">
+                                                                        <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource IconFilterOrderByASC}"/>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style.Setters>
+                                            </Style>
+                                        </ToggleButton.Style>
+                                    </ToggleButton>
+                                    <ComboBox Height="20" Width="175" Margin="25,10,10,0" DisplayMemberPath="Key" SelectedIndex="0" SelectedItem="{Binding SelectedGameFilterSortBy}" ItemsSource="{Binding GameFilterSortByValues}" SelectionChanged="SelectedGameFilterSortBy_SelectionChanged"/>
+                                </StackPanel>
+                            </Grid>
+                            <Border Background="{StaticResource DarkBackground4}" CornerRadius="5" Margin="-6,5,-6,0" VerticalAlignment="Top">
+                                <Grid>
+                                    <!--No Games Found-->
+                                    <StackPanel Panel.ZIndex="1">
+                                        <StackPanel.Style>
+                                            <Style TargetType="{x:Type StackPanel}">
+                                                <Setter Property="Visibility" Value="Hidden"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding TotalGamesCount}" Value="0">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </StackPanel.Style>
+                                        <Image Source="pack://application:,,,/gamevault;component/Resources/Images/library_NoGameFound.png" RenderOptions.EdgeMode="Aliased" Height="190"/>
+                                        <TextBlock Text="No Games found" FontSize="20" HorizontalAlignment="Center" Margin="0,-10,0,0"/>
+                                        <TextBlock HorizontalAlignment="Center" FontSize="10" Margin="0,5,0,10" >
+                    <Hyperlink TextDecorations="Baseline" NavigateUri="https://gamevau.lt/docs/troubleshooting/#games-not-appearing-in-the-installations--servers-list" RequestNavigate="Hyperlink_RequestNavigate" Foreground="#FFD4D4D4">
+                    <Hyperlink.Inlines>
+                        <Run Text="Troubleshooting"/>
+                    </Hyperlink.Inlines>
+                </Hyperlink>
+                                        </TextBlock>
+                                    </StackPanel>
+                                    <!--Games found-->
+                                    <vwp:VirtualizingItemsControl x:Name="uiServerGamesItemsControl" ItemsSource="{Binding Path=GameCards}" Margin="0,0,0,0" Background="Transparent" IsTabStop="False" MaxHeight="891">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <UniformGrid Background="Transparent" Columns="10" Margin="0,5,0,5"/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid Cursor="Hand" Background="Transparent" Name="ParentGrid" MaxHeight="267" MaxWidth="178" Height="267" Width="178" Margin="0,10,0,10" MouseLeftButtonUp="GameCard_Clicked">
+                                                    <Grid RenderTransformOrigin="0.5,0.5">
+                                                        <Grid.RenderTransform>
+                                                            <ScaleTransform/>
+                                                        </Grid.RenderTransform>
+                                                        <Grid.Style>
+                                                            <Style TargetType="{x:Type Grid}">
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsMouseOver, ElementName=ParentGrid}" Value="True">
+                                                                        <DataTrigger.EnterActions>
+                                                                            <BeginStoryboard>
+                                                                                <Storyboard>
+                                                                                    <DoubleAnimation Duration="0:0:0.15" Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)" To="0.95"/>
+                                                                                    <DoubleAnimation Duration="0:0:0.15" Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)" To="0.95"/>
+                                                                                </Storyboard>
+                                                                            </BeginStoryboard>
+                                                                        </DataTrigger.EnterActions>
+                                                                        <DataTrigger.ExitActions>
+                                                                            <BeginStoryboard>
+                                                                                <Storyboard>
+                                                                                    <DoubleAnimation Duration="0:0:0.05" Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)" To="1"/>
+                                                                                    <DoubleAnimation Duration="0:0:0.05" Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)" To="1"/>
+                                                                                </Storyboard>
+                                                                            </BeginStoryboard>
+                                                                        </DataTrigger.ExitActions>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Grid.Style>
+                                                        <Border Background="{StaticResource DarkBackground2}" CornerRadius="8">
+                                                            <local:CacheImage Stretch="Fill" ImageCacheType="BoxArt" Data="{Binding}" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Border>
+                                                        <Border VerticalAlignment="Stretch" Background="#B2000000" CornerRadius="8">
+                                                            <Border.Style>
+                                                                <Style TargetType="{x:Type Border}">
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsMouseOver, ElementName=ParentGrid}" Value="False">
+                                                                            <Setter Property="Opacity" Value="0" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Border.Style>
+                                                            <Grid>
+                                                                <Grid Style="{DynamicResource HoverEffect}" Visibility="{Binding Path=Title,Converter={StaticResource libCardsPermVisConv}}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,12,10,0" MouseLeftButtonUp="Settings_Click" Background="#02000000">
+                                                                    <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="White" RenderTransformOrigin="0.5,0.5">
+                                                                        <Path.RenderTransform>
+                                                                            <ScaleTransform ScaleX="1.3" ScaleY="1.3"/>
+                                                                        </Path.RenderTransform>
+                                                                    </Path>
+                                                                    <Grid.RenderTransform>
+                                                                        <ScaleTransform/>
+                                                                    </Grid.RenderTransform>
+                                                                </Grid>
+                                                                <TextBlock Text="{Binding Path=Title}" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" TextAlignment="Center" TextWrapping="Wrap"/>
+                                                                <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,30" Background="Transparent" Height="61" Width="65" MouseLeftButtonUp="Download_Click">
+                                                                    <Path Data="{StaticResource IconDownload}" Fill="White" RenderTransformOrigin="0.03,0.08">
+                                                                        <Path.RenderTransform>
+                                                                            <ScaleTransform ScaleX="3" ScaleY="3"/>
+                                                                        </Path.RenderTransform>
+                                                                    </Path>
+                                                                    <TextBlock FontSize="10" FontWeight="Bold" Text="{Binding Path=Size,Converter={StaticResource sizeConv}}" Margin="0,50,0,0" HorizontalAlignment="Center"/>
+                                                                    <Grid.RenderTransform>
+                                                                        <ScaleTransform/>
+                                                                    </Grid.RenderTransform>
+                                                                </Grid>
+                                                            </Grid>
+                                                        </Border>
+                                                    </Grid>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                        <ItemsControl.Template>
+                                            <ControlTemplate TargetType="vwp:VirtualizingItemsControl">
+                                                <Grid>
+                                                    <ScrollViewer Name="PART_ItemsScroll" Style="{DynamicResource SecondaryScrollView}" CanContentScroll="True" Padding="{TemplateBinding Padding}" Focusable="False" ScrollChanged="Library_ScrollChanged" PreviewMouseWheel="Library_PreviewMouseWheel">
+                                                 
+                                                        <ItemsPresenter Margin="5,0,5,0"/>
+                                                    </ScrollViewer>
+                                                    <Border Style="{DynamicResource HoverEffect}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Visibility="{Binding ScrollToTopVisibility}" Background="#B2574EB9" CornerRadius="5" Cursor="Hand" Width="50" Height="50" Margin="1800,0,15,15" Padding="18,20,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="ScrollToTop_Click">
+                                                        <Path Data="{StaticResource IconLibraryScrollToTop}" Fill="White" RenderTransformOrigin="0.5,0.5">
+                                                            <Path.RenderTransform>
+                                                                <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                                            </Path.RenderTransform>
+                                                        </Path>
+                                                        <Border.RenderTransform>
+                                                            <ScaleTransform/>
+                                                        </Border.RenderTransform>
+                                                    </Border>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </ItemsControl.Template>
+                                    </vwp:VirtualizingItemsControl>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </Expander>
+                </Viewbox>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

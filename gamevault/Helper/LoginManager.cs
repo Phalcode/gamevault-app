@@ -55,6 +55,7 @@ namespace gamevault.Helper
         }
         public void SwitchToOfflineMode()
         {
+            MainWindowViewModel.Instance.OnlineState = System.Windows.Visibility.Visible;
             m_User = null;
         }
         public async Task StartupLogin()

@@ -34,28 +34,30 @@ namespace gamevault
         private async void Application_Startup(object sender, StartupEventArgs e)
         {
 
-            Application.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(AppDispatcherUnhandledException);           
+            Application.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(AppDispatcherUnhandledException);
 
 #if DEBUG
             AppFilePath.InitDebugPaths();
             await CacheHelper.OptimizeCache();
 #else
-
-            int pcount = Process.GetProcessesByName(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name).Count();
-            //System.Windows.MessageBox.Show("pcount: "+pcount);
-            if (pcount != 1)
+            try
             {
-                var client = new NamedPipeClientStream("GameVault");
-                client.Connect();
-                StreamWriter writer = new StreamWriter(client);
-                writer.WriteLine("ShowMainWindow");
-                writer.Flush();
-                ShutdownApp();
+                int pcount = Process.GetProcessesByName(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name).Count();
+                if (pcount != 1)
+                {
+                    var client = new NamedPipeClientStream("GameVault");
+                    client.Connect();
+                    StreamWriter writer = new StreamWriter(client);
+                    writer.WriteLine("ShowMainWindow");
+                    writer.Flush();
+                    ShutdownApp();
+                }
+                else
+                {
+                    StartServer();
+                }
             }
-            else
-            {
-                StartServer();
-            }
+            catch (Exception ex) { MainWindowViewModel.Instance.AppBarText = "Could not connect to background pipe due to UAC remote restrictions"; }
             try
             {
                 UpdateWindow updateWindow = new UpdateWindow();
@@ -111,8 +113,10 @@ namespace gamevault
                 File.Create(errorLogPath).Close();
             }
             File.WriteAllText(errorLogPath, errorMessage + "\n" + errorStackTrace);
-            if (new ExceptionWindow().ShowDialog() == true)
+            ExceptionWindow exWin = new ExceptionWindow();
+            if (exWin.ShowDialog() == true)
             {
+                errorMessage += $"\nUSER_MESSAGE:{exWin.UserMessage}";
                 CrashReportHelper.SendCrashReport(errorMessage, errorStackTrace, $"Type: {e.GetType().ToString()}");
             }
             ShutdownApp();
@@ -180,6 +184,10 @@ namespace gamevault
             else if (MainWindow.IsVisible == false)
             {
                 MainWindow.Show();
+            }
+            else if (MainWindow.WindowState == WindowState.Minimized)
+            {
+                MainWindow.WindowState = WindowState.Normal;
             }
         }
         private async void NotifyIcon_Exit_Click(Object sender, EventArgs e)

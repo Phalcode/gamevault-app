@@ -1,5 +1,18 @@
 # GameVault App Changelog
 
+## 1.8.0
+Recommended Gamevault Server Version: `v10.0.0`
+### Changes
+-Installation tab has been integrated into the Library tab
+-Graphic overhaul of the Library
+-Graphic overhaul of the GameView
+-New user interface for Game Settings and User Settings
+-All text icons have been replaced with graphic icons
+-Added optional User Message to the Crash Report Window
+-Added Game Launch Parameter
+-Games can now be started and downloaded from the Library and the GameView
+-Progresses from other users are displayed in the GameView
+
 ## 1.7.3
 Recommended Gamevault Server Version: `v9.0.0`
 ### Changes

@@ -15,5 +15,7 @@ namespace gamevault.Models
         public int? ID { get; set; }
         [JsonPropertyName("box_image_url")]
         public string BoxImageUrl { get; set; }
+        [JsonPropertyName("release_date")]
+        public DateTime? ReleaseDate { get; set; }
     }
 }

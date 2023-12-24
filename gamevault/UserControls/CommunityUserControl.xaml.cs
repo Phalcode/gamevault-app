@@ -173,7 +173,6 @@ namespace gamevault.UserControls
                         break;
                 }
             }
-            uiUserEditPopup.Visibility = Visibility.Collapsed;
         }
 
         private void GameImage_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -183,7 +182,7 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.AppBarText = "Cannot open unknown game";
                 return;
             }
-            MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(((Progress)((FrameworkElement)sender).DataContext).Game));
+            MainWindowViewModel.Instance.SetActiveControl(new NewGameViewUserControl(((Progress)((FrameworkElement)sender).DataContext).Game));
         }
         private async void ReloadUser_Clicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -192,7 +191,7 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.AppBarText = "You are not logged in";
                 return;
             }
-            ((TextBlock)sender).IsEnabled = false;
+            ((FrameworkElement)sender).IsEnabled = false;
             try
             {
                 int currentUserId = ViewModel.CurrentShownUser.ID;
@@ -201,71 +200,16 @@ namespace gamevault.UserControls
                     string currentShownUser = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/{currentUserId}");
                     return JsonSerializer.Deserialize<User>(currentShownUser);
                 });
+
+                SortBy_SelectionChanged(null, new SelectionChangedEventArgs(System.Windows.Controls.Primitives.Selector.SelectionChangedEvent, new List<string>(), new List<string> { uiSortBy.SelectedValue.ToString() }));
+
             }
             catch (Exception ex) { }
-            SortBy_SelectionChanged(null, new SelectionChangedEventArgs(System.Windows.Controls.Primitives.Selector.SelectionChangedEvent, new List<string>(), new List<string> { uiSortBy.SelectedValue.ToString() }));
-            ((TextBlock)sender).IsEnabled = true;
+            ((FrameworkElement)sender).IsEnabled = true;
         }
         private void UserEdit_Clicked(object sender, RoutedEventArgs e)
         {
-            if (uiUserEditPopup.Visibility == Visibility.Visible)
-            {
-                uiUserEditPopup.Visibility = Visibility.Collapsed;
-                return;
-            }
-            else
-            {
-                uiUserEditPopup.Visibility = Visibility.Visible;
-            }
-            var obj = new UserEditUserControl(ViewModel.CurrentShownUser);
-            obj.UserSaved += UserSaved;
-            if (uiUserEditPopup.Children.Count != 0)
-            {
-                uiUserEditPopup.Children.Clear();
-            }
-            uiUserEditPopup.Children.Add(obj);
-        }
-        protected async void UserSaved(object sender, EventArgs e)
-        {
-            if (!LoginManager.Instance.IsLoggedIn())
-            {
-                MainWindowViewModel.Instance.AppBarText = "You are not logged in";
-                return;
-            }
-            ((Button)sender).IsEnabled = false;
-            this.IsEnabled = false;
-            User selectedUser = (User)((Button)sender).DataContext;
-            bool error = false;
-            string url = @$"{SettingsViewModel.Instance.ServerUrl}/api/users/{selectedUser.ID}";
-            if (LoginManager.Instance.GetCurrentUser().ID == selectedUser.ID)
-            {
-                url = @$"{SettingsViewModel.Instance.ServerUrl}/api/users/me";
-            }
-            await Task.Run(() =>
-            {
-                try
-                {
-                    WebHelper.Put(url, JsonSerializer.Serialize(selectedUser));
-                    MainWindowViewModel.Instance.AppBarText = "Sucessfully saved user changes";
-                }
-                catch (WebException ex)
-                {
-                    error = true;
-                    string msg = WebExceptionHelper.GetServerMessage(ex);
-                    MainWindowViewModel.Instance.AppBarText = msg;
-                }
-            });
-            if (!error)
-            {
-                if (LoginManager.Instance.GetCurrentUser().ID == selectedUser.ID)
-                {
-                    await LoginManager.Instance.ManualLogin(selectedUser.Username, string.IsNullOrEmpty(selectedUser.Password) ? WebHelper.GetCredentials()[1] : selectedUser.Password);
-                    MainWindowViewModel.Instance.UserIcon = LoginManager.Instance.GetCurrentUser();
-                }
-                await InitUserList();
-            }
-           ((Button)sender).IsEnabled = true;
-            this.IsEnabled = true;
+            MainWindowViewModel.Instance.OpenPopup(new UserSettingsUserControl(ViewModel.CurrentShownUser) { Width = 1200, Height = 800, Margin = new Thickness(50) });
         }
         private async void DeleteProgress_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {

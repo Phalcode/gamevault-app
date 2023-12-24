@@ -12,11 +12,17 @@ namespace gamevault.Models
 {
     public enum State
     {
+        [Description("Unplayed")]
         UNPLAYED,
+        [Description("Infinite")]
         INFINITE,
+        [Description("Playing")]
         PLAYING,
+        [Description("Completed")]
         COMPLETED,
+        [Description("Temporarily Aborted")]
         ABORTED_TEMPORARY,
+        [Description("Permanently Aborted")]
         ABORTED_PERMANENT
     }
     public class Progress
@@ -31,6 +37,8 @@ namespace gamevault.Models
         public DateTime? LastPlayedAt { get; set; }
         [JsonPropertyName("game")]
         public Game? Game { get; set; }
+        [JsonPropertyName("user")]
+        public User? User { get; set; }
 
     }
 

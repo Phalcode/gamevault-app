@@ -1,0 +1,405 @@
+﻿<UserControl x:Class="gamevault.UserControls.GameSettingsUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:conv="clr-namespace:gamevault.Converter"
+             xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+             xmlns:helper="clr-namespace:gamevault.Helper"
+             xmlns:local="clr-namespace:gamevault.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" Focusable="True" Loaded="GameSettings_Loaded" FocusVisualStyle="{x:Null}">
+    <UserControl.Resources>
+        <Style x:Key="TabItemHeaderPath" TargetType="Path">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="True">
+                    <Setter Property="Fill" Value="{DynamicResource MainColor}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="False">
+                    <Setter Property="Fill" Value="White"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="TabItemHeaderPathStroke" TargetType="Path">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="True">
+                    <Setter Property="Stroke" Value="{DynamicResource MainColor}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="False">
+                    <Setter Property="Stroke" Value="White"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="TabItemHeaderTextBlock" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="22"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="5,0,0,0"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource MainColor}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="False">
+                    <Setter Property="Foreground" Value="White"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <conv:GameSettingsTabVisibilityConverter x:Key="tabVisConv"/>
+        <conv:InverseNullConverter x:Key="invNullConv"/>
+    </UserControl.Resources>
+    <UserControl.InputBindings>
+        <KeyBinding Key="Esc">
+            <KeyBinding.Command>
+                <helper:CommandHelper Executed="KeyBindingEscape_OnExecuted"/>
+            </KeyBinding.Command>
+        </KeyBinding>
+    </UserControl.InputBindings>
+    <Border Padding="5" CornerRadius="5">
+        <Border.OpacityMask>
+            <VisualBrush>
+                <VisualBrush.Visual>
+                    <Border 
+                    Background="Black"
+                    SnapsToDevicePixels="True"
+                    CornerRadius="{Binding CornerRadius, RelativeSource={RelativeSource AncestorType=Border}}"
+                    Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Border}}"
+                    Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Border}}"
+                    />
+                </VisualBrush.Visual>
+            </VisualBrush>
+        </Border.OpacityMask>
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="7" Direction="0" ShadowDepth="0"/>
+        </Border.Effect>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="101*"/>
+                <ColumnDefinition Width="299*"/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0" Background="{DynamicResource DarkBackground2}">
+                <TextBlock Text="Game Settings" FontSize="30" Margin="10" Foreground="White"/>
+                <StackPanel VerticalAlignment="Top" Margin="40,70,0,0">
+                    <StackPanel Visibility="{Binding Game,Converter={StaticResource tabVisConv},ConverterParameter='local'}">
+                        <TextBlock Text="Your Computer" FontSize="30" Foreground="White"/>
+                        <TabControl x:Name="uiSettingsHeadersLocal" TabStripPlacement="Left" Background="Transparent" SelectionChanged="SettingsTabControl_SelectionChanged">
+                            <TabItem>
+                                <TabItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Style="{StaticResource TabItemHeaderPath}" Data="{DynamicResource IconGameSettingsFolder}" VerticalAlignment="Center"/>
+                                        <TextBlock Style="{StaticResource TabItemHeaderTextBlock}" Text="Installation"/>
+                                    </StackPanel>
+                                </TabItem.Header>
+                            </TabItem>
+                            <TabItem>
+                                <TabItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Style="{StaticResource TabItemHeaderPath}" Data="{DynamicResource IconGameSettingsLaunchOptions}" VerticalAlignment="Center"/>
+                                        <TextBlock Style="{StaticResource TabItemHeaderTextBlock}" Text="Launch Options"/>
+                                    </StackPanel>
+                                </TabItem.Header>
+                            </TabItem>
+                        </TabControl>
+                    </StackPanel>
+                    <StackPanel Visibility="{Binding Game,Converter={StaticResource tabVisConv},ConverterParameter='server'}">
+                        <TextBlock Text="Server" FontSize="30" Margin="0,30,0,0" Foreground="White"/>
+                        <TabControl x:Name="uiSettingsHeadersRemote" TabStripPlacement="Left" Background="Transparent" SelectionChanged="SettingsTabControl_SelectionChanged">
+                            <!--<TabItem>
+                                <TabItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Style="{StaticResource TabItemHeaderPath}" Data="{DynamicResource IconGameSettingsEditDetails}" VerticalAlignment="Center"/>
+                                        <TextBlock Style="{StaticResource TabItemHeaderTextBlock}" Text="Edit Details"/>
+                                    </StackPanel>
+                                </TabItem.Header>
+                            </TabItem>-->
+                            <TabItem>
+                                <TabItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Style="{StaticResource TabItemHeaderPath}" Data="{DynamicResource IconGameSettingsEditImages}" VerticalAlignment="Center"/>
+                                        <TextBlock Style="{StaticResource TabItemHeaderTextBlock}" Text="Edit Images"/>
+                                    </StackPanel>
+                                </TabItem.Header>
+                            </TabItem>
+                            <TabItem>
+                                <TabItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Style="{StaticResource TabItemHeaderPathStroke}" StrokeThickness="2" Data="{DynamicResource IconGameSettingsRawg}" VerticalAlignment="Center"/>
+                                        <TextBlock Style="{StaticResource TabItemHeaderTextBlock}" Text="RAWG Integration"/>
+                                    </StackPanel>
+                                </TabItem.Header>
+                            </TabItem>
+                        </TabControl>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+            <StackPanel Grid.Column="0" VerticalAlignment="Bottom" Margin="10">
+                <TextBlock FontSize="16" TextWrapping="Wrap">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} ({1})">
+                            <Binding Path="Game.Title" />
+                            <Binding Path="Game.ReleaseDate.Year" FallbackValue="?"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <TextBlock Text="{Binding Path=Game.ID,StringFormat='{}ID {0}'}" FontSize="16"/>
+                <TextBlock Text="{Binding Path=Game.Version,StringFormat='{}Version {0}',TargetNullValue='Version N/A'}" FontSize="16"/>
+            </StackPanel>
+            <Grid Grid.Column="1" Background="{DynamicResource DarkBackground3}">
+                <mah:MetroAnimatedTabControl x:Name="uiSettingsContent" Background="Transparent">
+                    <mah:MetroTabItem>
+                        <StackPanel Margin="20,20,0,0">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                                <Path Data="{DynamicResource IconGameSettingsFolder}" Fill="White" Margin="0,2,0,0"/>
+                                <TextBlock Text="Installation" FontSize="20" FontWeight="Bold" Margin="5,0,0,0"/>
+                            </StackPanel>
+                            <TextBlock Text="Here you can manage your Game Installation" FontSize="15" Margin="0,5,0,0"/>
+                            <TextBlock Text="Installation" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
+                            <TextBlock Text="This Game was installed to:" FontSize="15" FontWeight="Bold" Margin="0,20,0,0"/>
+                            <Border CornerRadius="5" Background="{DynamicResource DarkBackground2}" Margin="0,5,20,10" Padding="10">
+                                <TextBlock Text="{Binding Directory}" FontSize="15"/>
+                            </Border>
+                            <StackPanel Orientation="Horizontal">
+                                <local:IconButton Content="Uninstall Game" Icon="{DynamicResource IconTrash}" Background="IndianRed" Width="142" Height="33" MouseLeftButtonUp="Uninstall_Click"/>
+                                <local:IconButton Content="Open Directory" Icon="{DynamicResource IconGameSettingsFolder}" Width="145" Height="33" Margin="10,0,0,0" MouseLeftButtonUp="OpenDirectory_Click"/>
+                            </StackPanel>
+                            <TextBlock Text="Disk Usage" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
+                            <lvc:PieChart x:Name="uiDiscUsagePieChart" Width="300" Height="300" InitialRotation="-90" IsClockwise="True" HorizontalAlignment="Left" Margin="0,10,0,0"/>
+                            <StackPanel Margin="100,0,0,0" HorizontalAlignment="Left">
+                                <TextBlock Text="Total Disk Size" FontSize="15" FontWeight="Bold" />
+                                <TextBlock x:Name="uiTxtAllInstalledGamesSize" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </mah:MetroTabItem>
+                    <mah:MetroTabItem>
+                        <StackPanel Margin="20,20,0,0">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                                <Path Data="{DynamicResource IconGameSettingsLaunchOptions}" Fill="White" Margin="0,1,0,0"/>
+                                <TextBlock Text="Launch Options" FontSize="20" FontWeight="Bold" Margin="5,0,0,0"/>
+                            </StackPanel>
+                            <TextBlock Text="Here, you can customize your game launch settings, such as adding launch parameter or creating a desktop icon." FontSize="15" Margin="0,5,0,0"/>
+                            <TextBlock Text="Launch Executable" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
+                            <TextBlock Text="Select which executable should be started when you press the play button." FontSize="15" Margin="0,5,0,0"/>
+                            <ComboBox x:Name="uiCbExecutables" ItemsSource="{Binding Executables}" DisplayMemberPath="Value" Margin="0,10,20,0" SelectionChanged="Executable_SelectionChanged" DropDownOpened="ExecutableSelection_Opened"/>
+                            <TextBlock Text="Launch Parameter" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
+                            <TextBlock Text="Advanced Users can modify the launch parameters of the executable above here." FontSize="15" Margin="0,5,0,0"/>
+                            <TextBox Text="{Binding LaunchParameter,UpdateSourceTrigger=PropertyChanged}" LostFocus="LaunchParameter_Changed" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.Watermark="e.g. -fullscreen" BorderThickness="2" FontSize="17" Margin="0,10,20,0"/>
+                            <TextBlock Text="Desktop Icon" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
+                            <TextBlock Text="Your can press this button to create a desktop shortcut for the selected game executable. Please note that this shortcut does not launch GameVault, nor does it update when you change your launch executable or modify your launch parameters." FontSize="15" Margin="0,5,0,0" TextWrapping="Wrap"/>
+                            <local:IconButton Content="Create Desktop Icon" Icon="{DynamicResource IconGameSettingsLink}" Width="180" Height="33" Margin="0,10,0,0" HorizontalAlignment="Left" MouseLeftButtonUp="CreateDesktopShortcut_Click"/>
+                        </StackPanel>
+                    </mah:MetroTabItem>
+                    <mah:MetroTabItem>
+                        <Grid Margin="0,20,0,0">
+                            <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
+                                <Path Data="{DynamicResource IconGameSettingsEditImages}" Fill="White" Margin="0,1,0,0"/>
+                                <TextBlock Text="Edit Images" FontSize="20" FontWeight="Bold" Margin="5,0,0,0"/>
+                            </StackPanel>
+                            <TextBlock Text="Here, you can update the background and box images of your game." VerticalAlignment="Top" FontSize="15" Margin="10,35,0,0"/>
+                            <Border CornerRadius="5" Margin="10,70,0,50" Width="425" HorizontalAlignment="Left" Background="{DynamicResource DarkBackground}">
+                                <StackPanel>
+                                    <TextBlock Text="Background" HorizontalAlignment="Center" FontSize="15" Margin="0,5,0,0"/>
+                                    <Border CornerRadius="5" BorderThickness="2" Margin="10" Height="380" Background="{DynamicResource DarkBackground2}" Cursor="Hand" AllowDrop="True" Drop="Image_Drop" MouseLeftButtonUp="ChooseImage" Focusable="True" KeyDown="Image_Paste">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="BorderBrush" Value="LightGray"/>
+                                                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}" />
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource DarkBackground3}"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <StackPanel>
+                                            <Grid HorizontalAlignment="Center" Margin="0,20,0,0">
+                                                <local:CacheImage ImageCacheType="GameBackground" Data="{Binding Game}" CornerRadius="5" Stretch="Fill" Height="214" Width="380" Margin="10,10,10,0">
+                                                    <local:CacheImage.Style>
+                                                        <Style TargetType="local:CacheImage">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding BackgroundImageSource,Converter={StaticResource invNullConv}}" Value="False">
+                                                                    <Setter Property="Visibility" Value="Hidden" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </local:CacheImage.Style>
+                                                </local:CacheImage>
+                                                <Border CornerRadius="5" Height="215" Width="382" Margin="10,10,10,0">
+                                                    <Border.Background>
+                                                        <ImageBrush ImageSource="{Binding BackgroundImageSource}" Stretch="Fill"/>
+                                                    </Border.Background>
+                                                </Border>
+                                            </Grid>
+                                            <StackPanel HorizontalAlignment="Center" Margin="0,65,0,0">
+                                                <TextBlock Text="Click to Upload, Paste or Drag and Drop" FontWeight="Bold"/>
+                                                <TextBlock Text="JPG, PNG, GIF, TIF, ICO or BMP" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <Rectangle Fill="White" Width="70" Height="2"/>
+                                        <StackPanel Margin="10,0,10,0">
+                                            <TextBlock Text="OR" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="Upload via URL" FontWeight="Bold"/>
+                                        </StackPanel>
+                                        <Rectangle Fill="White" Width="70" Height="2"/>
+                                    </StackPanel>
+                                    <TextBox Margin="10" Height="28" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="https://example.com/example.png" TextChanged="BackgoundImageUrl_TextChanged"/>
+                                    <Grid Margin="10,95,10,0">
+                                        <local:IconButton Content="Save" Icon="{DynamicResource IconGameSettingsSave}" IsEnabled="{Binding BackgroundImageChanged}" Width="115" Height="33" HorizontalAlignment="Right" MouseLeftButtonUp="BackgroundImage_Save"/>
+                                        <local:IconButton Content="Find Images" Icon="{DynamicResource IconGameSettingsGoogle}" HorizontalAlignment="Left" Height="33" Width="115" Tag="Game Background Art" MouseLeftButtonUp="FindImages_Click"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                            <Border CornerRadius="5" Margin="0,70,10,50" Width="425" HorizontalAlignment="Right" Background="{DynamicResource DarkBackground}">
+                                <StackPanel>
+                                    <TextBlock Text="Box Art" HorizontalAlignment="Center" FontSize="15" Margin="0,5,0,0"/>
+                                    <Border CornerRadius="5" BorderThickness="2" Margin="10" Height="380" Background="{DynamicResource DarkBackground2}" Cursor="Hand" AllowDrop="True" Drop="Image_Drop" MouseLeftButtonUp="ChooseImage" Focusable="True" KeyDown="Image_Paste" Tag="box">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="BorderBrush" Value="LightGray"/>
+                                                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}" />
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource DarkBackground3}"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <StackPanel>
+                                            <Grid HorizontalAlignment="Center">
+                                                <local:CacheImage ImageCacheType="BoxArt" Data="{Binding Game}" CornerRadius="5" Stretch="Fill" Height="250" Width="167" Margin="10,10,10,0">
+                                                    <local:CacheImage.Style>
+                                                        <Style TargetType="local:CacheImage">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding BoxArtImageSource,Converter={StaticResource invNullConv}}" Value="False">
+                                                                    <Setter Property="Visibility" Value="Hidden" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </local:CacheImage.Style>
+                                                </local:CacheImage>
+                                                <Border CornerRadius="5" Height="250" Width="167" Margin="10,10,10,0">
+                                                    <Border.Background>
+                                                        <ImageBrush ImageSource="{Binding BoxArtImageSource}" Stretch="Fill"/>
+                                                    </Border.Background>
+                                                </Border>
+                                            </Grid>
+                                            <StackPanel HorizontalAlignment="Center" Margin="0,50,0,0">
+                                                <TextBlock Text="Click to Upload, Paste or Drag and Drop" FontWeight="Bold"/>
+                                                <TextBlock Text="JPG, PNG, GIF, TIF, ICO or BMP" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <Rectangle Fill="White" Width="70" Height="2"/>
+                                        <StackPanel Margin="10,0,10,0">
+                                            <TextBlock Text="OR" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="Upload via URL" FontWeight="Bold"/>
+                                        </StackPanel>
+                                        <Rectangle Fill="White" Width="70" Height="2"/>
+                                    </StackPanel>
+                                    <TextBox Margin="10" Height="28" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="https://example.com/example.png" TextChanged="BoxImageUrl_TextChanged"/>
+                                    <Grid Margin="10,95,10,0">
+                                        <local:IconButton Content="Save" Icon="{DynamicResource IconGameSettingsSave}" IsEnabled="{Binding BoxArtImageChanged}" Width="115" Height="33" HorizontalAlignment="Right" MouseLeftButtonUp="BoxImage_Save"/>
+                                        <local:IconButton Content="Find Images" Icon="{DynamicResource IconGameSettingsGoogle}" HorizontalAlignment="Left" Height="33" Width="115" Tag="Game Box Art" MouseLeftButtonUp="FindImages_Click"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </mah:MetroTabItem>
+                    <mah:MetroTabItem>
+                        <StackPanel Margin="20,20,0,0">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{DynamicResource IconGameSettingsRawg}" Stroke="White" StrokeThickness="2" VerticalAlignment="Center"/>
+                                <TextBlock Text="RAWG Integration" FontSize="20" FontWeight="Bold" Margin="5,0,0,0"/>
+                            </StackPanel>
+                            <TextBlock Text="Here, you can remap your games to other RAWG games or recache all information for them from the RAWG database." FontSize="15"  Margin="0,5,0,0"/>
+                            <StackPanel Margin="0,10,0,0">
+                                <TextBlock Text="Your Game File" FontSize="15" FontWeight="Bold" TextDecorations="Underline"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                    <TextBlock Text="Game ID" FontSize="15" FontWeight="Bold"/>
+                                    <TextBlock Text="File" FontSize="15" FontWeight="Bold" Margin="30,0,0,0"/>
+                                    <TextBlock Text="Release Date" FontSize="15" FontWeight="Bold" Margin="296,0,0,0"/>
+                                    <TextBlock Text="Added" FontSize="15" FontWeight="Bold" Margin="110,0,0,0"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Path=Game.ID}" FontSize="15" Width="70"/>
+                                    <TextBlock Text="{Binding Path=Game.FilePath}" FontSize="15" Margin="20,0,0,0" Width="280"/>
+                                    <TextBlock Text="{Binding Path=Game.ReleaseDate,StringFormat='{}{0:dd/MM/yyyy}'}" Width="100" FontSize="15" Margin="42,0,0,0"/>
+                                    <TextBlock Text="{Binding Path=Game.CreatedAt,StringFormat='{}{0:dd/MM/yyyy}'}" FontSize="15" Margin="98,0,0,0"/>
+                                </StackPanel>
+                                <TextBlock Text="Currently Mapped RAWG Game" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                    <TextBlock Text="RAWG ID" FontSize="15" FontWeight="Bold"/>
+                                    <TextBlock Text="RAWG Title" FontSize="15" FontWeight="Bold" Margin="25,0,0,0"/>
+                                    <TextBlock Text="RAWG Release Date" FontSize="15" FontWeight="Bold" Margin="240,0,0,0"/>
+                                    <TextBlock Text="Last Cached" FontSize="15" FontWeight="Bold" Margin="63,0,0,0"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Path=Game.RawgId}" FontSize="15" Width="70"/>
+                                    <TextBlock Text="{Binding Path=Game.RawgTitle}" FontSize="15" Margin="20,0,0,0" Width="280"/>
+                                    <TextBlock Text="{Binding Path=Game.RawgReleaseDate,StringFormat='{}{0:dd/MM/yyyy}'}" Width="100" FontSize="15" Margin="42,0,0,0"/>
+                                    <TextBlock Text="{Binding Path=Game.LastCached,StringFormat='{}{0:dd/MM/yyyy}'}" FontSize="15" Margin="102,0,0,0"/>
+                                </StackPanel>
+                            </StackPanel>
+                            <TextBlock Text="Recache Game" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
+                            <TextBlock Text="When pressed, this Button will re-fetch all data for the mapped RAWG Game from RAWG.IO and cache it on the Server." FontSize="15" Margin="0,5,0,0"/>
+                            <local:IconButton Content="Recache Game" Icon="{DynamicResource IconReload}" HorizontalAlignment="Left" Margin="0,5,0,0" Width="140" Height="33" MouseLeftButtonUp="Recache_Click"/>
+
+                            <TextBlock Text="Remap Game" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
+                            <TextBlock Text="Is the currently mapped Game incorrect or missing? Manually search the RAWG API and re-map your Game here." FontSize="15" Margin="0,5,0,0"/>
+                            <TextBox Style="{DynamicResource SearchTextBox}" HorizontalAlignment="Left" Height="27" Width="500" Margin="0,10,0,0" TextChanged="RawgGameSearch_TextChanged"/>
+                            <ItemsControl ItemsSource="{Binding RawgGames}" Height="300" Width="500" Margin="0,10,0,0" HorizontalAlignment="Left">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Vertical"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.Template>
+                                    <ControlTemplate TargetType="ItemsControl">
+                                        <ScrollViewer CanContentScroll="False" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="{TemplateBinding Padding}" Focusable="False">
+                                            <ItemsPresenter/>
+                                        </ScrollViewer>
+                                    </ControlTemplate>
+                                </ItemsControl.Template>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border CornerRadius="5" Height="60"  Margin="0,5,0,0" Background="{DynamicResource DarkBackground2}">
+                                            <Grid Margin="5">
+                                                <Image Source="{Binding Path=BoxImageUrl}" Stretch="UniformToFill" Width="100" HorizontalAlignment="Left"/>
+                                                <TextBlock Text="{Binding Path=Title}" Width="200" FontSize="13" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="105,0,0,0"/>
+                                                <TextBlock Text="{Binding Path=ReleaseDate,StringFormat='{}{0:MM/dd/yyyy}'}" Width="160" FontSize="13" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="105,0,0,0"/>
+                                                <Button Content="Remap" VerticalAlignment="Center" Width="50" HorizontalAlignment="Right" FontSize="10" Click="RawgGameRemap_Click"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </mah:MetroTabItem>
+                </mah:MetroAnimatedTabControl>
+            </Grid>
+            <Grid Grid.Column="1" Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" Margin="0,10,10,0" Cursor="Hand" MouseLeftButtonUp="Close_Click">
+                <Path Fill="White" Stroke="White" Data="{DynamicResource IconClose}" RenderTransformOrigin="1.2,1.2">
+                    <Path.RenderTransform>
+                        <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                    </Path.RenderTransform>
+                </Path>
+                <Grid.RenderTransform>
+                    <ScaleTransform/>
+                </Grid.RenderTransform>
+            </Grid>
+            <Grid Grid.Column="1" Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" Margin="0,8,50,0" Cursor="Hand" MouseLeftButtonUp="Help_Click">
+                <Path Fill="White" Data="{DynamicResource IconGameSettingsHelp}">
+                    <Path.RenderTransform>
+                        <ScaleTransform ScaleX="1" ScaleY="1"/>
+                    </Path.RenderTransform>
+                </Path>
+                <Grid.RenderTransform>
+                    <ScaleTransform/>
+                </Grid.RenderTransform>
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

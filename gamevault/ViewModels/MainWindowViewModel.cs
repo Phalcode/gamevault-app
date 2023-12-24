@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 
@@ -16,19 +17,18 @@ namespace gamevault.ViewModels
     {
         Library = 0,
         Downloads = 1,
-        Installs = 2,
-        Community = 3,
-        Settings = 4,
-        AdminConsole = 5
+        //NewLibrary = 2,
+        Community = 2,
+        Settings = 3,
+        AdminConsole = 4
     }
     internal class MainWindowViewModel : ViewModelBase
     {
         public MainWindowViewModel()
         {
-            m_Library = new LibraryUserControl();
             m_Settings = new SettingsUserControl();
             m_Downloads = new DownloadsUserControl();
-            m_Installs = new InstallUserControl();
+            m_NewLibrary = new NewLibraryUserControl();
             m_Community = new CommunityUserControl();
             m_AdminConsole = new AdminConsoleUserControl();
         }
@@ -91,12 +91,12 @@ namespace gamevault.ViewModels
         #region PrivateMembers     
         private double m_TaskbarProgress = 0;
         private int m_ActiveControlIndex = -1;
+        private Visibility onlineState = Visibility.Collapsed;
         private UserControl m_ActiveControl { get; set; }
-        private LibraryUserControl m_Library { get; set; }
-
+        private UserControl m_Popup { get; set; }
         private SettingsUserControl m_Settings { get; set; }
         private DownloadsUserControl m_Downloads { get; set; }
-        private InstallUserControl m_Installs { get; set; }
+        private NewLibraryUserControl m_NewLibrary { get; set; }
         private CommunityUserControl m_Community { get; set; }
         private AdminConsoleUserControl m_AdminConsole { get; set; }
         #endregion
@@ -111,8 +111,13 @@ namespace gamevault.ViewModels
             get { return m_ActiveControlIndex; }
             set { m_ActiveControlIndex = value; OnPropertyChanged(); }
         }
+        public Visibility OnlineState
+        {
+            get { return onlineState; }
+            set { onlineState = value; OnPropertyChanged(); }
+        }
         public UserControl ActiveControl
-        {          
+        {
             get { return m_ActiveControl; }
             set
             {
@@ -125,10 +130,22 @@ namespace gamevault.ViewModels
                 OnPropertyChanged();
             }
         }
-        internal LibraryUserControl Library
+        public UserControl Popup
         {
-            get { return m_Library; }
-            private set { m_Library = value; }
+            get { return m_Popup; }
+            set
+            {
+                m_Popup = value;
+                OnPropertyChanged();
+            }
+        }
+        public void OpenPopup(UserControl userControl)
+        {
+            Popup = userControl;
+        }
+        public void ClosePopup()
+        {
+            Popup = null;
         }
         internal SettingsUserControl Settings
         {
@@ -140,10 +157,10 @@ namespace gamevault.ViewModels
             get { return m_Downloads; }
             private set { m_Downloads = value; }
         }
-        internal InstallUserControl Installs
+        internal NewLibraryUserControl NewLibrary
         {
-            get { return m_Installs; }
-            private set { m_Installs = value; }
+            get { return m_NewLibrary; }
+            private set { m_NewLibrary = value; }
         }
         internal CommunityUserControl Community
         {

@@ -12,22 +12,39 @@ namespace gamevault.Converter
         {
             try
             {
-                double size = double.Parse(value.ToString());
-                size = size / 1000000;
-                if (size > 1000)
+                if (value == null)
                 {
-                    size = size / 1000;
-                    size = Math.Round(size, 2);
-                    return $"{size} GB";
+                    throw new ArgumentException("Invalid input value");
                 }
+
+                double size = double.Parse(value.ToString());
+
+                // DEFAULTS TO IEC (1024) used for storage capacity etc.
+                int baseValue = 1024;
+                if (parameter != null && parameter is int)
+                {
+                    // Other Standard could be SI (1000) used for download speeds etc.
+                    baseValue = (int)parameter;
+                }
+
+                string[] sizeSuffixes = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
+
+                int suffixIndex = 0;
+                while (size >= baseValue && suffixIndex < sizeSuffixes.Length - 1)
+                {
+                    size /= baseValue;
+                    suffixIndex++;
+                }
+
                 size = Math.Round(size, 2);
-                return $"{size} MB";
+                return $"{size} {sizeSuffixes[suffixIndex]}";
             }
             catch (Exception ex)
             {
-                return "Calc error";
+                return "ERR";
             }
         }
+
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
