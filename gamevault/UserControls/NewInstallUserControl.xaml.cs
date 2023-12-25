@@ -259,6 +259,7 @@ namespace gamevault.UserControls
         private void InputTimerElapsed(object sender, EventArgs e)
         {
             inputTimer.Stop();
+            if (NewInstallViewModel.Instance.InstalledGamesFilter == null) return;
             NewInstallViewModel.Instance.InstalledGamesFilter.Filter = item =>
             {
                 return ((KeyValuePair<Game, string>)item).Key.Title.Contains(inputTimer.Data, StringComparison.OrdinalIgnoreCase);

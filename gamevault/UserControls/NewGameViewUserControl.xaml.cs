@@ -95,6 +95,11 @@ namespace gamevault.UserControls
             {
                 path = result.Value;
             }
+            if(!File.Exists($"{path}\\gamevault-exec"))
+            {
+                MainWindowViewModel.Instance.AppBarText = $"Can not find part of '{path}'";
+                return;
+            }
             string savedExecutable = Preferences.Get(AppConfigKey.Executable, $"{path}\\gamevault-exec");
             string parameter = Preferences.Get(AppConfigKey.LaunchParameter, $"{path}\\gamevault-exec");
             if (savedExecutable == string.Empty)
