@@ -66,6 +66,11 @@ namespace gamevault.UserControls
         {
             return selectedEntries.Any();
         }
+        public void ClearEntries()
+        {
+            selectedEntries.Clear();
+            uiSelectedEntries.ItemsSource = null;
+        }
         private async void DebounceTimerElapsed(object? sender, EventArgs e)
         {
             debounceTimer.Stop();

@@ -54,8 +54,27 @@
                                 </TextBlock>
                                 <TextBox HorizontalAlignment="Center" Width="378" Margin="0,4,45,4" Style="{DynamicResource SearchTextBox}" TextChanged="Search_TextChanged"/>
                                 <Image Source="pack://application:,,,/gamevault;component/Resources/Images/library_dice.png" Margin="400,0,0,0" Height="25" Cursor="Hand" ToolTip="I'm Feeling Lucky" MouseLeftButtonDown="RandomGame_Click" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
-                                <mah:Badged Badge="{Binding FilterCounter}" BadgeBackground="IndianRed" BadgePlacementMode="BottomRight" BadgeMargin="0,0,0,0" Padding="0,0,0,0">
-                                    <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" Width="30" Margin="0,0,7,0" Cursor="Hand" ToolTip="Toggle Filters &amp; Sorting" Background="Transparent" MouseLeftButtonDown="Filter_Click">
+                                <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" Width="30" Margin="0,0,40,0" Cursor="Hand" ToolTip="Clear all Filters" Background="Transparent" MouseLeftButtonDown="ClearAllFilters_Click">
+                                    <Path Data="m11.25 4.75l-6.5 6.5m0-6.5l6.5 6.5" Stroke="IndianRed" StrokeThickness="2" RenderTransformOrigin="0.04,0.02">
+                                        <Path.RenderTransform>
+                                            <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                        </Path.RenderTransform>
+                                    </Path>
+                                    <Grid.RenderTransform>
+                                        <ScaleTransform/>
+                                    </Grid.RenderTransform>
+                                    <Grid.Style>
+                                        <Style TargetType="Grid" BasedOn="{StaticResource HoverEffect}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding FilterCounter}" Value="">
+                                                    <Setter Property="Visibility" Value="Hidden"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Grid.Style>
+                                </Grid>
+                                <mah:Badged Badge="{Binding FilterCounter}" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" Width="30" Margin="0,0,7,0" BadgeBackground="IndianRed" BadgePlacementMode="BottomRight" BadgeMargin="0,0,0,0" Padding="0,0,0,0">
+                                    <Grid Style="{DynamicResource HoverEffect}" Cursor="Hand" ToolTip="Toggle Filters &amp; Sorting" Background="Transparent" MouseLeftButtonDown="Filter_Click">
                                         <Path Data="{StaticResource IconOpenFilter}" Fill="White" RenderTransformOrigin="0.2,0.2">
                                             <Path.RenderTransform>
                                                 <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
@@ -107,7 +126,7 @@
                                             </Style>
                                         </ToggleButton.Style>
                                     </ToggleButton>
-                                    <ComboBox Height="20" Width="175" Margin="25,10,10,0" DisplayMemberPath="Key" SelectedIndex="0" SelectedItem="{Binding SelectedGameFilterSortBy}" ItemsSource="{Binding GameFilterSortByValues}" SelectionChanged="SelectedGameFilterSortBy_SelectionChanged"/>
+                                    <ComboBox x:Name="uiFilterSortBy" Height="20" Width="175" Margin="25,10,10,0" DisplayMemberPath="Key" SelectedIndex="0" SelectedItem="{Binding SelectedGameFilterSortBy}" ItemsSource="{Binding GameFilterSortByValues}" SelectionChanged="SelectedGameFilterSortBy_SelectionChanged"/>
                                 </StackPanel>
                             </Grid>
                             <Border Background="{StaticResource DarkBackground4}" CornerRadius="5" Margin="-6,5,-6,0" VerticalAlignment="Top">

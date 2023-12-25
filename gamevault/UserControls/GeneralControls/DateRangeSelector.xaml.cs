@@ -42,10 +42,14 @@ namespace gamevault.UserControls
         {
             return uiFilterYearTo.Text;
         }
+        public void ClearSelection()
+        {
+            uiFilterYearFrom.Text = string.Empty; uiFilterYearTo.Text = string.Empty;
+        }
         private void StackPanel_LostFocus(object sender, RoutedEventArgs e)
         {
-            if(EntriesUpdated!=null && IsValid())
-            EntriesUpdated(this, e);
+            if (EntriesUpdated != null && IsValid())
+                EntriesUpdated(this, e);
         }
         private void YearSelector_Changed(object sender, TextCompositionEventArgs e)
         {

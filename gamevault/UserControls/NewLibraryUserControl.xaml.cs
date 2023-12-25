@@ -167,7 +167,21 @@ namespace gamevault.UserControls
             }
             ViewModel.FilterVisibility = ViewModel.FilterVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
         }
+        private async void ClearAllFilters_Click(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+            uiFilterGameTypeSelector.ClearEntries();
+            uiFilterGenreSelector.ClearEntries();
+            uiFilterTagSelector.ClearEntries();
+            uiFilterReleaseDateRangeSelector.ClearSelection();
+            uiFilterSortBy.SelectedIndex= 0;
+            uiFilterEarlyAccess.Toggled -= FilterUpdated;
+            uiFilterEarlyAccess.IsOn = false;
+            uiFilterEarlyAccess.Toggled += FilterUpdated;
 
+            RefreshFilterCounter();
+            await Search();
+        }
         private async void Library_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             if ((ScrollViewer)sender != uiMainScrollBar)

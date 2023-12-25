@@ -18,9 +18,9 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border CornerRadius="5" Background="{Binding Name,Converter={StaticResource colorConv}}" Margin="0,2,5,0" Width="145">
-                                <Grid Margin="5,2,2,2">
+                                <Grid Margin="5,2,2,2" Background="Transparent" Cursor="Hand" ToolTip="Remove" MouseLeftButtonUp="RemoveEntry_Click">
                                     <TextBlock Text="{Binding Name}" ToolTip="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" MaxWidth="125"/>
-                                    <Path Data="m11.25 4.75l-6.5 6.5m0-6.5l6.5 6.5" Stroke="White" StrokeThickness="2" HorizontalAlignment="Right" Margin="0,0,2,0" Cursor="Hand" ToolTip="Remove" MouseLeftButtonUp="RemoveEntry_Click"/>
+                                    <Path Data="m11.25 4.75l-6.5 6.5m0-6.5l6.5 6.5" Stroke="White" StrokeThickness="2" HorizontalAlignment="Right" Margin="0,0,2,0"/>
                                 </Grid>
                             </Border>
                         </DataTemplate>
