@@ -39,7 +39,6 @@ namespace gamevault.UserControls
         public event EventHandler EntriesUpdated;
         private bool loaded = false;
         private InputTimer debounceTimer { get; set; }
-        private Genre_Tag[] selectionEntries { get; set; }
         private List<Genre_Tag> selectedEntries = new List<Genre_Tag>();
         public TagSelector()
         {
@@ -68,6 +67,10 @@ namespace gamevault.UserControls
         public string GetSelectedEntries()
         {
             return string.Join(",", selectedEntries.Select(o => o.Name));
+        }
+        public bool HasEntries()
+        {
+            return selectedEntries.Any();
         }
         private async void DebounceTimerElapsed(object? sender, EventArgs e)
         {

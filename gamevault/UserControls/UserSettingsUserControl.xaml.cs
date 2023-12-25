@@ -281,9 +281,12 @@ namespace gamevault.UserControls
                 //Update Data Context for Library. So that the images are also refreshed there directly
                 if (success)
                 {
-                    MainWindowViewModel.Instance.UserIcon = ViewModel.User;
                     await MainWindowViewModel.Instance.AdminConsole.InitUserList();
                     await MainWindowViewModel.Instance.Community.InitUserList();
+                    if (LoginManager.Instance.GetCurrentUser().ID == ViewModel.User.ID)
+                    {
+                        MainWindowViewModel.Instance.UserIcon = ViewModel.User;
+                    }
                 }
             }
             catch (WebException ex)

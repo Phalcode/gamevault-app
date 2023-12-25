@@ -17,6 +17,7 @@ namespace gamevault.ViewModels
         private Visibility scrollToTopVisibility { get; set; }
         private Visibility filterVisibility = Visibility.Collapsed;
         private KeyValuePair<string, string> m_SelectedGameFilterSortBy { get; set; }
+        private string filterCounter { get; set; }
         #endregion
         public ObservableCollection<Game> GameCards
         {
@@ -68,5 +69,10 @@ namespace gamevault.ViewModels
             set { m_SelectedGameFilterSortBy = value; }
         }
         public string OrderByValue = "ASC";
+        public string FilterCounter
+        {
+            get { return filterCounter; }
+            set { filterCounter = value; OnPropertyChanged(); }
+        }
     }
 }

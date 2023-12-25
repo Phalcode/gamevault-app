@@ -1,5 +1,12 @@
 # GameVault App Changelog
 
+## 1.8.1
+Recommended Gamevault Server Version: `v10.0.1`
+### Changes
+- Implemented to display whether and how many filters are active
+- Bug fix: Standard release date filters did not work if no release year was set in existing games
+- Bug fix: If the profile picture of another user has been changed, the profile picture has been changed in the top left-hand corner.
+
 ## 1.8.0
 Recommended Gamevault Server Version: `v10.0.0`
 ### Changes
