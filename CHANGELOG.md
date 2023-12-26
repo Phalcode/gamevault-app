@@ -12,7 +12,8 @@ Recommended Gamevault Server Version: `v10.0.1`
 - Bug fix: Game Type is now displayed in more user friendly values
 - Bug fix: Crash when searching in the installed games search bar while the list was empty
 - Bug fix: Installed Games executable auto picker only worked if you were in the game settings at least once
-- Bug fix: It was possible to save an image if it was not fully loaded
+- Bug fix: It was possible to save an image while it was not fully loaded
+- Bug fix: Crash if you click on the Download or Settings button before the GameView has fully loaded
 
 ## 1.8.0
 Recommended Gamevault Server Version: `v10.0.0`
