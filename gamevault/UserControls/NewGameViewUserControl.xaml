@@ -126,6 +126,19 @@
                             </Border.Style>
                             <TextBlock Text="{Binding Path=Game.Type,Converter={StaticResource enumDescConv}}" VerticalAlignment="Center" Margin="15,8,15,8" FontSize="15" FontWeight="Bold" Foreground="#FF424242"/>
                         </Border>
+                        <Border CornerRadius="5" Background="Gainsboro" Margin="0,10,10,10">
+                            <Border.Style>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=Game.EarlyAccess}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <TextBlock Text="Early Access" VerticalAlignment="Center" Margin="15,8,15,8" FontSize="15" FontWeight="Bold" Foreground="#FF424242"/>
+                        </Border>
                         <ItemsControl ItemsSource="{Binding Path=Game.Genres}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
