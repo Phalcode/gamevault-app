@@ -73,18 +73,17 @@
                                         </Style>
                                     </Grid.Style>
                                 </Grid>
-                                <mah:Badged Badge="{Binding FilterCounter}" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" Width="30" Margin="0,0,7,0" BadgeBackground="IndianRed" BadgePlacementMode="BottomRight" BadgeMargin="0,0,0,0" Padding="0,0,0,0">
-                                    <Grid Style="{DynamicResource HoverEffect}" Cursor="Hand" ToolTip="Toggle Filters &amp; Sorting" Background="Transparent" MouseLeftButtonDown="Filter_Click">
-                                        <Path Data="{StaticResource IconOpenFilter}" Fill="White" RenderTransformOrigin="0.2,0.2">
-                                            <Path.RenderTransform>
-                                                <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
-                                            </Path.RenderTransform>
-                                        </Path>
-                                        <Grid.RenderTransform>
-                                            <ScaleTransform/>
-                                        </Grid.RenderTransform>
-                                    </Grid>
-                                </mah:Badged>
+                                <mah:Badged Badge="{Binding FilterCounter}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,21,6,0" BadgeBackground="IndianRed"/>
+                                <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" Width="30" Margin="0,0,7,0" Cursor="Hand" ToolTip="Toggle Filters &amp; Sorting" Background="Transparent" MouseLeftButtonDown="Filter_Click">
+                                    <Path Data="{StaticResource IconOpenFilter}" Fill="White" RenderTransformOrigin="0.2,0.2">
+                                        <Path.RenderTransform>
+                                            <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+                                        </Path.RenderTransform>
+                                    </Path>
+                                    <Grid.RenderTransform>
+                                        <ScaleTransform/>
+                                    </Grid.RenderTransform>
+                                </Grid>
                             </Grid>
                         </Expander.Header>
                         <StackPanel>

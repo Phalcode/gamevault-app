@@ -52,7 +52,7 @@ namespace gamevault.UserControls
             uiSettingsContent.SelectedIndex = ((TabControl)sender).SelectedIndex;
         }
         #region Edit Image
-        private void Image_Drop(object sender, DragEventArgs e)
+        private async void Image_Drop(object sender, DragEventArgs e)
         {
             string tag = ((FrameworkElement)sender).Tag as string;
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -83,7 +83,7 @@ namespace gamevault.UserControls
                 {
                     try
                     {
-                        BitmapImage bitmap = new BitmapImage(new Uri(imagePath));
+                        BitmapImage bitmap = await BitmapHelper.GetBitmapImageAsync(imagePath);
                         if (tag == "avatar")
                         {
                             ViewModel.AvatarImageSource = bitmap;
@@ -166,17 +166,17 @@ namespace gamevault.UserControls
             }
         }
 
-        private void LoadImageUrl(string url, string tag)
+        private async void LoadImageUrl(string url, string tag)
         {
             try
             {
                 if (tag == "avatar")
                 {
-                    ViewModel.AvatarImageSource = BitmapHelper.GetBitmapImage(url);
+                    ViewModel.AvatarImageSource = await BitmapHelper.GetBitmapImageAsync(url);
                 }
                 else
                 {
-                    ViewModel.BackgroundImageSource = BitmapHelper.GetBitmapImage(url);
+                    ViewModel.BackgroundImageSource = await BitmapHelper.GetBitmapImageAsync(url);
                 }
             }
             catch (Exception ex)

@@ -410,7 +410,7 @@ namespace gamevault.UserControls
         #endregion
         #region EDIT IMAGE    
 
-        private void Image_Drop(object sender, DragEventArgs e)
+        private async void Image_Drop(object sender, DragEventArgs e)
         {
             string tag = ((FrameworkElement)sender).Tag as string;
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -441,7 +441,7 @@ namespace gamevault.UserControls
                 {
                     try
                     {
-                        BitmapImage bitmap = new BitmapImage(new Uri(imagePath));
+                        BitmapImage bitmap = await BitmapHelper.GetBitmapImageAsync(imagePath);
                         if (tag == "box")
                         {
                             ViewModel.BoxArtImageSource = bitmap;
@@ -495,17 +495,17 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.AppBarText = ex.Message;
             }
         }
-        private void LoadImageUrl(string url, string tag)
+        private async void LoadImageUrl(string url, string tag)
         {
             try
             {
                 if (tag == "box")
                 {
-                    ViewModel.BoxArtImageSource = BitmapHelper.GetBitmapImage(url);
+                    ViewModel.BoxArtImageSource = await BitmapHelper.GetBitmapImageAsync(url);
                 }
                 else
                 {
-                    ViewModel.BackgroundImageSource = BitmapHelper.GetBitmapImage(url);
+                    ViewModel.BackgroundImageSource = await BitmapHelper.GetBitmapImageAsync(url);
                 }
             }
             catch (Exception ex)
