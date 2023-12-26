@@ -269,13 +269,26 @@ namespace gamevault.UserControls
         private void Play_Click(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
+            if (!Directory.Exists($"{((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Value}"))
+            {
+                MainWindowViewModel.Instance.AppBarText = $"Can not find part of '{((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Value}'";
+                return;
+            }
             string savedExecutable = Preferences.Get(AppConfigKey.Executable, $"{((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Value}\\gamevault-exec");
             string parameter = Preferences.Get(AppConfigKey.LaunchParameter, $"{((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Value}\\gamevault-exec");
             if (savedExecutable == string.Empty)
             {
-                MainWindowViewModel.Instance.AppBarText = $"No Executable set";
+                if (GameSettingsUserControl.TryPrepareLaunchExecutable(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Value))
+                {
+                    savedExecutable = Preferences.Get(AppConfigKey.Executable, $"{((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Value}\\gamevault-exec");
+                }
+                else
+                {
+                    MainWindowViewModel.Instance.AppBarText = $"No valid Executable found";
+                    return;
+                }
             }
-            else if (File.Exists(savedExecutable))
+            if (File.Exists(savedExecutable))
             {
                 try
                 {

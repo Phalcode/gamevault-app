@@ -331,7 +331,26 @@ namespace gamevault.UserControls
                 }
             }
         }
-        private bool ContainsValueFromIgnoreList(string value)
+        public static bool TryPrepareLaunchExecutable(string directory)
+        {
+            foreach (string entry in Directory.GetFiles(directory, "*", SearchOption.AllDirectories))
+            {
+                string fileType = Path.GetExtension(entry).TrimStart('.');
+                if (Globals.SupportedExecutables.Contains(fileType.ToUpper()))
+                {
+                    if (!ContainsValueFromIgnoreList(entry))
+                    {
+                        if (File.Exists($"{directory}\\gamevault-exec"))
+                        {
+                            Preferences.Set(AppConfigKey.Executable, entry, $"{directory}\\gamevault-exec");
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+        private static bool ContainsValueFromIgnoreList(string value)
         {
             return (NewInstallViewModel.Instance.IgnoreList != null && NewInstallViewModel.Instance.IgnoreList.Any(s => Path.GetFileNameWithoutExtension(value).Contains(s, StringComparison.OrdinalIgnoreCase)));
         }
