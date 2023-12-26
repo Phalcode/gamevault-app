@@ -6,6 +6,7 @@ Recommended Gamevault Server Version: `v10.0.1`
 - Implemented to display whether and how many filters are active
 - Added clear all filters Button
 - Added Early Access Flag to the Game View
+- Library outer Scrollbar is now scrolling if inner Scrollbar has zero offset
 - Bug fix: Standard release date filters did not work if no release year was set in existing games
 - Bug fix: If the profile picture of another user has been changed, the profile picture has been changed in the top left-hand corner.
 - Bug fix: Game Type is now displayed in more user friendly values

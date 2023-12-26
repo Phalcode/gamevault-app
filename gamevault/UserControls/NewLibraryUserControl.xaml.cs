@@ -5,6 +5,7 @@ using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -174,7 +175,7 @@ namespace gamevault.UserControls
             uiFilterGenreSelector.ClearEntries();
             uiFilterTagSelector.ClearEntries();
             uiFilterReleaseDateRangeSelector.ClearSelection();
-            uiFilterSortBy.SelectedIndex= 0;
+            uiFilterSortBy.SelectedIndex = 0;
             uiFilterEarlyAccess.Toggled -= FilterUpdated;
             uiFilterEarlyAccess.IsOn = false;
             uiFilterEarlyAccess.Toggled += FilterUpdated;
@@ -202,7 +203,7 @@ namespace gamevault.UserControls
         }
         private void Library_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            if (e.Delta < 0 && ViewModel.NextPage == null && ((ScrollViewer)sender).VerticalOffset == ((ScrollViewer)sender).ScrollableHeight)
+            if ((e.Delta > 0 && ((ScrollViewer)sender).VerticalOffset == 0) || (e.Delta < 0 && ViewModel.NextPage == null && ((ScrollViewer)sender).VerticalOffset == ((ScrollViewer)sender).ScrollableHeight))
             {
                 var eventArg = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
                 eventArg.RoutedEvent = UIElement.MouseWheelEvent;
