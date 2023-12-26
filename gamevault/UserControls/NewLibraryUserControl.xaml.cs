@@ -175,7 +175,11 @@ namespace gamevault.UserControls
             uiFilterGenreSelector.ClearEntries();
             uiFilterTagSelector.ClearEntries();
             uiFilterReleaseDateRangeSelector.ClearSelection();
+            //Reset the Controls without trigger the Filter Updated Function
+            uiFilterSortBy.SelectionChanged -= FilterUpdated;
             uiFilterSortBy.SelectedIndex = 0;
+            uiFilterSortBy.SelectionChanged += FilterUpdated;
+
             uiFilterEarlyAccess.Toggled -= FilterUpdated;
             uiFilterEarlyAccess.IsOn = false;
             uiFilterEarlyAccess.Toggled += FilterUpdated;
