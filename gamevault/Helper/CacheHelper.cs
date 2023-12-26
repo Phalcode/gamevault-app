@@ -106,7 +106,7 @@ namespace gamevault.Helper
         {
             await Task.Run(() =>
             {
-                double maxHeight = SystemParameters.FullPrimaryScreenHeight / 4;
+                double maxHeight = SystemParameters.FullPrimaryScreenHeight / 2;
                 var files = Directory.GetFiles(AppFilePath.ImageCache, "*.*", SearchOption.AllDirectories);
                 foreach (string file in files)
                 {

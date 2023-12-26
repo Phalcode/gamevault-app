@@ -384,52 +384,54 @@
                             </ComboBox.ItemContainerStyle>
                         </ComboBox>
                     </StackPanel>
-                    <ItemsControl ItemsSource="{Binding UserProgress}" HorizontalAlignment="Right" VerticalAlignment="Top" Height="320" Width="410" Margin="0,160,0,0">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border CornerRadius="5" Background="#33000000" Padding="0" Margin="0,0,0,10" Height="50">
-                                    <Grid Margin="5">
-                                        <local:CacheImage Data="{Binding User}" Stretch="Fill" ImageCacheType="UserIcon" CornerRadius="5" HorizontalAlignment="Left" VerticalAlignment="Center" Width="40" Cursor="Hand" MouseLeftButtonUp="ShowProgressUser_Click"/>
-                                        <TextBlock Text="{Binding Path=User.Username}" FontSize="12" HorizontalAlignment="Left" Margin="50,0,0,0" VerticalAlignment="Center"/>
-                                        <TextBlock Text="{Binding MinutesPlayed,Converter={StaticResource timeConv}}" FontSize="12" HorizontalAlignment="Left" Margin="135,0,0,0" VerticalAlignment="Center"/>
-                                        <TextBlock FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,135,0">
-                                            <TextBlock.Style>
-                                                <Style TargetType="{x:Type TextBlock}">
-                                                    <Style.Setters>
-                                                        <Setter Property="Text">
-                                                            <Setter.Value>
-                                                                <MultiBinding StringFormat="{}{0}.{1}.{2}">
-                                                                    <Binding Path="LastPlayedAt.Day"/>
-                                                                    <Binding Path="LastPlayedAt.Month"/>
-                                                                    <Binding Path="LastPlayedAt.Year"/>
-                                                                </MultiBinding>
-                                                            </Setter.Value>
-                                                        </Setter>
-                                                    </Style.Setters>
-                                                </Style>
-                                            </TextBlock.Style>
-                                            <TextBlock.ToolTip>
-                                                <TextBlock HorizontalAlignment="Center">
-                                                    <TextBlock.Text>
-                                                        <MultiBinding StringFormat="{}{0}:{1} h">
-                                                            <Binding Path="LastPlayedAt.Hour"/>
-                                                            <Binding Path="LastPlayedAt.Minute"/>
-                                                        </MultiBinding>
-                                                    </TextBlock.Text>
-                                                </TextBlock>
-                                            </TextBlock.ToolTip>                                        
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalAlignment="Right" VerticalAlignment="Top" Height="460" Width="410" Margin="0,160,0,0">
+                        <ItemsControl ItemsSource="{Binding UserProgress}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border CornerRadius="5" Background="#33000000" Padding="0" Margin="0,0,0,10" Height="50">
+                                        <Grid Margin="5">
+                                            <local:CacheImage Data="{Binding User}" Stretch="Fill" ImageCacheType="UserIcon" CornerRadius="5" HorizontalAlignment="Left" VerticalAlignment="Center" Width="40" Cursor="Hand" MouseLeftButtonUp="ShowProgressUser_Click"/>
+                                            <TextBlock Text="{Binding Path=User.Username}" FontSize="12" HorizontalAlignment="Left" Margin="50,0,0,0" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding MinutesPlayed,Converter={StaticResource timeConv}}" FontSize="12" HorizontalAlignment="Left" Margin="135,0,0,0" VerticalAlignment="Center"/>
+                                            <TextBlock FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,135,0">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="{x:Type TextBlock}">
+                                                        <Style.Setters>
+                                                            <Setter Property="Text">
+                                                                <Setter.Value>
+                                                                    <MultiBinding StringFormat="{}{0}.{1}.{2}">
+                                                                        <Binding Path="LastPlayedAt.Day"/>
+                                                                        <Binding Path="LastPlayedAt.Month"/>
+                                                                        <Binding Path="LastPlayedAt.Year"/>
+                                                                    </MultiBinding>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Style.Setters>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                                <TextBlock.ToolTip>
+                                                    <TextBlock HorizontalAlignment="Center">
+                                                        <TextBlock.Text>
+                                                            <MultiBinding StringFormat="{}{0}:{1} h">
+                                                                <Binding Path="LastPlayedAt.Hour"/>
+                                                                <Binding Path="LastPlayedAt.Minute"/>
+                                                            </MultiBinding>
+                                                        </TextBlock.Text>
+                                                    </TextBlock>
+                                                </TextBlock.ToolTip>                                        
                                         </TextBlock>
-                                        <TextBlock Text="{Binding State,Converter={StaticResource gameStateDescConv}}" Foreground="{Binding Path=State,Converter={StaticResource gameStateColorConv}}" FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,2,0"/>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                                            <TextBlock Text="{Binding State,Converter={StaticResource gameStateDescConv}}" Foreground="{Binding Path=State,Converter={StaticResource gameStateColorConv}}" FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,2,0"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
                 </Grid>
             </Viewbox>
         </Grid>

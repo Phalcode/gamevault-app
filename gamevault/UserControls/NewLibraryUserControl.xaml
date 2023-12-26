@@ -73,7 +73,7 @@
                                         </Style>
                                     </Grid.Style>
                                 </Grid>
-                                <mah:Badged Badge="{Binding FilterCounter}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,21,6,0" BadgeBackground="IndianRed"/>
+                                <mah:Badged Badge="{Binding FilterCounter}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,22,6,0" BadgeBackground="IndianRed"/>
                                 <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" Width="30" Margin="0,0,7,0" Cursor="Hand" ToolTip="Toggle Filters &amp; Sorting" Background="Transparent" MouseLeftButtonDown="Filter_Click">
                                     <Path Data="{StaticResource IconOpenFilter}" Fill="White" RenderTransformOrigin="0.2,0.2">
                                         <Path.RenderTransform>

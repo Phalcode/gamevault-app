@@ -176,9 +176,9 @@ namespace gamevault.UserControls
             uiFilterTagSelector.ClearEntries();
             uiFilterReleaseDateRangeSelector.ClearSelection();
             //Reset the Controls without trigger the Filter Updated Function
-            uiFilterSortBy.SelectionChanged -= FilterUpdated;
-            uiFilterSortBy.SelectedIndex = 0;
-            uiFilterSortBy.SelectionChanged += FilterUpdated;
+            //uiFilterSortBy.SelectionChanged -= FilterUpdated;
+            //uiFilterSortBy.SelectedIndex = 0;
+            //uiFilterSortBy.SelectionChanged += FilterUpdated;
 
             uiFilterEarlyAccess.Toggled -= FilterUpdated;
             uiFilterEarlyAccess.IsOn = false;
@@ -313,7 +313,7 @@ namespace gamevault.UserControls
             filterCount += uiFilterGenreSelector.HasEntries() ? 1 : 0;
             filterCount += uiFilterTagSelector.HasEntries() ? 1 : 0;
             filterCount += uiFilterEarlyAccess.IsOn ? 1 : 0;
-            filterCount += ViewModel.SelectedGameFilterSortBy.Key != "Title" ? 1 : 0;
+            //filterCount += ViewModel.SelectedGameFilterSortBy.Key != "Title" ? 1 : 0;
             //filterCount += ViewModel.OrderByValue != "DESC" ? 1 : 0;
             filterCount += (uiFilterReleaseDateRangeSelector.IsValid()) ? 1 : 0;
             ViewModel.FilterCounter = filterCount == 0 ? string.Empty : filterCount.ToString();

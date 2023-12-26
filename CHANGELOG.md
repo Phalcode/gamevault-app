@@ -1,7 +1,7 @@
 # GameVault App Changelog
 
 ## 1.8.1
-Recommended Gamevault Server Version: `v10.0.1`
+Recommended Gamevault Server Version: `v10.0.2`
 ### Changes
 - Implemented to display whether and how many filters are active
 - Added clear all filters Button
@@ -14,6 +14,8 @@ Recommended Gamevault Server Version: `v10.0.1`
 - Bug fix: Installed Games executable auto picker only worked if you were in the game settings at least once
 - Bug fix: It was possible to save an image while it was not fully loaded
 - Bug fix: Crash if you click on the Download or Settings button before the GameView has fully loaded
+- Bug fix: Progesses from other users were cut off in GameView
+- Bug fix: Lower boxart quality in the GameView
 
 ## 1.8.0
 Recommended Gamevault Server Version: `v10.0.0`
