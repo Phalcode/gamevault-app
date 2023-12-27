@@ -1,24 +1,15 @@
-﻿using ControlzEx.Standard;
-using gamevault.Converter;
+﻿using gamevault.Converter;
 using gamevault.Helper;
 using gamevault.Models;
 using gamevault.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace gamevault.UserControls
 {
@@ -39,7 +30,6 @@ namespace gamevault.UserControls
         public event EventHandler EntriesUpdated;
         private bool loaded = false;
         private InputTimer debounceTimer { get; set; }
-        private Genre_Tag[] selectionEntries { get; set; }
         private List<Genre_Tag> selectedEntries = new List<Genre_Tag>();
         public TagSelector()
         {
@@ -67,7 +57,19 @@ namespace gamevault.UserControls
         }
         public string GetSelectedEntries()
         {
+            if (SelectionType == Selection.GameType)
+                return string.Join(",", selectedEntries.Select(o => o.OriginName));
+
             return string.Join(",", selectedEntries.Select(o => o.Name));
+        }
+        public bool HasEntries()
+        {
+            return selectedEntries.Any();
+        }
+        public void ClearEntries()
+        {
+            selectedEntries.Clear();
+            uiSelectedEntries.ItemsSource = null;
         }
         private async void DebounceTimerElapsed(object? sender, EventArgs e)
         {
@@ -106,16 +108,16 @@ namespace gamevault.UserControls
             }
             else
             {
-                //EnumDescriptionConverter conv = new EnumDescriptionConverter();
-                //List<Genre_Tag> list = new List<Genre_Tag>();
-                //foreach (GameType type in Enum.GetValues(typeof(GameType)))
-                //{
-                //    if (type == GameType.UNDETECTABLE)
-                //        continue;
+                EnumDescriptionConverter conv = new EnumDescriptionConverter();
+                List<Genre_Tag> list = new List<Genre_Tag>();
+                foreach (GameType type in Enum.GetValues(typeof(GameType)))
+                {
+                    if (type == GameType.UNDETECTABLE)
+                        continue;
 
-                //    list.Add(new Genre_Tag() { DisplayName = type.ToString(), Name = (string)conv.Convert(type, null, null, null) });
-                //}
-                data = new Genre_Tag[3] { new Genre_Tag() { Name = "WINDOWS_SETUP" }, new Genre_Tag() { Name = "WINDOWS_PORTABLE" }, new Genre_Tag() { Name = "LINUX_PORTABLE" } };
+                    list.Add(new Genre_Tag() { OriginName = type.ToString(), Name = (string)conv.Convert(type, null, null, null) });
+                }
+                data = list.ToArray();
                 data = data.Where(x => x.Name.Contains(debounceTimer.Data, StringComparison.OrdinalIgnoreCase)).ToArray();
             }
             uiSelectionEntries.ItemsSource = data;

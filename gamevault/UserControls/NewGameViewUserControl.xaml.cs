@@ -95,13 +95,26 @@ namespace gamevault.UserControls
             {
                 path = result.Value;
             }
+            if (!Directory.Exists(path))
+            {
+                MainWindowViewModel.Instance.AppBarText = $"Can not find part of '{path}'";
+                return;
+            }
             string savedExecutable = Preferences.Get(AppConfigKey.Executable, $"{path}\\gamevault-exec");
             string parameter = Preferences.Get(AppConfigKey.LaunchParameter, $"{path}\\gamevault-exec");
             if (savedExecutable == string.Empty)
             {
-                MainWindowViewModel.Instance.AppBarText = $"No Executable set";
+                if (GameSettingsUserControl.TryPrepareLaunchExecutable(path))
+                {
+                    savedExecutable = Preferences.Get(AppConfigKey.Executable, $"{path}\\gamevault-exec");
+                }
+                else
+                {
+                    MainWindowViewModel.Instance.AppBarText = $"No valid Executable found";
+                    return;
+                }
             }
-            else if (File.Exists(savedExecutable))
+            if (File.Exists(savedExecutable))
             {
                 try
                 {
@@ -127,10 +140,14 @@ namespace gamevault.UserControls
         }
         private void GameSettings_Click(object sender, MouseButtonEventArgs e)
         {
+            if (ViewModel.Game == null)
+                return;
             MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(ViewModel.Game) { Width = 1200, Height = 800, Margin = new Thickness(50) });
         }
         private async void GameDownload_Click(object sender, MouseButtonEventArgs e)
         {
+            if (ViewModel.Game == null)
+                return;
             await MainWindowViewModel.Instance.Downloads.TryStartDownload(ViewModel.Game);
         }
         private void KeyBindingEscape_OnExecuted(object sender, object e)

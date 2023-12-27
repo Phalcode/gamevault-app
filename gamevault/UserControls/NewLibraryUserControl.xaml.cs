@@ -5,6 +5,7 @@ using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -39,7 +40,6 @@ namespace gamevault.UserControls
             ViewModel = new NewLibraryViewModel();
             this.DataContext = ViewModel;
             InitTimer();
-            uiFilterYearTo.Text = DateTime.Now.Year.ToString();
         }
         private async void Library_Loaded(object sender, RoutedEventArgs e)
         {
@@ -168,7 +168,25 @@ namespace gamevault.UserControls
             }
             ViewModel.FilterVisibility = ViewModel.FilterVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
         }
+        private async void ClearAllFilters_Click(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+            uiFilterGameTypeSelector.ClearEntries();
+            uiFilterGenreSelector.ClearEntries();
+            uiFilterTagSelector.ClearEntries();
+            uiFilterReleaseDateRangeSelector.ClearSelection();
+            //Reset the Controls without trigger the Filter Updated Function
+            //uiFilterSortBy.SelectionChanged -= FilterUpdated;
+            //uiFilterSortBy.SelectedIndex = 0;
+            //uiFilterSortBy.SelectionChanged += FilterUpdated;
 
+            uiFilterEarlyAccess.Toggled -= FilterUpdated;
+            uiFilterEarlyAccess.IsOn = false;
+            uiFilterEarlyAccess.Toggled += FilterUpdated;
+
+            RefreshFilterCounter();
+            await Search();
+        }
         private async void Library_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             if ((ScrollViewer)sender != uiMainScrollBar)
@@ -189,7 +207,7 @@ namespace gamevault.UserControls
         }
         private void Library_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            if (e.Delta < 0 && ViewModel.NextPage == null && ((ScrollViewer)sender).VerticalOffset == ((ScrollViewer)sender).ScrollableHeight)
+            if ((e.Delta > 0 && ((ScrollViewer)sender).VerticalOffset == 0) || (e.Delta < 0 && ViewModel.NextPage == null && ((ScrollViewer)sender).VerticalOffset == ((ScrollViewer)sender).ScrollableHeight))
             {
                 var eventArg = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
                 eventArg.RoutedEvent = UIElement.MouseWheelEvent;
@@ -219,9 +237,9 @@ namespace gamevault.UserControls
             {
                 filter += "&filter.early_access=$eq:true";
             }
-            if (int.TryParse(uiFilterYearFrom.Text, out int yearFrom) && int.TryParse(uiFilterYearTo.Text, out int yearTo))
+            if (uiFilterReleaseDateRangeSelector.IsValid())
             {
-                filter += $"&filter.release_date=$btw:{yearFrom}-01-01,{yearTo}-12-31";
+                filter += $"&filter.release_date=$btw:{uiFilterReleaseDateRangeSelector.GetYearFrom()}-01-01,{uiFilterReleaseDateRangeSelector.GetYearTo()}-12-31";
             }
             string genres = uiFilterGenreSelector.GetSelectedEntries();
             if (genres != string.Empty)
@@ -242,13 +260,10 @@ namespace gamevault.UserControls
         }
         private async void FilterUpdated(object sender, EventArgs e)
         {
+            RefreshFilterCounter();
             await Search();
         }
-        private void YearSelector_Changed(object sender, TextCompositionEventArgs e)
-        {
-            Regex regex = new Regex("[^0-9]+");
-            e.Handled = (((TextBox)e.Source).Text == "" && e.Text == "0") || regex.IsMatch(e.Text);
-        }
+
 
         private async void RandomGame_Click(object sender, MouseButtonEventArgs e)
         {
@@ -291,6 +306,18 @@ namespace gamevault.UserControls
             e.Handled = true;
             await MainWindowViewModel.Instance.Downloads.TryStartDownload((Game)(((FrameworkElement)sender).DataContext));
         }
+        private void RefreshFilterCounter()
+        {
+            int filterCount = 0;
+            filterCount += uiFilterGameTypeSelector.HasEntries() ? 1 : 0;
+            filterCount += uiFilterGenreSelector.HasEntries() ? 1 : 0;
+            filterCount += uiFilterTagSelector.HasEntries() ? 1 : 0;
+            filterCount += uiFilterEarlyAccess.IsOn ? 1 : 0;
+            //filterCount += ViewModel.SelectedGameFilterSortBy.Key != "Title" ? 1 : 0;
+            //filterCount += ViewModel.OrderByValue != "DESC" ? 1 : 0;
+            filterCount += (uiFilterReleaseDateRangeSelector.IsValid()) ? 1 : 0;
+            ViewModel.FilterCounter = filterCount == 0 ? string.Empty : filterCount.ToString();
+        }
         public void RefreshGame(Game gameToRefreshParam)
         {
             Game? gameToRefresh = ViewModel.GameCards.Where(g => g.ID == gameToRefreshParam.ID).FirstOrDefault();
@@ -301,7 +328,5 @@ namespace gamevault.UserControls
                 ViewModel.GameCards[index] = gameToRefreshParam;
             }
         }
-
-
     }
 }

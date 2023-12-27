@@ -331,7 +331,26 @@ namespace gamevault.UserControls
                 }
             }
         }
-        private bool ContainsValueFromIgnoreList(string value)
+        public static bool TryPrepareLaunchExecutable(string directory)
+        {
+            foreach (string entry in Directory.GetFiles(directory, "*", SearchOption.AllDirectories))
+            {
+                string fileType = Path.GetExtension(entry).TrimStart('.');
+                if (Globals.SupportedExecutables.Contains(fileType.ToUpper()))
+                {
+                    if (!ContainsValueFromIgnoreList(entry))
+                    {
+                        if (File.Exists($"{directory}\\gamevault-exec"))
+                        {
+                            Preferences.Set(AppConfigKey.Executable, entry, $"{directory}\\gamevault-exec");
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+        private static bool ContainsValueFromIgnoreList(string value)
         {
             return (NewInstallViewModel.Instance.IgnoreList != null && NewInstallViewModel.Instance.IgnoreList.Any(s => Path.GetFileNameWithoutExtension(value).Contains(s, StringComparison.OrdinalIgnoreCase)));
         }
@@ -391,7 +410,7 @@ namespace gamevault.UserControls
         #endregion
         #region EDIT IMAGE    
 
-        private void Image_Drop(object sender, DragEventArgs e)
+        private async void Image_Drop(object sender, DragEventArgs e)
         {
             string tag = ((FrameworkElement)sender).Tag as string;
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -422,7 +441,7 @@ namespace gamevault.UserControls
                 {
                     try
                     {
-                        BitmapImage bitmap = new BitmapImage(new Uri(imagePath));
+                        BitmapImage bitmap = await BitmapHelper.GetBitmapImageAsync(imagePath);
                         if (tag == "box")
                         {
                             ViewModel.BoxArtImageSource = bitmap;
@@ -476,17 +495,17 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.AppBarText = ex.Message;
             }
         }
-        private void LoadImageUrl(string url, string tag)
+        private async void LoadImageUrl(string url, string tag)
         {
             try
             {
                 if (tag == "box")
                 {
-                    ViewModel.BoxArtImageSource = BitmapHelper.GetBitmapImage(url);
+                    ViewModel.BoxArtImageSource = await BitmapHelper.GetBitmapImageAsync(url);
                 }
                 else
                 {
-                    ViewModel.BackgroundImageSource = BitmapHelper.GetBitmapImage(url);
+                    ViewModel.BackgroundImageSource = await BitmapHelper.GetBitmapImageAsync(url);
                 }
             }
             catch (Exception ex)

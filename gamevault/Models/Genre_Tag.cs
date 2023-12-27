@@ -15,5 +15,6 @@ namespace gamevault.Models
         public int? RawgId { get; set; }
         [JsonPropertyName("name")]
         public string? Name { get; set; }
+        public string? OriginName { get; set; }
     }
 }

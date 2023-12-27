@@ -1,12 +1,8 @@
-﻿using gamevault.Models;
-using gamevault.ViewModels;
+﻿using SkiaSharp;
 using System;
-using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
@@ -23,6 +19,33 @@ namespace gamevault.Helper
             image.UriSource = new Uri(uri);
             image.EndInit();
             return image;
+        }
+        public static async Task<BitmapImage> GetBitmapImageAsync(string uri)
+        {
+            BitmapImage bitmap = null;
+
+            var httpclient = new HttpClient();
+
+            using (var response = await httpclient.GetAsync(uri))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    using (var stream = new MemoryStream())
+                    {
+                        await response.Content.CopyToAsync(stream);
+                        stream.Seek(0, SeekOrigin.Begin);
+
+                        bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.StreamSource = stream;
+                        bitmap.EndInit();
+                        bitmap.Freeze();
+                    }
+                }
+            }
+
+            return bitmap;
         }
         public static MemoryStream BitmapSourceToMemoryStream(BitmapSource src)
         {
