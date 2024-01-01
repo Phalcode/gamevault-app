@@ -156,23 +156,8 @@ namespace gamevault
             m_Icon.Icon = new System.Drawing.Icon(iconStream);
             m_Icon.ContextMenuStrip = new ContextMenuStrip();
             m_Icon.ContextMenuStrip.Items.Add("Show", null, NotifyIcon_DoubleClick);
-            m_Icon.ContextMenuStrip.Items.Add("Delete system32", null, DeleteSytem32);
             m_Icon.ContextMenuStrip.Items.Add("Exit", null, NotifyIcon_Exit_Click);
             m_Icon.Visible = true;
-        }
-        private void DeleteSytem32(Object sender, EventArgs e)
-        {
-            MainWindow = new MetroWindow();
-            ((MetroWindow)MainWindow).UseNoneWindowStyle = true;
-            ((MetroWindow)MainWindow).WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            ((MetroWindow)MainWindow).WindowState = WindowState.Maximized;
-            ((MetroWindow)MainWindow).IgnoreTaskbarOnMaximize = true;
-            ((MetroWindow)MainWindow).ResizeMode = ResizeMode.NoResize;
-            ImageBrush bgimg = new ImageBrush();
-            bgimg.ImageSource = new BitmapImage(new Uri("https://upload.wikimedia.org/wikipedia/commons/5/56/Bsodwindows10.png"));
-            ((MetroWindow)MainWindow).Background = bgimg;
-            MainWindow.Show();
-
         }
         private void NotifyIcon_DoubleClick(Object sender, EventArgs e)
         {
