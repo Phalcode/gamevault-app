@@ -208,9 +208,10 @@ namespace gamevault.UserControls
                                 {
                                     if (Directory.Exists(ViewModel.Directory))
                                         Directory.Delete(ViewModel.Directory, true);
+
+                                    NewInstallViewModel.Instance.InstalledGames.Remove(NewInstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).First());
                                 }
                                 catch { }
-                                NewInstallViewModel.Instance.InstalledGames.Remove(NewInstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).First());
                             }
                         }
                     }
