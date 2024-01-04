@@ -4,6 +4,7 @@
 Recommended Gamevault Server Version: `v10.0.2`
 ### Changes
 - Write permissions of the root folder are now checked on selection
+- The scrollbar in the download tab now covers the entire tab
 
 ## 1.8.1
 Recommended Gamevault Server Version: `v10.0.2`

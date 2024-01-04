@@ -27,22 +27,23 @@
             </TextBlock.Style>
         </TextBlock>
         <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-
-            <ScrollViewer Grid.Column="1" Margin="10,10,0,0" VerticalAlignment="Top" VerticalScrollBarVisibility="Auto">
-                <Viewbox>
-                    <ItemsControl ItemsSource="{Binding DownloadedGames}" Focusable="False">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Vertical"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                    </ItemsControl>
-                </Viewbox>
+            <ScrollViewer Grid.Column="1" Margin="10,10,0,10" VerticalScrollBarVisibility="Auto">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Viewbox Grid.Column="1">
+                        <ItemsControl ItemsSource="{Binding DownloadedGames}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                    </Viewbox>
+                </Grid>
             </ScrollViewer>
         </Grid>
     </Grid>
