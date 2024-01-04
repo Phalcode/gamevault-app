@@ -1,5 +1,10 @@
 # GameVault App Changelog
 
+## 1.8.2
+Recommended Gamevault Server Version: `v10.0.2`
+### Changes
+- Write permissions of the root folder are now checked on selection
+
 ## 1.8.1
 Recommended Gamevault Server Version: `v10.0.2`
 ### Changes
