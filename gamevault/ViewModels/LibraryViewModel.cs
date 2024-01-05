@@ -9,7 +9,7 @@ using System.Windows;
 
 namespace gamevault.ViewModels
 {
-    internal class NewLibraryViewModel : ViewModelBase
+    internal class LibraryViewModel : ViewModelBase
     {
         #region PrivateMembers      
         private ObservableCollection<Game> gameCards { get; set; }

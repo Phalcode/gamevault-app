@@ -20,7 +20,7 @@ namespace gamevault.Converter
                 return Visibility.Collapsed;
             if (parameter.ToString() == "local")
             {
-                if (NewInstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ((Game)value).ID).Count() > 0)
+                if (InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ((Game)value).ID).Count() > 0)
                 {
                     return Visibility.Visible;
                 }

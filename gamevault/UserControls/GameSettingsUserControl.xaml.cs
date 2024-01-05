@@ -107,7 +107,7 @@ namespace gamevault.UserControls
         }
         private bool IsGameInstalled(Game game)
         {
-            KeyValuePair<Game, string> result = NewInstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == game.ID).FirstOrDefault();
+            KeyValuePair<Game, string> result = InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == game.ID).FirstOrDefault();
             if (result.Equals(default(KeyValuePair<Game, string>)))
                 return false;
 
@@ -163,7 +163,7 @@ namespace gamevault.UserControls
                         if (Directory.Exists(ViewModel.Directory))
                             Directory.Delete(ViewModel.Directory, true);
 
-                        NewInstallViewModel.Instance.InstalledGames.Remove(NewInstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).First());
+                        InstallViewModel.Instance.InstalledGames.Remove(InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).First());
                         MainWindowViewModel.Instance.ClosePopup();
                     }
                     catch
@@ -209,7 +209,7 @@ namespace gamevault.UserControls
                                     if (Directory.Exists(ViewModel.Directory))
                                         Directory.Delete(ViewModel.Directory, true);
 
-                                    NewInstallViewModel.Instance.InstalledGames.Remove(NewInstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).First());
+                                    InstallViewModel.Instance.InstalledGames.Remove(InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).First());
                                 }
                                 catch { }
                             }
@@ -237,7 +237,7 @@ namespace gamevault.UserControls
                 long totalDiskSize = drive.TotalSize;
                 long currentGameSize = long.TryParse(ViewModel.Game.Size, out var size) ? size : 0;
 
-                long otherGamesSize = NewInstallViewModel.Instance.InstalledGames
+                long otherGamesSize = InstallViewModel.Instance.InstalledGames
                     .Sum(installedGame => long.TryParse(installedGame.Key.Size, out var gameSize) ? gameSize : 0) - currentGameSize;
 
                 long unmanagedDiskSize = totalDiskSize - currentGameSize - otherGamesSize - drive.TotalFreeSpace;
@@ -353,7 +353,7 @@ namespace gamevault.UserControls
         }
         private static bool ContainsValueFromIgnoreList(string value)
         {
-            return (NewInstallViewModel.Instance.IgnoreList != null && NewInstallViewModel.Instance.IgnoreList.Any(s => Path.GetFileNameWithoutExtension(value).Contains(s, StringComparison.OrdinalIgnoreCase)));
+            return (InstallViewModel.Instance.IgnoreList != null && InstallViewModel.Instance.IgnoreList.Any(s => Path.GetFileNameWithoutExtension(value).Contains(s, StringComparison.OrdinalIgnoreCase)));
         }
         private void ExecutableSelection_Opened(object sender, EventArgs e)
         {
@@ -624,11 +624,11 @@ namespace gamevault.UserControls
                 //Update Data Context for Library. So that the images are also refreshed there directly
                 if (success)
                 {
-                    NewInstallViewModel.Instance.RefreshGame(ViewModel.Game);
+                    InstallViewModel.Instance.RefreshGame(ViewModel.Game);
                     MainWindowViewModel.Instance.NewLibrary.RefreshGame(ViewModel.Game);
-                    if (MainWindowViewModel.Instance.ActiveControl.GetType() == typeof(NewGameViewUserControl))
+                    if (MainWindowViewModel.Instance.ActiveControl.GetType() == typeof(GameViewUserControl))
                     {
-                        ((NewGameViewUserControl)MainWindowViewModel.Instance.ActiveControl).RefreshGame(ViewModel.Game);
+                        ((GameViewUserControl)MainWindowViewModel.Instance.ActiveControl).RefreshGame(ViewModel.Game);
                     }
                 }
             }
@@ -750,7 +750,7 @@ namespace gamevault.UserControls
                     MainWindowViewModel.Instance.AppBarText = errMessage;
                 }
             });
-            NewInstallViewModel.Instance.RefreshGame(ViewModel.Game);
+            InstallViewModel.Instance.RefreshGame(ViewModel.Game);
             MainWindowViewModel.Instance.NewLibrary.RefreshGame(ViewModel.Game);
             this.IsEnabled = true;
         }

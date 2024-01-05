@@ -25,19 +25,19 @@ using System.Windows.Shapes;
 namespace gamevault.UserControls
 {
     /// <summary>
-    /// Interaction logic for NewLibraryUserControl.xaml
+    /// Interaction logic for LibraryUserControl.xaml
     /// </summary>
-    public partial class NewLibraryUserControl : UserControl
+    public partial class LibraryUserControl : UserControl
     {
-        private NewLibraryViewModel ViewModel;
+        private LibraryViewModel ViewModel;
         private InputTimer inputTimer { get; set; }
 
         private bool scrollBlocked = false;
         private bool loaded = false;
-        public NewLibraryUserControl()
+        public LibraryUserControl()
         {
             InitializeComponent();
-            ViewModel = new NewLibraryViewModel();
+            ViewModel = new LibraryViewModel();
             this.DataContext = ViewModel;
             InitTimer();
         }
@@ -105,7 +105,7 @@ namespace gamevault.UserControls
                 }
             }
         }
-        public NewInstallUserControl GetGameInstalls()
+        public InstallUserControl GetGameInstalls()
         {
             return uiGameInstalls;
         }
@@ -156,7 +156,7 @@ namespace gamevault.UserControls
 
         private void GameCard_Clicked(object sender, MouseButtonEventArgs e)
         {
-            MainWindowViewModel.Instance.SetActiveControl(new NewGameViewUserControl((Game)((FrameworkElement)sender).DataContext));
+            MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl((Game)((FrameworkElement)sender).DataContext));
         }
 
         private void Filter_Click(object sender, MouseButtonEventArgs e)
@@ -289,7 +289,7 @@ namespace gamevault.UserControls
             });
             if (result != null)
             {
-                MainWindowViewModel.Instance.SetActiveControl(new NewGameViewUserControl(result, true));
+                MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(result, true));
             }
             ((FrameworkElement)sender).IsEnabled = true;
         }
@@ -297,7 +297,7 @@ namespace gamevault.UserControls
         private void Settings_Click(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
-            var installedGame = NewInstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ((Game)((FrameworkElement)sender).DataContext).ID).FirstOrDefault();
+            var installedGame = InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ((Game)((FrameworkElement)sender).DataContext).ID).FirstOrDefault();
 
             MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl((Game)((FrameworkElement)sender).DataContext) { Width = 1200, Height = 800, Margin = new Thickness(50) });
         }

@@ -28,21 +28,21 @@ using Windows.UI.Composition;
 
 namespace gamevault.UserControls
 {
-    public partial class NewInstallUserControl : UserControl
+    public partial class InstallUserControl : UserControl
     {
         private InputTimer inputTimer { get; set; }
         private List<FileSystemWatcher> m_FileWatcherList = new List<FileSystemWatcher>();
 
-        public NewInstallUserControl()
+        public InstallUserControl()
         {
             InitializeComponent();
-            this.DataContext = NewInstallViewModel.Instance;
+            this.DataContext = InstallViewModel.Instance;
             InitTimer();
             uiInstalledGames.IsExpanded = Preferences.Get(AppConfigKey.InstalledGamesOpen, AppFilePath.UserFile) == "1" ? true : false;
         }
         public async Task RestoreInstalledGames()
         {
-            NewInstallViewModel.Instance.IgnoreList = GetIgnoreList();
+            InstallViewModel.Instance.IgnoreList = GetIgnoreList();
             Dictionary<int, string> foundGames = new Dictionary<int, string>();
             Game[]? games = await Task<Game[]>.Run(() =>
             {
@@ -61,7 +61,7 @@ namespace gamevault.UserControls
                         {
                             int id = GetGameIdByDirectory(dir);
                             if (id == -1) continue;
-                            if (NewInstallViewModel.Instance.InstalledGames.Where(x => x.Key.ID == id).Count() > 0)
+                            if (InstallViewModel.Instance.InstalledGames.Where(x => x.Key.ID == id).Count() > 0)
                                 continue;
                             if (!foundGames.ContainsKey(id))
                             {
@@ -140,7 +140,7 @@ namespace gamevault.UserControls
                         Game? game = games.Where(x => x.ID == foundGames.ElementAt(count).Key).FirstOrDefault();
                         if (game != null)
                         {
-                            NewInstallViewModel.Instance.InstalledGames.Add(new KeyValuePair<Game, string>(game, foundGames.ElementAt(count).Value));
+                            InstallViewModel.Instance.InstalledGames.Add(new KeyValuePair<Game, string>(game, foundGames.ElementAt(count).Value));
                             if (LoginManager.Instance.IsLoggedIn())
                             {
                                 if (!Preferences.Exists(game.ID.ToString(), AppFilePath.OfflineCache))
@@ -153,7 +153,7 @@ namespace gamevault.UserControls
                     }
                     catch { }
                 }
-                NewInstallViewModel.Instance.InstalledGamesFilter = CollectionViewSource.GetDefaultView(NewInstallViewModel.Instance.InstalledGames);
+                InstallViewModel.Instance.InstalledGamesFilter = CollectionViewSource.GetDefaultView(InstallViewModel.Instance.InstalledGames);
             }
         }
 
@@ -182,7 +182,7 @@ namespace gamevault.UserControls
             if (id == -1)
                 return;
 
-            if (NewInstallViewModel.Instance.InstalledGames.Where(x => x.Key.ID == id).Count() > 0)
+            if (InstallViewModel.Instance.InstalledGames.Where(x => x.Key.ID == id).Count() > 0)
                 return;
 
             try
@@ -208,7 +208,7 @@ namespace gamevault.UserControls
                 {
                     App.Current.Dispatcher.Invoke((Action)delegate
                     {
-                        NewInstallViewModel.Instance.InstalledGames.Add(new KeyValuePair<Game, string>(game, dir));
+                        InstallViewModel.Instance.InstalledGames.Add(new KeyValuePair<Game, string>(game, dir));
                     });
                 }
             }
@@ -248,7 +248,7 @@ namespace gamevault.UserControls
 
         private void GameCard_Clicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            MainWindowViewModel.Instance.SetActiveControl(new NewGameViewUserControl(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key, LoginManager.Instance.IsLoggedIn()));
+            MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key, LoginManager.Instance.IsLoggedIn()));
         }
         private void Search_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -259,8 +259,8 @@ namespace gamevault.UserControls
         private void InputTimerElapsed(object sender, EventArgs e)
         {
             inputTimer.Stop();
-            if (NewInstallViewModel.Instance.InstalledGamesFilter == null) return;
-            NewInstallViewModel.Instance.InstalledGamesFilter.Filter = item =>
+            if (InstallViewModel.Instance.InstalledGamesFilter == null) return;
+            InstallViewModel.Instance.InstalledGamesFilter.Filter = item =>
             {
                 return ((KeyValuePair<Game, string>)item).Key.Title.Contains(inputTimer.Data, StringComparison.OrdinalIgnoreCase);
             };

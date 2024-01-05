@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace gamevault.ViewModels
 {
-    internal class NewGameViewViewModel : ViewModelBase
+    internal class GameViewViewModel : ViewModelBase
     {
         #region PrivateMembers
         private Game? game { get; set; }

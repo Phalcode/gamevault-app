@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="gamevault.UserControls.NewLibraryUserControl"
+﻿<UserControl x:Class="gamevault.UserControls.LibraryUserControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -24,7 +24,7 @@
         <ScrollViewer x:Name="uiMainScrollBar" Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <Viewbox>
-                    <local:NewInstallUserControl x:Name="uiGameInstalls" Width="2000"/>
+                    <local:InstallUserControl x:Name="uiGameInstalls" Width="2000"/>
                 </Viewbox>
                 <Viewbox>
                     <Expander x:Name="uiExpanderGameCards" Width="2000" Margin="10,0,10,10" mah:ExpanderHelper.HeaderDownStyle="{StaticResource CustomExpanderToggleButton}" BorderBrush="{x:Null}">
