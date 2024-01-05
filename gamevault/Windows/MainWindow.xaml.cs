@@ -93,7 +93,7 @@ namespace gamevault.Windows
             }
             else if (LoginState.Error == state)
             {
-                MainWindowViewModel.Instance.AppBarText = "Could not connect to server";
+                MainWindowViewModel.Instance.AppBarText = LoginManager.Instance.GetLoginMessage();
             }
             await MainWindowViewModel.Instance.NewLibrary.GetGameInstalls().RestoreInstalledGames();
             await MainWindowViewModel.Instance.Downloads.RestoreDownloadedGames();

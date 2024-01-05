@@ -27,7 +27,7 @@
             </TextBlock.Style>
         </TextBlock>
         <Grid Grid.Row="1">
-            <ScrollViewer Grid.Column="1" Margin="10,10,0,10" VerticalScrollBarVisibility="Auto">
+            <ScrollViewer Grid.Column="1" VerticalAlignment="Top" Margin="10,10,0,10" VerticalScrollBarVisibility="Auto">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>

@@ -69,19 +69,14 @@ namespace gamevault.UserControls
                      }
                      return offlineCacheGames.ToArray();
                  }
-                 catch (WebException exWeb)
-                 {
-                     string webMsg = WebExceptionHelper.GetServerMessage(exWeb);
-                     if (webMsg == string.Empty) webMsg = "Could not connect to server";
-                     MainWindowViewModel.Instance.AppBarText = webMsg;
-                 }
-                 catch (JsonException exJson)
-                 {
-                     MainWindowViewModel.Instance.AppBarText = exJson.Message;
-                 }
                  catch (FormatException exFormat)
                  {
                      MainWindowViewModel.Instance.AppBarText = "The offline cache is corrupted";
+                 }
+                 catch (Exception ex)
+                 {
+                     string webMsg = WebExceptionHelper.TryGetServerMessage(ex);
+                     MainWindowViewModel.Instance.AppBarText = webMsg;
                  }
                  return null;
              });
@@ -105,7 +100,7 @@ namespace gamevault.UserControls
         {
             if (LoginManager.Instance.IsLoggedIn() == false)
             {
-                MainWindowViewModel.Instance.AppBarText = "Could not connect to server";
+                MainWindowViewModel.Instance.AppBarText = "You are not logged in or offline";
                 return;
             }
             if (SettingsViewModel.Instance.RootPath == string.Empty)

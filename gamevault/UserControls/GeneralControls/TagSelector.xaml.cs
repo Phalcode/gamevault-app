@@ -100,9 +100,9 @@ namespace gamevault.UserControls
                             Selection.Genres => JsonSerializer.Deserialize<Genre_Tag[]>(result).Where(x => x.Name.Contains(debounceTimer.Data, StringComparison.OrdinalIgnoreCase)).ToArray()
                         };
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        MainWindowViewModel.Instance.AppBarText = "Could not connect to server";
+                        MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
                     }
                 });
             }

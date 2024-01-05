@@ -56,9 +56,9 @@ namespace gamevault.UserControls
                     return JsonSerializer.Deserialize<User[]>(userList);
                 });
             }
-            catch (WebException ex)
+            catch (Exception ex)
             {
-                string msg = WebExceptionHelper.GetServerMessage(ex);
+                string msg = WebExceptionHelper.TryGetServerMessage(ex);
                 MainWindowViewModel.Instance.AppBarText = msg;
             }
         }
@@ -75,9 +75,9 @@ namespace gamevault.UserControls
                 WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/{selectedUser.ID}", JsonSerializer.Serialize(new User() { Role = selectedUser.Role }));
                 MainWindowViewModel.Instance.AppBarText = $"Successfully updated permission role of user '{selectedUser.Username}' to '{selectedUser.Role}'";
             }
-            catch (WebException ex)
+            catch (Exception ex)
             {
-                string msg = WebExceptionHelper.GetServerMessage(ex);
+                string msg = WebExceptionHelper.TryGetServerMessage(ex);
                 MainWindowViewModel.Instance.AppBarText = msg;
             }
         }
@@ -91,9 +91,9 @@ namespace gamevault.UserControls
                 string state = selectedUser.Activated == true ? "activated" : "deactivated";
                 MainWindowViewModel.Instance.AppBarText = $"Successfully {state} user '{selectedUser.Username}'";
             }
-            catch (WebException ex)
+            catch (Exception ex)
             {
-                string msg = WebExceptionHelper.GetServerMessage(ex);
+                string msg = WebExceptionHelper.TryGetServerMessage(ex);
                 MainWindowViewModel.Instance.AppBarText = msg;
             }
         }
@@ -120,9 +120,9 @@ namespace gamevault.UserControls
                         await InitUserList();
                     }
                 }
-                catch (WebException ex)
+                catch (Exception ex)
                 {
-                    string msg = WebExceptionHelper.GetServerMessage(ex);
+                    string msg = WebExceptionHelper.TryGetServerMessage(ex);
                     MainWindowViewModel.Instance.AppBarText = msg;
                 }
             });
@@ -158,10 +158,10 @@ namespace gamevault.UserControls
                     WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/{selectedUser.ID}", JsonSerializer.Serialize(selectedUser));
                     MainWindowViewModel.Instance.AppBarText = "Sucessfully saved user changes";
                 }
-                catch (WebException ex)
+                catch (Exception ex)
                 {
                     error = true;
-                    string msg = WebExceptionHelper.GetServerMessage(ex);
+                    string msg = WebExceptionHelper.TryGetServerMessage(ex);
                     MainWindowViewModel.Instance.AppBarText = msg;
                 }
             });
@@ -198,9 +198,9 @@ namespace gamevault.UserControls
                     WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/files/reindex", string.Empty);
                     MainWindowViewModel.Instance.AppBarText = "Sucessfully reindexed games";
                 }
-                catch (WebException ex)
+                catch (Exception ex)
                 {
-                    string msg = WebExceptionHelper.GetServerMessage(ex);
+                    string msg = WebExceptionHelper.TryGetServerMessage(ex);
                     MainWindowViewModel.Instance.AppBarText = msg;
                 }
             });

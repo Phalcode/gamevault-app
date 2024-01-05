@@ -113,19 +113,9 @@ namespace gamevault.UserControls
                             }
                         }
                     }
-                    catch (WebException exWeb)
-                    {
-                        MainWindowViewModel.Instance.AppBarText = "Could not connect to server";
-                        return null;
-                    }
-                    catch (JsonException exJson)
-                    {
-                        MainWindowViewModel.Instance.AppBarText = exJson.Message;
-                        return null;
-                    }
                     catch (Exception ex)
                     {
-                        MainWindowViewModel.Instance.AppBarText = ex.Message;
+                        MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
                         return null;
                     }
                 }

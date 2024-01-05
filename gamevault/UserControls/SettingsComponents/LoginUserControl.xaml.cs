@@ -66,9 +66,9 @@ namespace gamevault.UserControls.SettingsComponents
                     }
                     else if (LoginState.Error == state)
                     {
-                        MainWindowViewModel.Instance.AppBarText = "Could not connect to server";
+                        MainWindowViewModel.Instance.AppBarText = LoginManager.Instance.GetLoginMessage();
                     }
-                    MainWindowViewModel.Instance.UserIcon = LoginManager.Instance.GetCurrentUser();                  
+                    MainWindowViewModel.Instance.UserIcon = LoginManager.Instance.GetCurrentUser();
                 }
             }
             else

@@ -11,7 +11,7 @@ namespace gamevault.Helper
 {
     internal class WebExceptionHelper
     {
-        internal static string GetServerMessage(WebException ex)
+        private static string GetServerMessage(WebException ex)
         {
             string errMessage = string.Empty;
             try
@@ -23,15 +23,30 @@ namespace gamevault.Helper
             catch { }
             return errMessage;
         }
-        internal static string GetServerStatusCode(WebException ex)
+        /// <summary>
+        /// Tries to get the response message of the server. Else returns exception message
+        /// </summary>
+        internal static string TryGetServerMessage(Exception ex)
         {
+            if (ex is WebException webEx)
+            {
+                string msg = GetServerMessage(webEx);
+                return string.IsNullOrEmpty(msg) ? ex.Message : $"Server responded:{webEx}";
+            }
+            return ex.Message;
+        }
+        internal static string GetServerStatusCode(Exception ex)
+        {
+            if (ex is not WebException webex)
+                return "";
+
             string errMessage = string.Empty;
             try
             {
-                if (ex.Response == null)
+                if (webex.Response == null)
                     return string.Empty;
 
-                var resp = new StreamReader(ex.Response.GetResponseStream()).ReadToEnd();
+                var resp = new StreamReader(webex.Response.GetResponseStream()).ReadToEnd();
                 JsonObject obj = JsonNode.Parse(resp).AsObject();
                 errMessage = obj["statusCode"].ToString().Replace("\n", " ").Replace("\r", "");
             }

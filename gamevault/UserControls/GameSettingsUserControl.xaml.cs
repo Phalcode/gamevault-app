@@ -611,14 +611,9 @@ namespace gamevault.UserControls
                         success = true;
                         MainWindowViewModel.Instance.AppBarText = "Successfully updated image";
                     }
-                    catch (WebException ex)
-                    {
-                        string msg = WebExceptionHelper.GetServerMessage(ex);
-                        MainWindowViewModel.Instance.AppBarText = msg;
-                    }
                     catch (Exception ex)
                     {
-                        MainWindowViewModel.Instance.AppBarText = ex.Message;
+                        MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
                     }
                 });
                 //Update Data Context for Library. So that the images are also refreshed there directly
@@ -632,14 +627,9 @@ namespace gamevault.UserControls
                     }
                 }
             }
-            catch (WebException ex)
-            {
-                string msg = WebExceptionHelper.GetServerMessage(ex);
-                MainWindowViewModel.Instance.AppBarText = msg;
-            }
             catch (Exception ex)
             {
-                MainWindowViewModel.Instance.AppBarText = ex.Message;
+                MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
             }
         }
         private void Image_Paste(object sender, KeyEventArgs e)
@@ -721,9 +711,9 @@ namespace gamevault.UserControls
                     WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/rawg/{ViewModel.Game.ID}/recache", string.Empty);
                     MainWindowViewModel.Instance.AppBarText = $"Sucessfully re-cached {ViewModel.Game.Title}";
                 }
-                catch (WebException ex)
+                catch (Exception ex)
                 {
-                    string msg = WebExceptionHelper.GetServerMessage(ex);
+                    string msg = WebExceptionHelper.TryGetServerMessage(ex);
                     MainWindowViewModel.Instance.AppBarText = msg;
                 }
             });
@@ -743,10 +733,9 @@ namespace gamevault.UserControls
 
                     MainWindowViewModel.Instance.AppBarText = $"Successfully re-mapped {ViewModel.Game.Title}";
                 }
-                catch (WebException ex)
+                catch (Exception ex)
                 {
-                    string errMessage = WebExceptionHelper.GetServerMessage(ex);
-                    if (errMessage == string.Empty) { errMessage = "Failed to re-map game"; }
+                    string errMessage = WebExceptionHelper.TryGetServerMessage(ex);
                     MainWindowViewModel.Instance.AppBarText = errMessage;
                 }
             });

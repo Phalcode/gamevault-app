@@ -180,16 +180,11 @@ namespace gamevault.UserControls
                     {
                         WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{gameID}", System.Text.Json.JsonSerializer.Serialize(new Progress() { State = ViewModel.Progress.State }));
                     }
-                    catch (WebException webEx)
+                    catch (Exception ex)
                     {
-                        string msg = WebExceptionHelper.GetServerMessage(webEx);
-                        if (msg == string.Empty)
-                        {
-                            msg = "Could not connect to server";
-                        }
+                        string msg = WebExceptionHelper.TryGetServerMessage(ex);
                         MainWindowViewModel.Instance.AppBarText = msg;
                     }
-                    catch { }
                 });
             }
         }

@@ -118,14 +118,9 @@ namespace gamevault.UserControls
                     string gameList = WebHelper.GetRequest(url);
                     return JsonSerializer.Deserialize<PaginatedData<Game>>(gameList);
                 }
-                catch (JsonException exJson)
-                {
-                    MainWindowViewModel.Instance.AppBarText = exJson.Message;
-                    return null;
-                }
                 catch (Exception ex)
                 {
-                    MainWindowViewModel.Instance.AppBarText = "Could not connect to server";
+                    MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
                     return null;
                 }
             });
@@ -200,6 +195,11 @@ namespace gamevault.UserControls
                     scrollBlocked = true;
                     PaginatedData<Game>? gameResult = await GetGamesData(ViewModel.NextPage);
                     ViewModel.NextPage = gameResult?.Links.Next;
+                    if (gameResult == null || gameResult.Data == null)
+                    {
+                        MainWindowViewModel.Instance.AppBarText = "Failed to load next Page";
+                        return;
+                    }
                     await ProcessGamesData(gameResult);
                     scrollBlocked = false;
                 }
@@ -275,15 +275,10 @@ namespace gamevault.UserControls
                 {
                     string randomGame = WebHelper.GetRequest($"{SettingsViewModel.Instance.ServerUrl}/api/games/random");
                     return JsonSerializer.Deserialize<Game>(randomGame);
-                }
-                catch (JsonException exJson)
-                {
-                    MainWindowViewModel.Instance.AppBarText = exJson.Message;
-                    return null;
-                }
+                }                
                 catch (Exception ex)
                 {
-                    MainWindowViewModel.Instance.AppBarText = "Could not connect to server";
+                    MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
                     return null;
                 }
             });

@@ -82,15 +82,10 @@ namespace gamevault.UserControls.SettingsComponents
                     }
                     MainWindowViewModel.Instance.AppBarText = message;
                 }
-                catch (WebException ex)
+                catch (Exception ex)
                 {
-                    string errMessage = WebExceptionHelper.GetServerMessage(ex);
-                    if (errMessage == string.Empty) { errMessage = "Could not connect to server"; }
+                    string errMessage = WebExceptionHelper.TryGetServerMessage(ex);
                     MainWindowViewModel.Instance.AppBarText = errMessage;
-                }
-                catch
-                {
-                    MainWindowViewModel.Instance.AppBarText = "Could not connect to server";
                 }
             });
             uiBtnRegister.IsEnabled = true;

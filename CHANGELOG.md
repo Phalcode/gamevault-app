@@ -1,10 +1,11 @@
 # GameVault App Changelog
 
 ## 1.8.2
-Recommended Gamevault Server Version: `v10.0.2`
+Recommended Gamevault Server Version: `v10.1.0`
 ### Changes
 - Write permissions of the root folder are now checked on selection
 - The scrollbar in the download tab now covers the entire tab
+- Improved error messages
 
 ## 1.8.1
 Recommended Gamevault Server Version: `v10.0.2`
