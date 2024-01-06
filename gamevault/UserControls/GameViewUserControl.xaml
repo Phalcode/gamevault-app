@@ -90,7 +90,19 @@
                             </Grid.Style>
                         </Grid>
                         <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Left" Background="Transparent" Cursor="Hand" Width="70" Height="65" Margin="10,0,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="GameDownload_Click">
-                            <Path Data="{StaticResource IconDownload}" Fill="White" RenderTransformOrigin="0.02,0.09">
+                            <Path Fill="White" RenderTransformOrigin="0.02,0.09">
+                                <Path.Style>
+                                    <Style TargetType="Path">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsDownloaded}" Value="True">
+                                                <Setter Property="Data" Value="{StaticResource IconReDownload}"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsDownloaded}" Value="False">
+                                                <Setter Property="Data" Value="{StaticResource IconDownload}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Path.Style>
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="3.2" ScaleY="3.2"/>
                                 </Path.RenderTransform>

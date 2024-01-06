@@ -70,6 +70,7 @@ namespace gamevault.UserControls
                     catch (Exception ex) { }
                 }
                 ViewModel.IsInstalled = IsGameInstalled(ViewModel.Game);
+                ViewModel.IsDownloaded = IsGameDownloaded(ViewModel.Game);
                 ViewModel.ShowRawgTitle = Preferences.Get(AppConfigKey.ShowRawgTitle, AppFilePath.UserFile) == "1";
             }
         }
@@ -82,6 +83,10 @@ namespace gamevault.UserControls
                 return false;
 
             return true;
+        }
+        private bool IsGameDownloaded(Game? game)
+        {
+            return DownloadsViewModel.Instance.DownloadedGames.Where(gameUC => gameUC.GetGameId() == game.ID).Count() > 0;
         }
         private void Back_Click(object sender, MouseButtonEventArgs e)
         {

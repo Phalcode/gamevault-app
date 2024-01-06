@@ -6,6 +6,8 @@ Recommended Gamevault Server Version: `v10.1.0`
 - Write permissions of the root folder are now checked on selection
 - The scrollbar in the download tab now covers the entire tab
 - Improved error messages
+- Sort installed games by last played
+- The download icon in the game view now changes depending on whether the game has already been downloaded
 
 ## 1.8.1
 Recommended Gamevault Server Version: `v10.0.2`
