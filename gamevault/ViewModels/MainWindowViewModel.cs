@@ -157,7 +157,7 @@ namespace gamevault.ViewModels
             get { return m_Downloads; }
             private set { m_Downloads = value; }
         }
-        internal LibraryUserControl NewLibrary
+        internal LibraryUserControl Library
         {
             get { return m_Library; }
             private set { m_Library = value; }

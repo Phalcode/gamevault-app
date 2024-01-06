@@ -177,7 +177,7 @@ namespace gamevault.UserControls
             {
                 Directory.CreateDirectory(ViewModel.InstallPath);
             }
-            MainWindowViewModel.Instance.NewLibrary.GetGameInstalls().AddSystemFileWatcher(ViewModel.InstallPath);
+            MainWindowViewModel.Instance.Library.GetGameInstalls().AddSystemFileWatcher(ViewModel.InstallPath);
             if (SettingsViewModel.Instance.AutoExtract)
             {
                 App.Current.Dispatcher.Invoke((Action)async delegate

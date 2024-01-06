@@ -620,7 +620,7 @@ namespace gamevault.UserControls
                 if (success)
                 {
                     InstallViewModel.Instance.RefreshGame(ViewModel.Game);
-                    MainWindowViewModel.Instance.NewLibrary.RefreshGame(ViewModel.Game);
+                    MainWindowViewModel.Instance.Library.RefreshGame(ViewModel.Game);
                     if (MainWindowViewModel.Instance.ActiveControl.GetType() == typeof(GameViewUserControl))
                     {
                         ((GameViewUserControl)MainWindowViewModel.Instance.ActiveControl).RefreshGame(ViewModel.Game);
@@ -740,7 +740,7 @@ namespace gamevault.UserControls
                 }
             });
             InstallViewModel.Instance.RefreshGame(ViewModel.Game);
-            MainWindowViewModel.Instance.NewLibrary.RefreshGame(ViewModel.Game);
+            MainWindowViewModel.Instance.Library.RefreshGame(ViewModel.Game);
             this.IsEnabled = true;
         }
 

@@ -3,42 +3,39 @@ using gamevault.Models;
 using gamevault.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.NetworkInformation;
-using System.Text;
 using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Windows.UI.Composition;
 
 namespace gamevault.UserControls
 {
     public partial class InstallUserControl : UserControl
     {
-        private InputTimer inputTimer { get; set; }
+        private InputTimer? inputTimer { get; set; }
         private List<FileSystemWatcher> m_FileWatcherList = new List<FileSystemWatcher>();
-
+        private bool gamesRestored = false;
         public InstallUserControl()
         {
             InitializeComponent();
             this.DataContext = InstallViewModel.Instance;
             InitTimer();
             uiInstalledGames.IsExpanded = Preferences.Get(AppConfigKey.InstalledGamesOpen, AppFilePath.UserFile) == "1" ? true : false;
+        }
+
+        private async void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (this.IsVisible == true && gamesRestored && InstallViewModel.Instance.InstalledGames.Count > 0 &&  string.IsNullOrEmpty(inputTimer?.Data))
+            {
+                InstallViewModel.Instance.InstalledGames = await SortInstalledGamesByLastPlayed(InstallViewModel.Instance.InstalledGames);
+                InstallViewModel.Instance.InstalledGamesFilter = CollectionViewSource.GetDefaultView(InstallViewModel.Instance.InstalledGames);
+            }
         }
         public async Task RestoreInstalledGames()
         {
@@ -123,6 +120,7 @@ namespace gamevault.UserControls
             });
             if (games != null)
             {
+                ObservableCollection<KeyValuePair<Game, string>> TempInstalledGames = new ObservableCollection<KeyValuePair<Game, string>>();
                 for (int count = 0; count < foundGames.Count; count++)
                 {
                     try
@@ -130,7 +128,7 @@ namespace gamevault.UserControls
                         Game? game = games.Where(x => x.ID == foundGames.ElementAt(count).Key).FirstOrDefault();
                         if (game != null)
                         {
-                            InstallViewModel.Instance.InstalledGames.Add(new KeyValuePair<Game, string>(game, foundGames.ElementAt(count).Value));
+                            TempInstalledGames.Add(new KeyValuePair<Game, string>(game, foundGames.ElementAt(count).Value));
                             if (LoginManager.Instance.IsLoggedIn())
                             {
                                 if (!Preferences.Exists(game.ID.ToString(), AppFilePath.OfflineCache))
@@ -143,10 +141,38 @@ namespace gamevault.UserControls
                     }
                     catch { }
                 }
+                InstallViewModel.Instance.InstalledGames = await SortInstalledGamesByLastPlayed(TempInstalledGames);
                 InstallViewModel.Instance.InstalledGamesFilter = CollectionViewSource.GetDefaultView(InstallViewModel.Instance.InstalledGames);
             }
+            gamesRestored = true;
         }
+        private async Task<ObservableCollection<KeyValuePair<Game, string>>> SortInstalledGamesByLastPlayed(ObservableCollection<KeyValuePair<Game, string>> collection)
+        {
+            return await Task.Run(() =>
+            {
+                try
+                {
+                    Dictionary<int, string> lastPlayedDates = new Dictionary<int, string>();
+                    foreach (var val in collection)
+                    {
+                        if (File.Exists(val.Value + @"\gamevault-exec"))
+                        {
+                            string lastTimePlayed = Preferences.Get(AppConfigKey.LastPlayed, val.Value + @"\gamevault-exec");
+                            lastPlayedDates.Add(val.Key.ID, lastTimePlayed);
+                        }
+                    }
+                    lastPlayedDates = lastPlayedDates.OrderByDescending(kv => string.IsNullOrEmpty(kv.Value) ? DateTime.MinValue : DateTime.Parse(kv.Value)).ToDictionary(kv => kv.Key, kv => kv.Value);
 
+                    collection = new System.Collections.ObjectModel.ObservableCollection<KeyValuePair<Game, string>>(collection.OrderByDescending(item =>
+                    {
+                        int key = item.Key.ID;
+                        return lastPlayedDates.ContainsKey(key) ? lastPlayedDates[key] : string.Empty;
+                    }));
+                }
+                catch { }
+                return collection;
+            });           
+        }
 
         public void AddSystemFileWatcher(string path)
         {
@@ -296,6 +322,7 @@ namespace gamevault.UserControls
                         MainWindowViewModel.Instance.AppBarText = $"Can not execute '{savedExecutable}'";
                     }
                 }
+                Preferences.Set(AppConfigKey.LastPlayed, DateTime.Now.ToString(), $"{((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Value}\\gamevault-exec");
             }
             else
             {

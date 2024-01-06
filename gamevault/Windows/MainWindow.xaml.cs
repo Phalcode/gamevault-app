@@ -40,7 +40,7 @@ namespace gamevault.Windows
             {
                 case MainControl.Library:
                     {
-                        MainWindowViewModel.Instance.ActiveControl = MainWindowViewModel.Instance.NewLibrary;
+                        MainWindowViewModel.Instance.ActiveControl = MainWindowViewModel.Instance.Library;
                         break;
                     }
                 case MainControl.Settings:
@@ -52,12 +52,7 @@ namespace gamevault.Windows
                     {
                         MainWindowViewModel.Instance.ActiveControl = MainWindowViewModel.Instance.Downloads;
                         break;
-                    }
-                //case MainControl.NewLibrary:
-                //    {
-                //        MainWindowViewModel.Instance.ActiveControl = MainWindowViewModel.Instance.Library;
-                //        break;
-                //    }
+                    }              
                 case MainControl.Community:
                     {
                         MainWindowViewModel.Instance.ActiveControl = MainWindowViewModel.Instance.Community;
@@ -95,7 +90,7 @@ namespace gamevault.Windows
             {
                 MainWindowViewModel.Instance.AppBarText = LoginManager.Instance.GetLoginMessage();
             }
-            await MainWindowViewModel.Instance.NewLibrary.GetGameInstalls().RestoreInstalledGames();
+            await MainWindowViewModel.Instance.Library.GetGameInstalls().RestoreInstalledGames();
             await MainWindowViewModel.Instance.Downloads.RestoreDownloadedGames();
             MainWindowViewModel.Instance.UserIcon = LoginManager.Instance.GetCurrentUser();
         }
