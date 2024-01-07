@@ -181,7 +181,8 @@ namespace gamevault.UserControls
             }
             catch (Exception ex)
             {
-                MainWindowViewModel.Instance.AppBarText = ex.Message;
+                if (url != string.Empty)
+                    MainWindowViewModel.Instance.AppBarText = ex.Message;
             }
         }
         #region Generic Events

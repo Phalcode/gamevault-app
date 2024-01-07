@@ -512,7 +512,8 @@ namespace gamevault.UserControls
             }
             catch (Exception ex)
             {
-                MainWindowViewModel.Instance.AppBarText = ex.Message;
+                if (url != string.Empty)
+                    MainWindowViewModel.Instance.AppBarText = ex.Message;
             }
         }
         private void FindImages_Click(object sender, MouseButtonEventArgs e)
