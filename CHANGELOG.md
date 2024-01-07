@@ -8,6 +8,8 @@ Recommended Gamevault Server Version: `v10.1.0`
 - Improved error messages
 - Sort installed games by last played
 - The download icon in the game view now changes depending on whether the game has already been downloaded
+- Added more details to gamesettings ring chart
+- Changed default background of game view
 
 ## 1.8.1
 Recommended Gamevault Server Version: `v10.0.2`

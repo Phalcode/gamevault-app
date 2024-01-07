@@ -275,6 +275,7 @@ namespace gamevault.UserControls
                 App.Current.Dispatcher.Invoke((Action)delegate
                 {
                     uiTxtAllInstalledGamesSize.Text = gameSizeConverter.Convert(drive.TotalSize, null, null, null).ToString();
+                    uiDiscUsagePieChart.LegendTextPaint = new SolidColorPaint(new SkiaSharp.SKColor(255, 255, 255));
                     uiDiscUsagePieChart.Series = sliceSeries;
                 });
             });
