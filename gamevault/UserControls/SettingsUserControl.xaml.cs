@@ -168,5 +168,14 @@ namespace gamevault.UserControls
             Preferences.Set(AppConfigKey.DownloadLimit, ViewModel.DownloadLimit, AppFilePath.UserFile);
             MainWindowViewModel.Instance.AppBarText = "Successfully saved download limit";
         }
+
+        private void EditUser_Click(object sender, RoutedEventArgs e)
+        {
+            if (LoginManager.Instance.IsLoggedIn())
+            {
+                MainWindowViewModel.Instance.OpenPopup(new UserSettingsUserControl(LoginManager.Instance.GetCurrentUser()) { Width = 1200, Height = 800, Margin = new Thickness(50) });
+            }
+            else { MainWindowViewModel.Instance.AppBarText = "You are not logged in"; }
+        }
     }
 }

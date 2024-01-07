@@ -10,6 +10,7 @@ Recommended Gamevault Server Version: `v10.1.0`
 - The download icon in the game view now changes depending on whether the game has already been downloaded
 - Added more details to gamesettings ring chart
 - Changed default background of game view
+- You can now also open the user settings from the settings tab
 
 ## 1.8.1
 Recommended Gamevault Server Version: `v10.0.2`
