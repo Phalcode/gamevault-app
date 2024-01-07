@@ -31,7 +31,7 @@ namespace gamevault.Helper
             if (ex is WebException webEx)
             {
                 string msg = GetServerMessage(webEx);
-                return string.IsNullOrEmpty(msg) ? ex.Message : $"Server responded:{webEx}";
+                return string.IsNullOrEmpty(msg) ? ex.Message : $"Server responded: {msg}";
             }
             return ex.Message;
         }
