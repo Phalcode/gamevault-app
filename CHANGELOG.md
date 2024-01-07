@@ -11,6 +11,8 @@ Recommended Gamevault Server Version: `v10.1.0`
 - Added more details to gamesettings ring chart
 - Changed default background of game view
 - You can now also open the user settings from the settings tab
+- The mouse wheel now scrolls horizontally in the installed game scrollbar when visible
+- A message is now displayed when an admin tries to change their role
 
 ## 1.8.1
 Recommended Gamevault Server Version: `v10.0.2`

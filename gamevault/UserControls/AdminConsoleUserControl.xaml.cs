@@ -2,6 +2,9 @@
 using gamevault.Models;
 using gamevault.UserControls.SettingsComponents;
 using gamevault.ViewModels;
+using gamevault.Windows;
+using MahApps.Metro.Controls.Dialogs;
+using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -63,7 +66,7 @@ namespace gamevault.UserControls
             }
         }
 
-        private void PermissionRole_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void PermissionRole_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try
             {
@@ -71,6 +74,18 @@ namespace gamevault.UserControls
                 if (e.RemovedItems.Count < 1 || ((PERMISSION_ROLE)e.RemovedItems[0] == (PERMISSION_ROLE)e.AddedItems[0]))
                 {
                     return;
+                }
+                if (LoginManager.Instance.IsLoggedIn() && selectedUser.ID == LoginManager.Instance.GetCurrentUser().ID)
+                {
+                    MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to change your role?",
+                    "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+                    if (result != MessageDialogResult.Affirmative)
+                    {
+                        ((ComboBox)sender).SelectionChanged -= PermissionRole_SelectionChanged;
+                        ((ComboBox)sender).SelectedValue = e.RemovedItems[0];
+                        ((ComboBox)sender).SelectionChanged += PermissionRole_SelectionChanged;
+                        return;
+                    }
                 }
                 WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/{selectedUser.ID}", JsonSerializer.Serialize(new User() { Role = selectedUser.Role }));
                 MainWindowViewModel.Instance.AppBarText = $"Successfully updated permission role of user '{selectedUser.Username}' to '{selectedUser.Role}'";
@@ -130,7 +145,7 @@ namespace gamevault.UserControls
         }
 
         private void EditUser_Clicked(object sender, MouseButtonEventArgs e)
-        {            
+        {
             User user = JsonSerializer.Deserialize<User>(JsonSerializer.Serialize((User)((FrameworkElement)sender).DataContext));
             MainWindowViewModel.Instance.OpenPopup(new UserSettingsUserControl(user) { Width = 1200, Height = 800, Margin = new Thickness(50) });
         }

@@ -31,7 +31,7 @@ namespace gamevault.UserControls
 
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (this.IsVisible == true && gamesRestored && InstallViewModel.Instance.InstalledGames.Count > 0 &&  string.IsNullOrEmpty(inputTimer?.Data))
+            if (this.IsVisible == true && gamesRestored && InstallViewModel.Instance.InstalledGames.Count > 0 && string.IsNullOrEmpty(inputTimer?.Data))
             {
                 InstallViewModel.Instance.InstalledGames = await SortInstalledGamesByLastPlayed(InstallViewModel.Instance.InstalledGames);
                 InstallViewModel.Instance.InstalledGamesFilter = CollectionViewSource.GetDefaultView(InstallViewModel.Instance.InstalledGames);
@@ -171,7 +171,7 @@ namespace gamevault.UserControls
                 }
                 catch { }
                 return collection;
-            });           
+            });
         }
 
         public void AddSystemFileWatcher(string path)
@@ -344,12 +344,23 @@ namespace gamevault.UserControls
 
         private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            e.Handled = true;
-            ScrollViewer parent = VisualHelper.FindNextParentByType<ScrollViewer>((ScrollViewer)sender);
-            var eventArg = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
-            eventArg.RoutedEvent = UIElement.MouseWheelEvent;
-            eventArg.Source = sender;
-            parent.RaiseEvent(eventArg);
+            if (((ScrollViewer)sender).ComputedHorizontalScrollBarVisibility == Visibility.Visible)
+            {
+                e.Handled = true;               
+                if (e.Delta > 0)
+                    ((ScrollViewer)sender).LineLeft();
+                else
+                    ((ScrollViewer)sender).LineRight();
+            }
+            else
+            {
+                e.Handled = true;
+                ScrollViewer parent = VisualHelper.FindNextParentByType<ScrollViewer>((ScrollViewer)sender);
+                var eventArg = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
+                eventArg.RoutedEvent = UIElement.MouseWheelEvent;
+                eventArg.Source = sender;
+                parent.RaiseEvent(eventArg);
+            }
         }
 
         private void InstalledGames_Toggled(object sender, RoutedEventArgs e)
