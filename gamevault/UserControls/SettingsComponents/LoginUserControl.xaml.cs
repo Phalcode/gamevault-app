@@ -54,6 +54,7 @@ namespace gamevault.UserControls.SettingsComponents
                     LoginState state = await LoginManager.Instance.ManualLogin(SettingsViewModel.Instance.UserName, uiPwBox.Password);
                     if (LoginState.Success == state)
                     {
+                        await MainWindowViewModel.Instance.Library.LoadLibrary();//Load library, because otherwise it would be empty for new users at the first login
                         MainWindowViewModel.Instance.AppBarText = $"Successfully logged in as '{SettingsViewModel.Instance.UserName}'";
                     }
                     else if (LoginState.Unauthorized == state)

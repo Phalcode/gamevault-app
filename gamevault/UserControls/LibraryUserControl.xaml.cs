@@ -32,8 +32,7 @@ namespace gamevault.UserControls
         private LibraryViewModel ViewModel;
         private InputTimer inputTimer { get; set; }
 
-        private bool scrollBlocked = false;
-        private bool loaded = false;
+        private bool scrollBlocked = false;      
         public LibraryUserControl()
         {
             InitializeComponent();
@@ -41,12 +40,8 @@ namespace gamevault.UserControls
             this.DataContext = ViewModel;
             InitTimer();
         }
-        private async void Library_Loaded(object sender, RoutedEventArgs e)
+        public async Task LoadLibrary()
         {
-            if (loaded)
-                return;
-
-            loaded = true;
             if (Preferences.Get(AppConfigKey.LibStartup, AppFilePath.UserFile) == "1")
             {
                 await Search();
@@ -275,7 +270,7 @@ namespace gamevault.UserControls
                 {
                     string randomGame = WebHelper.GetRequest($"{SettingsViewModel.Instance.ServerUrl}/api/games/random");
                     return JsonSerializer.Deserialize<Game>(randomGame);
-                }                
+                }
                 catch (Exception ex)
                 {
                     MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);

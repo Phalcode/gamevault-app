@@ -80,7 +80,7 @@ namespace gamevault.Windows
             LoginState state = LoginManager.Instance.GetState();
             if (LoginState.Success == state)
             {
-
+                await MainWindowViewModel.Instance.Library.LoadLibrary();
             }
             else if (LoginState.Unauthorized == state || LoginState.Forbidden == state)
             {
