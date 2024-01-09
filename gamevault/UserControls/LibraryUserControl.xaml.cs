@@ -47,6 +47,14 @@ namespace gamevault.UserControls
                 await Search();
             }
         }
+        public void ShowLibraryError()
+        {
+            ViewModel.CanLoadServerGames = false;
+            if (!uiExpanderGameCards.IsExpanded)
+            {
+                uiExpanderGameCards.IsExpanded = true;
+            }
+        }
         private void Search_TextChanged(object sender, TextChangedEventArgs e)
         {
             inputTimer.Stop();
@@ -92,12 +100,17 @@ namespace gamevault.UserControls
             PaginatedData<Game>? gameResult = await GetGamesData(filterUrl);//add try catch
             if (gameResult != null)
             {
+                ViewModel.CanLoadServerGames = true;
                 ViewModel.TotalGamesCount = gameResult.Meta.TotalItems;
                 if (gameResult.Data.Length > 0)
                 {
                     ViewModel.NextPage = gameResult.Links.Next;
                     await ProcessGamesData(gameResult);
                 }
+            }
+            else
+            {
+                ViewModel.CanLoadServerGames = false;
             }
         }
         public InstallUserControl GetGameInstalls()

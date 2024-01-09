@@ -13,6 +13,7 @@ Recommended Gamevault Server Version: `v10.1.0`
 - You can now also open the user settings from the settings tab
 - The mouse wheel now scrolls horizontally in the installed game scrollbar when visible
 - A message is now displayed when an admin tries to change their role
+- Added Troubleshoot message to the library expander if the library fails to load
 - Bug fix: The library does not load automatically on first login
 
 ## 1.8.1

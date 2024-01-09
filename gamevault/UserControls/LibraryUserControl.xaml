@@ -136,9 +136,18 @@
                                             <Style TargetType="{x:Type StackPanel}">
                                                 <Setter Property="Visibility" Value="Hidden"/>
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding TotalGamesCount}" Value="0">
+                                                    <!--<DataTrigger Binding="{Binding TotalGamesCount}" Value="0">
                                                         <Setter Property="Visibility" Value="Visible"/>
-                                                    </DataTrigger>
+                                                    </DataTrigger>-->
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding TotalGamesCount}" Value="0" />
+                                                            <Condition Binding="{Binding CanLoadServerGames}" Value="True" />
+                                                        </MultiDataTrigger.Conditions>
+                                                        <MultiDataTrigger.Setters>
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </MultiDataTrigger.Setters>
+                                                    </MultiDataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </StackPanel.Style>
@@ -150,6 +159,29 @@
                         <Run Text="Troubleshooting"/>
                     </Hyperlink.Inlines>
                 </Hyperlink>
+                                        </TextBlock>
+                                    </StackPanel>
+                                    <!--Server Error-->
+                                    <StackPanel Panel.ZIndex="1">
+                                        <StackPanel.Style>
+                                            <Style TargetType="{x:Type StackPanel}">
+                                                <Setter Property="Visibility" Value="Hidden"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CanLoadServerGames}" Value="False">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                                    
+                                                </Style.Triggers>
+                                            </Style>
+                                        </StackPanel.Style>
+                                        <Image Source="pack://application:,,,/gamevault;component/Resources/Images/install_NoGameFound.png" RenderOptions.EdgeMode="Aliased" Height="190"/>
+                                        <TextBlock Text="Failed to load Library" FontSize="20" HorizontalAlignment="Center" Margin="0,-10,0,0"/>
+                                        <TextBlock HorizontalAlignment="Center" FontSize="10" Margin="0,5,0,10" >
+    <Hyperlink TextDecorations="Baseline" NavigateUri="https://gamevau.lt/docs/troubleshooting/#unable-to-connect-to-server--500-internal-server-error" RequestNavigate="Hyperlink_RequestNavigate" Foreground="#FFD4D4D4">
+    <Hyperlink.Inlines>
+        <Run Text="Troubleshooting"/>
+    </Hyperlink.Inlines>
+</Hyperlink>
                                         </TextBlock>
                                     </StackPanel>
                                     <!--Games found-->

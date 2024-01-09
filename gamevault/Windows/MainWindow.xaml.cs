@@ -89,6 +89,7 @@ namespace gamevault.Windows
             else if (LoginState.Error == state)
             {
                 MainWindowViewModel.Instance.AppBarText = LoginManager.Instance.GetLoginMessage();
+                MainWindowViewModel.Instance.Library.ShowLibraryError();
             }
             await MainWindowViewModel.Instance.Library.GetGameInstalls().RestoreInstalledGames();
             await MainWindowViewModel.Instance.Downloads.RestoreDownloadedGames();

@@ -18,6 +18,7 @@ namespace gamevault.ViewModels
         private Visibility filterVisibility = Visibility.Collapsed;
         private KeyValuePair<string, string> m_SelectedGameFilterSortBy { get; set; }
         private string filterCounter { get; set; } = string.Empty;
+        private bool canLoadServerGames { get; set; } = true;
         #endregion
         public ObservableCollection<Game> GameCards
         {
@@ -73,6 +74,11 @@ namespace gamevault.ViewModels
         {
             get { return filterCounter; }
             set { filterCounter = value; OnPropertyChanged(); }
+        }
+        public bool CanLoadServerGames
+        {
+            get { return canLoadServerGames; }
+            set { canLoadServerGames = value; OnPropertyChanged(); }
         }
     }
 }
