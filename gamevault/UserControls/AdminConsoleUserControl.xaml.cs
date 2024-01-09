@@ -115,19 +115,19 @@ namespace gamevault.UserControls
 
         private async void DeleteUser_Clicked(object sender, MouseButtonEventArgs e)
         {
-            this.IsEnabled = false;
+
             User selectedUser = (User)((FrameworkElement)sender).DataContext;
+            if (selectedUser == null)
+                return;
 
             if (selectedUser.DeletedAt == null)
             {
                 MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to delete User '{selectedUser.Username}' ?",
                     "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
                 if (result != MessageDialogResult.Affirmative)
-                {
-                    this.IsEnabled = true;
                     return;
-                }
             }
+            this.IsEnabled = false;
             await Task.Run(async () =>
             {
                 try
