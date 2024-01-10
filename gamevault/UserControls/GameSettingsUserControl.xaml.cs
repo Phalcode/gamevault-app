@@ -255,6 +255,9 @@ namespace gamevault.UserControls
                     if (percentages[i] > 5)
                         continue;
 
+                    if (percentages[i] == 0)
+                        continue;
+
                     totalFreeSpacePercentage -= (5 - percentages[i]);
                     percentages[i] = 5;
                 }
@@ -275,16 +278,15 @@ namespace gamevault.UserControls
                     // Outer-Label
                     series.DataLabelsPosition = LiveChartsCore.Measure.PolarLabelsPosition.Outer;
                     series.DataLabelsSize = 15;
-                    series.DataLabelsPadding.Top = 15;
-                    series.DataLabelsPadding.Right = 15;
-                    series.DataLabelsPadding.Bottom = 15;
-                    series.DataLabelsPadding.Left = 15;
-                    series.DataLabelsPaint = color;
-                    series.DataLabelsFormatter = point => $"{humanReadableSize}";
-                    series.ToolTipLabelFormatter = point => $"{point.StackedValue!.Share:P2}";
+                    series.DataLabelsPadding = new LiveChartsCore.Drawing.Padding(10);
 
-                    //ToolTip
-                    series.ToolTipLabelFormatter = (chartPoint) => $"{humanReadableSize}";
+                    if (size != 0)
+                    {
+                        series.DataLabelsPaint = color;
+                        series.DataLabelsFormatter = point => $"{humanReadableSize}";
+                        series.ToolTipLabelFormatter = point => $"{point.StackedValue!.Share:P2}";
+                    }
+
                     index++;
                 });
                 App.Current.Dispatcher.Invoke((Action)delegate
