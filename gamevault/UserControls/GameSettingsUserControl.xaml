@@ -162,8 +162,8 @@
                                 <local:IconButton Content="Open Directory" Icon="{DynamicResource IconGameSettingsFolder}" Width="145" Height="33" Margin="10,0,0,0" MouseLeftButtonUp="OpenDirectory_Click"/>
                             </StackPanel>
                             <TextBlock Text="Disk Usage" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
-                            <lvc:PieChart x:Name="uiDiscUsagePieChart" Width="600" Height="300" InitialRotation="-90" IsClockwise="True" HorizontalAlignment="Left" Margin="0,10,0,0" LegendPosition="Right"/>
-                            <StackPanel Margin="132,0,0,0" HorizontalAlignment="Left">
+                            <lvc:PieChart x:Name="uiDiscUsagePieChart" Width="600" Height="350" InitialRotation="-90" IsClockwise="True" HorizontalAlignment="Left" Margin="0,10,0,0" LegendPosition="Right"/>
+                            <StackPanel Margin="150,0,0,0" HorizontalAlignment="Left">
                                 <TextBlock Text="Total Disk Size" FontSize="15" FontWeight="Bold" />
                                 <TextBlock x:Name="uiTxtAllInstalledGamesSize" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center"/>
                             </StackPanel>

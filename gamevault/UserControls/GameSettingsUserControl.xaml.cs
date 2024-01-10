@@ -264,11 +264,26 @@ namespace gamevault.UserControls
                 Color[] colors = { Colors.DeepPink, Colors.LightSeaGreen, Colors.PaleVioletRed, Colors.DarkGray };
                 IEnumerable<ISeries> sliceSeries = percentages.AsPieSeries((value, series) =>
                 {
-                    series.MaxRadialColumnWidth = 80;
-                    series.Name = names[index % names.Length];
-                    series.Fill = new SolidColorPaint(new SkiaSharp.SKColor(colors[index % colors.Length].R, colors[index % colors.Length].G, colors[index % colors.Length].B));
                     var size = tooltips[index % tooltips.Length];
                     var humanReadableSize = gameSizeConverter.Convert(size, null, null, null);
+                    var color = new SolidColorPaint(new SkiaSharp.SKColor(colors[index % colors.Length].R, colors[index % colors.Length].G, colors[index % colors.Length].B));
+
+                    series.Name = names[index % names.Length];
+                    series.Fill = color;
+                    series.MaxRadialColumnWidth = 50;
+
+                    // Outer-Label
+                    series.DataLabelsPosition = LiveChartsCore.Measure.PolarLabelsPosition.Outer;
+                    series.DataLabelsSize = 15;
+                    series.DataLabelsPadding.Top = 15;
+                    series.DataLabelsPadding.Right = 15;
+                    series.DataLabelsPadding.Bottom = 15;
+                    series.DataLabelsPadding.Left = 15;
+                    series.DataLabelsPaint = color;
+                    series.DataLabelsFormatter = point => $"{humanReadableSize}";
+                    series.ToolTipLabelFormatter = point => $"{point.StackedValue!.Share:P2}";
+
+                    //ToolTip
                     series.ToolTipLabelFormatter = (chartPoint) => $"{humanReadableSize}";
                     index++;
                 });
