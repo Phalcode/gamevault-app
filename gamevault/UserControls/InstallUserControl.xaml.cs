@@ -264,6 +264,8 @@ namespace gamevault.UserControls
 
         private void GameCard_Clicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if (((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key == null)
+                return;
             MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key, LoginManager.Instance.IsLoggedIn()));
         }
         private void Search_TextChanged(object sender, TextChangedEventArgs e)

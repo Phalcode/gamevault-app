@@ -32,7 +32,7 @@ namespace gamevault.UserControls
         private LibraryViewModel ViewModel;
         private InputTimer inputTimer { get; set; }
 
-        private bool scrollBlocked = false;      
+        private bool scrollBlocked = false;
         public LibraryUserControl()
         {
             InitializeComponent();
@@ -135,7 +135,7 @@ namespace gamevault.UserControls
         }
         private async Task ProcessGamesData(PaginatedData<Game> gameResult)
         {
-            await Task.Run(async () =>
+            await Task.Run(() =>
             {
                 foreach (Game game in gameResult.Data)
                 {
@@ -159,6 +159,8 @@ namespace gamevault.UserControls
 
         private void GameCard_Clicked(object sender, MouseButtonEventArgs e)
         {
+            if ((Game)((FrameworkElement)sender).DataContext == null)
+                return;
             MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl((Game)((FrameworkElement)sender).DataContext));
         }
 

@@ -86,6 +86,8 @@ namespace gamevault.UserControls
         }
         private bool IsGameDownloaded(Game? game)
         {
+            if (game == null)
+                return false;
             return DownloadsViewModel.Instance.DownloadedGames.Where(gameUC => gameUC.GetGameId() == game.ID).Count() > 0;
         }
         private void Back_Click(object sender, MouseButtonEventArgs e)
