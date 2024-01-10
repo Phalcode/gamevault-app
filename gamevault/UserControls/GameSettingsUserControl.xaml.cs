@@ -704,6 +704,7 @@ namespace gamevault.UserControls
         }
         private async Task RawgGameSearch()
         {
+            this.Cursor = Cursors.Wait;
             ViewModel.RawgGames = await Task<RawgGame[]>.Run(() =>
             {
                 try
@@ -717,6 +718,7 @@ namespace gamevault.UserControls
                     return null;
                 }
             });
+            this.Cursor = null;
         }
         private async void Recache_Click(object sender, MouseButtonEventArgs e)
         {
