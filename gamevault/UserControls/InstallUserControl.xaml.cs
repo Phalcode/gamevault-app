@@ -152,26 +152,32 @@ namespace gamevault.UserControls
             {
                 try
                 {
-                    Dictionary<int, string> lastPlayedDates = new Dictionary<int, string>();
-                    foreach (var val in collection)
-                    {
-                        if (File.Exists(val.Value + @"\gamevault-exec"))
-                        {
-                            string lastTimePlayed = Preferences.Get(AppConfigKey.LastPlayed, val.Value + @"\gamevault-exec");
-                            lastPlayedDates.Add(val.Key.ID, lastTimePlayed);
-                        }
-                    }
-                    lastPlayedDates = lastPlayedDates.OrderByDescending(kv => string.IsNullOrEmpty(kv.Value) ? DateTime.MinValue : DateTime.Parse(kv.Value)).ToDictionary(kv => kv.Key, kv => kv.Value);
+                    string lastTimePlayed = Preferences.Get(AppConfigKey.LastPlayed, AppFilePath.UserFile);
+                    List<string> lastPlayedDates = lastTimePlayed.Split(';').ToList();
 
                     collection = new System.Collections.ObjectModel.ObservableCollection<KeyValuePair<Game, string>>(collection.OrderByDescending(item =>
                     {
                         int key = item.Key.ID;
-                        return lastPlayedDates.ContainsKey(key) ? lastPlayedDates[key] : string.Empty;
-                    }));
+                        return lastPlayedDates.Contains(key.ToString()) ? lastPlayedDates.IndexOf(key.ToString()) : int.MaxValue;
+                    }).Reverse());
                 }
                 catch { }
                 return collection;
             });
+        }
+        public void SetLastPlayedGame(int gameID)
+        {
+            try
+            {
+                string lastTimePlayed = Preferences.Get(AppConfigKey.LastPlayed, AppFilePath.UserFile);
+                if (lastTimePlayed.Contains($"{gameID}"))
+                {
+                    lastTimePlayed = lastTimePlayed.Replace($"{gameID};", "");
+                }
+                lastTimePlayed = lastTimePlayed.Insert(0, $"{gameID};");
+                Preferences.Set(AppConfigKey.LastPlayed, lastTimePlayed, AppFilePath.UserFile);
+            }
+            catch { }
         }
 
         public void AddSystemFileWatcher(string path)
@@ -324,7 +330,8 @@ namespace gamevault.UserControls
                         MainWindowViewModel.Instance.AppBarText = $"Can not execute '{savedExecutable}'";
                     }
                 }
-                Preferences.Set(AppConfigKey.LastPlayed, DateTime.Now.ToString(), $"{((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Value}\\gamevault-exec");
+                SetLastPlayedGame(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key.ID);
+                //Preferences.Set(AppConfigKey.LastPlayed, DateTime.Now.ToString(), $"{((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Value}\\gamevault-exec");
             }
             else
             {
@@ -348,7 +355,7 @@ namespace gamevault.UserControls
         {
             if (((ScrollViewer)sender).ComputedHorizontalScrollBarVisibility == Visibility.Visible)
             {
-                e.Handled = true;               
+                e.Handled = true;
                 if (e.Delta > 0)
                     ((ScrollViewer)sender).LineLeft();
                 else

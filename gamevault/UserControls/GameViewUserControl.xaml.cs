@@ -139,7 +139,8 @@ namespace gamevault.UserControls
                         MainWindowViewModel.Instance.AppBarText = $"Can not execute '{savedExecutable}'";
                     }
                 }
-                Preferences.Set(AppConfigKey.LastPlayed, DateTime.Now.ToString(), $"{path}\\gamevault-exec");
+                MainWindowViewModel.Instance.Library.GetGameInstalls().SetLastPlayedGame(result.Key.ID);
+                //Preferences.Set(AppConfigKey.LastPlayed, DateTime.Now.ToString(), $"{path}\\gamevault-exec");
             }
             else
             {
