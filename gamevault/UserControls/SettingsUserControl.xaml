@@ -58,6 +58,7 @@
                             <settingsComponents:LoginUserControl  Margin="10,10,0,0" HorizontalAlignment="Left"/>
                             <Button Content="Logout" VerticalAlignment="Bottom" Height="32" Margin="10,10,0,0" HorizontalAlignment="Left" Width="205" FontSize="15" Click="Logout_Click"/>
                             <settingsComponents:RegisterUserControl Margin="10,10,0,0" HorizontalAlignment="Left"/>
+                            <Button Content="Edit your User" VerticalAlignment="Bottom" Height="32" Margin="10,10,0,0" HorizontalAlignment="Left" Width="205" FontSize="15" Click="EditUser_Click"/>
                         </StackPanel>
                     </StackPanel>
                 </TabItem>

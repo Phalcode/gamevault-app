@@ -96,7 +96,7 @@ namespace gamevault.Helper
                         }
                     default:
                         {
-                            return BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/gameView_NoBackground.png");
+                            return BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/gameView_NoBackground.jpg");
                         }
                 }
             }

@@ -21,6 +21,7 @@ using LiveChartsCore.SkiaSharpView.Extensions;
 using gamevault.Converter;
 using System.Windows.Media;
 using LiveChartsCore.SkiaSharpView.Painting;
+using SkiaSharp;
 
 namespace gamevault.UserControls
 {
@@ -107,7 +108,7 @@ namespace gamevault.UserControls
         }
         private bool IsGameInstalled(Game game)
         {
-            KeyValuePair<Game, string> result = NewInstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == game.ID).FirstOrDefault();
+            KeyValuePair<Game, string> result = InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == game.ID).FirstOrDefault();
             if (result.Equals(default(KeyValuePair<Game, string>)))
                 return false;
 
@@ -163,7 +164,7 @@ namespace gamevault.UserControls
                         if (Directory.Exists(ViewModel.Directory))
                             Directory.Delete(ViewModel.Directory, true);
 
-                        NewInstallViewModel.Instance.InstalledGames.Remove(NewInstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).First());
+                        InstallViewModel.Instance.InstalledGames.Remove(InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).First());
                         MainWindowViewModel.Instance.ClosePopup();
                     }
                     catch
@@ -208,9 +209,10 @@ namespace gamevault.UserControls
                                 {
                                     if (Directory.Exists(ViewModel.Directory))
                                         Directory.Delete(ViewModel.Directory, true);
+
+                                    InstallViewModel.Instance.InstalledGames.Remove(InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).First());
                                 }
                                 catch { }
-                                NewInstallViewModel.Instance.InstalledGames.Remove(NewInstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).First());
                             }
                         }
                     }
@@ -236,7 +238,7 @@ namespace gamevault.UserControls
                 long totalDiskSize = drive.TotalSize;
                 long currentGameSize = long.TryParse(ViewModel.Game.Size, out var size) ? size : 0;
 
-                long otherGamesSize = NewInstallViewModel.Instance.InstalledGames
+                long otherGamesSize = InstallViewModel.Instance.InstalledGames
                     .Sum(installedGame => long.TryParse(installedGame.Key.Size, out var gameSize) ? gameSize : 0) - currentGameSize;
 
                 long unmanagedDiskSize = totalDiskSize - currentGameSize - otherGamesSize - drive.TotalFreeSpace;
@@ -254,6 +256,9 @@ namespace gamevault.UserControls
                     if (percentages[i] > 5)
                         continue;
 
+                    if (percentages[i] == 0)
+                        continue;
+
                     totalFreeSpacePercentage -= (5 - percentages[i]);
                     percentages[i] = 5;
                 }
@@ -263,17 +268,38 @@ namespace gamevault.UserControls
                 Color[] colors = { Colors.DeepPink, Colors.LightSeaGreen, Colors.PaleVioletRed, Colors.DarkGray };
                 IEnumerable<ISeries> sliceSeries = percentages.AsPieSeries((value, series) =>
                 {
-                    series.MaxRadialColumnWidth = 80;
-                    series.Name = names[index % names.Length];
-                    series.Fill = new SolidColorPaint(new SkiaSharp.SKColor(colors[index % colors.Length].R, colors[index % colors.Length].G, colors[index % colors.Length].B));
                     var size = tooltips[index % tooltips.Length];
                     var humanReadableSize = gameSizeConverter.Convert(size, null, null, null);
-                    series.ToolTipLabelFormatter = (chartPoint) => $"{humanReadableSize}";
+                    var color = new SolidColorPaint(new SkiaSharp.SKColor(colors[index % colors.Length].R, colors[index % colors.Length].G, colors[index % colors.Length].B));
+
+                    series.Name = names[index % names.Length];
+                    series.Fill = color;
+                    series.MaxRadialColumnWidth = 50;
+
+                    // Outer-Label
+                    series.DataLabelsPosition = LiveChartsCore.Measure.PolarLabelsPosition.Outer;
+                    series.DataLabelsSize = 15;
+                    series.DataLabelsPadding = index == 1 ? new LiveChartsCore.Drawing.Padding(5, 35, 5, 0) : new LiveChartsCore.Drawing.Padding(10);
+                    if (size != 0)
+                    {
+                        series.DataLabelsPaint = color;
+                        series.DataLabelsFormatter = point => $"{humanReadableSize}";
+                        series.ToolTipLabelFormatter = point => $"{point.StackedValue!.Share:P2}";
+                    }
+
                     index++;
                 });
+                try
+                {
+                    ViewModel.DiskSize = $"{drive.VolumeLabel} ({drive.RootDirectory.ToString().Trim('\\')}) - {gameSizeConverter.Convert(drive.TotalSize, null, null, null).ToString()}";
+                }
+                catch
+                {
+                    ViewModel.DiskSize = $"{gameSizeConverter.Convert(drive.TotalSize, null, null, null).ToString()}";
+                }
                 App.Current.Dispatcher.Invoke((Action)delegate
                 {
-                    uiTxtAllInstalledGamesSize.Text = gameSizeConverter.Convert(drive.TotalSize, null, null, null).ToString();
+                    uiDiscUsagePieChart.LegendTextPaint = new SolidColorPaint(new SkiaSharp.SKColor(255, 255, 255));
                     uiDiscUsagePieChart.Series = sliceSeries;
                 });
             });
@@ -352,7 +378,7 @@ namespace gamevault.UserControls
         }
         private static bool ContainsValueFromIgnoreList(string value)
         {
-            return (NewInstallViewModel.Instance.IgnoreList != null && NewInstallViewModel.Instance.IgnoreList.Any(s => Path.GetFileNameWithoutExtension(value).Contains(s, StringComparison.OrdinalIgnoreCase)));
+            return (InstallViewModel.Instance.IgnoreList != null && InstallViewModel.Instance.IgnoreList.Any(s => Path.GetFileNameWithoutExtension(value).Contains(s, StringComparison.OrdinalIgnoreCase)));
         }
         private void ExecutableSelection_Opened(object sender, EventArgs e)
         {
@@ -510,7 +536,8 @@ namespace gamevault.UserControls
             }
             catch (Exception ex)
             {
-                MainWindowViewModel.Instance.AppBarText = ex.Message;
+                if (url != string.Empty)
+                    MainWindowViewModel.Instance.AppBarText = ex.Message;
             }
         }
         private void FindImages_Click(object sender, MouseButtonEventArgs e)
@@ -610,35 +637,25 @@ namespace gamevault.UserControls
                         success = true;
                         MainWindowViewModel.Instance.AppBarText = "Successfully updated image";
                     }
-                    catch (WebException ex)
-                    {
-                        string msg = WebExceptionHelper.GetServerMessage(ex);
-                        MainWindowViewModel.Instance.AppBarText = msg;
-                    }
                     catch (Exception ex)
                     {
-                        MainWindowViewModel.Instance.AppBarText = ex.Message;
+                        MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
                     }
                 });
                 //Update Data Context for Library. So that the images are also refreshed there directly
                 if (success)
                 {
-                    NewInstallViewModel.Instance.RefreshGame(ViewModel.Game);
-                    MainWindowViewModel.Instance.NewLibrary.RefreshGame(ViewModel.Game);
-                    if (MainWindowViewModel.Instance.ActiveControl.GetType() == typeof(NewGameViewUserControl))
+                    InstallViewModel.Instance.RefreshGame(ViewModel.Game);
+                    MainWindowViewModel.Instance.Library.RefreshGame(ViewModel.Game);
+                    if (MainWindowViewModel.Instance.ActiveControl.GetType() == typeof(GameViewUserControl))
                     {
-                        ((NewGameViewUserControl)MainWindowViewModel.Instance.ActiveControl).RefreshGame(ViewModel.Game);
+                        ((GameViewUserControl)MainWindowViewModel.Instance.ActiveControl).RefreshGame(ViewModel.Game);
                     }
                 }
             }
-            catch (WebException ex)
-            {
-                string msg = WebExceptionHelper.GetServerMessage(ex);
-                MainWindowViewModel.Instance.AppBarText = msg;
-            }
             catch (Exception ex)
             {
-                MainWindowViewModel.Instance.AppBarText = ex.Message;
+                MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
             }
         }
         private void Image_Paste(object sender, KeyEventArgs e)
@@ -696,6 +713,7 @@ namespace gamevault.UserControls
         }
         private async Task RawgGameSearch()
         {
+            this.Cursor = Cursors.Wait;
             ViewModel.RawgGames = await Task<RawgGame[]>.Run(() =>
             {
                 try
@@ -709,6 +727,7 @@ namespace gamevault.UserControls
                     return null;
                 }
             });
+            this.Cursor = null;
         }
         private async void Recache_Click(object sender, MouseButtonEventArgs e)
         {
@@ -720,9 +739,9 @@ namespace gamevault.UserControls
                     WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/rawg/{ViewModel.Game.ID}/recache", string.Empty);
                     MainWindowViewModel.Instance.AppBarText = $"Sucessfully re-cached {ViewModel.Game.Title}";
                 }
-                catch (WebException ex)
+                catch (Exception ex)
                 {
-                    string msg = WebExceptionHelper.GetServerMessage(ex);
+                    string msg = WebExceptionHelper.TryGetServerMessage(ex);
                     MainWindowViewModel.Instance.AppBarText = msg;
                 }
             });
@@ -742,15 +761,14 @@ namespace gamevault.UserControls
 
                     MainWindowViewModel.Instance.AppBarText = $"Successfully re-mapped {ViewModel.Game.Title}";
                 }
-                catch (WebException ex)
+                catch (Exception ex)
                 {
-                    string errMessage = WebExceptionHelper.GetServerMessage(ex);
-                    if (errMessage == string.Empty) { errMessage = "Failed to re-map game"; }
+                    string errMessage = WebExceptionHelper.TryGetServerMessage(ex);
                     MainWindowViewModel.Instance.AppBarText = errMessage;
                 }
             });
-            NewInstallViewModel.Instance.RefreshGame(ViewModel.Game);
-            MainWindowViewModel.Instance.NewLibrary.RefreshGame(ViewModel.Game);
+            InstallViewModel.Instance.RefreshGame(ViewModel.Game);
+            MainWindowViewModel.Instance.Library.RefreshGame(ViewModel.Game);
             this.IsEnabled = true;
         }
 

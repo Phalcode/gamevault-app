@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace gamevault.ViewModels
 {
-    internal class NewInstallViewModel : ViewModelBase
+    internal class InstallViewModel : ViewModelBase
     {
         #region Singleton
-        private static NewInstallViewModel instance = null;
+        private static InstallViewModel instance = null;
         private static readonly object padlock = new object();
 
-        public static NewInstallViewModel Instance
+        public static InstallViewModel Instance
         {
             get
             {
@@ -24,7 +24,7 @@ namespace gamevault.ViewModels
                 {
                     if (instance == null)
                     {
-                        instance = new NewInstallViewModel();
+                        instance = new InstallViewModel();
                     }
                     return instance;
                 }

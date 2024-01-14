@@ -40,7 +40,7 @@ namespace gamevault.Windows
             {
                 case MainControl.Library:
                     {
-                        MainWindowViewModel.Instance.ActiveControl = MainWindowViewModel.Instance.NewLibrary;
+                        MainWindowViewModel.Instance.ActiveControl = MainWindowViewModel.Instance.Library;
                         break;
                     }
                 case MainControl.Settings:
@@ -52,12 +52,7 @@ namespace gamevault.Windows
                     {
                         MainWindowViewModel.Instance.ActiveControl = MainWindowViewModel.Instance.Downloads;
                         break;
-                    }
-                //case MainControl.NewLibrary:
-                //    {
-                //        MainWindowViewModel.Instance.ActiveControl = MainWindowViewModel.Instance.Library;
-                //        break;
-                //    }
+                    }              
                 case MainControl.Community:
                     {
                         MainWindowViewModel.Instance.ActiveControl = MainWindowViewModel.Instance.Community;
@@ -85,7 +80,7 @@ namespace gamevault.Windows
             LoginState state = LoginManager.Instance.GetState();
             if (LoginState.Success == state)
             {
-
+                await MainWindowViewModel.Instance.Library.LoadLibrary();
             }
             else if (LoginState.Unauthorized == state || LoginState.Forbidden == state)
             {
@@ -93,9 +88,10 @@ namespace gamevault.Windows
             }
             else if (LoginState.Error == state)
             {
-                MainWindowViewModel.Instance.AppBarText = "Could not connect to server";
+                MainWindowViewModel.Instance.AppBarText = LoginManager.Instance.GetLoginMessage();
+                MainWindowViewModel.Instance.Library.ShowLibraryError();
             }
-            await MainWindowViewModel.Instance.NewLibrary.GetGameInstalls().RestoreInstalledGames();
+            await MainWindowViewModel.Instance.Library.GetGameInstalls().RestoreInstalledGames();
             await MainWindowViewModel.Instance.Downloads.RestoreDownloadedGames();
             MainWindowViewModel.Instance.UserIcon = LoginManager.Instance.GetCurrentUser();
         }

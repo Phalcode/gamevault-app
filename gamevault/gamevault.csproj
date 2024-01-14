@@ -20,7 +20,7 @@
 
 	<ItemGroup>
 		<None Remove="Resources\Images\com_NoUserIcon.png" />
-		<None Remove="Resources\Images\gameView_NoBackground.png" />
+		<None Remove="Resources\Images\gameView_NoBackground.jpg" />
 		<None Remove="Resources\Images\glyph_admin.png" />
 		<None Remove="Resources\Images\glyph_community.png" />
 		<None Remove="Resources\Images\glyph_download.png" />
@@ -45,7 +45,7 @@
 
 	<ItemGroup>
 		<Resource Include="Resources\Images\com_NoUserIcon.png" />
-		<Resource Include="Resources\Images\gameView_NoBackground.png" />
+		<Resource Include="Resources\Images\gameView_NoBackground.jpg" />
 		<Resource Include="Resources\Images\glyph_admin.png" />
 		<Resource Include="Resources\Images\glyph_community.png" />
 		<Resource Include="Resources\Images\glyph_download.png" />

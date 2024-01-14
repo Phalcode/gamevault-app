@@ -3,46 +3,43 @@ using gamevault.Models;
 using gamevault.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.NetworkInformation;
-using System.Text;
 using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Windows.UI.Composition;
 
 namespace gamevault.UserControls
 {
-    public partial class NewInstallUserControl : UserControl
+    public partial class InstallUserControl : UserControl
     {
-        private InputTimer inputTimer { get; set; }
+        private InputTimer? inputTimer { get; set; }
         private List<FileSystemWatcher> m_FileWatcherList = new List<FileSystemWatcher>();
-
-        public NewInstallUserControl()
+        private bool gamesRestored = false;
+        public InstallUserControl()
         {
             InitializeComponent();
-            this.DataContext = NewInstallViewModel.Instance;
+            this.DataContext = InstallViewModel.Instance;
             InitTimer();
             uiInstalledGames.IsExpanded = Preferences.Get(AppConfigKey.InstalledGamesOpen, AppFilePath.UserFile) == "1" ? true : false;
         }
+
+        private async void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (this.IsVisible == true && gamesRestored && InstallViewModel.Instance.InstalledGames.Count > 0 && string.IsNullOrEmpty(inputTimer?.Data))
+            {
+                InstallViewModel.Instance.InstalledGames = await SortInstalledGamesByLastPlayed(InstallViewModel.Instance.InstalledGames);
+                InstallViewModel.Instance.InstalledGamesFilter = CollectionViewSource.GetDefaultView(InstallViewModel.Instance.InstalledGames);
+            }
+        }
         public async Task RestoreInstalledGames()
         {
-            NewInstallViewModel.Instance.IgnoreList = GetIgnoreList();
+            InstallViewModel.Instance.IgnoreList = GetIgnoreList();
             Dictionary<int, string> foundGames = new Dictionary<int, string>();
             Game[]? games = await Task<Game[]>.Run(() =>
             {
@@ -61,7 +58,7 @@ namespace gamevault.UserControls
                         {
                             int id = GetGameIdByDirectory(dir);
                             if (id == -1) continue;
-                            if (NewInstallViewModel.Instance.InstalledGames.Where(x => x.Key.ID == id).Count() > 0)
+                            if (InstallViewModel.Instance.InstalledGames.Where(x => x.Key.ID == id).Count() > 0)
                                 continue;
                             if (!foundGames.ContainsKey(id))
                             {
@@ -113,19 +110,9 @@ namespace gamevault.UserControls
                             }
                         }
                     }
-                    catch (WebException exWeb)
-                    {
-                        MainWindowViewModel.Instance.AppBarText = "Could not connect to server";
-                        return null;
-                    }
-                    catch (JsonException exJson)
-                    {
-                        MainWindowViewModel.Instance.AppBarText = exJson.Message;
-                        return null;
-                    }
                     catch (Exception ex)
                     {
-                        MainWindowViewModel.Instance.AppBarText = ex.Message;
+                        MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
                         return null;
                     }
                 }
@@ -133,6 +120,7 @@ namespace gamevault.UserControls
             });
             if (games != null)
             {
+                ObservableCollection<KeyValuePair<Game, string>> TempInstalledGames = new ObservableCollection<KeyValuePair<Game, string>>();
                 for (int count = 0; count < foundGames.Count; count++)
                 {
                     try
@@ -140,7 +128,7 @@ namespace gamevault.UserControls
                         Game? game = games.Where(x => x.ID == foundGames.ElementAt(count).Key).FirstOrDefault();
                         if (game != null)
                         {
-                            NewInstallViewModel.Instance.InstalledGames.Add(new KeyValuePair<Game, string>(game, foundGames.ElementAt(count).Value));
+                            TempInstalledGames.Add(new KeyValuePair<Game, string>(game, foundGames.ElementAt(count).Value));
                             if (LoginManager.Instance.IsLoggedIn())
                             {
                                 if (!Preferences.Exists(game.ID.ToString(), AppFilePath.OfflineCache))
@@ -153,10 +141,44 @@ namespace gamevault.UserControls
                     }
                     catch { }
                 }
-                NewInstallViewModel.Instance.InstalledGamesFilter = CollectionViewSource.GetDefaultView(NewInstallViewModel.Instance.InstalledGames);
+                InstallViewModel.Instance.InstalledGames = await SortInstalledGamesByLastPlayed(TempInstalledGames);
+                InstallViewModel.Instance.InstalledGamesFilter = CollectionViewSource.GetDefaultView(InstallViewModel.Instance.InstalledGames);
             }
+            gamesRestored = true;
         }
+        private async Task<ObservableCollection<KeyValuePair<Game, string>>> SortInstalledGamesByLastPlayed(ObservableCollection<KeyValuePair<Game, string>> collection)
+        {
+            return await Task.Run(() =>
+            {
+                try
+                {
+                    string lastTimePlayed = Preferences.Get(AppConfigKey.LastPlayed, AppFilePath.UserFile);
+                    List<string> lastPlayedDates = lastTimePlayed.Split(';').ToList();
 
+                    collection = new System.Collections.ObjectModel.ObservableCollection<KeyValuePair<Game, string>>(collection.OrderByDescending(item =>
+                    {
+                        int key = item.Key.ID;
+                        return lastPlayedDates.Contains(key.ToString()) ? lastPlayedDates.IndexOf(key.ToString()) : int.MaxValue;
+                    }).Reverse());
+                }
+                catch { }
+                return collection;
+            });
+        }
+        public void SetLastPlayedGame(int gameID)
+        {
+            try
+            {
+                string lastTimePlayed = Preferences.Get(AppConfigKey.LastPlayed, AppFilePath.UserFile);
+                if (lastTimePlayed.Contains($"{gameID}"))
+                {
+                    lastTimePlayed = lastTimePlayed.Replace($"{gameID};", "");
+                }
+                lastTimePlayed = lastTimePlayed.Insert(0, $"{gameID};");
+                Preferences.Set(AppConfigKey.LastPlayed, lastTimePlayed, AppFilePath.UserFile);
+            }
+            catch { }
+        }
 
         public void AddSystemFileWatcher(string path)
         {
@@ -182,7 +204,7 @@ namespace gamevault.UserControls
             if (id == -1)
                 return;
 
-            if (NewInstallViewModel.Instance.InstalledGames.Where(x => x.Key.ID == id).Count() > 0)
+            if (InstallViewModel.Instance.InstalledGames.Where(x => x.Key.ID == id).Count() > 0)
                 return;
 
             try
@@ -208,7 +230,7 @@ namespace gamevault.UserControls
                 {
                     App.Current.Dispatcher.Invoke((Action)delegate
                     {
-                        NewInstallViewModel.Instance.InstalledGames.Add(new KeyValuePair<Game, string>(game, dir));
+                        InstallViewModel.Instance.InstalledGames.Add(new KeyValuePair<Game, string>(game, dir));
                     });
                 }
             }
@@ -248,7 +270,9 @@ namespace gamevault.UserControls
 
         private void GameCard_Clicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            MainWindowViewModel.Instance.SetActiveControl(new NewGameViewUserControl(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key, LoginManager.Instance.IsLoggedIn()));
+            if (((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key == null)
+                return;
+            MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key, LoginManager.Instance.IsLoggedIn()));
         }
         private void Search_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -259,8 +283,8 @@ namespace gamevault.UserControls
         private void InputTimerElapsed(object sender, EventArgs e)
         {
             inputTimer.Stop();
-            if (NewInstallViewModel.Instance.InstalledGamesFilter == null) return;
-            NewInstallViewModel.Instance.InstalledGamesFilter.Filter = item =>
+            if (InstallViewModel.Instance.InstalledGamesFilter == null) return;
+            InstallViewModel.Instance.InstalledGamesFilter.Filter = item =>
             {
                 return ((KeyValuePair<Game, string>)item).Key.Title.Contains(inputTimer.Data, StringComparison.OrdinalIgnoreCase);
             };
@@ -306,6 +330,8 @@ namespace gamevault.UserControls
                         MainWindowViewModel.Instance.AppBarText = $"Can not execute '{savedExecutable}'";
                     }
                 }
+                SetLastPlayedGame(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key.ID);
+                //Preferences.Set(AppConfigKey.LastPlayed, DateTime.Now.ToString(), $"{((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Value}\\gamevault-exec");
             }
             else
             {
@@ -327,12 +353,23 @@ namespace gamevault.UserControls
 
         private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            e.Handled = true;
-            ScrollViewer parent = VisualHelper.FindNextParentByType<ScrollViewer>((ScrollViewer)sender);
-            var eventArg = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
-            eventArg.RoutedEvent = UIElement.MouseWheelEvent;
-            eventArg.Source = sender;
-            parent.RaiseEvent(eventArg);
+            if (((ScrollViewer)sender).ComputedHorizontalScrollBarVisibility == Visibility.Visible)
+            {
+                e.Handled = true;
+                if (e.Delta > 0)
+                    ((ScrollViewer)sender).LineLeft();
+                else
+                    ((ScrollViewer)sender).LineRight();
+            }
+            else
+            {
+                e.Handled = true;
+                ScrollViewer parent = VisualHelper.FindNextParentByType<ScrollViewer>((ScrollViewer)sender);
+                var eventArg = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
+                eventArg.RoutedEvent = UIElement.MouseWheelEvent;
+                eventArg.Source = sender;
+                parent.RaiseEvent(eventArg);
+            }
         }
 
         private void InstalledGames_Toggled(object sender, RoutedEventArgs e)

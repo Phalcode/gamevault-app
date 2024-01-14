@@ -41,6 +41,7 @@ namespace gamevault.Helper
         #endregion
         private User? m_User { get; set; }
         private LoginState m_LoginState { get; set; }
+        private string m_LoginMessage { get; set; }
         public User? GetCurrentUser()
         {
             return m_User;
@@ -52,6 +53,10 @@ namespace gamevault.Helper
         public LoginState GetState()
         {
             return m_LoginState;
+        }
+        public string GetLoginMessage()
+        {
+            return m_LoginMessage;
         }
         public void SwitchToOfflineMode()
         {
@@ -70,17 +75,15 @@ namespace gamevault.Helper
                     string result = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me");
                     return JsonSerializer.Deserialize<User>(result);
                 }
-                catch (WebException ex)
+                catch (Exception ex)
                 {
                     string code = WebExceptionHelper.GetServerStatusCode(ex);
                     state = DetermineLoginState(code);
+                    if (state == LoginState.Error)
+                        m_LoginMessage = WebExceptionHelper.TryGetServerMessage(ex);
+
                     return null;
-                }
-                catch
-                {
-                    state = LoginState.Error;
-                    return null;
-                }
+                }               
             });
             m_User = user;
             m_LoginState = state;
@@ -96,17 +99,15 @@ namespace gamevault.Helper
                     string result = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me");
                     return JsonSerializer.Deserialize<User>(result);
                 }
-                catch (WebException ex)
+                catch (Exception ex)
                 {
                     string code = WebExceptionHelper.GetServerStatusCode(ex);
                     state = DetermineLoginState(code);
+                    if (state == LoginState.Error)
+                        m_LoginMessage = WebExceptionHelper.TryGetServerMessage(ex);
+
                     return null;
-                }
-                catch
-                {
-                    state = LoginState.Error;
-                    return null;
-                }
+                }               
             });
             m_User = user;
             m_LoginState = state;

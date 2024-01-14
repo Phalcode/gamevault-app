@@ -177,7 +177,7 @@ namespace gamevault.UserControls
             {
                 Directory.CreateDirectory(ViewModel.InstallPath);
             }
-            MainWindowViewModel.Instance.NewLibrary.GetGameInstalls().AddSystemFileWatcher(ViewModel.InstallPath);
+            MainWindowViewModel.Instance.Library.GetGameInstalls().AddSystemFileWatcher(ViewModel.InstallPath);
             if (SettingsViewModel.Instance.AutoExtract)
             {
                 App.Current.Dispatcher.Invoke((Action)async delegate
@@ -223,7 +223,7 @@ namespace gamevault.UserControls
 
         private async void DeleteFile_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to delete '{ViewModel.Game.Title}' ?", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+            MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to delete '{(ViewModel.Game == null ? "this Game" : ViewModel.Game.Title)}' ?", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
             if (result == MessageDialogResult.Affirmative)
             {
                 try
@@ -252,7 +252,7 @@ namespace gamevault.UserControls
 
         private void GameImage_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            MainWindowViewModel.Instance.SetActiveControl(new NewGameViewUserControl(ViewModel.Game, LoginManager.Instance.IsLoggedIn()));
+            MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(ViewModel.Game, LoginManager.Instance.IsLoggedIn()));
         }
 
         private void ExtractionProgress(object sender, SevenZipProgressEventArgs e)

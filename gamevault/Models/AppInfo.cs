@@ -22,7 +22,8 @@ namespace gamevault.Models
         DownloadLimit,
         InstalledGamesOpen,
         LaunchParameter,
-        ShowRawgTitle
+        ShowRawgTitle,
+        LastPlayed
     }
     public static class AppFilePath
     {

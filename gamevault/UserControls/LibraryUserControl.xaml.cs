@@ -25,31 +25,34 @@ using System.Windows.Shapes;
 namespace gamevault.UserControls
 {
     /// <summary>
-    /// Interaction logic for NewLibraryUserControl.xaml
+    /// Interaction logic for LibraryUserControl.xaml
     /// </summary>
-    public partial class NewLibraryUserControl : UserControl
+    public partial class LibraryUserControl : UserControl
     {
-        private NewLibraryViewModel ViewModel;
+        private LibraryViewModel ViewModel;
         private InputTimer inputTimer { get; set; }
 
         private bool scrollBlocked = false;
-        private bool loaded = false;
-        public NewLibraryUserControl()
+        public LibraryUserControl()
         {
             InitializeComponent();
-            ViewModel = new NewLibraryViewModel();
+            ViewModel = new LibraryViewModel();
             this.DataContext = ViewModel;
             InitTimer();
         }
-        private async void Library_Loaded(object sender, RoutedEventArgs e)
+        public async Task LoadLibrary()
         {
-            if (loaded)
-                return;
-
-            loaded = true;
             if (Preferences.Get(AppConfigKey.LibStartup, AppFilePath.UserFile) == "1")
             {
                 await Search();
+            }
+        }
+        public void ShowLibraryError()
+        {
+            ViewModel.CanLoadServerGames = false;
+            if (!uiExpanderGameCards.IsExpanded)
+            {
+                uiExpanderGameCards.IsExpanded = true;
             }
         }
         private void Search_TextChanged(object sender, TextChangedEventArgs e)
@@ -97,6 +100,7 @@ namespace gamevault.UserControls
             PaginatedData<Game>? gameResult = await GetGamesData(filterUrl);//add try catch
             if (gameResult != null)
             {
+                ViewModel.CanLoadServerGames = true;
                 ViewModel.TotalGamesCount = gameResult.Meta.TotalItems;
                 if (gameResult.Data.Length > 0)
                 {
@@ -104,8 +108,12 @@ namespace gamevault.UserControls
                     await ProcessGamesData(gameResult);
                 }
             }
+            else
+            {
+                ViewModel.CanLoadServerGames = false;
+            }
         }
-        public NewInstallUserControl GetGameInstalls()
+        public InstallUserControl GetGameInstalls()
         {
             return uiGameInstalls;
         }
@@ -118,21 +126,16 @@ namespace gamevault.UserControls
                     string gameList = WebHelper.GetRequest(url);
                     return JsonSerializer.Deserialize<PaginatedData<Game>>(gameList);
                 }
-                catch (JsonException exJson)
-                {
-                    MainWindowViewModel.Instance.AppBarText = exJson.Message;
-                    return null;
-                }
                 catch (Exception ex)
                 {
-                    MainWindowViewModel.Instance.AppBarText = "Could not connect to server";
+                    MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
                     return null;
                 }
             });
         }
         private async Task ProcessGamesData(PaginatedData<Game> gameResult)
         {
-            await Task.Run(async () =>
+            await Task.Run(() =>
             {
                 foreach (Game game in gameResult.Data)
                 {
@@ -156,7 +159,9 @@ namespace gamevault.UserControls
 
         private void GameCard_Clicked(object sender, MouseButtonEventArgs e)
         {
-            MainWindowViewModel.Instance.SetActiveControl(new NewGameViewUserControl((Game)((FrameworkElement)sender).DataContext));
+            if ((Game)((FrameworkElement)sender).DataContext == null)
+                return;
+            MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl((Game)((FrameworkElement)sender).DataContext));
         }
 
         private void Filter_Click(object sender, MouseButtonEventArgs e)
@@ -200,6 +205,11 @@ namespace gamevault.UserControls
                     scrollBlocked = true;
                     PaginatedData<Game>? gameResult = await GetGamesData(ViewModel.NextPage);
                     ViewModel.NextPage = gameResult?.Links.Next;
+                    if (gameResult == null || gameResult.Data == null)
+                    {
+                        MainWindowViewModel.Instance.AppBarText = "Failed to load next Page";
+                        return;
+                    }
                     await ProcessGamesData(gameResult);
                     scrollBlocked = false;
                 }
@@ -276,20 +286,15 @@ namespace gamevault.UserControls
                     string randomGame = WebHelper.GetRequest($"{SettingsViewModel.Instance.ServerUrl}/api/games/random");
                     return JsonSerializer.Deserialize<Game>(randomGame);
                 }
-                catch (JsonException exJson)
-                {
-                    MainWindowViewModel.Instance.AppBarText = exJson.Message;
-                    return null;
-                }
                 catch (Exception ex)
                 {
-                    MainWindowViewModel.Instance.AppBarText = "Could not connect to server";
+                    MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
                     return null;
                 }
             });
             if (result != null)
             {
-                MainWindowViewModel.Instance.SetActiveControl(new NewGameViewUserControl(result, true));
+                MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(result, true));
             }
             ((FrameworkElement)sender).IsEnabled = true;
         }
@@ -297,7 +302,7 @@ namespace gamevault.UserControls
         private void Settings_Click(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
-            var installedGame = NewInstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ((Game)((FrameworkElement)sender).DataContext).ID).FirstOrDefault();
+            var installedGame = InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ((Game)((FrameworkElement)sender).DataContext).ID).FirstOrDefault();
 
             MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl((Game)((FrameworkElement)sender).DataContext) { Width = 1200, Height = 800, Margin = new Thickness(50) });
         }

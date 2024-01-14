@@ -1,5 +1,6 @@
 ﻿using gamevault.Helper;
 using gamevault.Models;
+using System;
 using System.IO;
 
 namespace gamevault.ViewModels
@@ -166,6 +167,16 @@ namespace gamevault.ViewModels
                 System.Windows.Forms.DialogResult result = dialog.ShowDialog();
                 if (result == System.Windows.Forms.DialogResult.OK && Directory.Exists(dialog.SelectedPath))
                 {
+                    try
+                    {
+                        File.Create(@$"{dialog.SelectedPath}\accesscheck.file").Close();
+                        File.Delete(@$"{dialog.SelectedPath}\accesscheck.file");
+                    }
+                    catch (Exception ex)
+                    {
+                        MainWindowViewModel.Instance.AppBarText = $"Access to the path {dialog.SelectedPath} is denied";
+                        return System.Windows.Forms.DialogResult.Cancel;
+                    }
                     Preferences.Set(AppConfigKey.RootPath, dialog.SelectedPath, AppFilePath.UserFile);
                     RootPath = dialog.SelectedPath.Replace(@"\\", @"\");
                     return System.Windows.Forms.DialogResult.OK;
@@ -181,7 +192,7 @@ namespace gamevault.ViewModels
         {
             get
             {
-                return "1.8.1";
+                return "1.8.2";
             }
         }
 

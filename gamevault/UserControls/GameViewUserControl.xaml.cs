@@ -18,15 +18,15 @@ namespace gamevault.UserControls
     /// <summary>
     /// Interaction logic for NewGameViewUserControl.xaml
     /// </summary>
-    public partial class NewGameViewUserControl : UserControl
+    public partial class GameViewUserControl : UserControl
     {
-        private NewGameViewViewModel ViewModel { get; set; }
+        private GameViewViewModel ViewModel { get; set; }
         private int gameID { get; set; }
         private bool loaded = false;
-        public NewGameViewUserControl(Game game, bool reloadGameObject = true)
+        public GameViewUserControl(Game game, bool reloadGameObject = true)
         {
             InitializeComponent();
-            ViewModel = new NewGameViewViewModel();
+            ViewModel = new GameViewViewModel();
             if (false == reloadGameObject)
             {
                 ViewModel.Game = game;
@@ -70,6 +70,7 @@ namespace gamevault.UserControls
                     catch (Exception ex) { }
                 }
                 ViewModel.IsInstalled = IsGameInstalled(ViewModel.Game);
+                ViewModel.IsDownloaded = IsGameDownloaded(ViewModel.Game);
                 ViewModel.ShowRawgTitle = Preferences.Get(AppConfigKey.ShowRawgTitle, AppFilePath.UserFile) == "1";
             }
         }
@@ -77,11 +78,17 @@ namespace gamevault.UserControls
         {
             if (game == null)
                 return false;
-            KeyValuePair<Game, string> result = NewInstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == game.ID).FirstOrDefault();
+            KeyValuePair<Game, string> result = InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == game.ID).FirstOrDefault();
             if (result.Equals(default(KeyValuePair<Game, string>)))
                 return false;
 
             return true;
+        }
+        private bool IsGameDownloaded(Game? game)
+        {
+            if (game == null)
+                return false;
+            return DownloadsViewModel.Instance.DownloadedGames.Where(gameUC => gameUC.GetGameId() == game.ID).Count() > 0;
         }
         private void Back_Click(object sender, MouseButtonEventArgs e)
         {
@@ -90,7 +97,7 @@ namespace gamevault.UserControls
         private void GamePlay_Click(object sender, MouseButtonEventArgs e)
         {
             string path = "";
-            KeyValuePair<Game, string> result = NewInstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).FirstOrDefault();
+            KeyValuePair<Game, string> result = InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).FirstOrDefault();
             if (!result.Equals(default(KeyValuePair<Game, string>)))
             {
                 path = result.Value;
@@ -132,6 +139,8 @@ namespace gamevault.UserControls
                         MainWindowViewModel.Instance.AppBarText = $"Can not execute '{savedExecutable}'";
                     }
                 }
+                MainWindowViewModel.Instance.Library.GetGameInstalls().SetLastPlayedGame(result.Key.ID);
+                //Preferences.Set(AppConfigKey.LastPlayed, DateTime.Now.ToString(), $"{path}\\gamevault-exec");
             }
             else
             {
@@ -180,16 +189,11 @@ namespace gamevault.UserControls
                     {
                         WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{gameID}", System.Text.Json.JsonSerializer.Serialize(new Progress() { State = ViewModel.Progress.State }));
                     }
-                    catch (WebException webEx)
+                    catch (Exception ex)
                     {
-                        string msg = WebExceptionHelper.GetServerMessage(webEx);
-                        if (msg == string.Empty)
-                        {
-                            msg = "Could not connect to server";
-                        }
+                        string msg = WebExceptionHelper.TryGetServerMessage(ex);
                         MainWindowViewModel.Instance.AppBarText = msg;
                     }
-                    catch { }
                 });
             }
         }

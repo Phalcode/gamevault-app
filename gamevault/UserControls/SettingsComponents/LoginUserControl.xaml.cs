@@ -54,6 +54,7 @@ namespace gamevault.UserControls.SettingsComponents
                     LoginState state = await LoginManager.Instance.ManualLogin(SettingsViewModel.Instance.UserName, uiPwBox.Password);
                     if (LoginState.Success == state)
                     {
+                        await MainWindowViewModel.Instance.Library.LoadLibrary();//Load library, because otherwise it would be empty for new users at the first login
                         MainWindowViewModel.Instance.AppBarText = $"Successfully logged in as '{SettingsViewModel.Instance.UserName}'";
                     }
                     else if (LoginState.Unauthorized == state)
@@ -66,9 +67,9 @@ namespace gamevault.UserControls.SettingsComponents
                     }
                     else if (LoginState.Error == state)
                     {
-                        MainWindowViewModel.Instance.AppBarText = "Could not connect to server";
+                        MainWindowViewModel.Instance.AppBarText = LoginManager.Instance.GetLoginMessage();
                     }
-                    MainWindowViewModel.Instance.UserIcon = LoginManager.Instance.GetCurrentUser();                  
+                    MainWindowViewModel.Instance.UserIcon = LoginManager.Instance.GetCurrentUser();
                 }
             }
             else

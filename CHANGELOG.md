@@ -1,5 +1,21 @@
 # GameVault App Changelog
 
+## 1.8.2
+Recommended Gamevault Server Version: `v10.1.0`
+### Changes
+- Write permissions of the root folder are now checked on selection
+- The scrollbar in the download tab now covers the entire tab
+- Improved error messages
+- Sort installed games by last played
+- The download icon in the game view now changes depending on whether the game has already been downloaded
+- Added more details to gamesettings ring chart
+- Changed default background of game view
+- You can now also open the user settings from the settings tab
+- The mouse wheel now scrolls horizontally in the installed game scrollbar when visible
+- A message is now displayed when an admin tries to change their role
+- Added Troubleshoot message to the library expander if the library fails to load
+- Bug fix: The library does not load automatically on first login
+
 ## 1.8.1
 Recommended Gamevault Server Version: `v10.0.2`
 ### Changes

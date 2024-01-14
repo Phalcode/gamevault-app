@@ -70,8 +70,11 @@ namespace gamevault.UserControls.SettingsComponents
                         WebHelper.Post($"{SettingsViewModel.Instance.ServerUrl}/api/users/register", jsonObject);
                         message = "Successfully registered";
                         SettingsViewModel.Instance.RegistrationUser = new User();
-                        uiPwReg.Password = string.Empty;
-                        uiPwRegRepeat.Password = string.Empty;
+                        App.Current.Dispatcher.Invoke((Action)delegate
+                        {
+                            uiPwReg.Password = string.Empty;
+                            uiPwRegRepeat.Password = string.Empty;
+                        });
                     }
                     else
                     {
@@ -79,15 +82,10 @@ namespace gamevault.UserControls.SettingsComponents
                     }
                     MainWindowViewModel.Instance.AppBarText = message;
                 }
-                catch (WebException ex)
+                catch (Exception ex)
                 {
-                    string errMessage = WebExceptionHelper.GetServerMessage(ex);
-                    if (errMessage == string.Empty) { errMessage = "Could not connect to server"; }
+                    string errMessage = WebExceptionHelper.TryGetServerMessage(ex);
                     MainWindowViewModel.Instance.AppBarText = errMessage;
-                }
-                catch
-                {
-                    MainWindowViewModel.Instance.AppBarText = "Could not connect to server";
                 }
             });
             uiBtnRegister.IsEnabled = true;

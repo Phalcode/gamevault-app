@@ -181,7 +181,8 @@ namespace gamevault.UserControls
             }
             catch (Exception ex)
             {
-                MainWindowViewModel.Instance.AppBarText = ex.Message;
+                if (url != string.Empty)
+                    MainWindowViewModel.Instance.AppBarText = ex.Message;
             }
         }
         #region Generic Events
@@ -268,14 +269,10 @@ namespace gamevault.UserControls
                         success = true;
                         MainWindowViewModel.Instance.AppBarText = "Successfully updated image";
                     }
-                    catch (WebException ex)
-                    {
-                        string msg = WebExceptionHelper.GetServerMessage(ex);
-                        MainWindowViewModel.Instance.AppBarText = msg;
-                    }
                     catch (Exception ex)
                     {
-                        MainWindowViewModel.Instance.AppBarText = ex.Message;
+                        string msg = WebExceptionHelper.TryGetServerMessage(ex);
+                        MainWindowViewModel.Instance.AppBarText = msg;
                     }
                 });
                 //Update Data Context for Library. So that the images are also refreshed there directly
@@ -289,14 +286,10 @@ namespace gamevault.UserControls
                     }
                 }
             }
-            catch (WebException ex)
-            {
-                string msg = WebExceptionHelper.GetServerMessage(ex);
-                MainWindowViewModel.Instance.AppBarText = msg;
-            }
             catch (Exception ex)
             {
-                MainWindowViewModel.Instance.AppBarText = ex.Message;
+                string msg = WebExceptionHelper.TryGetServerMessage(ex);
+                MainWindowViewModel.Instance.AppBarText = msg;
             }
         }
         #endregion
@@ -333,10 +326,10 @@ namespace gamevault.UserControls
                     WebHelper.Put(url, JsonSerializer.Serialize(selectedUser));
                     MainWindowViewModel.Instance.AppBarText = "Sucessfully saved user changes";
                 }
-                catch (WebException ex)
+                catch (Exception ex)
                 {
                     error = true;
-                    string msg = WebExceptionHelper.GetServerMessage(ex);
+                    string msg = WebExceptionHelper.TryGetServerMessage(ex);
                     MainWindowViewModel.Instance.AppBarText = msg;
                 }
             });

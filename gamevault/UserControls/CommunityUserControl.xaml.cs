@@ -131,7 +131,7 @@ namespace gamevault.UserControls
                     uiSortBy.SelectedIndex = 2;
                 }
             }
-            catch (Exception ex) { MainWindowViewModel.Instance.AppBarText = "Could not connect to server"; }
+            catch (Exception ex) { MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex); }
         }
         private User[] BringCurrentUserToTop(User[] users)
         {
@@ -182,7 +182,7 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.AppBarText = "Cannot open unknown game";
                 return;
             }
-            MainWindowViewModel.Instance.SetActiveControl(new NewGameViewUserControl(((Progress)((FrameworkElement)sender).DataContext).Game));
+            MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(((Progress)((FrameworkElement)sender).DataContext).Game));
         }
         private async void ReloadUser_Clicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -230,13 +230,9 @@ namespace gamevault.UserControls
                     MainWindowViewModel.Instance.AppBarText = $"Successfully deleted progress";
                 }
             }
-            catch (WebException webex)
-            {
-                MainWindowViewModel.Instance.AppBarText = $"Could not delete the Progress. {WebExceptionHelper.GetServerMessage(webex)}";
-            }
             catch (Exception ex)
             {
-                MainWindowViewModel.Instance.AppBarText = $"Could not delete the Progress. {ex.Message}";
+                MainWindowViewModel.Instance.AppBarText = $"Could not delete. {WebExceptionHelper.TryGetServerMessage(ex)}";
             }
         }
     }

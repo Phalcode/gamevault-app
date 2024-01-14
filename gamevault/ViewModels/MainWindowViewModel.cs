@@ -28,7 +28,7 @@ namespace gamevault.ViewModels
         {
             m_Settings = new SettingsUserControl();
             m_Downloads = new DownloadsUserControl();
-            m_NewLibrary = new NewLibraryUserControl();
+            m_Library = new LibraryUserControl();
             m_Community = new CommunityUserControl();
             m_AdminConsole = new AdminConsoleUserControl();
         }
@@ -96,7 +96,7 @@ namespace gamevault.ViewModels
         private UserControl m_Popup { get; set; }
         private SettingsUserControl m_Settings { get; set; }
         private DownloadsUserControl m_Downloads { get; set; }
-        private NewLibraryUserControl m_NewLibrary { get; set; }
+        private LibraryUserControl m_Library { get; set; }
         private CommunityUserControl m_Community { get; set; }
         private AdminConsoleUserControl m_AdminConsole { get; set; }
         #endregion
@@ -157,10 +157,10 @@ namespace gamevault.ViewModels
             get { return m_Downloads; }
             private set { m_Downloads = value; }
         }
-        internal NewLibraryUserControl NewLibrary
+        internal LibraryUserControl Library
         {
-            get { return m_NewLibrary; }
-            private set { m_NewLibrary = value; }
+            get { return m_Library; }
+            private set { m_Library = value; }
         }
         internal CommunityUserControl Community
         {
