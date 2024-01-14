@@ -22,6 +22,7 @@ namespace gamevault.ViewModels
         private bool boxArtImageChanged { get; set; }
         private ImageSource backgroundImageSource { get; set; }
         private ImageSource boxArtImageSource { get; set; }
+        private string diskSize { get; set; }
         #endregion      
         public Game Game
         {
@@ -74,6 +75,11 @@ namespace gamevault.ViewModels
         {
             get { return boxArtImageSource; }
             set { boxArtImageSource = value; OnPropertyChanged(); BoxArtImageChanged = true; }
+        }
+        public string DiskSize
+        {
+            get { return diskSize; }
+            set { diskSize = value; OnPropertyChanged(); }
         }
     }
 }

@@ -21,6 +21,7 @@ using LiveChartsCore.SkiaSharpView.Extensions;
 using gamevault.Converter;
 using System.Windows.Media;
 using LiveChartsCore.SkiaSharpView.Painting;
+using SkiaSharp;
 
 namespace gamevault.UserControls
 {
@@ -278,8 +279,7 @@ namespace gamevault.UserControls
                     // Outer-Label
                     series.DataLabelsPosition = LiveChartsCore.Measure.PolarLabelsPosition.Outer;
                     series.DataLabelsSize = 15;
-                    series.DataLabelsPadding = new LiveChartsCore.Drawing.Padding(10);
-
+                    series.DataLabelsPadding = index == 1 ? new LiveChartsCore.Drawing.Padding(5, 35, 5, 0) : new LiveChartsCore.Drawing.Padding(10);
                     if (size != 0)
                     {
                         series.DataLabelsPaint = color;
@@ -289,9 +289,16 @@ namespace gamevault.UserControls
 
                     index++;
                 });
+                try
+                {
+                    ViewModel.DiskSize = $"{drive.VolumeLabel} ({drive.RootDirectory.ToString().Trim('\\')}) - {gameSizeConverter.Convert(drive.TotalSize, null, null, null).ToString()}";
+                }
+                catch
+                {
+                    ViewModel.DiskSize = $"{gameSizeConverter.Convert(drive.TotalSize, null, null, null).ToString()}";
+                }
                 App.Current.Dispatcher.Invoke((Action)delegate
                 {
-                    uiTxtAllInstalledGamesSize.Text = gameSizeConverter.Convert(drive.TotalSize, null, null, null).ToString();
                     uiDiscUsagePieChart.LegendTextPaint = new SolidColorPaint(new SkiaSharp.SKColor(255, 255, 255));
                     uiDiscUsagePieChart.Series = sliceSeries;
                 });
