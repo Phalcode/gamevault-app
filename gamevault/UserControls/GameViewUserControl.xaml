@@ -255,7 +255,16 @@
                                 </Path.RenderTransform>
                             </Path>
                             <TextBlock Text="Website" FontWeight="Bold" FontSize="20" Margin="55,0,0,0"/>
-                            <TextBlock FontSize="20" Margin="55,24,0,0" ToolTip="{Binding Path=Game.WebsiteUrl}">                              
+                            <TextBlock FontSize="20" Margin="55,24,0,0" ToolTip="{Binding Path=Game.WebsiteUrl}">
+                                <TextBlock.Style>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=Game.WebsiteUrl}" Value="">
+                                                <Setter Property="IsEnabled" Value="False"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
                                 <Hyperlink TextDecorations="None" NavigateUri="{Binding Path=Game.WebsiteUrl}" RequestNavigate="Website_Navigate">
                                     <Hyperlink.Inlines>
                                         <Run>
@@ -265,6 +274,7 @@
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding Path=Game.WebsiteUrl}" Value="">
                                                             <Setter Property="Text" Value="N/A"/>
+                                                            <Setter Property="Foreground" Value="White"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>

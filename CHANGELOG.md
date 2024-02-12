@@ -1,5 +1,10 @@
 # GameVault App Changelog
 
+## 1.8.3
+Recommended Gamevault Server Version: `v10.2.0`
+### Changes
+- Bug fix: Re-Download icon not appearing on library cards. Also improved loading times by create library cards content only by hover over.
+- Bug fix: Game webite text no longer has the clickable style if no value has been set on GameView 
 ## 1.8.2
 Recommended Gamevault Server Version: `v10.1.0`
 ### Changes

@@ -12,7 +12,7 @@ namespace gamevault.Converter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Debug.WriteLine("PermRoleVis");
+            //Debug.WriteLine("PermRoleVis");
             if ((LoginManager.Instance.GetCurrentUser() != null && LoginManager.Instance.GetCurrentUser().Role >= PERMISSION_ROLE.EDITOR))
             {
                 return Visibility.Visible;
