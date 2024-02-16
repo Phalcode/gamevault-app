@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Input;
 using static System.Net.Mime.MediaTypeNames;
 using ABI.System;
+using gamevault.UserControls.SettingsComponents;
 
 namespace gamevault.UserControls
 {
@@ -176,6 +177,11 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.OpenPopup(new UserSettingsUserControl(LoginManager.Instance.GetCurrentUser()) { Width = 1200, Height = 800, Margin = new Thickness(50) });
             }
             else { MainWindowViewModel.Instance.AppBarText = "You are not logged in"; }
+        }
+
+        private void PhalcodeLoginRegister_Click(object sender, MouseButtonEventArgs e)
+        {
+            MainWindowViewModel.Instance.OpenPopup(new PhalcodeLoginRegisterUserControl() { Width = 400, Height = 700, Margin = new Thickness(100) });
         }
     }
 }

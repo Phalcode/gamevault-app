@@ -25,6 +25,7 @@
 		<None Remove="Resources\Images\glyph_community.png" />
 		<None Remove="Resources\Images\glyph_download.png" />
 		<None Remove="Resources\Images\glyph_installs_NoInstalls.png" />
+		<None Remove="Resources\Images\glyph_premium.png" />
 		<None Remove="Resources\Images\glyph_settings.png" />
 		<None Remove="Resources\Images\icon.ico" />
 		<None Remove="Resources\Images\InstallsEmptySpace.jpg" />
@@ -32,6 +33,8 @@
 		<None Remove="Resources\Images\library_dice.png" />
 		<None Remove="Resources\Images\library_NoBoxart.png" />
 		<None Remove="Resources\Images\library_NoGameFound.png" />
+		<None Remove="Resources\Images\phalcode_Icon.png" />
+		<None Remove="Resources\Images\phalcode_Logo.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -39,6 +42,7 @@
 		<PackageReference Include="Magick.NET-Q8-x64" Version="13.5.0" />
 		<PackageReference Include="MahApps.Metro" Version="2.4.10" />
 		<PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.3.1" />
 		<PackageReference Include="System.Management" Version="8.0.0" />
 		<PackageReference Include="VirtualizingWrapPanel" Version="1.5.8" />
 	</ItemGroup>
@@ -49,6 +53,7 @@
 		<Resource Include="Resources\Images\glyph_admin.png" />
 		<Resource Include="Resources\Images\glyph_community.png" />
 		<Resource Include="Resources\Images\glyph_download.png" />
+		<Resource Include="Resources\Images\glyph_premium.png" />
 		<Resource Include="Resources\Images\glyph_server.png" />
 		<Resource Include="Resources\Images\glyph_settings.png" />
 		<Resource Include="Resources\Images\icon.ico" />
@@ -56,6 +61,8 @@
 		<Resource Include="Resources\Images\library_dice.png" />
 		<Resource Include="Resources\Images\library_NoBoxart.png" />
 		<Resource Include="Resources\Images\library_NoGameFound.png" />
+		<Resource Include="Resources\Images\phalcode_Icon.png" />
+		<Resource Include="Resources\Images\phalcode_Logo.png" />
 	</ItemGroup>
 
 	<ItemGroup>

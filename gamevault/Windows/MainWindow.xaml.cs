@@ -127,5 +127,10 @@ namespace gamevault.Windows
             }
             e.Handled = true;
         }
+
+        private void Premium_Click(object sender, RoutedEventArgs e)
+        {
+            //Open Premium Website
+        }
     }
 }

@@ -55,6 +55,9 @@
                 <mah:TransitioningContentControl RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding ActiveControl}" FocusVisualStyle="{x:Null}"/>
             </mah:HamburgerMenu.Content>
         </mah:HamburgerMenu>
+        <Button HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="40" Width="40" Margin="4.1,0,0,4.1" Click="Premium_Click">
+            <Image Source="/Resources/Images/glyph_premium.png"/>
+        </Button>
         <Grid Panel.ZIndex="1">
             <Viewbox>
                 <mah:TransitioningContentControl RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding Popup}" FocusVisualStyle="{x:Null}"/>
