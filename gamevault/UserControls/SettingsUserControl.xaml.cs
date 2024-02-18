@@ -181,7 +181,7 @@ namespace gamevault.UserControls
 
         private void PhalcodeLoginRegister_Click(object sender, MouseButtonEventArgs e)
         {
-            MainWindowViewModel.Instance.OpenPopup(new PhalcodeLoginRegisterUserControl() { Width = 400, Height = 700, Margin = new Thickness(100) });
+            MainWindowViewModel.Instance.OpenPopup(new PhalcodeLoginRegisterUserControl());
         }
     }
 }

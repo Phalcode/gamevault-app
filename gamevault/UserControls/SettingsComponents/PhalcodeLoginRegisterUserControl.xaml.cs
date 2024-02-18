@@ -68,8 +68,22 @@ namespace gamevault.UserControls.SettingsComponents
                 var handler = new JwtSecurityTokenHandler();
                 var jwtToken = (JwtSecurityToken)handler.ReadToken(token);
 
-                string tokenString = jwtToken.ToString();
+
                 MainWindowViewModel.Instance.AppBarText = jwtToken.Claims.Where(c => c.Type == "name").FirstOrDefault().Value;
+                string productId = jwtToken.Claims.Where(c => c.Type == "sub").FirstOrDefault().Value;
+                if (!string.IsNullOrEmpty(productId))
+                {
+                    var getRequest = new HttpRequestMessage(HttpMethod.Get, $"https://customer-backend.platform.phalco.de/users/me/licenses/{productId}");
+                    getRequest.Headers.Add("Authorization", $"Bearer {token}");
+                    var licenseResponse = await client.SendAsync(getRequest);
+                    if (licenseResponse.IsSuccessStatusCode)
+                    {
+                        string licenseResult = await licenseResponse.Content.ReadAsStringAsync();
+                        dynamic licenseData = JsonSerializer.Deserialize<ExpandoObject>(licenseResult);
+                        //hasLicense:bool
+                        //endDate:DateTime
+                    }
+                }
 
             }
             catch (Exception ex)

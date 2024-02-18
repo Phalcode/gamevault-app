@@ -6,6 +6,6 @@
     <SolidColorBrush x:Key="DarkBackground4">#444444</SolidColorBrush>
     <SolidColorBrush x:Key="HoverColor">#3d3aad</SolidColorBrush>
     <SolidColorBrush x:Key="MainColor">#574eb9</SolidColorBrush>
-    <SolidColorBrush x:Key="PhalcodeMainColor">#19f57b</SolidColorBrush>
+    <SolidColorBrush x:Key="PhalcodeMainColor">#079185</SolidColorBrush>
     
 </ResourceDictionary>
