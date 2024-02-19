@@ -130,7 +130,13 @@ namespace gamevault.Windows
 
         private void Premium_Click(object sender, RoutedEventArgs e)
         {
-            //Open Premium Website
+            try
+            {
+                string url = ((FrameworkElement)sender).Tag as string;
+                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                e.Handled = true;
+            }
+            catch { }
         }
     }
 }

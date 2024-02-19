@@ -13,7 +13,7 @@
         </Border.Effect>
         <Grid>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
-                <Grid Style="{DynamicResource HoverEffect}" Background="Transparent" Margin="0,8,0,0" Cursor="Hand" MouseLeftButtonUp="Help_Click">
+                <Grid Style="{DynamicResource HoverEffect}" Background="Transparent" Margin="0,8,0,0" Cursor="Hand" Tag="https://gamevau.lt/gamevault-plus#faq" MouseLeftButtonUp="Help_Click">
                     <Path Fill="Black" Data="{DynamicResource IconGameSettingsHelp}">
                         <Path.RenderTransform>
                             <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -40,7 +40,15 @@
                 <TextBlock Text="Please Log In to Continue" FontSize="15" Foreground="Black" HorizontalAlignment="Center" Margin="0,5,0,30"/>
                 <TextBox x:Name="uiTxtUsername" mah:TextBoxHelper.Watermark="Email Adress" mah:ControlsHelper.CornerRadius="3" FontSize="10" Padding="5" Background="WhiteSmoke" Foreground="Black" CaretBrush="Black"/>
                 <PasswordBox x:Name="uiTxtPassword" mah:TextBoxHelper.Watermark="Password" mah:ControlsHelper.CornerRadius="3" FontSize="10" Padding="5" Background="WhiteSmoke" Foreground="Black" CaretBrush="Black" Margin="0,10,0,10"/>
-                <TextBlock Text="Forgot Password" TextDecorations="Underline" FontSize="10" Foreground="Gray" HorizontalAlignment="Center"/>
+                <TextBlock TextDecorations="Underline" FontSize="10"  HorizontalAlignment="Center">
+                    <Hyperlink NavigateUri="https://auth.platform.phalco.de/realms/phalcode/login-actions/reset-credentials" RequestNavigate="Hyperlink_RequestNavigate">
+                        <Hyperlink.Inlines>
+                            <Run Foreground="Gray" TextDecorations="Underline">
+                             Forgot Password
+                            </Run>
+                        </Hyperlink.Inlines>
+                    </Hyperlink>
+                </TextBlock>
                 <Button Content="Log In" FontSize="15" Background="{StaticResource PhalcodeMainColor}" mah:ControlsHelper.CornerRadius="10" Padding="5" Margin="50,10,50,0" Click="Login_Click"/>
                 <Grid Margin="0,20,0,0">
                     <Rectangle Stroke="Gray" Height="2" Width="250"/>
@@ -67,7 +75,15 @@
                     </Grid>
                 </StackPanel>
                 <TextBlock Text="Don't have an account?" FontSize="15" Foreground="Black" HorizontalAlignment="Center" Margin="0,-210,0,0" Panel.ZIndex="1"/>
-                <TextBlock Text="Register here" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Foreground="Black" HorizontalAlignment="Center" Margin="0,-180,0,0" Panel.ZIndex="1"/>
+                <TextBlock FontSize="15" FontWeight="Bold" TextDecorations="Underline" HorizontalAlignment="Center" Margin="0,-180,0,0" Panel.ZIndex="1">
+                     <Hyperlink  NavigateUri="https://auth.platform.phalco.de/realms/phalcode/protocol/openid-connect/registrations?client_id=gamevault&amp;scope=openid%20profile&amp;redirect_uri=https://gamevau.lt&amp;response_type=code" RequestNavigate="Hyperlink_RequestNavigate">
+                        <Hyperlink.Inlines>
+                           <Run Foreground="Black" TextDecorations="Underline">
+                              Register here
+                          </Run>
+                        </Hyperlink.Inlines>
+                     </Hyperlink>
+                </TextBlock>
             </StackPanel>
         </Grid>
     </Border>

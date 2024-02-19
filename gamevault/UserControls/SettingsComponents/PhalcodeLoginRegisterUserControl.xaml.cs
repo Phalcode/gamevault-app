@@ -1,6 +1,7 @@
 ﻿using gamevault.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Dynamic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -35,12 +36,7 @@ namespace gamevault.UserControls.SettingsComponents
         private void Close_Click(object sender, MouseButtonEventArgs e)
         {
             MainWindowViewModel.Instance.ClosePopup();
-        }
-
-        private void Help_Click(object sender, MouseButtonEventArgs e)
-        {
-            //Open Help Website
-        }
+        }      
 
         private async void Login_Click(object sender, RoutedEventArgs e)
         {
@@ -92,5 +88,26 @@ namespace gamevault.UserControls.SettingsComponents
             }
             ((Button)sender).IsEnabled = true;
         }
+        private void Help_Click(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                string url = ((FrameworkElement)sender).Tag as string;
+                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                e.Handled = true;
+            }
+            catch { }
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            try
+            {
+                string url = e.Uri.OriginalString;
+                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                e.Handled = true;
+            }
+            catch { }
+        }       
     }
 }
