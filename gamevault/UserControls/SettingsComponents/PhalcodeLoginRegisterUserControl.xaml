@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:gamevault.UserControls.SettingsComponents"
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" Height="500" Width="300" Margin="150">
+             d:DesignHeight="500" d:DesignWidth="300" Height="500" Width="300" Margin="150">
     <Border Background="LightGray" CornerRadius="10">
         <Border.Effect>
             <DropShadowEffect BlurRadius="3" Direction="0" ShadowDepth="0"/>

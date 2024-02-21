@@ -23,7 +23,10 @@ namespace gamevault.Models
         InstalledGamesOpen,
         LaunchParameter,
         ShowRawgTitle,
-        LastPlayed
+        LastPlayed,
+        Phalcode1,
+        Phalcode2,
+        Phalcode3
     }
     public static class AppFilePath
     {

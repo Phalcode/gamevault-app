@@ -39,6 +39,7 @@ namespace gamevault.ViewModels
         private long m_DownloadLimit { get; set; }
         private long m_DownloadLimitUIValue { get; set; }
         private User m_RegistrationUser = new User() { ProfilePicture = new Image(), BackgroundImage = new Image() };
+        private PhalcodeProduct license { get; set; }
         #endregion
 
         public SettingsViewModel()
@@ -159,6 +160,11 @@ namespace gamevault.ViewModels
         {
             get { return m_RegistrationUser; }
             set { m_RegistrationUser = value; OnPropertyChanged(); }
+        }
+        public PhalcodeProduct License
+        {
+            get { return license; }
+            set { license = value; OnPropertyChanged(); }
         }
         public System.Windows.Forms.DialogResult SelectDownloadPath()
         {
