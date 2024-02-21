@@ -163,7 +163,11 @@ namespace gamevault.ViewModels
         }
         public PhalcodeProduct License
         {
-            get { return license; }
+            get
+            {
+                if (license == null) { license = new PhalcodeProduct(); }
+                return license;
+            }
             set { license = value; OnPropertyChanged(); }
         }
         public System.Windows.Forms.DialogResult SelectDownloadPath()

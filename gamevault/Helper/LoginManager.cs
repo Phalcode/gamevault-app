@@ -124,7 +124,7 @@ namespace gamevault.Helper
             WebHelper.OverrideCredentials(string.Empty, string.Empty);
             MainWindowViewModel.Instance.Community.Reset();
         }
-        public async Task PhalcodeLogin(string userName = "", string password = "")
+        public async Task<bool> PhalcodeLogin(string userName = "", string password = "")
         {
             bool saveCredencials = true;
             if (userName == "" || password == "")
@@ -134,7 +134,7 @@ namespace gamevault.Helper
                 password = Preferences.Get(AppConfigKey.Phalcode2, AppFilePath.UserFile, true);
                 if (userName == "" || password == "")
                 {
-                    return;
+                    return false;
                 }
             }
             HttpClient client = new HttpClient();
@@ -188,11 +188,12 @@ namespace gamevault.Helper
                 var licenseResponse = await client.SendAsync(getRequest);
                 if (licenseResponse.IsSuccessStatusCode)
                 {
-                    string licenseResult = await licenseResponse.Content.ReadAsStringAsync();                    
+                    string licenseResult = await licenseResponse.Content.ReadAsStringAsync();
                     PhalcodeProduct[] licenseData = JsonSerializer.Deserialize<PhalcodeProduct[]>(licenseResult);
                     if (licenseData.Length == 0)
                     {
-                        return;
+                        SettingsViewModel.Instance.License.UserName = fullPhalcodeUserName;
+                        return true;
                     }
                     licenseData[0].UserName = fullPhalcodeUserName;
                     SettingsViewModel.Instance.License = licenseData[0];
@@ -206,7 +207,9 @@ namespace gamevault.Helper
             catch (Exception ex)
             {
                 MainWindowViewModel.Instance.AppBarText = ex.Message;
+                return false;
             }
+            return true;
         }
         private LoginState DetermineLoginState(string code)
         {

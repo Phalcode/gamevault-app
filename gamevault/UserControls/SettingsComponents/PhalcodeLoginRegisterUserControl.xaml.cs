@@ -43,7 +43,10 @@ namespace gamevault.UserControls.SettingsComponents
         private async void Login_Click(object sender, RoutedEventArgs e)
         {
             ((Button)sender).IsEnabled = false;
-            await LoginManager.Instance.PhalcodeLogin(uiTxtUsername.Text, uiTxtPassword.Password);
+            bool success = await LoginManager.Instance.PhalcodeLogin(uiTxtUsername.Text, uiTxtPassword.Password);
+            if (success)
+                MainWindowViewModel.Instance.ClosePopup();
+
             ((Button)sender).IsEnabled = true;
         }
         private void Help_Click(object sender, MouseButtonEventArgs e)
