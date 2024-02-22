@@ -126,29 +126,30 @@ namespace gamevault.Helper
         }
         public async Task<bool> PhalcodeLogin(string userName = "", string password = "")
         {
-            bool saveCredencials = true;
-            if (userName == "" || password == "")
-            {
-                saveCredencials = false;
-                userName = Preferences.Get(AppConfigKey.Phalcode1, AppFilePath.UserFile, true);
-                password = Preferences.Get(AppConfigKey.Phalcode2, AppFilePath.UserFile, true);
-                if (userName == "" || password == "")
-                {
-                    return false;
-                }
-            }
-            HttpClient client = new HttpClient();
-            var request = new HttpRequestMessage(HttpMethod.Post, "https://auth.platform.phalco.de/realms/phalcode/protocol/openid-connect/token");
-            var collection = new List<KeyValuePair<string, string>>();
-            collection.Add(new("username", userName));
-            collection.Add(new("password", password));
-            collection.Add(new("client_id", "customer-backend"));
-            collection.Add(new("grant_type", "password"));
-            var content = new FormUrlEncodedContent(collection);
-            request.Content = content;
-            var response = await client.SendAsync(request);
             try
             {
+                bool saveCredencials = true;
+                if (userName == "" || password == "")
+                {
+                    saveCredencials = false;
+                    userName = Preferences.Get(AppConfigKey.Phalcode1, AppFilePath.UserFile, true);
+                    password = Preferences.Get(AppConfigKey.Phalcode2, AppFilePath.UserFile, true);
+                    if (userName == "" || password == "")
+                    {
+                        return false;
+                    }
+                }
+                HttpClient client = new HttpClient();
+                var request = new HttpRequestMessage(HttpMethod.Post, "https://auth.platform.phalco.de/realms/phalcode/protocol/openid-connect/token");
+                var collection = new List<KeyValuePair<string, string>>();
+                collection.Add(new("username", userName));
+                collection.Add(new("password", password));
+                collection.Add(new("client_id", "customer-backend"));
+                collection.Add(new("grant_type", "password"));
+                var content = new FormUrlEncodedContent(collection);
+                request.Content = content;
+                var response = await client.SendAsync(request);
+
                 response.EnsureSuccessStatusCode();
                 string result = await response.Content.ReadAsStringAsync();
 
@@ -186,28 +187,35 @@ namespace gamevault.Helper
 #endif
                 getRequest.Headers.Add("Authorization", $"Bearer {token}");
                 var licenseResponse = await client.SendAsync(getRequest);
-                if (licenseResponse.IsSuccessStatusCode)
+                response.EnsureSuccessStatusCode();
+                string licenseResult = await licenseResponse.Content.ReadAsStringAsync();
+                PhalcodeProduct[] licenseData = JsonSerializer.Deserialize<PhalcodeProduct[]>(licenseResult);
+                if (licenseData.Length == 0)
                 {
-                    string licenseResult = await licenseResponse.Content.ReadAsStringAsync();
-                    PhalcodeProduct[] licenseData = JsonSerializer.Deserialize<PhalcodeProduct[]>(licenseResult);
-                    if (licenseData.Length == 0)
-                    {
-                        SettingsViewModel.Instance.License.UserName = fullPhalcodeUserName;
-                        return true;
-                    }
-                    licenseData[0].UserName = fullPhalcodeUserName;
-                    SettingsViewModel.Instance.License = licenseData[0];
-                    if (saveCredencials)
-                    {
-                        Preferences.Set(AppConfigKey.Phalcode1, userName, AppFilePath.UserFile, true);
-                        Preferences.Set(AppConfigKey.Phalcode2, password, AppFilePath.UserFile, true);
-                    }
+                    SettingsViewModel.Instance.License.UserName = fullPhalcodeUserName;
+                    return true;
                 }
+                licenseData[0].UserName = fullPhalcodeUserName;
+                SettingsViewModel.Instance.License = licenseData[0];
+                if (saveCredencials)
+                {
+                    Preferences.Set(AppConfigKey.Phalcode1, userName, AppFilePath.UserFile, true);
+                    Preferences.Set(AppConfigKey.Phalcode2, password, AppFilePath.UserFile, true);
+                }
+                Preferences.Set(AppConfigKey.Phalcode3, JsonSerializer.Serialize(SettingsViewModel.Instance.License), AppFilePath.UserFile, true);
             }
             catch (Exception ex)
             {
-                MainWindowViewModel.Instance.AppBarText = ex.Message;
-                return false;
+                //MainWindowViewModel.Instance.AppBarText = ex.Message;
+                try
+                {
+                    string data = Preferences.Get(AppConfigKey.Phalcode3, AppFilePath.UserFile, true);
+                    SettingsViewModel.Instance.License = JsonSerializer.Deserialize<PhalcodeProduct>(data);
+                }
+                catch
+                {
+                    return false;
+                }
             }
             return true;
         }
