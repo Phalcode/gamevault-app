@@ -209,11 +209,12 @@
                                                         </Style>
                                                     </local:CacheImage.Style>
                                                 </local:CacheImage>
-                                                <Border CornerRadius="5" Height="214" Width="214" Margin="0,30,0,0">
+                                                <local:CacheImage UseUriSource="True" Data="{Binding AvatarImageUrl}" CornerRadius="5" Stretch="Fill" Height="214" Width="214" Margin="0,30,0,0"/>
+                                                <!--<Border CornerRadius="5" Height="214" Width="214" Margin="0,30,0,0">
                                                     <Border.Background>
                                                         <ImageBrush ImageSource="{Binding AvatarImageSource}" Stretch="Fill"/>
                                                     </Border.Background>
-                                                </Border>
+                                                </Border>-->
                                             </Grid>
                                             <StackPanel HorizontalAlignment="Center" Margin="0,65,0,0">
                                                 <TextBlock Text="Click to Upload, Paste or Drag and Drop" FontWeight="Bold"/>

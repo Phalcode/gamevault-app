@@ -2,7 +2,9 @@
 using gamevault.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -42,6 +44,13 @@ namespace gamevault.UserControls
         {
             await ((CacheImage)sender).DataChanged(e.NewValue);
         }
+        public static readonly DependencyProperty UseUriSourceProperty = DependencyProperty.Register("UseUriSource", typeof(bool), typeof(CacheImage));
+
+        public bool UseUriSource
+        {
+            get { return (bool)GetValue(UseUriSourceProperty); }
+            set { SetValue(UseUriSourceProperty, value); }
+        }
 
         public static readonly DependencyProperty StretchProperty = DependencyProperty.Register("Stretch", typeof(Stretch), typeof(CacheImage), new PropertyMetadata(OnStretchChangedCallBack));
 
@@ -77,6 +86,49 @@ namespace gamevault.UserControls
 
         private async Task DataChanged(object newData)
         {
+            if (UseUriSource)
+            {
+                string uri = newData.ToString();
+                if (Uri.IsWellFormedUriString(uri, UriKind.Absolute))
+                {
+                    using (MemoryStream stream = new MemoryStream())
+                    {
+                        using (HttpClient client = new HttpClient())
+                        {
+                            using (HttpResponseMessage response = await client.GetAsync(uri))
+                            {
+                                if (response.IsSuccessStatusCode)
+                                {
+                                    await response.Content.CopyToAsync(stream);
+                                    stream.Position = 0;
+                                    if (GifHelper.IsGif(stream))
+                                    {
+                                        stream.Position = 0;
+                                        await GifHelper.LoadGif(stream, uiImg);
+                                    }
+                                    else
+                                    {
+                                        uiImg.Source = await BitmapHelper.GetBitmapImageAsync(stream);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (GifHelper.IsGif(uri))
+                    {
+                        await GifHelper.LoadGif(uri, uiImg);
+                    }
+                    else
+                    {
+                        uiImg.Source = await BitmapHelper.GetBitmapImageAsync(uri);
+                    }
+                }
+                return;
+            }
+
             int identifier = -1;
             int imageId = -1;
             string cachePath = AppFilePath.ImageCache;
@@ -127,7 +179,7 @@ namespace gamevault.UserControls
                 }
             }
             catch (Exception ex) { }
-            uiImg.Source = await CacheHelper.HandleImageCacheAsync(identifier, imageId, cachePath, ImageCacheType);
+            await CacheHelper.HandleImageCacheAsync(identifier, imageId, cachePath, ImageCacheType, uiImg);
         }
     }
 }

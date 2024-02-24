@@ -1,10 +1,13 @@
 ﻿using gamevault.Helper;
 using gamevault.Models;
 using gamevault.ViewModels;
+using gamevault.Windows;
+using SkiaSharp;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -62,7 +65,7 @@ namespace gamevault.UserControls
                     string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                     if (tag == "avatar")
                     {
-                        ViewModel.AvatarImageSource = BitmapHelper.GetBitmapImage(files[0]);
+                        ViewModel.AvatarImageUrl = files[0];
                     }
                     else
                     {
@@ -83,13 +86,13 @@ namespace gamevault.UserControls
                 {
                     try
                     {
-                        BitmapImage bitmap = await BitmapHelper.GetBitmapImageAsync(imagePath);
                         if (tag == "avatar")
                         {
-                            ViewModel.AvatarImageSource = bitmap;
+                            ViewModel.AvatarImageUrl = imagePath;
                         }
                         else
                         {
+                            BitmapImage bitmap = await BitmapHelper.GetBitmapImageAsync(imagePath);
                             ViewModel.BackgroundImageSource = bitmap;
                         }
                     }
@@ -122,7 +125,7 @@ namespace gamevault.UserControls
                     {
                         if (tag == "avatar")
                         {
-                            ViewModel.AvatarImageSource = BitmapHelper.GetBitmapImage(dialog.FileName);
+                            ViewModel.AvatarImageUrl = dialog.FileName;
                         }
                         else
                         {
@@ -147,14 +150,14 @@ namespace gamevault.UserControls
                     {
                         if (Clipboard.ContainsImage())
                         {
-                            var image = Clipboard.GetImage();
+
                             if (((FrameworkElement)sender).Tag != null && ((FrameworkElement)sender).Tag.ToString() == "avatar")
                             {
-                                ViewModel.AvatarImageSource = image;
+                                //ViewModel.AvatarImageUrl = Clipboard.GetImage();
                             }
                             else
                             {
-                                ViewModel.BackgroundImageSource = image;
+                                ViewModel.BackgroundImageSource = Clipboard.GetImage();
                             }
                         }
                     }
@@ -172,7 +175,7 @@ namespace gamevault.UserControls
             {
                 if (tag == "avatar")
                 {
-                    ViewModel.AvatarImageSource = await BitmapHelper.GetBitmapImageAsync(url);
+                    ViewModel.AvatarImageUrl = url;
                 }
                 else
                 {
@@ -243,8 +246,42 @@ namespace gamevault.UserControls
             bool success = false;
             try
             {
-                BitmapSource bitmapSource = tag == "avatar" ? (BitmapSource)ViewModel.AvatarImageSource : (BitmapSource)ViewModel.BackgroundImageSource;
-                string resp = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/images", BitmapHelper.BitmapSourceToMemoryStream(bitmapSource), "x.png", null);
+                MemoryStream ms = null;
+                string filename = "x.png";
+                if (tag == "avatar")
+                {
+                    if (System.Uri.IsWellFormedUriString(ViewModel.AvatarImageUrl, UriKind.Absolute))
+                    {
+                        ms = await BitmapHelper.UrlToMemoryStream(ViewModel.AvatarImageUrl);
+                        
+                        //string s = Encoding.UTF8.GetString(ms.ToArray());
+                        //File.WriteAllText("C:\\Users\\Philip Schäfer\\Downloads\\Dump\\Dump.txt", s);
+                    }
+                    else
+                    {
+                        ms = BitmapHelper.UriToMemoryStream(ViewModel.AvatarImageUrl);
+                    }
+                    if (GifHelper.IsGif(ms))
+                    {
+                        if(!SettingsViewModel.Instance.License.IsActive())
+                        {
+                            MainWindowViewModel.Instance.AppBarText = "Buy GameVault Plus";
+                            return;
+                        }    
+                        filename = "x.gif";
+                    }
+                    else
+                    {
+                        ms = BitmapHelper.BitmapSourceToMemoryStream(await BitmapHelper.GetBitmapImageAsync(ViewModel.AvatarImageUrl));
+                    }
+                }
+                else
+                {
+                    ms = BitmapHelper.BitmapSourceToMemoryStream((BitmapSource)ViewModel.BackgroundImageSource);
+                }
+                ms.Position = 0;
+                string resp = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/images", ms, filename, null);
+                ms.Dispose();
                 var newImageId = JsonSerializer.Deserialize<Models.Image>(resp).ID;
                 await Task.Run(() =>
                 {

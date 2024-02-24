@@ -40,7 +40,7 @@ namespace gamevault.Models
         public string UserName { get; set; }
         public bool IsActive()
         {
-            return (CurrentPeriodEnd != null && CurrentPeriodEnd > DateTime.Now);
+            return (CurrentPeriodEnd != null && CurrentPeriodEnd > DateTime.UtcNow);
         }
     }
 }

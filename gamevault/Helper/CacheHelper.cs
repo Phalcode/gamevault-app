@@ -27,7 +27,7 @@ namespace gamevault.Helper
             catch { }
         }
 
-        internal static async Task<BitmapImage> HandleImageCacheAsync(int identifier, int imageId, string cachePath, ImageCache cacheType)
+        internal static async Task HandleImageCacheAsync(int identifier, int imageId, string cachePath, ImageCache cacheType, System.Windows.Controls.Image img)
         {
             string cacheFile = $"{cachePath}/{identifier}.{imageId}";
             try
@@ -38,8 +38,16 @@ namespace gamevault.Helper
                 }
                 if (File.Exists(cacheFile))
                 {
+                    if (cacheType == ImageCache.UserIcon)
+                    {
+                        if (GifHelper.IsGif(cacheFile))
+                        {
+                            await GifHelper.LoadGif(cacheFile, img);
+                            return;
+                        }
+                    }
                     //if file exists then return it directly
-                    return BitmapHelper.GetBitmapImage(cacheFile);
+                    img.Source = BitmapHelper.GetBitmapImage(cacheFile);
                 }
                 else
                 {
@@ -55,7 +63,15 @@ namespace gamevault.Helper
                             File.Delete(files[0]);
                         }
                         await TaskQueue.Instance.Enqueue(() => WebHelper.DownloadImageFromUrlAsync($"{SettingsViewModel.Instance.ServerUrl}/api/images/{imageId}", cacheFile), imageId);
-                        return BitmapHelper.GetBitmapImage(cacheFile);
+                        if (cacheType == ImageCache.UserIcon)
+                        {
+                            if (GifHelper.IsGif(cacheFile))
+                            {
+                                await GifHelper.LoadGif(cacheFile, img);
+                                return;
+                            }
+                        }
+                        img.Source = BitmapHelper.GetBitmapImage(cacheFile);
                     }
                     else
                     {
@@ -63,7 +79,7 @@ namespace gamevault.Helper
                         {
                             //if we are offline, we will try to load an old image with the same identifier
                             cacheFile = files[0];
-                            return BitmapHelper.GetBitmapImage(cacheFile);
+                            img.Source = BitmapHelper.GetBitmapImage(cacheFile);
                         }
                         else
                         {
@@ -80,7 +96,7 @@ namespace gamevault.Helper
                     if (TaskQueue.Instance.IsAlreadyInProcess(imageId))
                     {
                         await TaskQueue.Instance.WaitForProcessToFinish(imageId);
-                        return BitmapHelper.GetBitmapImage(cacheFile);
+                        img.Source = BitmapHelper.GetBitmapImage(cacheFile);
                     }
                 }
                 catch { }
@@ -88,15 +104,18 @@ namespace gamevault.Helper
                 {
                     case ImageCache.BoxArt:
                         {
-                            return BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/library_NoBoxart.png");
+                            img.Source = BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/library_NoBoxart.png");
+                            break;
                         }
                     case ImageCache.UserIcon:
                         {
-                            return BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/com_NoUserIcon.png");
+                            img.Source = BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/com_NoUserIcon.png");
+                            break;
                         }
                     default:
                         {
-                            return BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/gameView_NoBackground.jpg");
+                            img.Source = BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/gameView_NoBackground.jpg");
+                            break;
                         }
                 }
             }
