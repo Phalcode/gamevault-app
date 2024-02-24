@@ -183,5 +183,10 @@ namespace gamevault.UserControls
         {
             MainWindowViewModel.Instance.OpenPopup(new PhalcodeLoginRegisterUserControl());
         }
+
+        private void ManageBilling_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

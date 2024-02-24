@@ -1,6 +1,7 @@
 ﻿using gamevault.Models;
 using gamevault.ViewModels;
 using ImageMagick;
+using LiveChartsCore.Drawing;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -45,8 +46,9 @@ namespace gamevault.Helper
                             await GifHelper.LoadGif(cacheFile, img);
                             return;
                         }
+                        img.BeginAnimation(System.Windows.Controls.Image.SourceProperty, null);
                     }
-                    //if file exists then return it directly
+                    //if file exists then return it directly                   
                     img.Source = BitmapHelper.GetBitmapImage(cacheFile);
                 }
                 else
