@@ -312,7 +312,7 @@ namespace gamevault.UserControls
                         MainWindowViewModel.Instance.AppBarText = msg;
                     }
                 });
-                //Update Data Context for Library. So that the images are also refreshed there directly
+                //Update Data Context for Community Page. So that the images are also refreshed there directly
                 if (success)
                 {
                     await MainWindowViewModel.Instance.AdminConsole.InitUserList();

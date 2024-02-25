@@ -41,6 +41,10 @@ namespace gamevault.Helper
                 {
                     if (cacheType == ImageCache.UserIcon)
                     {
+                        if (TaskQueue.Instance.IsAlreadyInProcess(imageId))
+                        {
+                            await TaskQueue.Instance.WaitForProcessToFinish(imageId);
+                        }
                         if (GifHelper.IsGif(cacheFile))
                         {
                             await GifHelper.LoadGif(cacheFile, img);
@@ -99,6 +103,7 @@ namespace gamevault.Helper
                     {
                         await TaskQueue.Instance.WaitForProcessToFinish(imageId);
                         img.Source = BitmapHelper.GetBitmapImage(cacheFile);
+                        return;
                     }
                 }
                 catch { }

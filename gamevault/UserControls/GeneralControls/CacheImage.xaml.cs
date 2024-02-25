@@ -1,5 +1,6 @@
 ﻿using gamevault.Helper;
 using gamevault.Models;
+using gamevault.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -91,28 +92,35 @@ namespace gamevault.UserControls
                 string uri = newData.ToString();
                 if (Uri.IsWellFormedUriString(uri, UriKind.Absolute))
                 {
-                    using (MemoryStream stream = new MemoryStream())
+                    try
                     {
-                        using (HttpClient client = new HttpClient())
+                        using (MemoryStream stream = new MemoryStream())
                         {
-                            using (HttpResponseMessage response = await client.GetAsync(uri))
+                            using (HttpClient client = new HttpClient())
                             {
-                                if (response.IsSuccessStatusCode)
+                                using (HttpResponseMessage response = await client.GetAsync(uri))
                                 {
-                                    await response.Content.CopyToAsync(stream);
-                                    stream.Position = 0;
-                                    if (GifHelper.IsGif(stream))
+                                    if (response.IsSuccessStatusCode)
                                     {
+                                        await response.Content.CopyToAsync(stream);
                                         stream.Position = 0;
-                                        await GifHelper.LoadGif(stream, uiImg);
-                                    }
-                                    else
-                                    {
-                                        uiImg.Source = await BitmapHelper.GetBitmapImageAsync(stream);
+                                        if (GifHelper.IsGif(stream))
+                                        {
+                                            stream.Position = 0;
+                                            await GifHelper.LoadGif(stream, uiImg);
+                                        }
+                                        else
+                                        {
+                                            uiImg.Source = await BitmapHelper.GetBitmapImageAsync(stream);
+                                        }
                                     }
                                 }
                             }
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        MainWindowViewModel.Instance.AppBarText = ex.Message;
                     }
                 }
                 else
