@@ -202,7 +202,7 @@
                                                     <local:CacheImage.Style>
                                                         <Style TargetType="local:CacheImage">
                                                             <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding AvatarImageSource,Converter={StaticResource invNullConv}}" Value="False">
+                                                                <DataTrigger Binding="{Binding AvatarImageUrl,Converter={StaticResource invNullConv}}" Value="False">
                                                                     <Setter Property="Visibility" Value="Hidden" />
                                                                 </DataTrigger>
                                                             </Style.Triggers>
