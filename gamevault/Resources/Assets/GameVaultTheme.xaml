@@ -85,7 +85,7 @@
 	<SolidColorBrush x:Key="MahApps.Brushes.Control.Validation"  Color="#FFDB000C" />
 	<SolidColorBrush x:Key="MahApps.Brushes.Button.Border"  Color="{StaticResource GameVault.Colors.Border}" />
 	<SolidColorBrush x:Key="MahApps.Brushes.Button.Border.Focus"  Color="{StaticResource GameVault.Colors.Accent}" />
-	<SolidColorBrush x:Key="MahApps.Brushes.Button.Border.MouseOver"  Color="{StaticResource GameVault.Colors.Border}" />
+	<SolidColorBrush x:Key="MahApps.Brushes.Button.Border.MouseOver"  Color="{StaticResource GameVault.Colors.Accent2}" />
 	<SolidColorBrush x:Key="MahApps.Brushes.ComboBox.Border.MouseOver"  Color="{StaticResource GameVault.Colors.Accent2}" />
 	<SolidColorBrush x:Key="MahApps.Brushes.ComboBox.Border.Focus"  Color="{StaticResource GameVault.Colors.Accent}" />
 	<SolidColorBrush x:Key="MahApps.Brushes.ComboBox.PopupBorder"  Color="{StaticResource MahApps.Colors.Gray4}" />

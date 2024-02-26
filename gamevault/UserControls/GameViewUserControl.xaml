@@ -170,7 +170,7 @@
                         <Grid>
                             <Popup Name="TagPopup" StaysOpen="False" AllowsTransparency="True">
                                 <Grid>
-                                    <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" CornerRadius="5" Margin="5">
+                                    <Border BorderBrush="{DynamicResource MahApps.Brushes.Button.Border}" BorderThickness="2" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" CornerRadius="5" Margin="5">
                                         <Border.Effect>
                                             <DropShadowEffect BlurRadius="7" Direction="0" ShadowDepth="0"/>
                                         </Border.Effect>
@@ -195,9 +195,10 @@
                         </Grid>
                         <Border.Style>
                             <Style TargetType="Border">
+                                <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Button.Border}"/>
                                 <Style.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="BorderBrush" Value="DarkGray"/>
+                                        <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Button.Border.MouseOver}"/>
                                     </Trigger>
                                 </Style.Triggers>
                             </Style>

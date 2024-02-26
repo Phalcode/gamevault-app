@@ -56,7 +56,7 @@
             </mah:HamburgerMenu.Content>
         </mah:HamburgerMenu>
         <Button HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="40" Width="40" Margin="4.1,0,0,4.1" Tag="https://gamevau.lt/gamevault-plus" Click="Premium_Click" ToolTip="Open GameVault Plus Website">
-            <Image Source="/Resources/Images/glyph_premium.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+            <Image Source="/Resources/Images/glyph_premium.png" RenderOptions.BitmapScalingMode="HighQuality" Margin="-2"/>
         </Button>
         <Grid Panel.ZIndex="1">
             <Viewbox>

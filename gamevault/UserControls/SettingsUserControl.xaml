@@ -123,13 +123,25 @@
                                     <Setter Property="Text" Value="{Binding License.CurrentPeriodStart,StringFormat='{}Subscribed since {0}'}"/>
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding License.CurrentPeriodStart}" Value="{x:Null}">
-                                            <Setter Property="Text" Value="Unknown. Please Log into your Phalcode Account first"/>
+                                            <Setter Property="Visibility" Value="Collapsed"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </TextBlock.Style>
                         </TextBlock>
-                        <Button Content="Manage Billing" FontSize="15" Width="150" HorizontalAlignment="Left" Margin="0,10,0,0" Click="ManageBilling_Click"/>
+                        <TextBlock FontSize="15" Margin="0,10,0,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Text" Value="{Binding License.CurrentPeriodEnd,StringFormat='{}Current period ends {0}'}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding License.CurrentPeriodEnd}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <Button Content="Manage Billing" FontSize="15" Width="150" HorizontalAlignment="Left" Margin="0,20,0,0" Click="ManageBilling_Click"/>
                     </StackPanel>
                 </TabItem>
             </TabControl>
