@@ -14,7 +14,7 @@
         <conv:EnumDescriptionConverter x:Key="enumDescConv"/>
     </UserControl.Resources>
 
-    <Border Background="{StaticResource DarkBackground2}" Margin="1" Height="80" CornerRadius="2">
+    <Border Background="{StaticResource MahApps.Brushes.ThemeBackground2}" Margin="1" Height="80" CornerRadius="2">
         <Grid>
             <local:CacheImage HorizontalAlignment="Left" VerticalAlignment="Top" MaxWidth="52" Margin="2,2,120,2" ImageCacheType="BoxArt" Data="{Binding Path=Game}" CornerRadius="2" Cursor="Hand" MouseLeftButtonUp="GameImage_MouseLeftButtonUp"/>
 
@@ -88,7 +88,7 @@
                 </Border.Style>
                 <TextBlock Text="Install" FontSize="5"/>
             </Border>
-            <Grid x:Name="uiInstallOptions" Visibility="Collapsed" Margin="56,10,1,2"  MaxWidth="130" Background="{StaticResource DarkBackground2}">
+            <Grid x:Name="uiInstallOptions" Visibility="Collapsed" Margin="56,10,1,2"  MaxWidth="130" Background="{StaticResource MahApps.Brushes.ThemeBackground}">
                 <Grid>
                     <Grid.Style>
                         <Style TargetType="{x:Type Grid}">

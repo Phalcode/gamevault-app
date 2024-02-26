@@ -13,9 +13,9 @@
             <RowDefinition Height="50"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Border Background="{StaticResource DarkBackground2}" Grid.Row="0">
+        <Border Background="{StaticResource MahApps.Brushes.ThemeBackground}" Grid.Row="0">
             <Grid>
-                <TextBlock Text="Complete setup" FontSize="35" Margin="20,0,0,0" Foreground="White"/>
+                <TextBlock Text="Complete setup" FontSize="35" Margin="20,0,0,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
             </Grid>
         </Border>
         <Grid Grid.RowSpan="2">

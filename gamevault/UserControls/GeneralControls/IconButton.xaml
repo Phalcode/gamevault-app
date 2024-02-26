@@ -15,7 +15,7 @@
                         <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Accent}"/>
                     </DataTrigger>
                     <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="{DynamicResource DarkBackground2}"/>
+                        <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.ThemeBackground}"/>
                     </Trigger>
                     <Trigger Property="IsEnabled" Value="False">
                         <Setter Property="Background" Value="DarkGray" />
@@ -24,7 +24,7 @@
             </Style>
         </Border.Style>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <Path Data="{Binding ElementName=parent,Path=Icon}" Fill="White" VerticalAlignment="Center" Margin="0,0,0,4"/>
+            <Path Data="{Binding ElementName=parent,Path=Icon}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" VerticalAlignment="Center" Margin="0,0,0,4"/>
             <TextBlock Text="{Binding ElementName=parent,Path=Content}" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" Margin="4,0,0,3"/>
         </StackPanel>
     </Border>

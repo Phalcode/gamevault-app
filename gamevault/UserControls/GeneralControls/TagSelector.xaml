@@ -20,7 +20,7 @@
                             <Border CornerRadius="5" Background="{Binding Name,Converter={StaticResource colorConv}}" Margin="0,2,5,0" Width="145">
                                 <Grid Margin="5,2,2,2" Background="Transparent" Cursor="Hand" ToolTip="Remove" MouseLeftButtonUp="RemoveEntry_Click">
                                     <TextBlock Text="{Binding Name}" ToolTip="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" MaxWidth="125"/>
-                                    <Path Data="m11.25 4.75l-6.5 6.5m0-6.5l6.5 6.5" Stroke="White" StrokeThickness="2" HorizontalAlignment="Right" Margin="0,0,2,0"/>
+                                    <Path Data="m11.25 4.75l-6.5 6.5m0-6.5l6.5 6.5" Stroke="{DynamicResource MahApps.Brushes.ThemeForeground}" StrokeThickness="2" HorizontalAlignment="Right" Margin="0,0,2,0"/>
                                 </Grid>
                             </Border>
                         </DataTemplate>
@@ -36,10 +36,10 @@
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="7" Direction="0" ShadowDepth="0"/>
                 </Border.Effect>
-                <Border CornerRadius="5" Background="{DynamicResource DarkBackground2}">
+                <Border CornerRadius="5" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" BorderThickness="1" BorderBrush="{DynamicResource MahApps.Brushes.Control.Border}">
                     <StackPanel Margin="5">
                         <TextBlock x:Name="uiTxtSelectionHeader" HorizontalAlignment="Center"/>
-                        <TextBox Style="{DynamicResource SearchTextBox}" Height="26" TextChanged="Search_TextChanged" Margin="0,0,0,5"/>
+                        <TextBox Style="{DynamicResource SearchTextBox}" Height="26" TextChanged="Search_TextChanged" Margin="0,1,0,5"/>
                         <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" MaxHeight="200">
                             <ItemsControl x:Name="uiSelectionEntries">
                                 <ItemsControl.ItemTemplate>
@@ -49,7 +49,7 @@
                                                 <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <Border Background="#02000000" Cursor="Hand" HorizontalAlignment="Right" MouseLeftButtonUp="AddEntry_Click">
-                                                <Path Data="{DynamicResource IconAddTag}" Fill="White"/>
+                                                <Path Data="{DynamicResource IconAddTag}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
                                             </Border>
                                         </Grid>
                                     </DataTemplate>

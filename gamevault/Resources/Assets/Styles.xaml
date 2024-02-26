@@ -126,9 +126,9 @@
 
     <!--ComboBox-->
     <Style TargetType="{x:Type ComboBox}">
-        <Setter Property="Foreground" Value="#333" />
-        <Setter Property="BorderBrush" Value="Gray" />
-        <Setter Property="Background" Value="#FFFAFAFA" />
+        <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.ThemeForeground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Control.Border}" />
+        <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.ThemeBackground}" />
         <Setter Property="SnapsToDevicePixels" Value="true"/>
         <Setter Property="OverridesDefaultStyle" Value="true"/>
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
@@ -137,6 +137,7 @@
         <Setter Property="FontSize" Value="13" />
         <Setter Property="MinWidth" Value="150"/>
         <Setter Property="MinHeight" Value="35"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ComboBox">
@@ -164,12 +165,22 @@
                                                     </Grid.ColumnDefinitions>
                                                     <Border
                           x:Name="Border"
-                          Grid.ColumnSpan="2"
-                          CornerRadius="8"
+                          Grid.ColumnSpan="2"                         
                           Background="{TemplateBinding Background}"
-                          BorderBrush="#F6F6F6"
-                          BorderThickness="0" 
-                        />
+                          BorderBrush="{TemplateBinding BorderBrush}"
+                          BorderThickness="1" 
+                        >
+                                                        <Border.Style>
+                                                            <Style TargetType="Border">
+                                                                <Setter Property="CornerRadius" Value="8"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding Path=IsChecked,RelativeSource={RelativeSource AncestorType={x:Type ToggleButton}}}" Value="True">
+                                                                        <Setter Property="CornerRadius" Value="8,8,0,0"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Border.Style>
+                                                    </Border>
 
                                                     <Path
                             x:Name="Arrow"
@@ -223,11 +234,11 @@
                               MinWidth="{TemplateBinding ActualWidth}"
                               MaxHeight="{TemplateBinding MaxDropDownHeight}">
                                 <Border
-                                    CornerRadius="8"
+                                    CornerRadius="0,0,8,8"
                                     x:Name="DropDownBorder"
-                                    Background="#FFFAFAFA"
-                                    BorderThickness="0"
-                                    BorderBrush="#F6F6F6"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="1,0,1,1"                                    
                                     />
                                 <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
                                     <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
@@ -311,7 +322,7 @@
                             <Setter TargetName="Arrow" Property="Data" Value="m12 10.775l-3.9 3.9q-.275.275-.7.275t-.7-.275q-.275-.275-.275-.7t.275-.7l4.6-4.6q.15-.15.325-.213T12 8.4q.2 0 .375.063t.325.212l4.6 4.6q.275.275.275.7t-.275.7q-.275.275-.7.275t-.7-.275z" />
                         </Trigger>
                         <Trigger Property="UIElement.IsMouseOver" Value="true">
-                            <Setter TargetName="Arrow" Value="{DynamicResource MahApps.Brushes.Gray2}" Property="Fill" />
+                            <Setter TargetName="Arrow" Value="0.7" Property="Opacity" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="true">
                             <Setter TargetName="Arrow" Value="{DynamicResource MahApps.Brushes.ThemeForeground}" Property="Fill" />
@@ -395,21 +406,21 @@
     </Style>
 
     <Style x:Key="SearchTextBox" TargetType="{x:Type TextBox}">
-        <Setter Property="Background" Value="#FFE2E1EF" />
+        <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.ThemeBackground}" />
         <!--<Setter Property="BorderBrush" Value="RED" />-->
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Foreground" Value="Black" />
-        <Setter Property="CaretBrush" Value="Black" />
+        <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.ThemeForeground}" />
+        <Setter Property="CaretBrush" Value="{DynamicResource MahApps.Brushes.ThemeForeground}" />
         <Setter Property="FontFamily" Value="{DynamicResource MahApps.Fonts.Family.Control}" />
         <Setter Property="Padding" Value="4" />
-        <Setter Property="TextBoxBase.SelectionBrush" Value="{DynamicResource MahApps.Brushes.Highlight}" />
+        <Setter Property="TextBoxBase.SelectionBrush" Value="{DynamicResource MahApps.Brushes.Accent}" />
         <Setter Property="UIElement.SnapsToDevicePixels" Value="True" />
 
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TextBox}">
                     <Grid>
-                        <Border Name="Base" Background="{TemplateBinding Background}" BorderBrush="Transparent" BorderThickness="1" CornerRadius="5" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        <Border Name="Base" Background="{TemplateBinding Background}" BorderBrush="{DynamicResource MahApps.Brushes.TextBox.Border}" BorderThickness="1" CornerRadius="5" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         <Grid Name="PART_InnerGrid" Margin="{TemplateBinding BorderThickness}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Name="TextColumn" Width="*" />
@@ -422,27 +433,28 @@
                             <ScrollViewer Name="PART_ContentHost" Grid.Row="1" Grid.Column="0" Margin="0" Padding="{TemplateBinding Padding}" VerticalAlignment="Stretch" BorderThickness="0" IsTabStop="False" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Background="{x:Null}" BorderBrush="{x:Null}"/>
                             <TextBlock Name="PART_Message" Grid.Row="1" Grid.Column="0" Margin="4 0" Padding="{TemplateBinding Padding}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Foreground="{TemplateBinding Foreground}" Style="{DynamicResource MahApps.Styles.TextBlock.Watermark}" Text="Search..." TextAlignment="Center" TextTrimming="None" TextWrapping="NoWrap" Visibility="Collapsed"/>
                             <Border Name="PART_ClearTextBorder" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Width="25" BorderThickness="1" CornerRadius="5" SnapsToDevicePixels="False">
-                                <Button Name="PART_ClearText" FontSize="15" Foreground="Black" Focusable="False" IsTabStop="False" Style="{DynamicResource MahApps.Styles.Button.Chromeless}">
+                                <Button Name="PART_ClearText" FontSize="15" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}" Focusable="False" IsTabStop="False" Style="{DynamicResource MahApps.Styles.Button.Chromeless}">
                                     <Button.Content>
-                                        <Path Name="ClearText_Icon" Margin="4" Stretch="Fill" Data="m11.25 4.75l-6.5 6.5m0-6.5l6.5 6.5" Fill="Black" Stroke="Black"  StrokeThickness="3"/>
+                                        <Path Name="ClearText_Icon" Margin="4" Stretch="Fill" Data="m11.25 4.75l-6.5 6.5m0-6.5l6.5 6.5" Fill="{DynamicResource MahApps.Brushes.Control.Border}" Stroke="{DynamicResource MahApps.Brushes.Control.Border}"  StrokeThickness="3"/>
                                     </Button.Content>
                                 </Button>
                             </Border>
                         </Grid>
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <Trigger SourceName="PART_ClearText" Property="UIElement.IsMouseOver" Value="True">
-                            <Setter TargetName="PART_ClearText" Value="LightGray" Property="Background" />
-                            <Setter TargetName="PART_ClearText" Value="white" Property="Foreground" />
-                            <Setter TargetName="PART_ClearTextBorder" Value="LightGray" Property="BorderBrush" />
+                        <!--<Trigger SourceName="PART_ClearText" Property="UIElement.IsMouseOver" Value="True">
+                            --><!--<Setter TargetName="PART_ClearText" Value="{DynamicResource MahApps.Brushes.ThemeBackground}" Property="Background" />-->
+                            <!--<Setter TargetName="PART_ClearText" Value="{DynamicResource MahApps.Brushes.ThemeForeground}" Property="Foreground" />-->
+                            <!--<Setter TargetName="PART_ClearTextBorder" Value="{DynamicResource MahApps.Brushes.TextBox.Border}" Property="BorderBrush" />--><!--
 
+                        </Trigger>-->
+                       
+                        <Trigger Property="UIElement.IsMouseOver" Value="True">
+                            <Setter TargetName="Base" Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.TextBox.Border.MouseOver}"/>
                         </Trigger>
                         <Trigger Property="UIElement.IsFocused" Value="True">
-                            <Setter TargetName="PART_Message" Property="Foreground" Value="#7F000000"/>
-                            <Setter TargetName="Base" Property="BorderBrush" Value="Black"/>
-                        </Trigger>
-                        <Trigger Property="UIElement.IsMouseOver" Value="True">
-                            <Setter TargetName="Base" Property="BorderBrush" Value="Black"/>
+                            <Setter TargetName="PART_Message" Property="Opacity" Value="0.5"/>
+                            <Setter TargetName="Base" Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.TextBox.Border.Focus}"/>
                         </Trigger>
                         <Trigger Property="Text" Value="">
                             <Setter TargetName="PART_Message" Property="Visibility" Value="Visible"/>

@@ -9,9 +9,9 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <StackPanel Orientation="Horizontal" LostFocus="StackPanel_LostFocus">
-            <TextBox x:Name="uiFilterYearFrom" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="{Binding YearFromPlaceholder}" Background="{DynamicResource MahApps.Brushes.Accent}" Width="42" MaxLength="4" PreviewTextInput="YearSelector_Changed"/>
-            <Rectangle Fill="White" Stroke="White" StrokeThickness="4" Height="3" Width="7" Margin="5"/>
-            <TextBox x:Name="uiFilterYearTo" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="{Binding YearToPlaceholder}" Background="{DynamicResource MahApps.Brushes.Accent}" Width="42" MaxLength="4" PreviewTextInput="YearSelector_Changed"/>
+            <TextBox x:Name="uiFilterYearFrom" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="{Binding YearFromPlaceholder}" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" Width="42" MaxLength="4" PreviewTextInput="YearSelector_Changed"/>
+            <Rectangle Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Stroke="{DynamicResource MahApps.Brushes.ThemeForeground}" StrokeThickness="4" Height="3" Width="7" Margin="5"/>
+            <TextBox x:Name="uiFilterYearTo" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="{Binding YearToPlaceholder}" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" Width="42" MaxLength="4" PreviewTextInput="YearSelector_Changed"/>
         </StackPanel>
     </Grid>
 </UserControl>

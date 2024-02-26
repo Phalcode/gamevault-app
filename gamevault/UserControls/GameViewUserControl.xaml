@@ -37,7 +37,7 @@
             <Viewbox>
                 <Grid Width="2000">
                     <Border Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Left" Background="#B2574EB9" CornerRadius="5" Cursor="Hand" Width="40" Height="40" Margin="0,0,0,0" Padding="0,0,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="Back_Click">
-                        <Path Data="{StaticResource IconGameViewBack}" Fill="White" RenderTransformOrigin="0.0,-0.09">
+                        <Path Data="{StaticResource IconGameViewBack}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.0,-0.09">
                             <Path.RenderTransform>
                                 <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
                             </Path.RenderTransform>
@@ -70,7 +70,7 @@
                     <!--ACTION BUTTONS-->
                     <StackPanel Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="390,70,0,0" Orientation="Horizontal">
                         <Grid VerticalAlignment="Top" HorizontalAlignment="Left" Background="Transparent" Cursor="Hand" Width="60" Height="60" Margin="0,1,45,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="GamePlay_Click">
-                            <Path Data="{StaticResource IconInstalledGamesPlay}" Fill="White" RenderTransformOrigin="0.13,0.12">
+                            <Path Data="{StaticResource IconInstalledGamesPlay}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.13,0.12">
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="4.7" ScaleY="4.7"/>
                                 </Path.RenderTransform>
@@ -90,7 +90,7 @@
                             </Grid.Style>
                         </Grid>
                         <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Left" Background="Transparent" Cursor="Hand" Width="70" Height="65" Margin="10,0,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="GameDownload_Click">
-                            <Path Fill="White" RenderTransformOrigin="0.02,0.09">
+                            <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.02,0.09">
                                 <Path.Style>
                                     <Style TargetType="Path">
                                         <Style.Triggers>
@@ -113,7 +113,7 @@
                             </Grid.RenderTransform>
                         </Grid>
                         <Grid Style="{DynamicResource HoverEffect}" Visibility="{Binding IsInstalled,Converter={StaticResource settingsPermRoleVisConv}}" VerticalAlignment="Top" HorizontalAlignment="Left" Background="Transparent" Cursor="Hand" Width="70" Height="70" Margin="48,-2.7,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="GameSettings_Click">
-                            <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="White" RenderTransformOrigin="-0.00,0.01">
+                            <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="-0.00,0.01">
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="2.95" ScaleY="2.95"/>
                                 </Path.RenderTransform>
@@ -166,11 +166,11 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </StackPanel>
-                    <Border BorderThickness="2" CornerRadius="5" Background="{DynamicResource DarkBackground2}" Height="44" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1460,158,0,0" Cursor="Hand">
+                    <Border BorderThickness="2" CornerRadius="5" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" Height="44" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1460,158,0,0" Cursor="Hand">
                         <Grid>
                             <Popup Name="TagPopup" StaysOpen="False" AllowsTransparency="True">
                                 <Grid>
-                                    <Border Background="{DynamicResource DarkBackground4}" CornerRadius="5" Margin="5">
+                                    <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" CornerRadius="5" Margin="5">
                                         <Border.Effect>
                                             <DropShadowEffect BlurRadius="7" Direction="0" ShadowDepth="0"/>
                                         </Border.Effect>
@@ -222,7 +222,7 @@
                     <!--DETAILS-->
                     <StackPanel Background="Transparent" Margin="0,650,0,0" HorizontalAlignment="Left">
                         <Grid Height="50">
-                            <Path Fill="White" Data="{DynamicResource IconGameViewCalendar}" RenderTransformOrigin="0,0">
+                            <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Data="{DynamicResource IconGameViewCalendar}" RenderTransformOrigin="0,0">
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="2" ScaleY="2"/>
                                 </Path.RenderTransform>
@@ -231,7 +231,7 @@
                             <TextBlock Text="{Binding Path=Game.ReleaseDate.Year,TargetNullValue='N/A'}" FontSize="20" Margin="55,24,0,0"/>
                         </Grid>
                         <Grid Height="50" Margin="0,20,0,0">
-                            <Path Fill="White" Data="{DynamicResource IconGameViewMetacritic}" RenderTransformOrigin="0,0">
+                            <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Data="{DynamicResource IconGameViewMetacritic}" RenderTransformOrigin="0,0">
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="2" ScaleY="2"/>
                                 </Path.RenderTransform>
@@ -240,7 +240,7 @@
                             <TextBlock Text="{Binding Path=Game.Rating,StringFormat={}{0}%,TargetNullValue='N/A'}" FontSize="20" Margin="55,24,0,0"/>
                         </Grid>
                         <Grid Height="50" Margin="0,20,0,0">
-                            <Path Fill="White" Data="{DynamicResource IconGameViewVersion}" RenderTransformOrigin="0,0">
+                            <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Data="{DynamicResource IconGameViewVersion}" RenderTransformOrigin="0,0">
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="2" ScaleY="2.4"/>
                                 </Path.RenderTransform>
@@ -249,7 +249,7 @@
                             <TextBlock Text="{Binding Path=Game.Version,TargetNullValue='N/A'}" FontSize="20" Margin="55,24,0,0"/>
                         </Grid>
                         <Grid Height="50" Margin="0,20,0,0">
-                            <Path Fill="White" Data="{DynamicResource IconGameViewWebsite}" RenderTransformOrigin="0,0">
+                            <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Data="{DynamicResource IconGameViewWebsite}" RenderTransformOrigin="0,0">
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="2" ScaleY="2.0"/>
                                 </Path.RenderTransform>
@@ -275,7 +275,7 @@
                             </TextBlock>
                         </Grid>
                         <Grid Height="50" Margin="0,20,0,0">
-                            <Path Fill="White" Data="{DynamicResource IconGameViewDeveloper}" RenderTransformOrigin="0,0">
+                            <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Data="{DynamicResource IconGameViewDeveloper}" RenderTransformOrigin="0,0">
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="2" ScaleY="2"/>
                                 </Path.RenderTransform>
@@ -307,7 +307,7 @@
                             </TextBlock>
                         </Grid>
                         <Grid Height="50" Margin="0,20,0,0">
-                            <Path Fill="White" Data="{DynamicResource IconGameViewPublisher}" RenderTransformOrigin="0,0">
+                            <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Data="{DynamicResource IconGameViewPublisher}" RenderTransformOrigin="0,0">
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="2" ScaleY="2"/>
                                 </Path.RenderTransform>

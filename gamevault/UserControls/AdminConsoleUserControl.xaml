@@ -16,9 +16,9 @@
             <RowDefinition Height="50"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Border Background="{StaticResource DarkBackground4}" Grid.Row="0">
+        <Border Background="{StaticResource MahApps.Brushes.ThemeBackground2}" Grid.Row="0">
             <Grid>
-                <TextBlock Text="Admin Console" FontSize="35" Margin="20,0,0,0" Foreground="White"/>
+                <TextBlock Text="Admin Console" FontSize="35" Margin="20,0,0,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
                 <StackPanel Orientation="Horizontal" Margin="270,0,0,0" HorizontalAlignment="Left">
                     <TextBlock Text="{Binding Path=ServerVersionInfo.Key}" FontSize="20" VerticalAlignment="Center"/>
                     <TextBlock VerticalAlignment="Center" FontSize="20" Margin="5,0,0,0">
@@ -88,7 +88,7 @@
 
                                 <!--<TextBlock FontSize="2" Margin="0,0,5,0" Text="⚙️" HorizontalAlignment="Right" VerticalAlignment="Center" Cursor="Hand" ToolTip="Edit user" MouseLeftButtonUp="EditUser_Clicked"/>-->
                                 <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Cursor="Hand" Width="2.5" Height="2.5" Margin="0,1.8,5,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="EditUser_Clicked">
-                                    <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="White" Margin="0,0,-20,-20">
+                                    <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Margin="0,0,-20,-20">
                                         <Path.RenderTransform>
                                             <ScaleTransform ScaleX="0.1" ScaleY="0.1"/>
                                         </Path.RenderTransform>

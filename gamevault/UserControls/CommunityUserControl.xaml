@@ -20,9 +20,9 @@
             <RowDefinition Height="50"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Border Background="{StaticResource DarkBackground4}" Grid.Row="0">
+        <Border Background="{StaticResource MahApps.Brushes.ThemeBackground2}" Grid.Row="0">
             <Grid>
-                <TextBlock Text="Community" FontSize="35" Margin="20,0,0,0" Foreground="White"/>
+                <TextBlock Text="Community" FontSize="35" Margin="20,0,0,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
                 <ComboBox x:Name="uiSelectUser" ItemsSource="{Binding Users}" DisplayMemberPath="Username" Margin="5" HorizontalAlignment="Right" SelectionChanged="Users_SelectionChanged"/>
             </Grid>
         </Border>
@@ -37,7 +37,7 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <local:CacheImage ImageCacheType="UserBackground" Data="{Binding Path=CurrentShownUser}" Grid.RowSpan="2" Grid.ColumnSpan="3"/>
-            <Grid Grid.Column="1" Grid.RowSpan="2" Background="#B2000000" />
+            <Grid Grid.Column="1" Grid.RowSpan="2" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Opacity="0.8"/>
             <Viewbox Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left">
                 <Grid>
                     <Grid>
@@ -53,7 +53,7 @@
                     </Grid>
                     <Grid HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,5,0">
                         <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Right" Visibility="{Binding SelectedIndex,ElementName=uiSelectUser,Converter={StaticResource roleToVisConv}}" Background="Transparent" Cursor="Hand" Width="25" Height="25" Margin="0,0,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="UserEdit_Clicked">
-                            <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="White">
+                            <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}">
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="1" ScaleY="1"/>
                                 </Path.RenderTransform>
@@ -63,7 +63,7 @@
                             </Grid.RenderTransform>
                         </Grid>
                         <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Cursor="Hand" Width="25" Height="25" Margin="0,0,30,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="ReloadUser_Clicked">
-                            <Path Data="{StaticResource IconReload}" Fill="White">
+                            <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}">
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="1" ScaleY="1"/>
                                 </Path.RenderTransform>
@@ -74,7 +74,7 @@
                         </Grid>
                     </Grid>
                     <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="320,0,10,0">
-                        <TextBlock Text="Sort by: "/>
+                       
                         <ComboBox x:Name="uiSortBy" ItemsSource="{Binding SortBy}" SelectionChanged="SortBy_SelectionChanged"/>
                     </StackPanel>
 

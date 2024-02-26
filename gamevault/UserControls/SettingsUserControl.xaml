@@ -19,9 +19,9 @@
             <RowDefinition Height="50"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Border Background="{StaticResource DarkBackground4}" Grid.Row="0">
+        <Border Background="{StaticResource MahApps.Brushes.ThemeBackground2}" Grid.Row="0">
             <Grid>
-                <TextBlock Text="Settings" FontSize="35" Margin="20,0,0,0" Foreground="White"/>
+                <TextBlock Text="Settings" FontSize="35" Margin="20,0,0,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
                 <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Version,StringFormat='{}V {0}'}" Margin="0,0,5,0"/>
             </Grid>
         </Border>
@@ -39,7 +39,7 @@
                             <settingsComponents:ServerUrlUserControl Margin="10,10,0,0" HorizontalAlignment="Left"/>
                             <GroupBox Header="Download Limit" Margin="10,10,0,0" Width="510" HorizontalAlignment="Left" mah:ControlsHelper.CornerRadius="4">
                                 <StackPanel>
-                                    <TextBox Text="{Binding DownloadLimitUIValue,UpdateSourceTrigger=PropertyChanged}" Margin="0,10,0,5" MaxLength="8" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="{Binding DownloadLimitUIValue,Converter={StaticResource downloadLimitConv}}" PreviewTextInput="DownloadLimit_InputValidation" TextChanged="DownloadLimit_InputValidation" KeyDown="DownloadLimit_Save"/>
+                                    <TextBox Text="{Binding DownloadLimitUIValue,UpdateSourceTrigger=PropertyChanged}" Margin="0,10,0,5" MaxLength="8" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.Watermark="{Binding DownloadLimitUIValue,Converter={StaticResource downloadLimitConv}}" PreviewTextInput="DownloadLimit_InputValidation" TextChanged="DownloadLimit_InputValidation" KeyDown="DownloadLimit_Save"/>
                                     <Button Content="Save" FontSize="15" Width="80" HorizontalAlignment="Left" Click="DownloadLimit_Save"/>
                                 </StackPanel>
                             </GroupBox>
@@ -134,6 +134,6 @@
                 </TabItem>
             </TabControl>
         </ScrollViewer>
-        <Rectangle Grid.Row="1" Stroke="White" Width="1" HorizontalAlignment="Left" Margin="175,10,0,10"/>
+        <Rectangle Grid.Row="1" Stroke="{DynamicResource MahApps.Brushes.ThemeForeground}" Width="1" HorizontalAlignment="Left" Margin="175,10,0,10"/>
     </Grid>
 </UserControl>
