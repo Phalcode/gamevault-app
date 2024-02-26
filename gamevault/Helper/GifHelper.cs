@@ -78,7 +78,7 @@ namespace gamevault.Helper
         private static bool IsDisposableGif(MagickImageCollection frames)
         {
             bool hasDisposalMethod = false;
-            hasDisposalMethod = frames.All(image => image.GifDisposeMethod == GifDisposeMethod.None);
+            hasDisposalMethod = frames.All(image => image.GifDisposeMethod == GifDisposeMethod.None || image.GifDisposeMethod == GifDisposeMethod.Undefined);
             if (hasDisposalMethod)
             {
                 return true;
