@@ -4,8 +4,16 @@
     <SolidColorBrush x:Key="DarkBackground2">#333333</SolidColorBrush>
     <SolidColorBrush x:Key="DarkBackground3">#484444</SolidColorBrush>
     <SolidColorBrush x:Key="DarkBackground4">#444444</SolidColorBrush>
-    <SolidColorBrush x:Key="HoverColor">#3d3aad</SolidColorBrush>
-    <SolidColorBrush x:Key="MainColor">#574eb9</SolidColorBrush>
     <SolidColorBrush x:Key="PhalcodeMainColor">#079185</SolidColorBrush>
+
+    <!--<Color x:Key="MahApps.Colors.AccentBase">#FF4f46af</Color>
+    <SolidColorBrush x:Key="MahApps.Brushes.AccentBase" Color="{StaticResource MahApps.Colors.AccentBase}" />
+    <SolidColorBrush x:Key="MahApps.Brushes.Accent" Color="{StaticResource MahApps.Colors.AccentBase}" />
+    <SolidColorBrush x:Key="MahApps.Brushes.Accent2" Color="#6660a9" />
+    --><!--<SolidColorBrush x:Key="MahApps.Brushes.Accent3" Color="{StaticResource MahApps.Colors.Accent3}" />
+    <SolidColorBrush x:Key="MahApps.Brushes.Accent4" Color="{StaticResource MahApps.Colors.Accent4}" />--><!--
+    <SolidColorBrush x:Key="MahApps.Brushes.WindowTitle" Color="{StaticResource MahApps.Colors.AccentBase}" />-->
+
+
     
 </ResourceDictionary>

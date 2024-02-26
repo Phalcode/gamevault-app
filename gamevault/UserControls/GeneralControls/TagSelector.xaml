@@ -27,7 +27,7 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
                 <Border MouseLeftButtonUp="OpenSelection_Click" Cursor="Hand" Background="#02000000" ToolTip="Add">
-                    <Path Data="{DynamicResource IconAddTag}" Fill="{DynamicResource MainColor}"/>
+                    <Path Data="{DynamicResource IconAddTag}" Fill="{DynamicResource MahApps.Brushes.Accent}"/>
                 </Border>
             </StackPanel>
         </StackPanel>

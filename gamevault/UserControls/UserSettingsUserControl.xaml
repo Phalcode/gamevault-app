@@ -13,7 +13,7 @@
         <Style x:Key="TabItemHeaderPath" TargetType="Path">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="True">
-                    <Setter Property="Fill" Value="{DynamicResource MainColor}"/>
+                    <Setter Property="Fill" Value="{DynamicResource MahApps.Brushes.Accent}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="False">
                     <Setter Property="Fill" Value="White"/>
@@ -23,7 +23,7 @@
         <Style x:Key="TabItemHeaderPathStroke" TargetType="Path">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="True">
-                    <Setter Property="Stroke" Value="{DynamicResource MainColor}"/>
+                    <Setter Property="Stroke" Value="{DynamicResource MahApps.Brushes.Accent}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="False">
                     <Setter Property="Stroke" Value="White"/>
@@ -36,7 +36,7 @@
             <Setter Property="Margin" Value="5,0,0,0"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="True">
-                    <Setter Property="Foreground" Value="{DynamicResource MainColor}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.Accent}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="False">
                     <Setter Property="Foreground" Value="White"/>

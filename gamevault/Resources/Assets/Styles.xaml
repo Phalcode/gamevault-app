@@ -292,7 +292,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ToggleButton}">
-                    <Border Background="{TemplateBinding Background}" BorderBrush="{DynamicResource MainColor}" BorderThickness="4" CornerRadius="5" Margin="-2">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="4" CornerRadius="5" Margin="-2">
                         <Grid Margin="{TemplateBinding Padding}" Background="Transparent" SnapsToDevicePixels="False">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />

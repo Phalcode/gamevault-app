@@ -12,7 +12,7 @@
                 <Setter Property="Background" Value="{Binding ElementName=parent,Path=Background}"/>
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding ElementName=parent,Path=Background}" Value="{x:Null}">
-                        <Setter Property="Background" Value="{DynamicResource MainColor}"/>
+                        <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Accent}"/>
                     </DataTrigger>
                     <Trigger Property="IsMouseOver" Value="True">
                         <Setter Property="Background" Value="{DynamicResource DarkBackground2}"/>
