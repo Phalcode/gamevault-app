@@ -158,5 +158,50 @@ namespace gamevault.Helper
                 }
             });
         }
+        internal static void OptimizeGIF(string path, int maxHeightWidth)
+        {
+            Tuple<int, int>? dimensions = GetGifDimensions(path);
+            if (dimensions != null && (dimensions.Item1 > maxHeightWidth || dimensions.Item2 > maxHeightWidth))
+            {
+                using (MagickImageCollection collection = new MagickImageCollection(path))
+                {
+                    MagickGeometry size = new MagickGeometry(maxHeightWidth);
+                    size.IgnoreAspectRatio = false;
+                    // Coalesce the image
+                    collection.Coalesce();
+                    foreach (MagickImage image in collection)
+                    {
+                        image.Resize(size);
+                        image.GifDisposeMethod = GifDisposeMethod.Background;
+                    }
+                    //collection.Optimize();
+                    collection.Write(path);
+                }
+            }
+        }
+        private static Tuple<int, int>? GetGifDimensions(string filePath)
+        {
+            try
+            {
+                using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                {
+                    // Skip to the start of the logical screen descriptor block
+                    fs.Seek(6, SeekOrigin.Begin);
+
+                    byte[] buffer = new byte[4];
+                    fs.Read(buffer, 0, 4);
+
+                    // Extract width and height from the buffer
+                    int width = BitConverter.ToUInt16(buffer, 0);
+                    int height = BitConverter.ToUInt16(buffer, 2);
+                    return Tuple.Create(width, height);
+                }
+            }
+            catch (Exception)
+            {
+                // Handle any exceptions that might occur during file operations
+                return null;
+            }
+        }
     }
 }

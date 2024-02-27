@@ -141,6 +141,16 @@ namespace gamevault.Helper
                         var image = new FileInfo(file);
                         if (image.Length > 0)
                         {
+                            if (file.Contains("uico"))
+                            {
+                                if (GifHelper.IsGif(file))
+                                {
+                                    int maxGifHeightWidth = 400;
+                                    GifHelper.OptimizeGIF(file, maxGifHeightWidth);
+                                    image.Refresh();
+                                    continue;
+                                }
+                            }
                             ResizeImage(file, Convert.ToInt32(maxHeight));
                             image.Refresh();
                         }
