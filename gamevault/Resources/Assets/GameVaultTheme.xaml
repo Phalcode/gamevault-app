@@ -13,6 +13,10 @@
 	<Color x:Key="GameVault.Colors.Accent3">#664F46AF</Color>
 	<Color x:Key="GameVault.Colors.Accent4">#334F46AF</Color>
 	<Color x:Key="GameVault.Colors.Border">#FF6660A9</Color>
+    <SolidColorBrush x:Key="GameVault.Brushes.Button"  Color="{StaticResource GameVault.Colors.Accent}" />
+    <SolidColorBrush x:Key="GameVault.Brushes.Button.MouseOver"  Color="{StaticResource GameVault.Colors.Accent2}" />
+    <SolidColorBrush x:Key="GameVault.Brushes.Button.Focus"  Color="{StaticResource GameVault.Colors.Accent3}" />
+    <SolidColorBrush x:Key="GameVault.Brushes.Button.Disabled"  Color="{StaticResource GameVault.Colors.Accent4}" />
 
 
 	<Color x:Key="Theme.PrimaryAccentColor">#FF6459DF</Color>

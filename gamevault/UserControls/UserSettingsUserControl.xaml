@@ -174,9 +174,9 @@
                                     </StackPanel>
                                     <TextBox Margin="10" Height="28" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="https://example.com/example.png" TextChanged="BackgoundImageUrl_TextChanged"/>
                                     <Grid Margin="10,95,10,0">
-                                        <local:IconButton Content="Save" Icon="{DynamicResource IconGameSettingsSave}" IsEnabled="{Binding BackgroundImageChanged}" Width="70" Height="33" HorizontalAlignment="Right" MouseLeftButtonUp="BackgroundImage_Save"/>
+                                        <local:IconButtonOld Content="Save" Icon="{DynamicResource IconGameSettingsSave}" IsEnabled="{Binding BackgroundImageChanged}" Width="70" Height="33" HorizontalAlignment="Right" MouseLeftButtonUp="BackgroundImage_Save"/>
 
-                                        <!--<local:IconButton Content="Find Images" Icon="{DynamicResource IconGameSettingsGoogle}" HorizontalAlignment="Left" Height="33" Width="115" Tag="Game Background Art" MouseLeftButtonUp="FindImages_Click"/>-->
+                                        <!--<local:IconButtonOld Content="Find Images" Icon="{DynamicResource IconGameSettingsGoogle}" HorizontalAlignment="Left" Height="33" Width="115" Tag="Game Background Art" MouseLeftButtonUp="FindImages_Click"/>-->
                                     </Grid>
                                 </StackPanel>
                             </Border>
@@ -232,8 +232,8 @@
                                     </StackPanel>
                                     <TextBox Margin="10" Height="28" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="https://example.com/example.png" TextChanged="AvatarImageUrl_TextChanged"/>
                                     <Grid Margin="10,95,10,0">
-                                        <local:IconButton Content="Save" Icon="{DynamicResource IconGameSettingsSave}" IsEnabled="{Binding AvatarImageChanged}" Width="70" Height="33" HorizontalAlignment="Right" MouseLeftButtonUp="AvatarImage_Save"/>
-                                        <!--<local:IconButton Content="Find Images" Icon="{DynamicResource IconGameSettingsGoogle}" HorizontalAlignment="Left" Height="33" Width="115" Tag="Game Box Art" MouseLeftButtonUp="FindImages_Click"/>-->
+                                        <local:IconButtonOld Content="Save" Icon="{DynamicResource IconGameSettingsSave}" IsEnabled="{Binding AvatarImageChanged}" Width="70" Height="33" HorizontalAlignment="Right" MouseLeftButtonUp="AvatarImage_Save"/>
+                                        <!--<local:IconButtonOld Content="Find Images" Icon="{DynamicResource IconGameSettingsGoogle}" HorizontalAlignment="Left" Height="33" Width="115" Tag="Game Box Art" MouseLeftButtonUp="FindImages_Click"/>-->
                                     </Grid>
                                 </StackPanel>
                             </Border>
@@ -270,7 +270,7 @@
                                     <TextBox Text="{Binding Path=User.LastName,UpdateSourceTrigger=PropertyChanged}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" Height="30" Width="400" TextChanged="UserDetails_TextChanged"/>
                                 </StackPanel>
                             </Grid>
-                            <local:IconButton Content="Save" Icon="{DynamicResource IconGameSettingsSave}" IsEnabled="{Binding UserDetailsChanged}" Width="70" Height="33" Margin="0,0,10,0" HorizontalAlignment="Right" MouseLeftButtonUp="SaveUserDetails_Click"/>
+                            <local:IconButtonOld Content="Save" Icon="{DynamicResource IconGameSettingsSave}" IsEnabled="{Binding UserDetailsChanged}" Width="70" Height="33" Margin="0,0,10,0" HorizontalAlignment="Right" MouseLeftButtonUp="SaveUserDetails_Click"/>
                         </Grid>
                     </mah:MetroTabItem>
                 </mah:MetroAnimatedTabControl>

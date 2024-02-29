@@ -1,8 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro">
-
-
+                    xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                     xmlns:local="clr-namespace:gamevault.UserControls">
     <DataTemplate DataType="{x:Type mah:HamburgerMenuGlyphItem}">
         <Grid x:Name="IconPart" HorizontalAlignment="Left"
               Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type mah:HamburgerMenu}}, Path=CompactPaneLength}">
@@ -97,13 +96,121 @@
         </Style.Triggers>
     </Style>
 
-    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource MahApps.Styles.Button}">
+    <!--<Style TargetType="{x:Type Button}" BasedOn="{StaticResource MahApps.Styles.Button}">
         <Style.Setters>
             <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Accent}"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Focusable" Value="False"/>
         </Style.Setters>
+    </Style>-->
+    <Style TargetType="{x:Type local:IconButton}">
+        <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.Text}" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="CornerRadius" Value="5"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:IconButton}">
+                    <Grid>
+                        <Border Name="Border" CornerRadius="{TemplateBinding CornerRadius}" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        <mah:ContentControlEx Name="PART_ContentPresenter" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" ContentStringFormat="{TemplateBinding ContentStringFormat}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                            <mah:ContentControlEx.Content>
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Name="Icon" Data="{TemplateBinding Icon}" Fill="{TemplateBinding Foreground}"/>
+                                    <TextBlock Text="{TemplateBinding Text}" Foreground="{TemplateBinding Foreground}" FontSize="{TemplateBinding FontSize}"/>
+                                </StackPanel>
+                            </mah:ContentControlEx.Content>
+                        </mah:ContentControlEx>
+                        <Border Name="Disabled_Border"  Visibility="Collapsed" CornerRadius="{TemplateBinding CornerRadius}" BorderThickness="2" Background="{DynamicResource GameVault.Brushes.Button.Disabled}" BorderBrush="{DynamicResource GameVault.Brushes.Button.Disabled}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Kind" Value="Primary">
+                            <Setter Property="Background" Value="{DynamicResource GameVault.Brushes.Button}"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource GameVault.Brushes.Button}" TargetName="Border"/>
+                        </Trigger>
+                        <Trigger Property="Kind" Value="Skeleton">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource GameVault.Brushes.Button}" TargetName="Border"/>
+                        </Trigger>
+                        <Trigger Property="Kind" Value="Danger">
+                            <Setter Property="Background" Value="IndianRed"/>
+                            <Setter Property="BorderBrush" Value="IndianRed" TargetName="Border"/>
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="UIElement.IsMouseOver" Value="True" />
+                                <Condition Property="Kind" Value="Primary" />
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" Value="{DynamicResource GameVault.Brushes.Button.MouseOver}"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource GameVault.Brushes.Button.MouseOver}" TargetName="Border"/>
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="UIElement.IsMouseOver" Value="True" />
+                                <Condition Property="Kind" Value="Skeleton" />
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" Value="{DynamicResource GameVault.Brushes.Button.MouseOver}"/>
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="UIElement.IsMouseOver" Value="True" />
+                                <Condition Property="Kind" Value="Danger" />
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" Value="IndianRed" TargetName="Border"/>
+                            <Setter Property="BorderBrush" Value="IndianRed" TargetName="Border"/>
+                            <Setter Property="Opacity" Value="0.8" TargetName="Border"/>
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsPressed" Value="True" />
+                                <Condition Property="Kind" Value="Primary" />
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" Value="{DynamicResource GameVault.Brushes.Button.Focus}"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource GameVault.Brushes.Button.Focus}" TargetName="Border"/>
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsPressed" Value="True" />
+                                <Condition Property="Kind" Value="Skeleton" />
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" Value="{DynamicResource GameVault.Brushes.Button.Focus}"/>
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsPressed" Value="True" />
+                                <Condition Property="Kind" Value="Danger" />
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" Value="IndianRed" TargetName="Border"/>
+                            <Setter Property="BorderBrush" Value="IndianRed" TargetName="Border"/>
+                            <Setter Property="Opacity" Value="0.6" TargetName="Border"/>
+                        </MultiTrigger>
+                        <Trigger Property="OverrideIconTransform" Value="True">
+                            <Setter TargetName="Icon" Property="RenderTransform">
+                                <Setter.Value>
+                                    <ScaleTransform ScaleX="{Binding IconScale, RelativeSource={RelativeSource TemplatedParent}}"
+                                                ScaleY="{Binding IconScale, RelativeSource={RelativeSource TemplatedParent}}"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="Icon" Property="RenderTransformOrigin" Value="{Binding IconPosition, RelativeSource={RelativeSource TemplatedParent}}"/>
+                            <Setter TargetName="Icon" Property="Margin" Value="{Binding IconMargin, RelativeSource={RelativeSource TemplatedParent}}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Disabled_Border" Property="Visibility" Value="Visible" />
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderBrush" Value="Transparent" TargetName="Border"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <!--<Setter Property="mah:ControlsHelper.ContentCharacterCasing" Value="Upper" />
+        <Setter Property="mah:ControlsHelper.CornerRadius" Value="3" />
+        <Setter Property="mah:ControlsHelper.FocusBorderBrush" Value="{DynamicResource MahApps.Brushes.Button.Border.Focus}" />
+        <Setter Property="mah:ControlsHelper.FocusBorderThickness" Value="2" />
+        <Setter Property="mah:ControlsHelper.MouseOverBorderBrush" Value="{DynamicResource MahApps.Brushes.Button.Border.MouseOver}" />-->
     </Style>
 
     <Style x:Key="TextTurnAnimation" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource MahApps.Styles.TextBlock}">
@@ -443,12 +550,14 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <!--<Trigger SourceName="PART_ClearText" Property="UIElement.IsMouseOver" Value="True">
-                            --><!--<Setter TargetName="PART_ClearText" Value="{DynamicResource MahApps.Brushes.ThemeBackground}" Property="Background" />-->
-                            <!--<Setter TargetName="PART_ClearText" Value="{DynamicResource MahApps.Brushes.ThemeForeground}" Property="Foreground" />-->
-                            <!--<Setter TargetName="PART_ClearTextBorder" Value="{DynamicResource MahApps.Brushes.TextBox.Border}" Property="BorderBrush" />--><!--
+                            -->
+                        <!--<Setter TargetName="PART_ClearText" Value="{DynamicResource MahApps.Brushes.ThemeBackground}" Property="Background" />-->
+                        <!--<Setter TargetName="PART_ClearText" Value="{DynamicResource MahApps.Brushes.ThemeForeground}" Property="Foreground" />-->
+                        <!--<Setter TargetName="PART_ClearTextBorder" Value="{DynamicResource MahApps.Brushes.TextBox.Border}" Property="BorderBrush" />-->
+                        <!--
 
                         </Trigger>-->
-                       
+
                         <Trigger Property="UIElement.IsMouseOver" Value="True">
                             <Setter TargetName="Base" Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.TextBox.Border.MouseOver}"/>
                         </Trigger>

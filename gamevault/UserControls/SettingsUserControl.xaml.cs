@@ -188,5 +188,10 @@ namespace gamevault.UserControls
         {
 
         }
+
+        private void IconButton_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindowViewModel.Instance.AppBarText = "New button click";
+        }
     }
 }

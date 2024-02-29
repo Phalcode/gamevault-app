@@ -49,6 +49,12 @@
                             <mah:ToggleSwitch x:Name="uiAutostartToggle" Header="Launch GameVault on Computer Startup" VerticalAlignment="Top" Margin="10,10,0,0"/>
                             <mah:ToggleSwitch Header="Minimize GameVault to System Tray on Startup" VerticalAlignment="Top" IsOn="{Binding BackgroundStart}" Margin="10,10,0,0"/>
                         </StackPanel>
+                        <local:IconButton Height="50" Width="140" IconScale="1.5" IconMargin="4,10,10,0" Icon="{DynamicResource IconGameSettingsSave}" Text="Scaled" FontSize="30" Click="IconButton_Click"/>
+                        <local:IconButton Margin="0,5,0,0" Height="50" Width="120" IconMargin="0,2,5,0" Icon="{DynamicResource IconGameSettingsSave}" Text="Default" FontSize="20" Click="IconButton_Click"/>
+                        <local:IconButton Margin="0,5,0,0" Height="50" Width="120" IconMargin="0,2,5,0" IsEnabled="False" Icon="{DynamicResource IconGameSettingsSave}" Text="Disabled" FontSize="20" Click="IconButton_Click"/>
+                        <local:IconButton Margin="5" Height="50" Width="120" IconMargin="0,2,5,0" Kind="Skeleton" Icon="{DynamicResource IconGameSettingsLink}" Text="Skeleton" FontSize="20" Click="IconButton_Click"/>
+                        <local:IconButton Height="50" Width="120" Kind="Danger" IconMargin="0,2,5,0" Icon="{DynamicResource IconTrash}" Text="Danger" FontSize="20" Click="IconButton_Click"/>
+                        <local:IconButton Height="50" Margin="0,5,0,0" Width="120" Kind="Primary" Text="Text only" FontSize="20" Click="IconButton_Click"/>
                     </StackPanel>
                 </TabItem>
                 <TabItem Header="User">

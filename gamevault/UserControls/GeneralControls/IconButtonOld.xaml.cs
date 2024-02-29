@@ -16,17 +16,17 @@ using System.Windows.Shapes;
 namespace gamevault.UserControls
 {
     /// <summary>
-    /// Interaction logic for IconButton.xaml
+    /// Interaction logic for IconButtonOld.xaml
     /// </summary>
-    public partial class IconButton : UserControl
+    public partial class IconButtonOld : UserControl
     {
         public static readonly DependencyProperty IconProperty =
-            DependencyProperty.Register("Icon", typeof(Geometry), typeof(IconButton));
+            DependencyProperty.Register("Icon", typeof(Geometry), typeof(IconButtonOld));
         public static readonly DependencyProperty ContentProperty =
-            DependencyProperty.Register("Content", typeof(string), typeof(IconButton));
+            DependencyProperty.Register("Content", typeof(string), typeof(IconButtonOld));
         public static readonly DependencyProperty BackgroundProperty =
-            DependencyProperty.Register("Background", typeof(Brush), typeof(IconButton));
-        public IconButton()
+            DependencyProperty.Register("Background", typeof(Brush), typeof(IconButtonOld));
+        public IconButtonOld()
         {
             InitializeComponent();         
         }

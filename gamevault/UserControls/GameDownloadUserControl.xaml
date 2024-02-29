@@ -44,17 +44,19 @@
             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="56,10,0,0" Text="{Binding State,StringFormat={}State: {0}}" ToolTip="{Binding State}" FontSize="4" Width="122"/>
 
             <TextBlock Text="📥" FontSize="9" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="55,17,0,0"/>
-            <Border Visibility="{Binding DownloadFailedVisibility}" Background="{StaticResource MahApps.Brushes.Accent}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="70,21,2,0" CornerRadius="2" Padding="1" Cursor="Hand" ToolTip="Download Game" MouseLeftButtonUp="RetryDownload_Click">
+            <!--<Border Visibility="{Binding DownloadFailedVisibility}" Background="{StaticResource MahApps.Brushes.Accent}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="70,21,2,0" CornerRadius="2" Padding="1" Cursor="Hand" ToolTip="Download Game" MouseLeftButtonUp="RetryDownload_Click">
                 <TextBlock Text="Retry" FontSize="5" Width="23" TextAlignment="Center"/>
-            </Border>
+            </Border>-->
+            <local:IconButton Text="Retry" FontSize="5" Visibility="{Binding DownloadFailedVisibility}" CornerRadius="2" Height="9" Width="26" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="70,20.3,0,0" ToolTip="Download Game" Click="RetryDownload_Click"/>
             <TextBlock Visibility="{Binding DownloadUIVisibility}" Text="{Binding DownloadInfo}" FontSize="4" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="68,19,0,0" Width="115"/>
-            <Border Visibility="{Binding DownloadUIVisibility}" Background="IndianRed" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,24,2,0" CornerRadius="2" Padding="1" Cursor="Hand" ToolTip="Cancel Download" MouseLeftButtonUp="CancelDownload_Click">
+            <!--<Border Visibility="{Binding DownloadUIVisibility}" Background="IndianRed" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,24,2,0" CornerRadius="2" Padding="1" Cursor="Hand" ToolTip="Cancel Download" MouseLeftButtonUp="CancelDownload_Click">
                 <TextBlock Text="Cancel" FontSize="3"/>
-            </Border>
+            </Border>-->
+            <local:IconButton Kind="Danger" Text="Cancel" FontSize="4" Visibility="{Binding DownloadUIVisibility}" CornerRadius="2" Height="9" Width="14" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,20.3,1,0" ToolTip="Cancel Download" Click="CancelDownload_Click"/>
             <ProgressBar Visibility="{Binding DownloadUIVisibility}" VerticalAlignment="Top" Margin="68,25,16,51"  Minimum="0" Maximum="100" Value="{Binding GameDownloadProgress}" BorderThickness="0"/>
 
 
-            <Border x:Name="uiBtnExtract" IsEnabled="False" Visibility="{Binding ExtractionUIVisibility,Converter={StaticResource visConv}}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="70,39,2,0" CornerRadius="2" Padding="1" Cursor="Hand" ToolTip="Extract Game" MouseLeftButtonUp="Extract_Click">
+            <!--<Border x:Name="uiBtnExtract" IsEnabled="False" Visibility="{Binding ExtractionUIVisibility,Converter={StaticResource visConv}}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="70,39,2,0" CornerRadius="2" Padding="1" Cursor="Hand" ToolTip="Extract Game" MouseLeftButtonUp="Extract_Click">
                 <Border.Style>
                     <Style TargetType="{x:Type Border}">
                         <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Accent}"/>
@@ -66,12 +68,15 @@
                     </Style>
                 </Border.Style>
                 <TextBlock Text="Extract" FontSize="5" Width="23" TextAlignment="Center"/>
-            </Border>
+            </Border>-->
+            <local:IconButton x:Name="uiBtnExtract" IsEnabled="False" Text="Extract" FontSize="5" Height="9" Width="26" CornerRadius="2" Visibility="{Binding ExtractionUIVisibility,Converter={StaticResource visConv}}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="70,38,0,0" ToolTip="Extract Game" Click="Extract_Click"/>
+            
             <TextBlock Text="📤" FontSize="9" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="55,35,0,0"/>
             <TextBlock Visibility="{Binding ExtractionUIVisibility}" Text="{Binding ExtractionInfo}" FontSize="4" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="68,37,0,0" Width="115"/>
-            <Border Visibility="{Binding ExtractionUIVisibility}" Background="IndianRed" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,42,2,0" CornerRadius="2" Padding="1" Cursor="Hand" ToolTip="Cancel Download" MouseLeftButtonUp="CancelExtraction_Click">
+            <!--<Border Visibility="{Binding ExtractionUIVisibility}" Background="IndianRed" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,42,2,0" CornerRadius="2" Padding="1" Cursor="Hand" ToolTip="Cancel Download" MouseLeftButtonUp="CancelExtraction_Click">
                 <TextBlock Text="Cancel" FontSize="3"/>
-            </Border>
+            </Border>-->
+            <local:IconButton Kind="Danger" Text="Cancel" FontSize="4" Visibility="{Binding ExtractionUIVisibility}" CornerRadius="2" Height="9" Width="14" HorizontalAlignment="Right" Margin="0,6,1,0" Click="CancelExtraction_Click"/>
             <ProgressBar Visibility="{Binding ExtractionUIVisibility}" VerticalAlignment="Top" Margin="68,43,16,33"  Minimum="0" Maximum="100" Value="{Binding GameExtractionProgress}" BorderThickness="0"/>
 
             <TextBlock Text="⚙️" FontSize="9" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="55,55,0,0"/>

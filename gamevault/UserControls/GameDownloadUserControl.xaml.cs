@@ -60,7 +60,7 @@ namespace gamevault.UserControls
                     ViewModel.State = "Extracted";
                     uiBtnExtract.IsEnabled = true;
                     uiBtnInstall.IsEnabled = true;
-                    ((TextBlock)uiBtnExtract.Child).Text = "Re-Extract";
+                    uiBtnExtract.Text = "Re-Extract";
                 }
                 else
                 {
@@ -141,7 +141,7 @@ namespace gamevault.UserControls
                 }
             });
         }
-        private void RetryDownload_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void RetryDownload_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.DownloadInfo = string.Empty;
             ViewModel.GameDownloadProgress = 0;
@@ -187,11 +187,11 @@ namespace gamevault.UserControls
             }
         }
 
-        private void CancelDownload_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void CancelDownload_Click(object sender, RoutedEventArgs e)
         {
             CancelDownload();
         }
-        private void CancelExtraction_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void CancelExtraction_Click(object sender, RoutedEventArgs e)
         {
             extractionCancelled = true;
             sevenZipHelper.Cancel();
@@ -261,11 +261,14 @@ namespace gamevault.UserControls
             ViewModel.ExtractionInfo = $"{$"{FormatBytesHumanReadable(totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds, 1000)}/s"} - {FormatBytesHumanReadable(totalBytesDownloaded)} of {FormatBytesHumanReadable(Convert.ToInt64(ViewModel.Game.Size))} | Time left: {CalculateTimeLeft(Convert.ToInt64(ViewModel.Game.Size), totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds)}";
             ViewModel.GameExtractionProgress = e.PercentageDone;
         }
-
-        private async void Extract_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private async void Extract_Click(object sender, RoutedEventArgs e)
         {
             await Extract();
         }
+        //private async void Extract_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        //{
+        //    await Extract();
+        //}
         private async Task Extract()
         {
             if (!Directory.Exists(m_DownloadPath))
@@ -297,7 +300,7 @@ namespace gamevault.UserControls
                 }
                 Preferences.Set(AppConfigKey.ExtractionFinished, "1", $"{m_DownloadPath}\\Extract\\gamevault-metadata");
                 ViewModel.State = "Extracted";
-                ((TextBlock)uiBtnExtract.Child).Text = "Re-Extract";
+                uiBtnExtract.Text = "Re-Extract";
                 uiBtnInstall.IsEnabled = true;
                 ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
             }
@@ -397,7 +400,7 @@ namespace gamevault.UserControls
                 uiProgressRingInstall.IsActive = false;
                 ((FrameworkElement)sender).IsEnabled = true;
                 ViewModel.State = "Downloaded";
-                ((TextBlock)uiBtnExtract.Child).Text = "Extract";
+                uiBtnExtract.Text = "Extract";
                 if (error)
                 {
                     MainWindowViewModel.Instance.AppBarText = "Something wen't wrong during installation";
@@ -457,5 +460,7 @@ namespace gamevault.UserControls
             }
             catch { }
         }
+
+
     }
 }
