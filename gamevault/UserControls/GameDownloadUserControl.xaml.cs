@@ -264,11 +264,7 @@ namespace gamevault.UserControls
         private async void Extract_Click(object sender, RoutedEventArgs e)
         {
             await Extract();
-        }
-        //private async void Extract_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        //{
-        //    await Extract();
-        //}
+        }      
         private async Task Extract()
         {
             if (!Directory.Exists(m_DownloadPath))
@@ -326,19 +322,15 @@ namespace gamevault.UserControls
                 ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
             }
         }
-
-        private void OpenInstallOptions_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void OpenInstallOptions_Click(object sender, RoutedEventArgs e)
         {
             uiInstallOptions.Visibility = System.Windows.Visibility.Visible;
             LoadSetupExecutables();
-
         }
-
-        private void InstallOptionCancel_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void InstallOptionCancel_Click(object sender, RoutedEventArgs e)
         {
             uiInstallOptions.Visibility = System.Windows.Visibility.Collapsed;
-        }
-
+        }        
         private void LoadSetupExecutables()
         {
             if (Directory.Exists($"{m_DownloadPath}\\Extract"))
@@ -370,8 +362,7 @@ namespace gamevault.UserControls
                 uiCbSetupExecutable.ItemsSource = null;
             }
         }
-
-        private async void Install_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private async void Install_Click(object sender, RoutedEventArgs e)
         {
             ((FrameworkElement)sender).IsEnabled = false;
             uiBtnExtract.IsEnabled = false;
@@ -449,7 +440,7 @@ namespace gamevault.UserControls
             uiInstallOptions.Visibility = System.Windows.Visibility.Collapsed;
             uiProgressRingInstall.IsActive = false;
             uiBtnExtract.IsEnabled = true;
-        }
+        }      
 
         private void CopyInstallPathToClipboard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -459,8 +450,6 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.AppBarText = "Copied Installation Directory to Clipboard";
             }
             catch { }
-        }
-
-
+        }       
     }
 }

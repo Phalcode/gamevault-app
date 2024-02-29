@@ -43,7 +43,7 @@
                     <Grid>
                         <local:CacheImage Height="130" Width="130" Margin="-340,5,0,0" ImageCacheType="UserIcon" CornerRadius="10" Data="{Binding Path=CurrentShownUser}"/>
 
-                        <Border Background="{StaticResource MahApps.Brushes.Accent}" Width="46" Height="23" Padding="3" CornerRadius="10" Margin="145,70,0,0" HorizontalAlignment="Left">
+                        <Border Background="{StaticResource MahApps.Brushes.Accent}" Width="47" Height="23" Padding="3" CornerRadius="5" Margin="145,70,0,0" HorizontalAlignment="Left">
                             <TextBlock Text="{Binding Path=CurrentShownUser.Role}" TextAlignment="Center"/>
                         </Border>
                         <StackPanel Margin="145,55,0,0">
