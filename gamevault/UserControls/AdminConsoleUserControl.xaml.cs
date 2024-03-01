@@ -215,7 +215,7 @@ namespace gamevault.UserControls
 
         private async void Reindex_Click(object sender, RoutedEventArgs e)
         {
-            ((Button)sender).IsEnabled = false;
+            ((FrameworkElement)sender).IsEnabled = false;
             await Task.Run(() =>
             {
                 try
@@ -229,7 +229,7 @@ namespace gamevault.UserControls
                     MainWindowViewModel.Instance.AppBarText = msg;
                 }
             });
-            ((Button)sender).IsEnabled = true;
+            ((FrameworkElement)sender).IsEnabled = true;
         }
 
         private async void Reload_Click(object sender, MouseButtonEventArgs e)

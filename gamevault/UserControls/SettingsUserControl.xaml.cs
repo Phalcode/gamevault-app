@@ -32,7 +32,7 @@ namespace gamevault.UserControls
 
         private void ClearImageCache_Clicked(object sender, RoutedEventArgs e)
         {
-            ViewModel.IsOnIdle = false;
+            
             try
             {
                 Directory.Delete(AppFilePath.ImageCache, true);
@@ -44,11 +44,11 @@ namespace gamevault.UserControls
             {
                 MainWindowViewModel.Instance.AppBarText = "Something went wrong while the image cache was cleared";
             }
-            ViewModel.IsOnIdle = true;
+            
         }
         private void ClearOfflineCache_Clicked(object sender, RoutedEventArgs e)
         {
-            ViewModel.IsOnIdle = false;
+           
             try
             {
                 if (File.Exists(AppFilePath.IgnoreList))
@@ -66,7 +66,7 @@ namespace gamevault.UserControls
             {
                 MainWindowViewModel.Instance.AppBarText = "Something went wrong while the offline cache was cleared";
             }
-            ViewModel.IsOnIdle = true;
+            
         }
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
@@ -156,7 +156,7 @@ namespace gamevault.UserControls
             }
         }
 
-        private void DownloadLimit_Save(object sender, EventArgs e)
+        private void DownloadLimit_Save(object sender, RoutedEventArgs e)
         {
             if (e.GetType() == typeof(KeyEventArgs))
             {

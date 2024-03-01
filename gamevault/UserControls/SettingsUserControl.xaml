@@ -40,7 +40,7 @@
                             <GroupBox Header="Download Limit" Margin="10,10,0,0" Width="510" HorizontalAlignment="Left" mah:ControlsHelper.CornerRadius="4">
                                 <StackPanel>
                                     <TextBox Text="{Binding DownloadLimitUIValue,UpdateSourceTrigger=PropertyChanged}" Margin="0,10,0,5" MaxLength="8" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.Watermark="{Binding DownloadLimitUIValue,Converter={StaticResource downloadLimitConv}}" PreviewTextInput="DownloadLimit_InputValidation" TextChanged="DownloadLimit_InputValidation" KeyDown="DownloadLimit_Save"/>
-                                    <Button Content="Save" FontSize="15" Width="80" HorizontalAlignment="Left" Click="DownloadLimit_Save"/>
+                                    <local:IconButton Text="Save" FontSize="15" Width="80" Height="30" HorizontalAlignment="Left" Click="DownloadLimit_Save"/>
                                 </StackPanel>
                             </GroupBox>
                         </StackPanel>
@@ -56,9 +56,9 @@
                         <StackPanel Margin="0,0,0,0">
                             <TextBlock Text="Account" FontSize="20" FontWeight="Bold"/>
                             <settingsComponents:LoginUserControl  Margin="10,10,0,0" HorizontalAlignment="Left"/>
-                            <Button Content="Logout" VerticalAlignment="Bottom" Height="32" Margin="10,10,0,0" HorizontalAlignment="Left" Width="205" FontSize="15" Click="Logout_Click"/>
+                            <local:IconButton Text="Logout" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="30" Margin="10,10,0,0" Width="205" FontSize="15" Click="Logout_Click"/>
                             <settingsComponents:RegisterUserControl Margin="10,10,0,0" HorizontalAlignment="Left"/>
-                            <Button Content="Edit your User" VerticalAlignment="Bottom" Height="32" Margin="10,10,0,0" HorizontalAlignment="Left" Width="205" FontSize="15" Click="EditUser_Click"/>
+                            <local:IconButton Text="Edit your User" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="30" Margin="10,10,0,0" Width="205" FontSize="15" Click="EditUser_Click"/>
                         </StackPanel>
                     </StackPanel>
                 </TabItem>
@@ -71,11 +71,11 @@
                         <StackPanel Margin="0,10,0,0">
                             <TextBlock Text="Cache Management" FontSize="20" FontWeight="Bold"/>
                             <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
-                                <Button Content="Clear image cache"  FontSize="15" Width="175" HorizontalAlignment="Left" Click="ClearImageCache_Clicked" ToolTip="Clears the entire image cache"/>
+                                <local:IconButton Text="Clear image cache" FontSize="15" Width="175" Height="30" HorizontalAlignment="Left" ToolTip="Clears the entire image cache" Click="ClearImageCache_Clicked"/>
                                 <TextBlock Text="{Binding ImageCacheSize,Converter={StaticResource sizeConv},StringFormat={}({0})}" FontSize="20" Margin="10,0,0,0"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="10,10,0,0">
-                                <Button Content="Clear offline cache" FontSize="15" Width="175" HorizontalAlignment="Left" Click="ClearOfflineCache_Clicked" ToolTip="Clears the entire offline cache"/>
+                                <local:IconButton Text="Clear offline cache" FontSize="15" Width="175" Height="30" HorizontalAlignment="Left" Click="ClearOfflineCache_Clicked" ToolTip="Clears the entire offline cache"/>
                                 <TextBlock Text="{Binding OfflineCacheSize,Converter={StaticResource sizeConv},StringFormat={}({0})}" FontSize="20" Margin="10,0,0,0"/>
                             </StackPanel>
                         </StackPanel>
@@ -141,7 +141,7 @@
                                 </Style>
                             </TextBlock.Style>
                         </TextBlock>
-                        <Button Content="Manage Billing" FontSize="15" Width="150" HorizontalAlignment="Left" Margin="0,20,0,0" Click="ManageBilling_Click"/>
+                        <local:IconButton Text="Manage Billing" FontSize="15" Width="150" Height="30" HorizontalAlignment="Left" Margin="0,20,0,0" Click="ManageBilling_Click"/>
                     </StackPanel>
                 </TabItem>
             </TabControl>

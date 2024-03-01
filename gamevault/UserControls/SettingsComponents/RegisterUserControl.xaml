@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:local="clr-namespace:gamevault.UserControls.SettingsComponents"
+             xmlns:controls="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Border BorderBrush="{StaticResource MahApps.Brushes.Control.Border}" Background="{StaticResource MahApps.Brushes.ThemeBackground}" BorderThickness="2" CornerRadius="10" Width="205" Padding="5" KeyDown="Register_KeyDown">
@@ -15,7 +16,7 @@
             <TextBox Text="{Binding RegistrationUser.EMail,UpdateSourceTrigger=PropertyChanged}" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="E-mail" Margin="5"/>
             <PasswordBox x:Name="uiPwReg" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.Watermark="Password*" Margin="5"/>
             <PasswordBox x:Name="uiPwRegRepeat" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.Watermark="Repeat password*" Margin="5"/>
-            <Button x:Name="uiBtnRegister" Content="Register" Click="Registration_Clicked" FontSize="15"/>
+            <controls:IconButton x:Name="uiBtnRegister" Text="Register" Height="30" Margin="5" FontSize="15" Click="Registration_Clicked"/>
         </StackPanel>
     </Border>
 </UserControl>

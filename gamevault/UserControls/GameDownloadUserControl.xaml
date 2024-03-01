@@ -44,55 +44,23 @@
             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="56,10,0,0" Text="{Binding State,StringFormat={}State: {0}}" ToolTip="{Binding State}" FontSize="4" Width="122"/>
 
             <TextBlock Text="📥" FontSize="9" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="55,17,0,0"/>
-            <!--<Border Visibility="{Binding DownloadFailedVisibility}" Background="{StaticResource MahApps.Brushes.Accent}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="70,21,2,0" CornerRadius="2" Padding="1" Cursor="Hand" ToolTip="Download Game" MouseLeftButtonUp="RetryDownload_Click">
-                <TextBlock Text="Retry" FontSize="5" Width="23" TextAlignment="Center"/>
-            </Border>-->
+
             <local:IconButton Text="Retry" FontSize="5" Visibility="{Binding DownloadFailedVisibility}" CornerRadius="2" Height="9" Width="26" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="70,20.3,0,0" ToolTip="Download Game" Click="RetryDownload_Click"/>
             <TextBlock Visibility="{Binding DownloadUIVisibility}" Text="{Binding DownloadInfo}" FontSize="4" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="68,19,0,0" Width="115"/>
-            <!--<Border Visibility="{Binding DownloadUIVisibility}" Background="IndianRed" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,24,2,0" CornerRadius="2" Padding="1" Cursor="Hand" ToolTip="Cancel Download" MouseLeftButtonUp="CancelDownload_Click">
-                <TextBlock Text="Cancel" FontSize="3"/>
-            </Border>-->
+
             <local:IconButton Kind="Danger" Text="Cancel" FontSize="4" Visibility="{Binding DownloadUIVisibility}" CornerRadius="2" Height="9" Width="14" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,20.3,1,0" ToolTip="Cancel Download" Click="CancelDownload_Click"/>
             <ProgressBar Visibility="{Binding DownloadUIVisibility}" VerticalAlignment="Top" Margin="68,25,16,51"  Minimum="0" Maximum="100" Value="{Binding GameDownloadProgress}" BorderThickness="0"/>
 
-
-            <!--<Border x:Name="uiBtnExtract" IsEnabled="False" Visibility="{Binding ExtractionUIVisibility,Converter={StaticResource visConv}}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="70,39,2,0" CornerRadius="2" Padding="1" Cursor="Hand" ToolTip="Extract Game" MouseLeftButtonUp="Extract_Click">
-                <Border.Style>
-                    <Style TargetType="{x:Type Border}">
-                        <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Accent}"/>
-                        <Style.Triggers>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Background" Value="LightGray" />
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </Border.Style>
-                <TextBlock Text="Extract" FontSize="5" Width="23" TextAlignment="Center"/>
-            </Border>-->
             <local:IconButton x:Name="uiBtnExtract" IsEnabled="False" Text="Extract" FontSize="5" Height="9" Width="26" CornerRadius="2" Visibility="{Binding ExtractionUIVisibility,Converter={StaticResource visConv}}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="70,38,0,0" ToolTip="Extract Game" Click="Extract_Click"/>
-            
+
             <TextBlock Text="📤" FontSize="9" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="55,35,0,0"/>
             <TextBlock Visibility="{Binding ExtractionUIVisibility}" Text="{Binding ExtractionInfo}" FontSize="4" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="68,37,0,0" Width="115"/>
-            <!--<Border Visibility="{Binding ExtractionUIVisibility}" Background="IndianRed" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,42,2,0" CornerRadius="2" Padding="1" Cursor="Hand" ToolTip="Cancel Download" MouseLeftButtonUp="CancelExtraction_Click">
-                <TextBlock Text="Cancel" FontSize="3"/>
-            </Border>-->
+
             <local:IconButton Kind="Danger" Text="Cancel" FontSize="4" Visibility="{Binding ExtractionUIVisibility}" CornerRadius="2" Height="9" Width="14" HorizontalAlignment="Right" Margin="0,6,1,0" Click="CancelExtraction_Click"/>
             <ProgressBar Visibility="{Binding ExtractionUIVisibility}" VerticalAlignment="Top" Margin="68,43,16,33"  Minimum="0" Maximum="100" Value="{Binding GameExtractionProgress}" BorderThickness="0"/>
 
             <TextBlock Text="⚙️" FontSize="9" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="55,55,0,0"/>
-            <!--<Border x:Name="uiBtnInstall" IsEnabled="False" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="70,57,2,0" CornerRadius="2" Padding="6,1,6,1" Cursor="Hand" ToolTip="Install Game" MouseLeftButtonUp="OpenInstallOptions_Click">
-                <Border.Style>
-                    <Style TargetType="{x:Type Border}">
-                        <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Accent}"/>
-                        <Style.Triggers>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Background" Value="LightGray" />
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </Border.Style>
-                <TextBlock Text="Install" FontSize="5"/>
-            </Border>-->
+
             <local:IconButton x:Name="uiBtnInstall" Kind="Primary" IsEnabled="False" Text="Install" FontSize="5" CornerRadius="2" Height="9" Width="26" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="70,43,1,0" ToolTip="Install Game" Click="OpenInstallOptions_Click"/>
             <Grid x:Name="uiInstallOptions" Visibility="Collapsed" Margin="56,10,1,2"  MaxWidth="130" Background="{StaticResource MahApps.Brushes.ThemeBackground2}">
                 <Grid>
@@ -123,23 +91,7 @@
                     <Border Background="Gainsboro" CornerRadius="2" Margin="0,49,1,0"  VerticalAlignment="Top" Padding="1" ToolTip="Copy to clipboard" MouseLeftButtonUp="CopyInstallPathToClipboard_Click">
                         <TextBlock Text="{Binding InstallPath}" FontSize="3" Foreground="#FF424242" HorizontalAlignment="Left" Cursor="Hand"/>
                     </Border>
-                    <!--<Border VerticalAlignment="Bottom" HorizontalAlignment="Right" CornerRadius="2" Margin="0,0,1,0" Padding="6,1,6,1" Cursor="Hand" MouseLeftButtonUp="Install_Click">
-                        <Border.Style>
-                            <Style TargetType="{x:Type Border}">
-                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Accent}"/>
-                                <Setter Property="IsEnabled" Value="True"/>
-                                <Style.Triggers>
-                                    <Trigger Property="IsEnabled" Value="False">
-                                        <Setter Property="Background" Value="LightGray" />
-                                    </Trigger>
-                                    <DataTrigger Binding="{Binding SelectedIndex, ElementName=uiCbSetupExecutable}" Value="-1">
-                                        <Setter Property="IsEnabled" Value="False" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Border.Style>
-                        <TextBlock Text="Install" FontSize="5"/>
-                    </Border>-->
+
                     <local:IconButton Kind="Primary" Text="Install" FontSize="5" CornerRadius="2" Height="9" Width="26" BorderThickness="0.2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,1,0" Click="Install_Click">
                         <local:IconButton.Style>
                             <Style TargetType="{x:Type local:IconButton}" BasedOn="{StaticResource {x:Type local:IconButton}}">
@@ -170,19 +122,7 @@
                     <TextBlock Text="To install this game, please follow the steps below:" FontWeight="Bold" Margin="0,10,0,0" FontSize="4"/>
 
                     <TextBlock FontSize="4" TextWrapping="Wrap" Text="This is a Portable Game, so there's no need for any setup. Once you click 'Install', the files will be automatically moved to the installation folder." MaxWidth="126" Margin="0,18,0,0"/>
-                    <!--<Border VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,1,0" CornerRadius="2" Padding="6,1,6,1" Cursor="Hand" MouseLeftButtonUp="Install_Click">
-                        <Border.Style>
-                            <Style TargetType="{x:Type Border}">
-                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Accent}"/>
-                                <Style.Triggers>
-                                    <Trigger Property="IsEnabled" Value="False">
-                                        <Setter Property="Background" Value="LightGray" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Border.Style>
-                        <TextBlock Text="Install" FontSize="5"/>
-                    </Border>-->
+
                     <local:IconButton Kind="Primary" Text="Install" FontSize="5" CornerRadius="2" Height="9" Width="26" BorderThickness="0.2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,1,0" Click="Install_Click"/>
                 </Grid>
                 <Grid>
@@ -204,9 +144,7 @@
                 <Viewbox Width="9" Height="9" Margin="0,0,30,0" HorizontalAlignment="Right" VerticalAlignment="Bottom">
                     <mah:ProgressRing x:Name="uiProgressRingInstall" IsActive="False"/>
                 </Viewbox>
-                <!--<Border Background="Gray" VerticalAlignment="Bottom" HorizontalAlignment="Left" CornerRadius="2" Padding="6,1,6,1" Cursor="Hand" MouseLeftButtonUp="InstallOptionCancel_Click">
-                    <TextBlock Text="Back" FontSize="5"/>
-                </Border>-->
+
                 <local:IconButton Kind="Skeleton" Text="Back" FontSize="5" CornerRadius="2" Height="9" Width="26" BorderThickness="0.2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,43,1,0" Click="InstallOptionCancel_Click"/>
             </Grid>
         </Grid>

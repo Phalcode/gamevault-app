@@ -29,7 +29,7 @@ namespace gamevault.ViewModels
         #region PrivateMembers       
         private string m_UserName { get; set; }
         private string m_RootPath { get; set; }
-        private bool m_IsOnIdle = true;
+        
         private bool m_BackgroundStart { get; set; }
         private bool m_LibStartup { get; set; }
         private bool m_AutoExtract { get; set; }
@@ -80,12 +80,7 @@ namespace gamevault.ViewModels
         {
             get { return m_RootPath; }
             set { m_RootPath = value; OnPropertyChanged(); }
-        }
-        public bool IsOnIdle
-        {
-            get { return m_IsOnIdle; }
-            set { m_IsOnIdle = value; OnPropertyChanged(); }
-        }
+        }        
         public bool BackgroundStart
         {
             get { return m_BackgroundStart; }
