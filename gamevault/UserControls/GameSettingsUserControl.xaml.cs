@@ -144,14 +144,13 @@ namespace gamevault.UserControls
         {
             MainWindowViewModel.Instance.ClosePopup();
         }
-        #region INSTALLATION
-        private void OpenDirectory_Click(object sender, MouseButtonEventArgs e)
+        #region INSTALLATION        
+        private void OpenDirectory_Click(object sender, RoutedEventArgs e)
         {
             if (Directory.Exists(ViewModel.Directory))
                 Process.Start("explorer.exe", ViewModel.Directory);
         }
-
-        private async void Uninstall_Click(object sender, MouseButtonEventArgs e)
+        private async void Uninstall_Click(object sender, RoutedEventArgs e)
         {
             ((FrameworkElement)sender).IsEnabled = false;
             if (ViewModel.Game.Type == GameType.WINDOWS_PORTABLE)
@@ -395,15 +394,14 @@ namespace gamevault.UserControls
                 }
             }
         }
-
-        private async void CreateDesktopShortcut_Click(object sender, MouseButtonEventArgs e)
+        private async void CreateDesktopShortcut_Click(object sender, RoutedEventArgs e)
         {
             if (!File.Exists(SavedExecutable))
             {
                 MainWindowViewModel.Instance.AppBarText = "No valid Executable set";
                 return;
             }
-            MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Do you want to create a desktop shortcut for the current selected executable?", "",
+            MessageDialogResult result = await((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Do you want to create a desktop shortcut for the current selected executable?", "",
                 MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
             if (result == MessageDialogResult.Affirmative)
             {
@@ -424,7 +422,7 @@ namespace gamevault.UserControls
                 }
                 catch { }
             }
-        }
+        }        
 
         private void LaunchParameter_Changed(object sender, RoutedEventArgs e)
         {
@@ -540,7 +538,7 @@ namespace gamevault.UserControls
                     MainWindowViewModel.Instance.AppBarText = ex.Message;
             }
         }
-        private void FindImages_Click(object sender, MouseButtonEventArgs e)
+        private void FindImages_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -575,12 +573,12 @@ namespace gamevault.UserControls
                 boxImageUrldebounceTimer.Tick += BoxImageDebounceTimerElapsed;
             }
         }
-        private async void BoxImage_Save(object sender, MouseButtonEventArgs e)
+        private async void BoxImage_Save(object sender, RoutedEventArgs e)
         {
             ViewModel.BoxArtImageChanged = false;
             await SaveImage("box");
         }
-        private async void BackgroundImage_Save(object sender, MouseButtonEventArgs e)
+        private async void BackgroundImage_Save(object sender, RoutedEventArgs e)
         {
             ViewModel.BackgroundImageChanged = false;
             await SaveImage("");
@@ -772,8 +770,11 @@ namespace gamevault.UserControls
             this.IsEnabled = true;
         }
 
+
+
+
         #endregion
 
-
+       
     }
 }

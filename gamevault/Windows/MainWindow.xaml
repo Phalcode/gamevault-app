@@ -55,9 +55,19 @@
                 <mah:TransitioningContentControl RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding ActiveControl}" FocusVisualStyle="{x:Null}"/>
             </mah:HamburgerMenu.Content>
         </mah:HamburgerMenu>
-        <Button HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="40" Width="40" Margin="4.1,0,0,4.1" Tag="https://gamevau.lt/gamevault-plus" Click="Premium_Click" ToolTip="Open GameVault Plus Website">
-            <Image Source="/Resources/Images/glyph_premium.png" RenderOptions.BitmapScalingMode="HighQuality" Margin="-2"/>
-        </Button>
+        <Border CornerRadius="5" Padding="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="40" Width="40" Margin="4.1,0,0,4.1" Tag="https://gamevau.lt/gamevault-plus" MouseLeftButtonUp="Premium_Click" ToolTip="Open GameVault Plus Website" Cursor="Hand">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Background" Value="{DynamicResource GameVault.Brushes.Button}"/>
+                    <Style.Triggers>
+                        <Trigger Property="UIElement.IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource GameVault.Brushes.Button.MouseOver}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <Image Source="/Resources/Images/glyph_premium.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+        </Border>
         <Grid Panel.ZIndex="1">
             <Viewbox>
                 <mah:TransitioningContentControl RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding Popup}" FocusVisualStyle="{x:Null}"/>

@@ -231,12 +231,12 @@ namespace gamevault.UserControls
             LoadImageUrl(avatarImageUrldebounceTimer.Data, "avatar");
         }
         #endregion
-        private async void BackgroundImage_Save(object sender, MouseButtonEventArgs e)
+        private async void BackgroundImage_Save(object sender, RoutedEventArgs e)
         {
             ViewModel.BackgroundImageChanged = false;
             await SaveImage("");
         }
-        private async void AvatarImage_Save(object sender, MouseButtonEventArgs e)
+        private async void AvatarImage_Save(object sender, RoutedEventArgs e)
         {
             ViewModel.AvatarImageChanged = false;
             await SaveImage("avatar");
@@ -339,7 +339,7 @@ namespace gamevault.UserControls
             }
         }
 
-        private async void SaveUserDetails_Click(object sender, MouseButtonEventArgs e)
+        private async void SaveUserDetails_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.UserDetailsChanged = false;
             this.IsEnabled = false;

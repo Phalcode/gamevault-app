@@ -128,7 +128,7 @@ namespace gamevault.Windows
             e.Handled = true;
         }
 
-        private void Premium_Click(object sender, RoutedEventArgs e)
+        private void Premium_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             try
             {

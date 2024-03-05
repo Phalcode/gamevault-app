@@ -30,9 +30,7 @@ namespace gamevault.UserControls
         public static readonly DependencyProperty OverrideIconTransformProperty =
             DependencyProperty.Register("OverrideIconTransform", typeof(bool), typeof(IconButton), new FrameworkPropertyMetadata(true));
         public static readonly DependencyProperty IconScaleProperty =
-            DependencyProperty.Register("IconScale", typeof(double), typeof(IconButton), new FrameworkPropertyMetadata(1.0));
-        public static readonly DependencyProperty IconPositionProperty =
-           DependencyProperty.Register("IconPosition", typeof(Point), typeof(IconButton), new FrameworkPropertyMetadata(new Point(0.5, 0.5)));
+            DependencyProperty.Register("IconScale", typeof(double), typeof(IconButton), new FrameworkPropertyMetadata(1.0));     
         public static readonly DependencyProperty IconMarginProperty =
           DependencyProperty.Register("IconMargin", typeof(Thickness), typeof(IconButton), new FrameworkPropertyMetadata(new Thickness(0)));
 
@@ -66,12 +64,7 @@ namespace gamevault.UserControls
         {
             get { return (double)GetValue(IconScaleProperty); }
             set { SetValue(IconScaleProperty, value); }
-        }
-        public Point IconPosition
-        {
-            get { return (Point)GetValue(IconPositionProperty); }
-            set { SetValue(IconPositionProperty, value); }
-        }
+        }       
         public Thickness IconMargin
         {
             get { return (Thickness)GetValue(IconMarginProperty); }
