@@ -42,7 +42,7 @@ namespace gamevault.Helper
             _httpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Basic", Convert.ToBase64String(System.Text.ASCIIEncoding.UTF8.GetBytes($"{auth[0]}:{auth[1]}")));
             _httpClient.DefaultRequestHeaders.Add("User-Agent", $"GameVault/{SettingsViewModel.Instance.Version}");
-           
+
             if (_additionalHeader != null)
             {
                 _httpClient.DefaultRequestHeaders.Add(_additionalHeader.Value.Key, _additionalHeader.Value.Value);
@@ -60,7 +60,7 @@ namespace gamevault.Helper
                 _fileName = response.Content.Headers.ContentDisposition.FileName.Replace("\"", "");
                 if (string.IsNullOrEmpty(_fileName))
                 {
-                    throw new Exception("Incomplete response header");
+                    throw new Exception("Missing response header (Content-Disposition)");
                 }
             }
             catch
@@ -70,7 +70,7 @@ namespace gamevault.Helper
             var totalBytes = response.Content.Headers.ContentLength;
             if (totalBytes == null || totalBytes == 0)
             {
-                throw new Exception("Incomplete response header (lenght)");
+                throw new Exception("Missing response header (Content-Length)");
             }
 
             using (var contentStream = await response.Content.ReadAsStreamAsync())
