@@ -392,8 +392,8 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsHighlighted" Value="true">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource MahApps.Brushes.Accent}"/>
-                            <Setter TargetName="Border" Property="Background" Value="{StaticResource MahApps.Brushes.Accent4}"/>
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Accent}"/>
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource MahApps.Brushes.Accent4}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

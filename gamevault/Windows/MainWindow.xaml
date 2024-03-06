@@ -83,7 +83,7 @@
                 </Style>
             </Grid.Style>
         </Grid>
-        <mah:Flyout IsOpen="{Binding IsAppBarOpen,UpdateSourceTrigger=PropertyChanged}" Background="{StaticResource MahApps.Brushes.ThemeBackground}" Height="80" IsAutoCloseEnabled="True" AutoCloseInterval="4000" Focusable="False" Panel.ZIndex="2"
+        <mah:Flyout IsOpen="{Binding IsAppBarOpen,UpdateSourceTrigger=PropertyChanged}" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" Height="80" IsAutoCloseEnabled="True" AutoCloseInterval="4000" Focusable="False" Panel.ZIndex="2"
                         CloseButtonVisibility="Collapsed"
                         Position="Bottom"
                         TitleVisibility="Collapsed">

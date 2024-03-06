@@ -13,7 +13,7 @@
             <RowDefinition Height="50"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Border Background="{StaticResource MahApps.Brushes.ThemeBackground}" Grid.Row="0">
+        <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground}" Grid.Row="0">
             <Grid>
                 <TextBlock Text="Complete setup" FontSize="35" Margin="20,0,0,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
             </Grid>
@@ -44,7 +44,7 @@
                     </TabItem>
                     <TabItem>
                         <Grid>
-                            <Border CornerRadius="10" Background="{StaticResource MahApps.Brushes.Accent}" Height="8" Width="8" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,33,0,0" Cursor="Hand" MouseLeftButtonUp="Help_Clicked" Panel.ZIndex="1" ToolTip="Open help site" Tag="https://gamevau.lt/docs/client-docs/setup/#step-1-select-the-root-folder">
+                            <Border CornerRadius="10" Background="{DynamicResource MahApps.Brushes.Accent}" Height="8" Width="8" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,33,0,0" Cursor="Hand" MouseLeftButtonUp="Help_Clicked" Panel.ZIndex="1" ToolTip="Open help site" Tag="https://gamevau.lt/docs/client-docs/setup/#step-1-select-the-root-folder">
                                 <TextBlock Text="?" TextAlignment="Center" Padding="0,0,0,0" FontSize="6"/>
                             </Border>
                             <StackPanel Width="330" Height="200">
@@ -72,7 +72,7 @@
                     </TabItem>
                     <TabItem>
                         <Grid>
-                            <Border CornerRadius="10" Background="{StaticResource MahApps.Brushes.Accent}" Height="8" Width="8" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,33,0,0" Cursor="Hand" MouseLeftButtonUp="Help_Clicked" Panel.ZIndex="1" ToolTip="Open help site" Tag="https://gamevau.lt/docs/client-docs/setup/#step-2-entering-the-selfhosted-backend-server-url">
+                            <Border CornerRadius="10" Background="{DynamicResource MahApps.Brushes.Accent}" Height="8" Width="8" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,33,0,0" Cursor="Hand" MouseLeftButtonUp="Help_Clicked" Panel.ZIndex="1" ToolTip="Open help site" Tag="https://gamevau.lt/docs/client-docs/setup/#step-2-entering-the-selfhosted-backend-server-url">
                                 <TextBlock Text="?" TextAlignment="Center" Padding="0,0,0,0" FontSize="6"/>
                             </Border>
                             <StackPanel Width="330" Height="200">
@@ -100,7 +100,7 @@
                     </TabItem>
                     <TabItem>
                         <Grid>
-                            <Border CornerRadius="10" Background="{StaticResource MahApps.Brushes.Accent}" Height="8" Width="8" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,33,0,0" Cursor="Hand" MouseLeftButtonUp="Help_Clicked" Panel.ZIndex="1" ToolTip="Open help site" Tag="https://gamevau.lt/docs/client-docs/setup/#step-3-login-or-register">
+                            <Border CornerRadius="10" Background="{DynamicResource MahApps.Brushes.Accent}" Height="8" Width="8" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,33,0,0" Cursor="Hand" MouseLeftButtonUp="Help_Clicked" Panel.ZIndex="1" ToolTip="Open help site" Tag="https://gamevau.lt/docs/client-docs/setup/#step-3-login-or-register">
                                 <TextBlock Text="?" TextAlignment="Center" Padding="0,0,0,0" FontSize="6"/>
                             </Border>
                             <StackPanel Width="330" Height="200">

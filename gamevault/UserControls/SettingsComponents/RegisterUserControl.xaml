@@ -8,7 +8,7 @@
              xmlns:controls="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Border BorderBrush="{StaticResource MahApps.Brushes.Control.Border}" Background="{StaticResource MahApps.Brushes.ThemeBackground}" BorderThickness="2" CornerRadius="10" Width="205" Padding="5" KeyDown="Register_KeyDown">
+    <Border BorderBrush="{DynamicResource MahApps.Brushes.Control.Border}" Background="{StaticResource MahApps.Brushes.ThemeBackground}" BorderThickness="2" CornerRadius="10" Width="205" Padding="5" KeyDown="Register_KeyDown">
         <StackPanel>
             <TextBox Text="{Binding RegistrationUser.Username,UpdateSourceTrigger=PropertyChanged}" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Username*" Margin="5"/>
             <TextBox Text="{Binding RegistrationUser.FirstName,UpdateSourceTrigger=PropertyChanged}" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="First name" Margin="5"/>

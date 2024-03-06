@@ -1,6 +1,7 @@
 ﻿using gamevault.Helper;
 using gamevault.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace gamevault.ViewModels
@@ -29,7 +30,7 @@ namespace gamevault.ViewModels
         #region PrivateMembers       
         private string m_UserName { get; set; }
         private string m_RootPath { get; set; }
-        
+
         private bool m_BackgroundStart { get; set; }
         private bool m_LibStartup { get; set; }
         private bool m_AutoExtract { get; set; }
@@ -80,7 +81,7 @@ namespace gamevault.ViewModels
         {
             get { return m_RootPath; }
             set { m_RootPath = value; OnPropertyChanged(); }
-        }        
+        }
         public bool BackgroundStart
         {
             get { return m_BackgroundStart; }
@@ -155,6 +156,18 @@ namespace gamevault.ViewModels
         {
             get { return m_RegistrationUser; }
             set { m_RegistrationUser = value; OnPropertyChanged(); }
+        }
+        public Dictionary<string, string> Themes
+        {
+            get
+            {
+                return new Dictionary<string, string>() {
+                    { "GameVault Dark","pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultDark.xaml"},
+                    { "GameVault Light","pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultLight.xaml"},
+                    { "Lime Dark","pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeLimeDark.xaml"},
+                    { "Lime Light","pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeLimeLight.xaml"}
+                };
+            }
         }
         public PhalcodeProduct License
         {

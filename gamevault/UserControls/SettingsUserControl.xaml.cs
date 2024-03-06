@@ -14,6 +14,7 @@ using System.Windows.Input;
 using static System.Net.Mime.MediaTypeNames;
 using ABI.System;
 using gamevault.UserControls.SettingsComponents;
+using System.Collections.Generic;
 
 namespace gamevault.UserControls
 {
@@ -32,7 +33,7 @@ namespace gamevault.UserControls
 
         private void ClearImageCache_Clicked(object sender, RoutedEventArgs e)
         {
-            
+
             try
             {
                 Directory.Delete(AppFilePath.ImageCache, true);
@@ -44,11 +45,11 @@ namespace gamevault.UserControls
             {
                 MainWindowViewModel.Instance.AppBarText = "Something went wrong while the image cache was cleared";
             }
-            
+
         }
         private void ClearOfflineCache_Clicked(object sender, RoutedEventArgs e)
         {
-           
+
             try
             {
                 if (File.Exists(AppFilePath.IgnoreList))
@@ -66,7 +67,7 @@ namespace gamevault.UserControls
             {
                 MainWindowViewModel.Instance.AppBarText = "Something went wrong while the offline cache was cleared";
             }
-            
+
         }
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
@@ -188,10 +189,10 @@ namespace gamevault.UserControls
         {
 
         }
-
-        private void IconButton_Click(object sender, RoutedEventArgs e)
+        private void Themes_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            MainWindowViewModel.Instance.AppBarText = "New button click";
+            string selectedTheme = ((ComboBox)sender).SelectedValue.ToString();
+            App.Current.Resources.MergedDictionaries[0] = new ResourceDictionary() { Source = new System.Uri(selectedTheme) };
         }
     }
 }

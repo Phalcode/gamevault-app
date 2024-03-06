@@ -49,7 +49,7 @@
                         </Hyperlink.Inlines>
                     </Hyperlink>
                 </TextBlock>
-                <Button Content="Log In" FontSize="15" Background="{StaticResource PhalcodeMainColor}" mah:ControlsHelper.CornerRadius="10" Padding="5" Margin="50,10,50,0" Click="Login_Click"/>
+                <Button Content="Log In" FontSize="15" Background="{DynamicResource PhalcodeMainColor}" mah:ControlsHelper.CornerRadius="10" Padding="5" Margin="50,10,50,0" Click="Login_Click"/>
                 <Grid Margin="0,20,0,0">
                     <Rectangle Stroke="Gray" Height="2" Width="250"/>
                     <TextBlock Text="Or continue with" FontSize="12" Foreground="Black" Background="LightGray" HorizontalAlignment="Center" Width="100" TextAlignment="Center"/>

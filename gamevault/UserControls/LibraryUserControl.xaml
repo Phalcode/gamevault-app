@@ -18,7 +18,7 @@
             <RowDefinition Height="50"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Border Background="{StaticResource MahApps.Brushes.ThemeBackground2}" Grid.Row="0">
+        <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Grid.Row="0">
             <TextBlock Text="Library" FontSize="35" Margin="20,0,0,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
         </Border>
         <ScrollViewer x:Name="uiMainScrollBar" Grid.Row="1" VerticalScrollBarVisibility="Auto">
@@ -140,7 +140,7 @@
                                     <ComboBox x:Name="uiFilterSortBy" Height="20" Width="175" Margin="25,10,10,0" DisplayMemberPath="Key" SelectedIndex="0" SelectedItem="{Binding SelectedGameFilterSortBy}" ItemsSource="{Binding GameFilterSortByValues}" SelectionChanged="SelectedGameFilterSortBy_SelectionChanged"/>
                                 </StackPanel>
                             </Grid>
-                            <Border Background="{StaticResource MahApps.Brushes.ThemeBackground2}" CornerRadius="5" Margin="-6,5,-6,0" VerticalAlignment="Top">
+                            <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" CornerRadius="5" Margin="-6,5,-6,0" VerticalAlignment="Top">
                                 <Grid>
                                     <!--No Games Found-->
                                     <StackPanel Panel.ZIndex="1">
@@ -234,7 +234,7 @@
                                                                 </Style.Triggers>
                                                             </Style>
                                                         </Grid.Style>
-                                                        <Border Background="{StaticResource MahApps.Brushes.ThemeBackground}" CornerRadius="8">
+                                                        <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground}" CornerRadius="8">
                                                             <local:CacheImage Stretch="Fill" ImageCacheType="BoxArt" Data="{Binding}" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                         </Border>
                                                         <Border VerticalAlignment="Stretch" Background="{DynamicResource GameVault.Brushes.Blur}" CornerRadius="8">

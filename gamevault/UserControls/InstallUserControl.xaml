@@ -15,7 +15,7 @@
                     <TextBox HorizontalAlignment="Center" Width="376" Margin="0,4,44,4" Style="{DynamicResource SearchTextBox}" TextChanged="Search_TextChanged"/>
                 </Grid>
             </Expander.Header>
-            <Border Background="{StaticResource MahApps.Brushes.ThemeBackground2}" CornerRadius="5" Margin="-6,5,-6,0" VerticalAlignment="Top">
+            <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" CornerRadius="5" Margin="-6,5,-6,0" VerticalAlignment="Top">
                 <Grid>
                     <StackPanel Panel.ZIndex="1">
                         <StackPanel.Style>
@@ -82,7 +82,7 @@
                                                 </Style.Triggers>
                                             </Style>
                                         </Grid.Style>
-                                        <Border Background="{StaticResource MahApps.Brushes.ThemeBackground}" CornerRadius="8">
+                                        <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground}" CornerRadius="8">
                                             <local:CacheImage Stretch="Fill" ImageCacheType="BoxArt" Data="{Binding Key}" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <Border Name="banner" VerticalAlignment="Stretch" Background="{DynamicResource GameVault.Brushes.Blur}" CornerRadius="8">

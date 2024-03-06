@@ -20,7 +20,7 @@
             <RowDefinition Height="50"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Border Background="{StaticResource MahApps.Brushes.ThemeBackground2}" Grid.Row="0">
+        <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Grid.Row="0">
             <Grid>
                 <TextBlock Text="Community" FontSize="35" Margin="20,0,0,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
                 <ComboBox x:Name="uiSelectUser" ItemsSource="{Binding Users}" DisplayMemberPath="Username" Margin="5" HorizontalAlignment="Right" SelectionChanged="Users_SelectionChanged"/>
@@ -43,7 +43,7 @@
                     <Grid>
                         <local:CacheImage Height="130" Width="130" Margin="-340,5,0,0" ImageCacheType="UserIcon" CornerRadius="10" Data="{Binding Path=CurrentShownUser}"/>
 
-                        <Border Background="{StaticResource MahApps.Brushes.Accent}" Width="47" Height="23" Padding="3" CornerRadius="5" Margin="145,70,0,0" HorizontalAlignment="Left">
+                        <Border Background="{DynamicResource MahApps.Brushes.Accent}" Width="47" Height="23" Padding="3" CornerRadius="5" Margin="145,70,0,0" HorizontalAlignment="Left">
                             <TextBlock Text="{Binding Path=CurrentShownUser.Role}" TextAlignment="Center"/>
                         </Border>
                         <StackPanel Margin="145,55,0,0">

@@ -7,7 +7,7 @@
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" KeyDown="OnPaste" Focusable="True" Loaded="UserControl_Loaded" AllowDrop="True" Drop="UserControl_Drop" IsVisibleChanged="UserControl_IsVisibleChanged">
-    <Border CornerRadius="10" Background="{StaticResource MahApps.Brushes.ThemeBackground}" BorderThickness="2" BorderBrush="{DynamicResource MahApps.Brushes.Control.Border}" Height="120" Width="180">
+    <Border CornerRadius="10" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" BorderThickness="2" BorderBrush="{DynamicResource MahApps.Brushes.Control.Border}" Height="120" Width="180">
         <Grid>
             <Border x:Name="uiUploadBlocker" Background="#B2000000" Panel.ZIndex="1" Visibility="Collapsed" CornerRadius="10">
                 <mah:ProgressRing/>
@@ -15,7 +15,7 @@
             <StackPanel Margin="5">
                 <TextBlock Text="Select File" HorizontalAlignment="Center" FontSize="12" Margin="0,0,0,5"/>
 
-                <Border CornerRadius="2" Background="{StaticResource MahApps.Brushes.Accent}" Height="20" Cursor="Hand" MouseLeftButtonUp="Upload_Click">
+                <Border CornerRadius="2" Background="{DynamicResource MahApps.Brushes.Accent}" Height="20" Cursor="Hand" MouseLeftButtonUp="Upload_Click">
                     <TextBlock Text="CHOOSE IMAGE OR DROP/PASTE" FontWeight="Bold" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </Border>
                 <Grid>
