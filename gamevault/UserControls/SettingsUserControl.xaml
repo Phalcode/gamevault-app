@@ -51,7 +51,7 @@
                         </StackPanel>
                         <StackPanel Margin="0,10,0,0">
                             <TextBlock Text="Theme" FontSize="20" FontWeight="Bold"/>
-                            <ComboBox DisplayMemberPath="Key" SelectedValuePath="Value" ItemsSource="{Binding Themes}" Margin="0,10,0,0" Width="520" HorizontalAlignment="Left" SelectionChanged="Themes_SelectionChanged"/>
+                            <ComboBox x:Name="uiCbTheme" DisplayMemberPath="Key" SelectedValuePath="Value" ItemsSource="{Binding Themes}" Margin="0,10,0,0" Width="520" HorizontalAlignment="Left" SelectionChanged="Themes_SelectionChanged"/>
                         </StackPanel>
                     </StackPanel>
                 </TabItem>

@@ -15,6 +15,7 @@ using static System.Net.Mime.MediaTypeNames;
 using ABI.System;
 using gamevault.UserControls.SettingsComponents;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace gamevault.UserControls
 {
@@ -29,6 +30,17 @@ namespace gamevault.UserControls
             InitializeComponent();
             ViewModel = SettingsViewModel.Instance;
             this.DataContext = ViewModel;
+
+            string currentTheme = Preferences.Get(AppConfigKey.Theme, AppFilePath.UserFile, true);
+            var theme = SettingsViewModel.Instance.Themes.Where(theme => theme.Value == currentTheme).ToArray();
+            if (theme.Count() > 0)
+            {
+                uiCbTheme.SelectedItem = theme[0];
+            }
+            else
+            {
+                uiCbTheme.SelectedIndex = 0;
+            }
         }
 
         private void ClearImageCache_Clicked(object sender, RoutedEventArgs e)
@@ -192,7 +204,14 @@ namespace gamevault.UserControls
         private void Themes_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string selectedTheme = ((ComboBox)sender).SelectedValue.ToString();
+            if (((ComboBox)sender).SelectionBoxItem == string.Empty)
+                return;
+            if (((KeyValuePair<string, string>)((ComboBox)sender).SelectionBoxItem).Value == selectedTheme)
+                return;
+            
             App.Current.Resources.MergedDictionaries[0] = new ResourceDictionary() { Source = new System.Uri(selectedTheme) };
+            //SettingsViewModel.Instance.Themes.Where(theme=>theme.Value==selectedTheme).FirstOrDefault();
+            Preferences.Set(AppConfigKey.Theme, selectedTheme, AppFilePath.UserFile, true);
         }
     }
 }
