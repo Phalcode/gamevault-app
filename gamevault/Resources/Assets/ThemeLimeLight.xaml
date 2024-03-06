@@ -1,18 +1,18 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:markup="clr-namespace:MahApps.Metro.Markup;assembly=MahApps.Metro" xmlns:markupWithAssembly="clr-namespace:MahApps.Metro.Markup;assembly=MahApps.Metro" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:options="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options" xmlns:system="clr-namespace:System;assembly=mscorlib">
 	<system:String x:Key="Theme.Name">GameVault</system:String>
 	<!--<system:String x:Key="Theme.Origin">MahApps.Metro</system:String>-->
-	<system:String x:Key="Theme.DisplayName">GameVault Theme</system:String>
-	<system:String x:Key="Theme.BaseColorScheme">Dark</system:String>
-	<system:String x:Key="Theme.ColorScheme">Purple</system:String>
+	<system:String x:Key="Theme.DisplayName">Lime Theme (Light)</system:String>
+	<system:String x:Key="Theme.BaseColorScheme">Light</system:String>
+	<system:String x:Key="Theme.ColorScheme">Lime</system:String>
 
-	<Color x:Key="GameVault.Colors.Foreground">#FFF6F5FA</Color>
-	<Color x:Key="GameVault.Colors.Background">#FF11101E</Color>
-	<Color x:Key="GameVault.Colors.Background2">#FF171528</Color>
-	<Color x:Key="GameVault.Colors.Accent">#FF4F46AF</Color>
-	<Color x:Key="GameVault.Colors.Accent2">#994F46AF</Color>
-	<Color x:Key="GameVault.Colors.Accent3">#664F46AF</Color>
-	<Color x:Key="GameVault.Colors.Accent4">#334F46AF</Color>
-	<Color x:Key="GameVault.Colors.Border">#FF6660A9</Color>
+	<Color x:Key="GameVault.Colors.Foreground">#FF0E110F</Color> <!-- RTC Text -->
+	<Color x:Key="GameVault.Colors.Background">#FFF2F8F4</Color> <!-- RTC Background -->
+	<Color x:Key="GameVault.Colors.Background2">#FF8EF0B7</Color> <!-- RTC Secondary -->
+	<Color x:Key="GameVault.Colors.Accent">#FF49CA7F</Color> <!-- RTC Primary -->
+	<Color x:Key="GameVault.Colors.Accent2">#9949CA7F</Color> <!-- RTC Primary with Opacity -->
+	<Color x:Key="GameVault.Colors.Accent3">#6649CA7F</Color> <!-- RTC Primary with Opacity -->
+	<Color x:Key="GameVault.Colors.Accent4">#3349CA7F</Color> <!-- RTC Primary with Opacity -->
+	<Color x:Key="GameVault.Colors.Border">#FF43FE91</Color> <!-- RTC Accent -->
     <SolidColorBrush x:Key="GameVault.Brushes.Button"  Color="{StaticResource GameVault.Colors.Accent}" />
     <SolidColorBrush x:Key="GameVault.Brushes.Button.MouseOver"  Color="{StaticResource GameVault.Colors.Accent2}" />
     <SolidColorBrush x:Key="GameVault.Brushes.Button.Focus"  Color="{StaticResource GameVault.Colors.Accent3}" />
