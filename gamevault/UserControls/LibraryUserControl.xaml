@@ -53,11 +53,16 @@
                                     </TextBlock.Text>
                                 </TextBlock>
                                 <TextBox HorizontalAlignment="Center" Width="378" Margin="0,4,45,4" Style="{DynamicResource SearchTextBox}" TextChanged="Search_TextChanged"/>
-                                <Image Style="{DynamicResource HoverEffect}" Source="pack://application:,,,/gamevault;component/Resources/Images/library_dice.png" Margin="400,0,0,0" Height="25" Cursor="Hand" ToolTip="I'm Feeling Lucky" MouseLeftButtonDown="RandomGame_Click" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality">
-                                    <Image.RenderTransform>
+                                <Grid Style="{DynamicResource HoverEffect}" Background="Transparent" Height="30" Width="35" Margin="400,0,0,0" Cursor="Hand" ToolTip="I'm Feeling Lucky" MouseLeftButtonDown="RandomGame_Click">
+                                    <Path Data="{StaticResource IconLibraryDices}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Margin="-227" RenderTransformOrigin="0.5,0.5">
+                                        <Path.RenderTransform>
+                                            <ScaleTransform ScaleX="0.06" ScaleY="0.06"/>
+                                        </Path.RenderTransform>
+                                    </Path>
+                                    <Grid.RenderTransform>
                                         <ScaleTransform/>
-                                    </Image.RenderTransform>
-                                </Image>
+                                    </Grid.RenderTransform>
+                                </Grid>
                                 <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" Width="30" Margin="0,0,40,0" Cursor="Hand" ToolTip="Clear all Filters" Background="Transparent" MouseLeftButtonDown="ClearAllFilters_Click">
                                     <Path Data="m11.25 4.75l-6.5 6.5m0-6.5l6.5 6.5" Stroke="IndianRed" StrokeThickness="2" RenderTransformOrigin="0.04,0.02">
                                         <Path.RenderTransform>
@@ -232,7 +237,7 @@
                                                         <Border Background="{StaticResource MahApps.Brushes.ThemeBackground}" CornerRadius="8">
                                                             <local:CacheImage Stretch="Fill" ImageCacheType="BoxArt" Data="{Binding}" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                         </Border>
-                                                        <Border VerticalAlignment="Stretch" Background="#B2000000" CornerRadius="8">
+                                                        <Border VerticalAlignment="Stretch" Background="{DynamicResource GameVault.Brushes.Blur}" CornerRadius="8">
                                                             <Border.Style>
                                                                 <Style TargetType="{x:Type Border}">
                                                                     <Style.Triggers>
@@ -278,7 +283,7 @@
 
                                                         <ItemsPresenter Margin="5,0,5,0"/>
                                                     </ScrollViewer>
-                                                    <Border Style="{DynamicResource HoverEffect}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Visibility="{Binding ScrollToTopVisibility}" Background="#B2574EB9" CornerRadius="5" Cursor="Hand" Width="50" Height="50" Margin="1800,0,15,15" Padding="18,20,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="ScrollToTop_Click">
+                                                    <Border Style="{DynamicResource HoverEffect}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Visibility="{Binding ScrollToTopVisibility}" Background="{DynamicResource MahApps.Brushes.Accent2}" CornerRadius="5" Cursor="Hand" Width="50" Height="50" Margin="1800,0,15,15" Padding="18,20,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="ScrollToTop_Click">
                                                         <Path Data="{StaticResource IconLibraryScrollToTop}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
                                                             <Path.RenderTransform>
                                                                 <ScaleTransform ScaleX="2" ScaleY="2"/>

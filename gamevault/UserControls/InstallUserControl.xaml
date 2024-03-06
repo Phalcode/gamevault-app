@@ -85,7 +85,7 @@
                                         <Border Background="{StaticResource MahApps.Brushes.ThemeBackground}" CornerRadius="8">
                                             <local:CacheImage Stretch="Fill" ImageCacheType="BoxArt" Data="{Binding Key}" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
-                                        <Border Name="banner" VerticalAlignment="Stretch" Background="#B2000000" CornerRadius="8">
+                                        <Border Name="banner" VerticalAlignment="Stretch" Background="{DynamicResource GameVault.Brushes.Blur}" CornerRadius="8">
                                             <Border.Style>
                                                 <Style TargetType="{x:Type Border}">
                                                     <Style.Triggers>

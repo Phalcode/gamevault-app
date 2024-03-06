@@ -10,8 +10,8 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
                
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Dark.Purple.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/gamevault;component/Resources/Assets/ThemeGameVaultDark.xaml" />
+                <!--<ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Dark.Purple.xaml" />-->
+                <ResourceDictionary Source="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeLimeLight.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/gamevault;component/Resources/Assets/Styles.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/gamevault;component/Resources/Assets/Colors.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/gamevault;component/Resources/Assets/Icons.xaml" />

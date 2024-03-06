@@ -393,7 +393,7 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsHighlighted" Value="true">
                             <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource MahApps.Brushes.Accent}"/>
-                            <Setter TargetName="Border" Property="Background" Value="#266459DF"/>
+                            <Setter TargetName="Border" Property="Background" Value="{StaticResource MahApps.Brushes.Accent4}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -412,7 +412,7 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Path Name="Arrow" Margin="10,0,12,12" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M12 14.95q-.2 0-.375-.062t-.325-.213l-4.6-4.6q-.275-.275-.275-.7t.275-.7q.275-.275.7-.275t.7.275l3.9 3.9l3.9-3.9q.275-.275.7-.275t.7.275q.275.275.275.7t-.275.7l-4.6 4.6q-.15.15-.325.213T12 14.95" RenderTransformOrigin="0.5, 0.5" SnapsToDevicePixels="false" Fill="{TemplateBinding Foreground}" >
+                            <Path Name="Arrow" Margin="10,0,12,12" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M12 14.95q-.2 0-.375-.062t-.325-.213l-4.6-4.6q-.275-.275-.275-.7t.275-.7q.275-.275.7-.275t.7.275l3.9 3.9l3.9-3.9q.275-.275.7-.275t.7.275q.275.275.275.7t-.275.7l-4.6 4.6q-.15.15-.325.213T12 14.95" RenderTransformOrigin="0.5, 0.5" SnapsToDevicePixels="false" Fill="{DynamicResource MahApps.Brushes.Text}" >
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="1.8" ScaleY="1.8"/>
                                 </Path.RenderTransform>
@@ -425,10 +425,10 @@
                             <Setter TargetName="Arrow" Property="Data" Value="m12 10.775l-3.9 3.9q-.275.275-.7.275t-.7-.275q-.275-.275-.275-.7t.275-.7l4.6-4.6q.15-.15.325-.213T12 8.4q.2 0 .375.063t.325.212l4.6 4.6q.275.275.275.7t-.275.7q-.275.275-.7.275t-.7-.275z" />
                         </Trigger>
                         <Trigger Property="UIElement.IsMouseOver" Value="true">
-                            <Setter TargetName="Arrow" Value="0.7" Property="Opacity" />
+                            <Setter TargetName="Arrow" Value="0.8" Property="Opacity" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="true">
-                            <Setter TargetName="Arrow" Value="{DynamicResource MahApps.Brushes.ThemeForeground}" Property="Fill" />
+                            <Setter TargetName="Arrow" Value="0.6" Property="Opacity" />
                         </Trigger>
                     </ControlTemplate.Triggers>
 
@@ -545,20 +545,11 @@
                         </Grid>
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <!--<Trigger SourceName="PART_ClearText" Property="UIElement.IsMouseOver" Value="True">
-                            -->
-                        <!--<Setter TargetName="PART_ClearText" Value="{DynamicResource MahApps.Brushes.ThemeBackground}" Property="Background" />-->
-                        <!--<Setter TargetName="PART_ClearText" Value="{DynamicResource MahApps.Brushes.ThemeForeground}" Property="Foreground" />-->
-                        <!--<Setter TargetName="PART_ClearTextBorder" Value="{DynamicResource MahApps.Brushes.TextBox.Border}" Property="BorderBrush" />-->
-                        <!--
-
-                        </Trigger>-->
-
                         <Trigger Property="UIElement.IsMouseOver" Value="True">
                             <Setter TargetName="Base" Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.TextBox.Border.MouseOver}"/>
                         </Trigger>
                         <Trigger Property="UIElement.IsFocused" Value="True">
-                            <Setter TargetName="PART_Message" Property="Opacity" Value="0.5"/>
+                            <Setter TargetName="PART_Message" Property="Opacity" Value="0.4"/>
                             <Setter TargetName="Base" Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.TextBox.Border.Focus}"/>
                         </Trigger>
                         <Trigger Property="Text" Value="">
