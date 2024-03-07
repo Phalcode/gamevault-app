@@ -37,9 +37,7 @@
                                 <LineBreak/>
                                 Everything in this setup can be changed manually later in the settings menu.
                             </TextBlock>
-                            <Viewbox Height="10" VerticalAlignment="Center" Margin="0,10,0,0">
-                                <Button Content="Begin" Width="50" Click="Next_Clicked"/>
-                            </Viewbox>
+                            <local:IconButton Text="Begin" FontSize="5" Height="10" Width="20" CornerRadius="1" Margin="0,10,0,0" Click="Next_Clicked"/>
                         </StackPanel>
                     </TabItem>
                     <TabItem>
@@ -61,12 +59,10 @@
                                 <Viewbox Height="10" HorizontalAlignment="Left" Margin="0,8,0,0">
                                     <settingsComponents:RootPathUserControl/>
                                 </Viewbox>
-                                <Viewbox Height="11" Margin="0,40,0,0">
-                                    <Grid Width="800">
-                                        <Button Content="Back" Width="50" HorizontalAlignment="Left" Background="Gray" Click="Back_Clicked"/>
-                                        <Button Content="Next" Width="50" HorizontalAlignment="Right" Click="Next_Clicked"/>
-                                    </Grid>
-                                </Viewbox>
+                                <Grid Margin="0,40,0,0">
+                                    <local:IconButton Kind="Skeleton" BorderThickness="0.3" CornerRadius="1" Text="Back" FontSize="5" Height="10" Width="20" HorizontalAlignment="Left" Click="Back_Clicked"/>
+                                    <local:IconButton Text="Next" FontSize="5" Height="10" Width="20" CornerRadius="1" HorizontalAlignment="Right" Click="Next_Clicked"/>
+                                </Grid>
                             </StackPanel>
                         </Grid>
                     </TabItem>
@@ -89,12 +85,10 @@
                                 <Viewbox Height="30" Width="120" HorizontalAlignment="Left" Margin="0,8,0,0">
                                     <settingsComponents:ServerUrlUserControl/>
                                 </Viewbox>
-                                <Viewbox Height="11" Margin="0,20,0,0">
-                                    <Grid Width="800">
-                                        <Button Content="Back" Width="50" HorizontalAlignment="Left" Background="Gray" Click="Back_Clicked"/>
-                                        <Button Content="Next" Width="50" HorizontalAlignment="Right" Click="Next_Clicked"/>
-                                    </Grid>
-                                </Viewbox>
+                                <Grid Margin="0,20,0,0">
+                                    <local:IconButton Kind="Skeleton" BorderThickness="0.3" CornerRadius="1" Text="Back" FontSize="5" Height="10" Width="20" HorizontalAlignment="Left" Click="Back_Clicked"/>
+                                    <local:IconButton Text="Next" FontSize="5" Height="10" Width="20" CornerRadius="1" HorizontalAlignment="Right" Click="Next_Clicked"/>
+                                </Grid>
                             </StackPanel>
                         </Grid>
                     </TabItem>
@@ -120,24 +114,19 @@
                                     <LineBreak/>
                                     Demo server credentials: Username: "demo", Password: "demodemo"
                                 </TextBlock>
-                                <Viewbox Height="11" HorizontalAlignment="Left" Margin="0,10,0,0">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Button Content="Login" Width="60" Margin="0,0,10,0" Click="Login_Clicked"/>
-                                        <Button Content="Register" Width="60" Click="Register_Clicked"/>
-                                    </StackPanel>
-                                </Viewbox>
-                                <Viewbox Height="11" Margin="0,13.4,0,0">
-                                    <Grid Width="800">
-                                        <Button Content="Back" Width="50" HorizontalAlignment="Left" Background="Gray" Click="Back_Clicked"/>
-                                        <Button Content="Finish" Width="50" HorizontalAlignment="Right" Click="Finish_Clicked"/>
-                                    </Grid>
-                                </Viewbox>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                                    <local:IconButton Text="Login" FontSize="5" Height="10" Width="20" CornerRadius="1" Margin="0,10.4,0,0" Click="Login_Clicked"/>
+                                    <local:IconButton Text="Register" FontSize="5" Height="10" Width="20" CornerRadius="1" Margin="5,10.4,0,0" Click="Register_Clicked"/>                                  
+                                </StackPanel>
+                                <Grid Margin="0,13.4,0,0">
+                                    <local:IconButton Kind="Skeleton" BorderThickness="0.3" CornerRadius="1" Text="Back" FontSize="5" Height="10" Width="20" HorizontalAlignment="Left" Click="Back_Clicked"/>
+                                    <local:IconButton Text="Finish" FontSize="5" Height="10" Width="20" CornerRadius="1" HorizontalAlignment="Right" Click="Finish_Clicked"/>
+                                </Grid>
                             </StackPanel>
                         </Grid>
                     </TabItem>
                 </mah:MetroAnimatedTabControl>
             </Viewbox>
         </Grid>
-
     </Grid>
 </UserControl>
