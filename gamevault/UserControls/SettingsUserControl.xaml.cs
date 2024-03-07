@@ -16,6 +16,11 @@ using ABI.System;
 using gamevault.UserControls.SettingsComponents;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
+using IdentityModel.OidcClient;
+using static SkiaSharp.HarfBuzz.SKShaper;
+using System.Dynamic;
+using System.Text.Json;
 
 namespace gamevault.UserControls
 {
@@ -191,15 +196,21 @@ namespace gamevault.UserControls
             }
             else { MainWindowViewModel.Instance.AppBarText = "You are not logged in"; }
         }
-
-        private void PhalcodeLoginRegister_Click(object sender, MouseButtonEventArgs e)
+        private async void PhalcodeLoginRegister_Click(object sender, MouseButtonEventArgs e)
         {
-            MainWindowViewModel.Instance.OpenPopup(new PhalcodeLoginRegisterUserControl());
+            await LoginManager.Instance.PhalcodeLogin();
         }
 
         private void ManageBilling_Click(object sender, RoutedEventArgs e)
         {
+#if DEBUG
+            string url = "https://test.phalco.de/account";
+#else
+            string url = "https://phalco.de/account";
+#endif
 
+            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+            e.Handled = true;
         }
         private void Themes_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -208,7 +219,7 @@ namespace gamevault.UserControls
                 return;
             if (((KeyValuePair<string, string>)((ComboBox)sender).SelectionBoxItem).Value == selectedTheme)
                 return;
-            
+
             App.Current.Resources.MergedDictionaries[0] = new ResourceDictionary() { Source = new System.Uri(selectedTheme) };
             //SettingsViewModel.Instance.Themes.Where(theme=>theme.Value==selectedTheme).FirstOrDefault();
             Preferences.Set(AppConfigKey.Theme, selectedTheme, AppFilePath.UserFile, true);

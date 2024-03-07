@@ -37,7 +37,7 @@ namespace gamevault.Models
         public DateTime? TrialEndsAt { get; set; }
         [JsonPropertyName("cancel_at_period_end")]
         public bool? CancelAtPeriodEnd { get; set; }
-        public string UserName { get; set; }
+        public string? UserName { get; set; }
         public bool IsActive()
         {
             return (CurrentPeriodEnd != null && CurrentPeriodEnd > DateTime.UtcNow);

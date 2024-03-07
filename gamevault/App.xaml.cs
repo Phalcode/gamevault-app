@@ -83,7 +83,7 @@ namespace gamevault
             }
 #endif
             await LoginManager.Instance.StartupLogin();
-            await LoginManager.Instance.PhalcodeLogin();
+            await LoginManager.Instance.PhalcodeLogin(true);
             m_gameTimeTracker = new GameTimeTracker();
             await m_gameTimeTracker.Start();
 

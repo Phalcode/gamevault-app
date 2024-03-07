@@ -253,7 +253,7 @@ namespace gamevault.UserControls
                     if (System.Uri.IsWellFormedUriString(ViewModel.AvatarImageUrl, UriKind.Absolute))
                     {
                         ms = await BitmapHelper.UrlToMemoryStream(ViewModel.AvatarImageUrl);
-                        
+
                         //string s = Encoding.UTF8.GetString(ms.ToArray());
                         //File.WriteAllText("C:\\Users\\Philip Schäfer\\Downloads\\Dump\\Dump.txt", s);
                     }
@@ -263,11 +263,21 @@ namespace gamevault.UserControls
                     }
                     if (GifHelper.IsGif(ms))
                     {
-                        if(!SettingsViewModel.Instance.License.IsActive())
+                        if (!SettingsViewModel.Instance.License.IsActive())
                         {
-                            MainWindowViewModel.Instance.AppBarText = "Buy GameVault Plus";
+                            try
+                            {
+#if DEBUG
+                                string url = "https://test.phalco.de/products/gamevault-plus/checkout?hit_paywall=true";
+#else
+                                string url = "https://phalco.de/products/gamevault-plus/checkout?hit_paywall=true";
+#endif
+
+                                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                            }
+                            catch { }
                             return;
-                        }    
+                        }
                         filename = "x.gif";
                     }
                     else

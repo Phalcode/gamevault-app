@@ -7,6 +7,7 @@
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:local="clr-namespace:gamevault.UserControls"
              xmlns:settingsComponents="clr-namespace:gamevault.UserControls.SettingsComponents"
+             xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
     <UserControl.Resources>
@@ -25,6 +26,9 @@
                 <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Version,StringFormat='{}V {0}'}" Margin="0,0,5,0"/>
             </Grid>
         </Border>
+
+        <!--<wv2:WebView2 Grid.Row="1" x:Name="uiWebView" VerticalAlignment="Center" HorizontalAlignment="Center" Height="700" Width="500"/>-->
+
         <ScrollViewer Grid.Row="1" Margin="10" VerticalScrollBarVisibility="Auto">
             <TabControl TabStripPlacement="Left" SelectionChanged="TabControl_SelectionChanged">
                 <TabItem Header="Application">
@@ -145,7 +149,7 @@
                                 </Style>
                             </TextBlock.Style>
                         </TextBlock>
-                        <local:IconButton Text="Manage Billing" FontSize="15" Width="150" Height="30" HorizontalAlignment="Left" Margin="0,20,0,0" Click="ManageBilling_Click"/>
+                        <local:IconButton Text="Manage Billing" FontSize="15" Icon="{StaticResource IconBilling}" IconScale="0.04" IconMargin="-180,-400,-175,-400" Width="150" Height="40" HorizontalAlignment="Left" Margin="0,20,0,0" Click="ManageBilling_Click"/>
                     </StackPanel>
                 </TabItem>
             </TabControl>
