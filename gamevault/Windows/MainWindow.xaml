@@ -28,7 +28,7 @@
         <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="1" Width="48" Height="50">
             <Border MouseLeftButtonUp="UserIcon_Clicked" Cursor="Hand">
                 <Grid>
-                    <uc:CacheImage ImageCacheType="UserIcon" Data="{Binding Path=UserIcon}"/>
+                    <uc:CacheImage ImageCacheType="UserIcon" Stretch="Fill" Data="{Binding Path=UserIcon}"/>
                     <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" CornerRadius="5,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Visibility="{Binding OnlineState}">
                         <Path Data="{DynamicResource IconNoSignal}" Fill="IndianRed"/>
                     </Border>

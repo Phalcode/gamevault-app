@@ -105,7 +105,7 @@
         </Style.Setters>
     </Style>-->
     <Style TargetType="{x:Type local:IconButton}">
-        <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.Text}" />
+        <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.IdealForeground}" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="SnapsToDevicePixels" Value="True"/>
         <Setter Property="CornerRadius" Value="5"/>
@@ -412,7 +412,7 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Path Name="Arrow" Margin="10,0,12,12" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M12 14.95q-.2 0-.375-.062t-.325-.213l-4.6-4.6q-.275-.275-.275-.7t.275-.7q.275-.275.7-.275t.7.275l3.9 3.9l3.9-3.9q.275-.275.7-.275t.7.275q.275.275.275.7t-.275.7l-4.6 4.6q-.15.15-.325.213T12 14.95" RenderTransformOrigin="0.5, 0.5" SnapsToDevicePixels="false" Fill="{DynamicResource MahApps.Brushes.Text}" >
+                            <Path Name="Arrow" Margin="10,0,12,12" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M12 14.95q-.2 0-.375-.062t-.325-.213l-4.6-4.6q-.275-.275-.275-.7t.275-.7q.275-.275.7-.275t.7.275l3.9 3.9l3.9-3.9q.275-.275.7-.275t.7.275q.275.275.275.7t-.275.7l-4.6 4.6q-.15.15-.325.213T12 14.95" RenderTransformOrigin="0.5, 0.5" SnapsToDevicePixels="false" Fill="{DynamicResource MahApps.Brushes.IdealForeground}" >
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="1.8" ScaleY="1.8"/>
                                 </Path.RenderTransform>
@@ -425,10 +425,10 @@
                             <Setter TargetName="Arrow" Property="Data" Value="m12 10.775l-3.9 3.9q-.275.275-.7.275t-.7-.275q-.275-.275-.275-.7t.275-.7l4.6-4.6q.15-.15.325-.213T12 8.4q.2 0 .375.063t.325.212l4.6 4.6q.275.275.275.7t-.275.7q-.275.275-.7.275t-.7-.275z" />
                         </Trigger>
                         <Trigger Property="UIElement.IsMouseOver" Value="true">
-                            <Setter TargetName="Arrow" Value="0.8" Property="Opacity" />
+                            <Setter TargetName="Arrow" Value="0.6" Property="Opacity" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="true">
-                            <Setter TargetName="Arrow" Value="0.6" Property="Opacity" />
+                            <Setter TargetName="Arrow" Value="0.4" Property="Opacity" />
                         </Trigger>
                     </ControlTemplate.Triggers>
 

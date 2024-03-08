@@ -161,6 +161,7 @@
                                             <StackPanel HorizontalAlignment="Center" Margin="0,65,0,0">
                                                 <TextBlock Text="Click to Upload, Paste or Drag and Drop" FontWeight="Bold"/>
                                                 <TextBlock Text="JPG, PNG, GIF, TIF, ICO or BMP" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                                                <TextBlock Text="For optimal display, use an image that is 1920px wide and 1080px high." FontSize="8" HorizontalAlignment="Center" Margin="0,5,0,0"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </Border>
@@ -212,6 +213,7 @@
                                             <StackPanel HorizontalAlignment="Center" Margin="0,65,0,0">
                                                 <TextBlock Text="Click to Upload, Paste or Drag and Drop" FontWeight="Bold"/>
                                                 <TextBlock Text="JPG, PNG, GIF, TIF, ICO or BMP" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                                                <TextBlock Text="For optimal display, use an image that is 264px wide and 264px high." FontSize="8" HorizontalAlignment="Center" Margin="0,5,0,0"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </Border>

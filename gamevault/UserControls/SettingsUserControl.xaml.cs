@@ -3,24 +3,14 @@ using gamevault.ViewModels;
 using System.IO;
 using System.Windows.Controls;
 using System.Windows;
-using Windows.ApplicationModel;
 using System;
 using gamevault.Helper;
 using System.Threading.Tasks;
-using gamevault.Converter;
-using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
-using static System.Net.Mime.MediaTypeNames;
-using ABI.System;
-using gamevault.UserControls.SettingsComponents;
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
-using IdentityModel.OidcClient;
-using static SkiaSharp.HarfBuzz.SKShaper;
-using System.Dynamic;
-using System.Text.Json;
 
 namespace gamevault.UserControls
 {
@@ -47,7 +37,10 @@ namespace gamevault.UserControls
                 uiCbTheme.SelectedIndex = 0;
             }
         }
-
+        public void SetTabIndex(int index)
+        {
+            uiTabControl.SelectedIndex = index;
+        }
         private void ClearImageCache_Clicked(object sender, RoutedEventArgs e)
         {
 

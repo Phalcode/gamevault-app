@@ -229,6 +229,7 @@
                                             <StackPanel HorizontalAlignment="Center" Margin="0,65,0,0">
                                                 <TextBlock Text="Click to Upload, Paste or Drag and Drop" FontWeight="Bold"/>
                                                 <TextBlock Text="JPG, PNG, GIF, TIF, ICO or BMP" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                                                <TextBlock Text="For optimal display, use an image that is 1920px wide and 1080px high." FontSize="8" HorizontalAlignment="Center" Margin="0,5,0,0"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </Border>
@@ -285,6 +286,7 @@
                                             <StackPanel HorizontalAlignment="Center" Margin="0,50,0,0">
                                                 <TextBlock Text="Click to Upload, Paste or Drag and Drop" FontWeight="Bold"/>
                                                 <TextBlock Text="JPG, PNG, GIF, TIF, ICO or BMP" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                                                <TextBlock Text="For optimal display, use an image that is 600px wide and 900px high." FontSize="8" HorizontalAlignment="Center" Margin="0,5,0,0"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </Border>
@@ -367,7 +369,7 @@
                                                 <Image Source="{Binding Path=BoxImageUrl}" Stretch="UniformToFill" Width="100" HorizontalAlignment="Left"/>
                                                 <TextBlock Text="{Binding Path=Title}" Width="200" FontSize="13" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="105,0,0,0"/>
                                                 <TextBlock Text="{Binding Path=ReleaseDate,StringFormat='{}{0:MM/dd/yyyy}'}" Width="160" FontSize="13" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="105,0,0,0"/>
-                                                <Button Content="Remap" VerticalAlignment="Center" Width="50" HorizontalAlignment="Right" FontSize="10" Click="RawgGameRemap_Click"/>
+                                                <local:IconButton Text="Remap" VerticalAlignment="Center" HorizontalAlignment="Right" Width="50" Height="20" FontSize="10" Click="RawgGameRemap_Click"/>
                                             </Grid>
                                         </Border>
                                     </DataTemplate>

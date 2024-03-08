@@ -30,8 +30,8 @@
                     <Expander x:Name="uiExpanderGameCards" Width="2000" Margin="10,0,10,10" mah:ExpanderHelper.HeaderDownStyle="{StaticResource CustomExpanderToggleButton}" BorderBrush="{x:Null}">
                         <Expander.Header>
                             <Grid Height="35">
-                                <TextBlock Text="Server Games" FontWeight="Bold" HorizontalAlignment="Left" FontSize="20" VerticalAlignment="Center"/>
-                                <TextBlock FontWeight="Bold" HorizontalAlignment="Left" FontSize="20" VerticalAlignment="Center" Margin="135,0,0,0">
+                                <TextBlock Text="Server Games" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" FontWeight="Bold" HorizontalAlignment="Left" FontSize="20" VerticalAlignment="Center"/>
+                                <TextBlock FontWeight="Bold" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" HorizontalAlignment="Left" FontSize="20" VerticalAlignment="Center" Margin="135,0,0,0">
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Visibility" Value="Visible" />
@@ -54,7 +54,7 @@
                                 </TextBlock>
                                 <TextBox HorizontalAlignment="Center" Width="378" Margin="0,4,45,4" Style="{DynamicResource SearchTextBox}" TextChanged="Search_TextChanged"/>
                                 <Grid Style="{DynamicResource HoverEffect}" Background="Transparent" Height="30" Width="35" Margin="400,0,0,0" Cursor="Hand" ToolTip="I'm Feeling Lucky" MouseLeftButtonDown="RandomGame_Click">
-                                    <Path Data="{StaticResource IconLibraryDices}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Margin="-227" RenderTransformOrigin="0.5,0.5">
+                                    <Path Data="{StaticResource IconLibraryDices}" Fill="{DynamicResource MahApps.Brushes.IdealForeground}" Margin="-227" RenderTransformOrigin="0.5,0.5">
                                         <Path.RenderTransform>
                                             <ScaleTransform ScaleX="0.06" ScaleY="0.06"/>
                                         </Path.RenderTransform>
@@ -84,7 +84,7 @@
                                 </Grid>
                                 <mah:Badged Badge="{Binding FilterCounter}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,22,6,0" BadgeBackground="IndianRed"/>
                                 <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" Width="30" Margin="0,0,7,0" Cursor="Hand" ToolTip="Toggle Filters &amp; Sorting" Background="Transparent" MouseLeftButtonDown="Filter_Click">
-                                    <Path Data="{StaticResource IconOpenFilter}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.2,0.2">
+                                    <Path Data="{StaticResource IconOpenFilter}" Fill="{DynamicResource MahApps.Brushes.IdealForeground}" RenderTransformOrigin="0.2,0.2">
                                         <Path.RenderTransform>
                                             <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
                                         </Path.RenderTransform>
@@ -165,8 +165,8 @@
                                         </StackPanel.Style>
                                         <Image Source="pack://application:,,,/gamevault;component/Resources/Images/library_NoGameFound.png" RenderOptions.EdgeMode="Aliased" Height="190"/>
                                         <TextBlock Text="No Games found" FontSize="20" HorizontalAlignment="Center" Margin="0,-10,0,0"/>
-                                        <TextBlock HorizontalAlignment="Center" FontSize="10" Margin="0,5,0,10" >
-                    <Hyperlink TextDecorations="Baseline" NavigateUri="https://gamevau.lt/docs/troubleshooting/#games-not-appearing-in-the-installations--servers-list" RequestNavigate="Hyperlink_RequestNavigate" Foreground="#FFD4D4D4">
+                                        <TextBlock HorizontalAlignment="Center" FontSize="10" Margin="0,5,0,10" Opacity="0.8">
+                    <Hyperlink TextDecorations="Baseline" NavigateUri="https://gamevau.lt/docs/troubleshooting/#games-not-appearing-in-the-installations--servers-list" RequestNavigate="Hyperlink_RequestNavigate" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}">
                     <Hyperlink.Inlines>
                         <Run Text="Troubleshooting"/>
                     </Hyperlink.Inlines>
@@ -188,8 +188,8 @@
                                         </StackPanel.Style>
                                         <Image Source="pack://application:,,,/gamevault;component/Resources/Images/install_NoGameFound.png" RenderOptions.EdgeMode="Aliased" Height="190"/>
                                         <TextBlock Text="Failed to load Library" FontSize="20" HorizontalAlignment="Center" Margin="0,-10,0,0"/>
-                                        <TextBlock HorizontalAlignment="Center" FontSize="10" Margin="0,5,0,10" >
-    <Hyperlink TextDecorations="Baseline" NavigateUri="https://gamevau.lt/docs/troubleshooting/#unable-to-connect-to-server--500-internal-server-error" RequestNavigate="Hyperlink_RequestNavigate" Foreground="#FFD4D4D4">
+                                        <TextBlock HorizontalAlignment="Center" FontSize="10" Margin="0,5,0,10" Opacity="0.8">
+    <Hyperlink TextDecorations="Baseline" NavigateUri="https://gamevau.lt/docs/troubleshooting/#unable-to-connect-to-server--500-internal-server-error" RequestNavigate="Hyperlink_RequestNavigate" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}">
     <Hyperlink.Inlines>
         <Run Text="Troubleshooting"/>
     </Hyperlink.Inlines>

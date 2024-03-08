@@ -6,7 +6,8 @@
 	<system:String x:Key="Theme.ColorScheme">Purple</system:String>
 
 	<Color x:Key="GameVault.Colors.Foreground">#FF06050A</Color> <!-- RTC Text -->
-	<Color x:Key="GameVault.Colors.Background">#FFE2E1EF</Color> <!-- RTC Background -->
+    <Color x:Key="GameVault.Colors.Foreground2">#FFF6F5FA</Color> <!-- Text Alt-->
+    <Color x:Key="GameVault.Colors.Background">#FFE2E1EF</Color> <!-- RTC Background -->
 	<Color x:Key="GameVault.Colors.Background2">#FFD9D7EA</Color> <!-- RTC Secondary -->
 	<Color x:Key="GameVault.Colors.Accent">#FF5950B9</Color> <!-- RTC Primary -->
 	<Color x:Key="GameVault.Colors.Accent2">#995950B9</Color> <!-- RTC Primary with Opacity -->
@@ -52,9 +53,9 @@
 	<SolidColorBrush x:Key="MahApps.Brushes.ThemeBackground2"  Color="{StaticResource GameVault.Colors.Background2}" />
 	<SolidColorBrush x:Key="MahApps.Brushes.ThemeForeground"  Color="{StaticResource GameVault.Colors.Foreground}" />
 	<SolidColorBrush x:Key="MahApps.Brushes.Text"  Color="{StaticResource GameVault.Colors.Foreground}" />
-	<SolidColorBrush x:Key="MahApps.Brushes.IdealForeground"  Color="{StaticResource MahApps.Colors.IdealForeground}" />
+	<SolidColorBrush x:Key="MahApps.Brushes.IdealForeground"  Color="{StaticResource GameVault.Colors.Foreground2}" />
 	<SolidColorBrush x:Key="MahApps.Brushes.IdealForegroundDisabled"  Color="#FFADADAD" />
-	<SolidColorBrush x:Key="MahApps.Brushes.Selected.Foreground"  Color="{StaticResource MahApps.Colors.IdealForeground}" />
+	<SolidColorBrush x:Key="MahApps.Brushes.Selected.Foreground"  Color="{StaticResource GameVault.Colors.Foreground2}" />
 	<SolidColorBrush x:Key="MahApps.Brushes.WindowTitle"  Color="{StaticResource GameVault.Colors.Accent}" />
 	<SolidColorBrush x:Key="MahApps.Brushes.WindowTitle.NonActive"  Color="#808080" />
 	<SolidColorBrush x:Key="MahApps.Brushes.Border.NonActive"  Color="#808080" />
@@ -121,7 +122,7 @@
 	<SolidColorBrush x:Key="MahApps.Brushes.Button.Square.Background.MouseOver"  Color="{StaticResource MahApps.Colors.Gray8}" />
 	<SolidColorBrush x:Key="MahApps.Brushes.Button.Square.Foreground.MouseOver"  Color="{StaticResource GameVault.Colors.Foreground}" />
 	<SolidColorBrush x:Key="MahApps.Brushes.Button.AccentedSquare.Background.MouseOver"  Color="#66000000" />
-	<SolidColorBrush x:Key="MahApps.Brushes.Button.AccentedSquare.Foreground.MouseOver"  Color="{StaticResource MahApps.Colors.IdealForeground}" />
+	<SolidColorBrush x:Key="MahApps.Brushes.Button.AccentedSquare.Foreground.MouseOver"  Color="{StaticResource GameVault.Colors.Foreground2}" />
 	<SolidColorBrush x:Key="MahApps.Brushes.Validation1"  Color="#052A2E31" />
 	<SolidColorBrush x:Key="MahApps.Brushes.Validation2"  Color="#152A2E31" />
 	<SolidColorBrush x:Key="MahApps.Brushes.Validation3"  Color="#252A2E31" />
@@ -164,13 +165,13 @@
 	<SolidColorBrush x:Key="MahApps.Brushes.DataGrid.Selection.BorderBrush.Focus"  Color="{StaticResource GameVault.Colors.Accent}" />
 	<SolidColorBrush x:Key="MahApps.Brushes.DataGrid.Selection.BorderBrush.Inactive"  Color="{StaticResource GameVault.Colors.Accent3}" />
 	<SolidColorBrush x:Key="MahApps.Brushes.DataGrid.Selection.BorderBrush.MouseOver"  Color="{StaticResource GameVault.Colors.Accent2}" />
-	<SolidColorBrush x:Key="MahApps.Brushes.DataGrid.Selection.Text"  Color="{StaticResource MahApps.Colors.IdealForeground}" />
+	<SolidColorBrush x:Key="MahApps.Brushes.DataGrid.Selection.Text"  Color="{StaticResource GameVault.Colors.Foreground2}" />
 	<SolidColorBrush x:Key="MahApps.Brushes.DataGrid.Selection.Text.Disabled"  Color="{StaticResource MahApps.Colors.Gray1}" />
 	<SolidColorBrush x:Key="MahApps.Brushes.DataGrid.Selection.Text.Inactive"  Color="{StaticResource GameVault.Colors.Foreground}" />
-	<SolidColorBrush x:Key="MahApps.Brushes.DataGrid.Selection.Text.MouseOver"  Color="{StaticResource MahApps.Colors.IdealForeground}" />
+	<SolidColorBrush x:Key="MahApps.Brushes.DataGrid.Selection.Text.MouseOver"  Color="{StaticResource GameVault.Colors.Foreground2}" />
 	<SolidColorBrush x:Key="MahApps.Brushes.Badged.Background"  Color="{StaticResource GameVault.Colors.Accent}" />
 	<SolidColorBrush x:Key="MahApps.Brushes.Badged.Background.Disabled"  Color="#FF666666" />
-	<SolidColorBrush x:Key="MahApps.Brushes.Badged.Foreground"  Color="{StaticResource MahApps.Colors.IdealForeground}" />
+	<SolidColorBrush x:Key="MahApps.Brushes.Badged.Foreground"  Color="{StaticResource GameVault.Colors.Foreground2}" />
 	<SolidColorBrush x:Key="MahApps.Brushes.Badged.Foreground.Disabled"  Color="#99000000" />
 	<SolidColorBrush x:Key="MahApps.HamburgerMenu.Pane.Background"  Color="{StaticResource GameVault.Colors.Background2}" />
     <SolidColorBrush x:Key="MahApps.HamburgerMenu.Pane.Foreground"  Color="{StaticResource GameVault.Colors.Foreground}" />

@@ -46,10 +46,10 @@
                                     <DataTemplate>
                                         <Grid Margin="2">
                                             <Border CornerRadius="5" Background="{Binding Name,Converter={StaticResource colorConv}}" Margin="0,0,25,0">
-                                                <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                <TextBlock Text="{Binding Name}" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <Border Background="#02000000" Cursor="Hand" HorizontalAlignment="Right" MouseLeftButtonUp="AddEntry_Click">
-                                                <Path Data="{DynamicResource IconAddTag}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+                                                <Path Data="{DynamicResource IconAddTag}" Fill="{DynamicResource MahApps.Brushes.Accent}"/>
                                             </Border>
                                         </Grid>
                                     </DataTemplate>
