@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -12,6 +13,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Documents;
+using System.Windows.Threading;
 using Windows.Media.Protection.PlayReady;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
@@ -126,18 +128,19 @@ namespace gamevault.Helper
             WebHelper.OverrideCredentials(string.Empty, string.Empty);
             MainWindowViewModel.Instance.Community.Reset();
         }
+        private WpfEmbeddedBrowser wpfEmbeddedBrowser = null;
         public async Task PhalcodeLogin(bool isStartup = false)
         {
             if (isStartup && Preferences.Get(AppConfigKey.Phalcode1, AppFilePath.UserFile, true) != "true")
             {
                 return;
             }
-            WpfEmbeddedBrowser wpfEmbeddedBrowser = new WpfEmbeddedBrowser();
+            wpfEmbeddedBrowser = new WpfEmbeddedBrowser(isStartup);
             var options = new OidcClientOptions()
             {
                 Authority = "https://auth.platform.phalco.de/realms/phalcode",
                 ClientId = "gamevault-app",
-                Scope = "openid profile email offline_access",
+                Scope = "openid profile email",
                 RedirectUri = "http://127.0.0.1/gamevault",
                 Browser = wpfEmbeddedBrowser,
                 Policy = new Policy
@@ -146,26 +149,40 @@ namespace gamevault.Helper
                 }
             };
             var _oidcClient = new OidcClient(options);
-            LoginResult loginResult;
+            LoginResult loginResult = null;
             string? username = null;
+            DispatcherTimer timer = new DispatcherTimer();
             try
             {
+                timer.Interval = TimeSpan.FromSeconds(5);
+                timer.Tick += (s, e) =>
+                {
+                    timer.Stop();
+                    wpfEmbeddedBrowser.ShowWindowIfHidden();
+                };
+                timer.Start();
                 loginResult = await _oidcClient.LoginAsync();
+                timer.Stop();
                 //string token = loginResult.AccessToken;
                 username = loginResult.User == null ? null : loginResult.User.Identity.Name;
                 SettingsViewModel.Instance.License.UserName = username;
+                Preferences.Set(AppConfigKey.Phalcode1, "true", AppFilePath.UserFile, true);
             }
             catch (System.Exception exception)
             {
+                timer.Stop();
                 MainWindowViewModel.Instance.AppBarText = exception.Message;
-                return;
             }
-            if (loginResult.IsError)
+            if (loginResult != null && loginResult.IsError)
             {
+                if (loginResult.Error == "UserCancel")
+                {
+                    loginResult.Error = "Phalcode Sign-in aborted. You can choose to sign in later in the settings.";
+                    Preferences.DeleteKey(AppConfigKey.Phalcode1.ToString(), AppFilePath.UserFile);
+                }
                 MainWindowViewModel.Instance.AppBarText = loginResult.Error;
-                return;
             }
-            Preferences.Set(AppConfigKey.Phalcode1, "true", AppFilePath.UserFile, true);
+
             //#####GET LISENCE OBJECT#####
 
             try
@@ -211,7 +228,14 @@ namespace gamevault.Helper
         }
         public void PhalcodeLogout()
         {
+            SettingsViewModel.Instance.License = new PhalcodeProduct();
             Preferences.DeleteKey(AppConfigKey.Phalcode1.ToString(), AppFilePath.UserFile);
+            Preferences.DeleteKey(AppConfigKey.Phalcode2.ToString(), AppFilePath.UserFile);
+            try
+            {
+                wpfEmbeddedBrowser.ClearAllCookies();
+            }
+            catch (Exception ex) { }
         }
         private LoginState DetermineLoginState(string code)
         {

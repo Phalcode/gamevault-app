@@ -34,7 +34,18 @@ namespace gamevault
         private GameTimeTracker m_gameTimeTracker;
         private async void Application_Startup(object sender, StartupEventArgs e)
         {
-
+            //var signinWindow = new Window()
+            //{
+            //    Width = 0,
+            //    Height = 0,
+            //    Title = "Sign In",
+            //    WindowStartupLocation = WindowStartupLocation.CenterScreen,
+            //    WindowStyle = WindowStyle.None,
+            //    Opacity = 0,
+            //    AllowsTransparency = true,              
+            //};
+            //signinWindow.Show();
+            //return;
             Application.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(AppDispatcherUnhandledException);
             #region DirectoryCreation
             if (!Directory.Exists(AppFilePath.ImageCache))

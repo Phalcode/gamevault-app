@@ -196,9 +196,18 @@ namespace gamevault.UserControls
             }
             else { MainWindowViewModel.Instance.AppBarText = "You are not logged in"; }
         }
-        private async void PhalcodeLoginRegister_Click(object sender, MouseButtonEventArgs e)
+        private async void PhalcodeLoginLogout_Click(object sender, MouseButtonEventArgs e)
         {
-            await LoginManager.Instance.PhalcodeLogin();
+            ((FrameworkElement)sender).IsEnabled = false;
+            if (string.IsNullOrEmpty(SettingsViewModel.Instance.License.UserName))
+            {
+                await LoginManager.Instance.PhalcodeLogin();
+            }
+            else
+            {
+                LoginManager.Instance.PhalcodeLogout();
+            }
+            ((FrameworkElement)sender).IsEnabled = true;
         }
 
         private void ManageBilling_Click(object sender, RoutedEventArgs e)

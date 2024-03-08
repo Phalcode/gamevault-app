@@ -13,7 +13,12 @@ namespace gamevault.Helper
     {
         private BrowserOptions _options = null;
         private WebView2 webView = null;
-              
+        private bool StartWithoutWindow;
+        private Window signinWindow = null;
+        public WpfEmbeddedBrowser(bool startWithoutWindow)
+        {
+            StartWithoutWindow = startWithoutWindow;
+        }
         public async Task<BrowserResult> InvokeAsync(BrowserOptions options, CancellationToken cancellationToken = default)
         {
             _options = options;
@@ -24,13 +29,30 @@ namespace gamevault.Helper
                 ResultType = BrowserResultType.UserCancel
             };
 
-            var signinWindow = new Window()
+
+            if (StartWithoutWindow)
             {
-                Width = 600,
-                Height = 800,
-                Title = "Sign In",
-                WindowStartupLocation = WindowStartupLocation.CenterScreen
-            };
+                signinWindow = new Window()
+                {
+                    Width = 0,
+                    Height = 0,
+                    Title = "Phalcode Silent Sign-in",
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Top = int.MinValue,
+                    Left = int.MinValue,                    
+                    ShowInTaskbar = false,
+                };
+            }
+            else
+            {
+                signinWindow = new Window()
+                {
+                    Width = 600,
+                    Height = 800,
+                    Title = "Phalcode Sign-in",
+                    WindowStartupLocation = WindowStartupLocation.CenterScreen
+                };
+            }
             //signinWindow.Owner = App.Current.MainWindow;
             signinWindow.Closing += (s, e) =>
             {
@@ -71,6 +93,26 @@ namespace gamevault.Helper
             await semaphoreSlim.WaitAsync();
 
             return browserResult;
+        }
+        public void ShowWindowIfHidden()
+        {
+            if (signinWindow.ShowInTaskbar == false)
+            {
+                signinWindow.Width = 600;
+                signinWindow.Height = 800;
+                signinWindow.Title = "Phalcode Sign-in";
+                signinWindow.ShowInTaskbar = true;
+                double screenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;
+                double screenHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
+                double windowWidth = signinWindow.Width;
+                double windowHeight = signinWindow.Height;
+                signinWindow.Left = (screenWidth / 2) - (windowWidth / 2);
+                signinWindow.Top = (screenHeight / 2) - (windowHeight / 2);
+            }
+        }
+        public void ClearAllCookies()
+        {
+            webView.CoreWebView2.CookieManager.DeleteAllCookies();
         }
         private bool IsBrowserNavigatingToRedirectUri(Uri uri)
         {

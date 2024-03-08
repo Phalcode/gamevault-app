@@ -94,7 +94,7 @@
                         <TextBlock Text="GameVault+" FontSize="20" FontWeight="Bold"/>
                         <TextBlock Text="Here, you can enable GameVault+ if you are alredy subscribed." FontSize="15" Margin="0,5,0,0"/>
                         <TextBlock Text="Your Phalcode Account" TextDecorations="Underline" FontSize="15" Margin="0,20,0,0"/>
-                        <Border CornerRadius="10" Height="50" Width="180" Cursor="Hand" HorizontalAlignment="Left" Margin="0,10,0,0" MouseLeftButtonUp="PhalcodeLoginRegister_Click">
+                        <Border CornerRadius="10" Height="50" Cursor="Hand" HorizontalAlignment="Left" Margin="0,10,0,0" MouseLeftButtonUp="PhalcodeLoginLogout_Click">
                             <Border.Style>
                                 <Style TargetType="Border">
                                     <Setter Property="Background" Value="LightGray"/>
@@ -105,9 +105,9 @@
                                     </Style.Triggers>
                                 </Style>
                             </Border.Style>
-                            <Grid>
+                            <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/Images/phalcode_Icon.png" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                <StackPanel HorizontalAlignment="Right" Margin="5" VerticalAlignment="Center" Width="125">
+                                <StackPanel HorizontalAlignment="Left" Margin="0,8,5,5" VerticalAlignment="Center">
                                     <Image Source="/Resources/Images/phalcode_Logo.png" Width="80" Margin="1,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                     <TextBlock FontWeight="Bold" Foreground="Black" FontSize="15">
                                         <TextBlock.Style>
@@ -122,7 +122,22 @@
                                         </TextBlock.Style>
                                     </TextBlock>
                                 </StackPanel>
-                            </Grid>
+                                <Path Name="LogoutIcon" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0,8,0" RenderTransformOrigin="0.5,0.5">
+                                    <Path.Style>
+                                        <Style TargetType="Path">
+                                            <Setter Property="Data" Value="{StaticResource IconLogout}"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding License.UserName}" Value="{x:Null}">
+                                                    <Setter Property="Data" Value="{x:Null}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Path.Style>
+                                    <Path.RenderTransform>
+                                        <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                    </Path.RenderTransform>
+                                </Path>
+                            </StackPanel>
                         </Border>
                         <TextBlock Text="Your GameVault+ Subscription" TextDecorations="Underline" FontSize="15" Margin="0,20,0,0"/>
                         <TextBlock FontSize="15" Margin="0,10,0,0">
