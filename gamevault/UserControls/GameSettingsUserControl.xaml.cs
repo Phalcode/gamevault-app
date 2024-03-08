@@ -154,6 +154,12 @@ namespace gamevault.UserControls
         private async void Uninstall_Click(object sender, MouseButtonEventArgs e)
         {
             ((FrameworkElement)sender).IsEnabled = false;
+            await UninstallGame();
+            ((FrameworkElement)sender).IsEnabled = true;
+        }
+
+        public async Task UninstallGame()
+        {
             if (ViewModel.Game.Type == GameType.WINDOWS_PORTABLE)
             {
                 MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to uninstall '{ViewModel.Game.Title}' ?", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
@@ -222,8 +228,8 @@ namespace gamevault.UserControls
             {
                 MainWindowViewModel.Instance.AppBarText = "Game Type cannot be determined";
             }
-            ((FrameworkElement)sender).IsEnabled = true;
         }
+
         private void InitDiskUsagePieChart()
         {
             Task.Run(() =>

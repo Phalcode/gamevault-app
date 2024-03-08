@@ -28,36 +28,32 @@ namespace gamevault
         public static bool ShowToastMessage = true;
         public static bool IsWindowsPackage = false;
 
+        public static CommandOptions? CommandLineOptions { get; internal set; } = null;
+
         private NotifyIcon m_Icon;
 
         private GameTimeTracker m_gameTimeTracker;
+
         private async void Application_Startup(object sender, StartupEventArgs e)
         {
-
             Application.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(AppDispatcherUnhandledException);
 
 #if DEBUG
             AppFilePath.InitDebugPaths();
+
+            #region DirectoryCreation
+            if (!Directory.Exists(AppFilePath.ImageCache))
+            {
+                Directory.CreateDirectory(AppFilePath.ImageCache);
+            }
+            if (!Directory.Exists(AppFilePath.ConfigDir))
+            {
+                Directory.CreateDirectory(AppFilePath.ConfigDir);
+            }
+            #endregion
+
             await CacheHelper.OptimizeCache();
 #else
-            try
-            {
-                int pcount = Process.GetProcessesByName(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name).Count();
-                if (pcount != 1)
-                {
-                    var client = new NamedPipeClientStream("GameVault");
-                    client.Connect();
-                    StreamWriter writer = new StreamWriter(client);
-                    writer.WriteLine("ShowMainWindow");
-                    writer.Flush();
-                    ShutdownApp();
-                }
-                else
-                {
-                    StartServer();
-                }
-            }
-            catch (Exception ex) { MainWindowViewModel.Instance.AppBarText = "Could not connect to background pipe due to UAC remote restrictions"; }
             try
             {
                 UpdateWindow updateWindow = new UpdateWindow();
@@ -69,6 +65,7 @@ namespace gamevault
                 //m_StoreHelper.NoInternetException();              
             }
 #endif
+
             #region DirectoryCreation
             if (!Directory.Exists(AppFilePath.ImageCache))
             {
@@ -79,17 +76,29 @@ namespace gamevault
                 Directory.CreateDirectory(AppFilePath.ConfigDir);
             }
             #endregion
+
             await LoginManager.Instance.StartupLogin();
             m_gameTimeTracker = new GameTimeTracker();
             await m_gameTimeTracker.Start();
 
-            if (false == SettingsViewModel.Instance.BackgroundStart && MainWindow == null)
+            bool startMinimized = false;
+
+            if ((CommandLineOptions?.Minimized).HasValue)
+                startMinimized = CommandLineOptions!.Minimized!.Value;
+            else if (SettingsViewModel.Instance.BackgroundStart)
+                startMinimized = true;
+
+            if (!startMinimized && MainWindow == null)
             {
                 MainWindow = new MainWindow();
                 MainWindow.Show();
             }
+
             InitNotifyIcon();
 
+            // After the app is created and most things are instantiated, handle any special command line stuff
+            if (PipeServiceHandler.Instance != null)
+                await PipeServiceHandler.Instance.HandleCommand(App.CommandLineOptions);
         }
 
         private void AppDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
@@ -101,6 +110,7 @@ namespace gamevault
             LogUnhandledException(e.Exception);
 #endif
         }
+
         public void LogUnhandledException(Exception e)
         {
             Application.Current.DispatcherUnhandledException -= new DispatcherUnhandledExceptionEventHandler(AppDispatcherUnhandledException);
@@ -121,33 +131,7 @@ namespace gamevault
             }
             ShutdownApp();
         }
-        private void StartServer()
-        {
-            Task.Factory.StartNew(() =>
-            {
-                while (true)
-                {
-                    using (var server = new NamedPipeServerStream("GameVault"))
-                    {
-                        server.WaitForConnection();
-                        StreamReader reader = new StreamReader(server);
 
-                        var line = reader.ReadLine();
-                        if (line == "ShowMainWindow")
-                        {
-                            Dispatcher.Invoke(() =>
-                            {
-                                if (MainWindow == null)
-                                {
-                                    MainWindow = new MainWindow();
-                                }
-                                MainWindow.Show();
-                            });
-                        }
-                    }
-                }
-            });
-        }
         private void InitNotifyIcon()
         {
             m_Icon = new NotifyIcon();
@@ -159,6 +143,7 @@ namespace gamevault
             m_Icon.ContextMenuStrip.Items.Add("Exit", null, NotifyIcon_Exit_Click);
             m_Icon.Visible = true;
         }
+
         private void NotifyIcon_DoubleClick(Object sender, EventArgs e)
         {
             if (MainWindow == null)
@@ -175,6 +160,7 @@ namespace gamevault
                 MainWindow.WindowState = WindowState.Normal;
             }
         }
+
         private async void NotifyIcon_Exit_Click(Object sender, EventArgs e)
         {
             if ((DownloadsViewModel.Instance.DownloadedGames.Where(g => g.IsDownloading() == true)).Count() > 0)
@@ -195,6 +181,7 @@ namespace gamevault
                 ShutdownApp();
             }
         }
+
         private void ShutdownApp()
         {
             ShowToastMessage = false;
