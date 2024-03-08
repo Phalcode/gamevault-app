@@ -9,6 +9,7 @@
 		<UseWindowsForms>True</UseWindowsForms>
 		<ApplicationIcon>Resources\Images\icon.ico</ApplicationIcon>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<StartupObject>gamevault.Program</StartupObject>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -35,6 +36,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CommandLineParser" Version="2.9.1" />
 		<PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.0-rc2" />
 		<PackageReference Include="Magick.NET-Q8-x64" Version="13.5.0" />
 		<PackageReference Include="MahApps.Metro" Version="2.4.10" />

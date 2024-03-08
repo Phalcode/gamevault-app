@@ -96,6 +96,11 @@ namespace gamevault.UserControls
         }
         private void GamePlay_Click(object sender, MouseButtonEventArgs e)
         {
+            GamePlay();
+        }
+
+        public void GamePlay()
+        {
             string path = "";
             KeyValuePair<Game, string> result = InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).FirstOrDefault();
             if (!result.Equals(default(KeyValuePair<Game, string>)))
@@ -147,6 +152,7 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.AppBarText = $"Could not find Executable '{savedExecutable}'";
             }
         }
+
         private void GameSettings_Click(object sender, MouseButtonEventArgs e)
         {
             if (ViewModel.Game == null)
