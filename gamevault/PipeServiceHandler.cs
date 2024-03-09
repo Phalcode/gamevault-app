@@ -570,6 +570,11 @@ namespace gamevault
             GetName,
 
             /// <summary>
+            /// Returns the install directory of the game
+            /// </summary>
+            GetInstallDirectory,
+
+            /// <summary>
             /// Returns the version of the app
             /// </summary>
             GetAppVersion,
@@ -582,7 +587,8 @@ namespace gamevault
             /// <summary>
             /// Returns true/false depending on if the user is logged in
             /// </summary>
-            IsLoggedIn
+            IsLoggedIn,
+
         }
 
         /// <summary>
@@ -644,6 +650,20 @@ namespace gamevault
                             game = await GetServerGame(options.GameId.Value);
 
                         return game?.Title ?? "error: game not found";
+                    }
+                case ActionQueryEnum.GetInstallDirectory:
+                    {
+                        if (!options.GameId.HasValue)
+                            return "error: no game id";
+
+                        var game = await GetInstalledGame(options.GameId.Value);
+
+                        if (game == null)
+                            return "";
+
+                        var installDirectory = InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == game.ID).Select(g => g.Value).FirstOrDefault();
+
+                        return installDirectory ?? "";
                     }
                 case ActionQueryEnum.GetServerUrl:
                     return SettingsViewModel.Instance.ServerUrl;
