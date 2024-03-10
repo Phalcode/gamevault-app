@@ -39,9 +39,18 @@
                         </Hyperlink>
                     </TextBlock>
                 </StackPanel>
-                <local:IconButton Text="Backup / Restore Database" HorizontalAlignment="Right" FontSize="15" Width="190" Margin="10,10,180,10" Click="BackupRestore_Click"/>
-                <local:IconButton Text="Reindex Games" HorizontalAlignment="Right" FontSize="15" Width="120" Margin="10,10,46,10" Click="Reindex_Click"/>
-                <TextBlock Text="↻" Cursor="Hand" ToolTip="Refresh admin console" HorizontalAlignment="Right" Margin="0,2,10,0" FontSize="30" MouseLeftButtonUp="Reload_Click"/>
+                <local:IconButton Text="Backup / Restore Database" Icon="{StaticResource IconDatabase}" IconMargin="0,0,5,2" HorizontalAlignment="Right" FontSize="15" Width="225" Margin="10,10,200,10" Click="BackupRestore_Click"/>
+                <local:IconButton Text="Reindex Games" HorizontalAlignment="Right" FontSize="15" Icon="{StaticResource IconReload}" IconMargin="0,0,5,2" Width="140" Margin="10,10,46,10" Click="Reindex_Click"/>
+                <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Center" HorizontalAlignment="Right" Background="Transparent" Cursor="Hand" Width="30" Height="30" Margin="0,0,5,0" RenderTransformOrigin="0.5,0.5" ToolTip="Refresh admin console" MouseLeftButtonUp="Reload_Click">
+                    <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}">
+                        <Path.RenderTransform>
+                            <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                        </Path.RenderTransform>
+                    </Path>
+                    <Grid.RenderTransform>
+                        <ScaleTransform/>
+                    </Grid.RenderTransform>
+                </Grid>
             </Grid>
         </Border>
         <Grid Grid.RowSpan="2" Panel.ZIndex="1">

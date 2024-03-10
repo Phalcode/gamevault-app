@@ -296,9 +296,10 @@ namespace gamevault.UserControls
                 {
                     ViewModel.DiskSize = $"{gameSizeConverter.Convert(drive.TotalSize, null, null, null).ToString()}";
                 }
+                SolidColorBrush legendTextPaint = (SolidColorBrush)Application.Current.TryFindResource("MahApps.Brushes.Text");
                 App.Current.Dispatcher.Invoke((Action)delegate
                 {
-                    uiDiscUsagePieChart.LegendTextPaint = new SolidColorPaint(new SkiaSharp.SKColor(255, 255, 255));
+                    uiDiscUsagePieChart.LegendTextPaint = new SolidColorPaint(legendTextPaint == null ? new SkiaSharp.SKColor(0, 0, 0) : new SkiaSharp.SKColor(legendTextPaint.Color.R, legendTextPaint.Color.G, legendTextPaint.Color.B));
                     uiDiscUsagePieChart.Series = sliceSeries;
                 });
             });
@@ -401,7 +402,7 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.AppBarText = "No valid Executable set";
                 return;
             }
-            MessageDialogResult result = await((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Do you want to create a desktop shortcut for the current selected executable?", "",
+            MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Do you want to create a desktop shortcut for the current selected executable?", "",
                 MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
             if (result == MessageDialogResult.Affirmative)
             {
@@ -422,7 +423,7 @@ namespace gamevault.UserControls
                 }
                 catch { }
             }
-        }        
+        }
 
         private void LaunchParameter_Changed(object sender, RoutedEventArgs e)
         {
@@ -775,6 +776,6 @@ namespace gamevault.UserControls
 
         #endregion
 
-       
+
     }
 }

@@ -12,6 +12,7 @@
         <conv:GameSizeConverter x:Key="sizeConv"/>
         <conv:InverseVisibilityConverter x:Key="visConv"/>
         <conv:EnumDescriptionConverter x:Key="enumDescConv"/>
+        <conv:GreaterThanConverter x:Key="greaterThanConv"/>
     </UserControl.Resources>
 
     <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Margin="1" Height="80" CornerRadius="2">
@@ -43,25 +44,61 @@
 
             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="56,10,0,0" Text="{Binding State,StringFormat={}State: {0}}" ToolTip="{Binding State}" FontSize="4" Width="122"/>
 
-            <TextBlock Text="📥" FontSize="9" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="55,17,0,0"/>
 
-            <local:IconButton Text="Retry" FontSize="5" Visibility="{Binding DownloadFailedVisibility}" CornerRadius="2" Height="9" Width="26" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="70,20.3,0,0" ToolTip="Download Game" Click="RetryDownload_Click"/>
-            <TextBlock Visibility="{Binding DownloadUIVisibility}" Text="{Binding DownloadInfo}" FontSize="4" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="68,19,0,0" Width="115"/>
 
-            <local:IconButton Kind="Danger" Text="Cancel" FontSize="4" Visibility="{Binding DownloadUIVisibility}" CornerRadius="2" Height="9" Width="14" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,20.3,1,0" ToolTip="Cancel Download" Click="CancelDownload_Click"/>
-            <ProgressBar Visibility="{Binding DownloadUIVisibility}" VerticalAlignment="Top" Margin="68,25,16,51"  Minimum="0" Maximum="100" Value="{Binding GameDownloadProgress}" BorderThickness="0"/>
+            <local:IconButton Text="Retry" FontSize="5" Icon="{StaticResource IconReload}" IconScale="0.3" IconMargin="-9,-5.5,-5,-5" Visibility="{Binding DownloadFailedVisibility}" CornerRadius="2" Height="9" Width="34" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="64,18.3,0,0" ToolTip="Download Game" Click="RetryDownload_Click"/>
+            <TextBlock Visibility="{Binding DownloadUIVisibility}" Text="{Binding DownloadInfo}" FontSize="4" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="64,18,0,0" Width="115"/>
 
-            <local:IconButton x:Name="uiBtnExtract" IsEnabled="False" Text="Extract" FontSize="5" Height="9" Width="26" CornerRadius="2" Visibility="{Binding ExtractionUIVisibility,Converter={StaticResource visConv}}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="70,38,0,0" ToolTip="Extract Game" Click="Extract_Click"/>
+            <local:IconButton Kind="Danger" Text="Cancel" FontSize="4" Visibility="{Binding DownloadUIVisibility}" CornerRadius="2" Height="9" Width="14" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,19.1,1,0" ToolTip="Cancel Download" Click="CancelDownload_Click"/>
+            <ProgressBar Visibility="{Binding DownloadUIVisibility}" VerticalAlignment="Top" Margin="64,24,16,52"  Minimum="0" Maximum="100" Value="{Binding GameDownloadProgress}" BorderThickness="0"/>
 
-            <TextBlock Text="📤" FontSize="9" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="55,35,0,0"/>
-            <TextBlock Visibility="{Binding ExtractionUIVisibility}" Text="{Binding ExtractionInfo}" FontSize="4" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="68,37,0,0" Width="115"/>
+            <local:IconButton x:Name="uiBtnExtract" IsEnabled="False" Text="Extract" FontSize="5" Icon="{StaticResource IconExtract}" IconScale="0.3" IconMargin="-9,-6.5,-5,-6" Height="9" Width="34" CornerRadius="2" Visibility="{Binding ExtractionUIVisibility,Converter={StaticResource visConv}}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="64,42.4,0,0" ToolTip="Extract Game" Click="Extract_Click"/>
 
-            <local:IconButton Kind="Danger" Text="Cancel" FontSize="4" Visibility="{Binding ExtractionUIVisibility}" CornerRadius="2" Height="9" Width="14" HorizontalAlignment="Right" Margin="0,6,1,0" Click="CancelExtraction_Click"/>
-            <ProgressBar Visibility="{Binding ExtractionUIVisibility}" VerticalAlignment="Top" Margin="68,43,16,33"  Minimum="0" Maximum="100" Value="{Binding GameExtractionProgress}" BorderThickness="0"/>
 
-            <TextBlock Text="⚙️" FontSize="9" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="55,55,0,0"/>
+            <TextBlock Visibility="{Binding ExtractionUIVisibility}" Text="{Binding ExtractionInfo}" FontSize="4" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="64,41,0,0" Width="115"/>
 
-            <local:IconButton x:Name="uiBtnInstall" Kind="Primary" IsEnabled="False" Text="Install" FontSize="5" CornerRadius="2" Height="9" Width="26" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="70,43,1,0" ToolTip="Install Game" Click="OpenInstallOptions_Click"/>
+            <local:IconButton Kind="Danger" Text="Cancel" FontSize="4" Visibility="{Binding ExtractionUIVisibility}" CornerRadius="2" Height="9" Width="14" HorizontalAlignment="Right" Margin="0,13.2,1,0" Click="CancelExtraction_Click"/>
+            <ProgressBar Visibility="{Binding ExtractionUIVisibility}" VerticalAlignment="Top" Margin="64,47,16,29"  Minimum="0" Maximum="100" Value="{Binding GameExtractionProgress}" BorderThickness="0"/>
+
+
+            <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left" Margin="56,20,0,0">
+                <Ellipse Name="StepDownload" StrokeThickness="1" Stroke="{DynamicResource MahApps.Brushes.Accent}" Height="6" Width="6">
+                    <Ellipse.Style>
+                        <Style TargetType="Ellipse">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding InstallationStepperProgress,Converter={StaticResource greaterThanConv},ConverterParameter=-1}" Value="True">
+                                    <Setter  Property="Fill" Value="{DynamicResource MahApps.Brushes.Accent}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Ellipse.Style>
+                </Ellipse>
+                <Line X1="0" Y1="0" X2="0" Y2="16" Stroke="{DynamicResource MahApps.Brushes.ThemeForeground}" Opacity="0.5" StrokeThickness="0.5" StrokeDashArray="4 4" Margin="3,2,0,0"/>
+                <Ellipse Name="StepExtract" StrokeThickness="1" Stroke="{DynamicResource MahApps.Brushes.Accent}" Height="6">
+                    <Ellipse.Style>
+                        <Style TargetType="Ellipse">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding InstallationStepperProgress,Converter={StaticResource greaterThanConv},ConverterParameter=0}" Value="True">
+                                    <Setter  Property="Fill" Value="{DynamicResource MahApps.Brushes.Accent}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Ellipse.Style>
+                </Ellipse>
+                <Line X1="0" Y1="0" X2="0" Y2="16" Stroke="{DynamicResource MahApps.Brushes.ThemeForeground}" Opacity="0.5" StrokeThickness="0.5" StrokeDashArray="4 4" Margin="3,2,0,0"/>
+                <Ellipse Name="StepInstall" StrokeThickness="1" Stroke="{DynamicResource MahApps.Brushes.Accent}" Height="6">
+                    <Ellipse.Style>
+                        <Style TargetType="Ellipse">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding InstallationStepperProgress,Converter={StaticResource greaterThanConv},ConverterParameter=1}" Value="True">
+                                    <Setter  Property="Fill" Value="{DynamicResource MahApps.Brushes.Accent}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Ellipse.Style>
+                </Ellipse>
+            </StackPanel>
+            <local:IconButton x:Name="uiBtnInstall" Kind="Primary" IsEnabled="False" Text="Install" FontSize="5" Icon="{StaticResource IconInstalledGamesSettings}" IconScale="0.29" IconMargin="-9,-7,-5.5,-7" CornerRadius="2" Height="9" Width="34" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="64,62,1,0" ToolTip="Install Game" Click="OpenInstallOptions_Click"/>
             <Grid x:Name="uiInstallOptions" Visibility="Collapsed" Margin="56,10,1,2"  MaxWidth="130" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}">
                 <Grid>
                     <Grid.Style>
@@ -88,11 +125,20 @@
                     <TextBlock Text="2. Hit the 'Install' button to launch the games installer." Margin="0,32,0,0" FontSize="4"/>
                     <TextBlock Text="3. Go through the game's setup process." Margin="0,37,0,0" FontSize="4" />
                     <TextBlock Text="Make sure to select this folder as the installers destination:" Margin="4,42,0,0" FontSize="4" />
-                    <Border Background="Gainsboro" CornerRadius="2" Margin="0,49,1,0"  VerticalAlignment="Top" Padding="1" ToolTip="Copy to clipboard" MouseLeftButtonUp="CopyInstallPathToClipboard_Click">
-                        <TextBlock Text="{Binding InstallPath}" FontSize="3" Foreground="#FF424242" HorizontalAlignment="Left" Cursor="Hand"/>
+                    <Border Background="Gainsboro" CornerRadius="2" Margin="0,49,1,0"  VerticalAlignment="Top" Padding="1" Cursor="Hand" ToolTip="Copy to clipboard" MouseLeftButtonUp="CopyInstallPathToClipboard_Click">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Style.Triggers>
+                                    <Trigger Property="UIElement.IsMouseOver" Value="True">
+                                        <Setter Property="Opacity" Value="0.8"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock Text="{Binding InstallPath}" FontSize="3" IsHitTestVisible="False" Foreground="#FF424242" HorizontalAlignment="Left"/>
                     </Border>
 
-                    <local:IconButton Kind="Primary" Text="Install" FontSize="5" CornerRadius="2" Height="9" Width="26" BorderThickness="0.2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,1,0" Click="Install_Click">
+                    <local:IconButton Kind="Primary" Text="Install" FontSize="5" Icon="{StaticResource IconInstalledGamesSettings}" IconScale="0.29" IconMargin="-8,-7,-5.5,-7" CornerRadius="2" Height="9" Width="34" BorderThickness="0.2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,1,0" Click="Install_Click">
                         <local:IconButton.Style>
                             <Style TargetType="{x:Type local:IconButton}" BasedOn="{StaticResource {x:Type local:IconButton}}">
                                 <Style.Triggers>
@@ -123,7 +169,7 @@
 
                     <TextBlock FontSize="4" TextWrapping="Wrap" Text="This is a Portable Game, so there's no need for any setup. Once you click 'Install', the files will be automatically moved to the installation folder." MaxWidth="126" Margin="0,18,0,0"/>
 
-                    <local:IconButton Kind="Primary" Text="Install" FontSize="5" CornerRadius="2" Height="9" Width="26" BorderThickness="0.2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,1,0" Click="Install_Click"/>
+                    <local:IconButton Kind="Primary" Text="Install" FontSize="5" Icon="{StaticResource IconInstalledGamesSettings}" IconScale="0.29" IconMargin="-8,-7,-5.5,-7" CornerRadius="2" Height="9" Width="34" BorderThickness="0.2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,1,0" Click="Install_Click"/>
                 </Grid>
                 <Grid>
                     <Grid.Style>
@@ -145,7 +191,7 @@
                     <mah:ProgressRing x:Name="uiProgressRingInstall" IsActive="False"/>
                 </Viewbox>
 
-                <local:IconButton Kind="Skeleton" Text="Back" FontSize="5" CornerRadius="2" Height="9" Width="26" BorderThickness="0.2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,43,1,0" Click="InstallOptionCancel_Click"/>
+                <local:IconButton Kind="Skeleton" Text="Back" FontSize="5" CornerRadius="2" Height="9" Width="34" BorderThickness="0.2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,43,1,0" Click="InstallOptionCancel_Click"/>
             </Grid>
         </Grid>
     </Border>

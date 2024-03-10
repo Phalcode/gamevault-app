@@ -9,7 +9,16 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
     <Grid>
-        <TextBlock Text="x" FontWeight="Bold" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,-2,5,0" FontSize="15" Panel.ZIndex="1" MouseLeftButtonUp="BackupRestorePopup_Close" Cursor="Hand"/>
+        <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" Margin="0,5,7,0" Panel.ZIndex="1" Height="20" Width="20" Cursor="Hand" MouseLeftButtonUp="BackupRestorePopup_Close">
+            <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Stroke="{DynamicResource MahApps.Brushes.ThemeForeground}" Data="{DynamicResource IconClose}" Margin="-2,-1,0,0" RenderTransformOrigin="0.5,0.5">
+                <Path.RenderTransform>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                </Path.RenderTransform>
+            </Path>
+            <Grid.RenderTransform>
+                <ScaleTransform/>
+            </Grid.RenderTransform>
+        </Grid>
         <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground}" Padding="10" BorderBrush="{DynamicResource MahApps.Brushes.Control.Border}" BorderThickness="2" CornerRadius="10">
             <TabControl Width="500" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" Height="235">
                 <TabItem Header="Backup">

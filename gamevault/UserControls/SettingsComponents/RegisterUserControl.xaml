@@ -16,7 +16,7 @@
             <TextBox Text="{Binding RegistrationUser.EMail,UpdateSourceTrigger=PropertyChanged}" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="E-mail" Margin="5"/>
             <PasswordBox x:Name="uiPwReg" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.Watermark="Password*" Margin="5"/>
             <PasswordBox x:Name="uiPwRegRepeat" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.Watermark="Repeat password*" Margin="5"/>
-            <controls:IconButton x:Name="uiBtnRegister" Text="Register" Height="30" Margin="5" FontSize="15" Click="Registration_Clicked"/>
+            <controls:IconButton x:Name="uiBtnRegister" Text="Register" Icon="{StaticResource IconLogin}" IconMargin="0,0,5,2" Height="30" Margin="5" FontSize="15" Click="Registration_Clicked"/>
         </StackPanel>
     </Border>
 </UserControl>

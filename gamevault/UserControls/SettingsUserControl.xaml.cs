@@ -11,6 +11,8 @@ using System.Windows.Input;
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
+using MahApps.Metro.Controls.Dialogs;
+using MahApps.Metro.Controls;
 
 namespace gamevault.UserControls
 {
@@ -27,10 +29,10 @@ namespace gamevault.UserControls
             this.DataContext = ViewModel;
 
             string currentTheme = Preferences.Get(AppConfigKey.Theme, AppFilePath.UserFile, true);
-            var theme = SettingsViewModel.Instance.Themes.Where(theme => theme.Value == currentTheme).ToArray();
-            if (theme.Count() > 0)
+            int themeIndex = Array.FindIndex(ViewModel.Themes, i => i.Value == currentTheme);
+            if (themeIndex != -1 && (ViewModel.Themes[themeIndex].IsPlus == true ? ViewModel.License.IsActive() : true))
             {
-                uiCbTheme.SelectedItem = theme[0];
+                uiCbTheme.SelectedIndex = themeIndex;
             }
             else
             {
@@ -198,7 +200,11 @@ namespace gamevault.UserControls
             }
             else
             {
-                LoginManager.Instance.PhalcodeLogout();
+                MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to log out of your Phalcode account? GameVault Plus features will no longer be usable.", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+                if (result == MessageDialogResult.Affirmative)
+                {
+                    LoginManager.Instance.PhalcodeLogout();
+                }
             }
             ((FrameworkElement)sender).IsEnabled = true;
         }
@@ -219,11 +225,25 @@ namespace gamevault.UserControls
             string selectedTheme = ((ComboBox)sender).SelectedValue.ToString();
             if (((ComboBox)sender).SelectionBoxItem == string.Empty)
                 return;
-            if (((KeyValuePair<string, string>)((ComboBox)sender).SelectionBoxItem).Value == selectedTheme)
+            if (((ThemeItem)((ComboBox)sender).SelectionBoxItem).Value == selectedTheme)
                 return;
+            if (((ThemeItem)e.AddedItems[0]).IsPlus == true && ViewModel.License.IsActive() == false)
+            {
+                ((ComboBox)sender).SelectedItem = (ThemeItem)((ComboBox)sender).SelectionBoxItem;
+                try
+                {
+#if DEBUG
+                    string url = "https://test.phalco.de/products/gamevault-plus/checkout?hit_paywall=true";
+#else
+                    string url = "https://phalco.de/products/gamevault-plus/checkout?hit_paywall=true";
+#endif
 
+                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                }
+                catch { }
+                return;
+            }
             App.Current.Resources.MergedDictionaries[0] = new ResourceDictionary() { Source = new System.Uri(selectedTheme) };
-            //SettingsViewModel.Instance.Themes.Where(theme=>theme.Value==selectedTheme).FirstOrDefault();
             Preferences.Set(AppConfigKey.Theme, selectedTheme, AppFilePath.UserFile, true);
         }
     }

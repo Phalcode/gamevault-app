@@ -61,11 +61,13 @@ namespace gamevault.UserControls
                     uiBtnExtract.IsEnabled = true;
                     uiBtnInstall.IsEnabled = true;
                     uiBtnExtract.Text = "Re-Extract";
+                    ViewModel.InstallationStepperProgress = 1;
                 }
                 else
                 {
                     ViewModel.State = "Downloaded";
                     uiBtnExtract.IsEnabled = true;
+                    ViewModel.InstallationStepperProgress = 0;
                 }
             }
         }
@@ -173,6 +175,7 @@ namespace gamevault.UserControls
             IsDownloadActive = false;
             ViewModel.State = "Downloaded";
             uiBtnExtract.IsEnabled = true;
+            ViewModel.InstallationStepperProgress = 0;
             if (!Directory.Exists(ViewModel.InstallPath))
             {
                 Directory.CreateDirectory(ViewModel.InstallPath);
@@ -298,6 +301,7 @@ namespace gamevault.UserControls
                 ViewModel.State = "Extracted";
                 uiBtnExtract.Text = "Re-Extract";
                 uiBtnInstall.IsEnabled = true;
+                ViewModel.InstallationStepperProgress = 1;
                 ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
             }
             else
@@ -399,6 +403,7 @@ namespace gamevault.UserControls
                 else
                 {
                     MainWindowViewModel.Instance.AppBarText = $"Successfully installed '{ViewModel.Game.Title}'";
+                    ViewModel.InstallationStepperProgress = 2;
                 }
             }
             else if (ViewModel.Game.Type == GameType.WINDOWS_SETUP)

@@ -11,8 +11,8 @@
     <Border BorderBrush="{DynamicResource MahApps.Brushes.Control.Border}" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" BorderThickness="2" CornerRadius="10" Width="205" Padding="5" KeyDown="Login_KeyDown">
         <StackPanel>
             <TextBox Text="{Binding UserName,UpdateSourceTrigger=PropertyChanged}" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="User" Margin="5"/>
-            <PasswordBox x:Name="uiPwBox" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Password" Margin="5" />           
-            <controls:IconButton x:Name="uiBtnLogin" Text="Login" FontSize="15" Height="30" Margin="5" Click="Login_Clicked"/>
+            <PasswordBox x:Name="uiPwBox" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Password" Margin="5" />
+            <controls:IconButton x:Name="uiBtnLogin" Text="Login" FontSize="15" Icon="{StaticResource IconLogin}" IconMargin="0,0,5,2" Height="30" Margin="5" Click="Login_Clicked"/>
         </StackPanel>
     </Border>
 </UserControl>

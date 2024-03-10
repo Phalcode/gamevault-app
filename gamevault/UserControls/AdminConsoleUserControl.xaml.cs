@@ -234,7 +234,9 @@ namespace gamevault.UserControls
 
         private async void Reload_Click(object sender, MouseButtonEventArgs e)
         {
+            ((FrameworkElement)sender).IsEnabled = false;
             await InitUserList();
+            ((FrameworkElement)sender).IsEnabled = true;
         }
         private async Task<KeyValuePair<string, string>> GetServerVersionInfo()
         {

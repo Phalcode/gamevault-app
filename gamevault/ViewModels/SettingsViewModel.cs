@@ -157,15 +157,15 @@ namespace gamevault.ViewModels
             get { return m_RegistrationUser; }
             set { m_RegistrationUser = value; OnPropertyChanged(); }
         }
-        public Dictionary<string, string> Themes
+        public ThemeItem[] Themes
         {
             get
             {
-                return new Dictionary<string, string>() {
-                    { "GameVault Dark","pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultDark.xaml"},
-                    { "GameVault Light","pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultLight.xaml"},
-                    { "Lime Dark","pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeLimeDark.xaml"},
-                    { "Lime Light","pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeLimeLight.xaml"}
+                return new ThemeItem[] {
+                    new  ThemeItem(){ Key="GameVault Dark",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultDark.xaml",IsPlus=false},
+                    new  ThemeItem(){ Key="GameVault Light",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultLight.xaml",IsPlus=false},
+                    new  ThemeItem(){ Key="Lime Dark",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeLimeDark.xaml",IsPlus=true},
+                    new  ThemeItem(){ Key="Lime Light",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeLimeLight.xaml",IsPlus=true}
                 };
             }
         }
@@ -214,5 +214,11 @@ namespace gamevault.ViewModels
             }
         }
 
+    }
+    public class ThemeItem
+    {
+        public string Key { get; set; }
+        public string Value { get; set; }
+        public bool IsPlus { get; set; }
     }
 }
