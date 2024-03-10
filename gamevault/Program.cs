@@ -127,7 +127,7 @@ namespace gamevault
                 if (cmdLineOptions.Action == CommandOptions.ActionEnum.Query)
                 {
                     // We're sending a query through the pipe, this is mostly for debugging
-                    var result = PipeServiceHandler.SendMessage(cmdLineOptions.UriData!, expectsResult: true).Result;
+                    var result = PipeServiceHandler.SendMessage(cmdLineOptions.UriData!, expectsResult: true).GetAwaiter().GetResult();
 
                     result = result?.Trim('\r', '\n');
 
@@ -139,7 +139,7 @@ namespace gamevault
                     return;
                 }
 
-                PipeServiceHandler.SendMessage(cmdLineOptions.UriData, expectsResult: false).Wait();
+                PipeServiceHandler.SendMessage(cmdLineOptions.UriData, expectsResult: false).GetAwaiter().GetResult();
                 Environment.Exit(1);
                 return;
             }
