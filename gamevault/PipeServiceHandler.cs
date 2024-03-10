@@ -38,6 +38,36 @@ namespace gamevault
         /// </summary>
         public static PipeServiceHandler? Instance { get; private set; }
 
+        private TaskCompletionSource isReadyForCommandsTCS = new TaskCompletionSource();
+
+        private bool _isReadyForCommands = false;
+
+        /// <summary>
+        /// Whether or not the handler is ready for commands. If set to false (the default) then all commands sent to the main instance will be queued until ready.
+        /// </summary>
+        public bool IsReadyForCommands
+        {
+            get => _isReadyForCommands;
+            set
+            {
+                if (_isReadyForCommands == value)
+                    return;
+
+                if (value)
+                {
+                    isReadyForCommandsTCS?.TrySetResult();
+                }
+                else
+                {
+                    // If we somehow have an existing tcs, cancel it before making a new one
+                    isReadyForCommandsTCS?.TrySetCanceled();
+                    isReadyForCommandsTCS = new TaskCompletionSource();
+                }
+
+                _isReadyForCommands = value;
+            }
+        }
+
         private PipeServiceHandler()
         {
         }
@@ -150,6 +180,9 @@ namespace gamevault
 
             try
             {
+                if (!IsReadyForCommands)
+                    await isReadyForCommandsTCS.Task;
+
                 string? message = null;
 
                 reader = new StreamReader(server, leaveOpen: true);
@@ -267,6 +300,9 @@ namespace gamevault
         {
             if (options == null)
                 return null;
+
+            if (!IsReadyForCommands)
+                await isReadyForCommandsTCS.Task;
 
             bool showMainWindow = false;
             bool isGameInstalled = false;
