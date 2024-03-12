@@ -1,6 +1,7 @@
 ﻿using gamevault.Helper;
 using gamevault.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace gamevault.ViewModels
@@ -29,7 +30,7 @@ namespace gamevault.ViewModels
         #region PrivateMembers       
         private string m_UserName { get; set; }
         private string m_RootPath { get; set; }
-        private bool m_IsOnIdle = true;
+
         private bool m_BackgroundStart { get; set; }
         private bool m_LibStartup { get; set; }
         private bool m_AutoExtract { get; set; }
@@ -39,6 +40,7 @@ namespace gamevault.ViewModels
         private long m_DownloadLimit { get; set; }
         private long m_DownloadLimitUIValue { get; set; }
         private User m_RegistrationUser = new User() { ProfilePicture = new Image(), BackgroundImage = new Image() };
+        private PhalcodeProduct license { get; set; }
         #endregion
 
         public SettingsViewModel()
@@ -79,11 +81,6 @@ namespace gamevault.ViewModels
         {
             get { return m_RootPath; }
             set { m_RootPath = value; OnPropertyChanged(); }
-        }
-        public bool IsOnIdle
-        {
-            get { return m_IsOnIdle; }
-            set { m_IsOnIdle = value; OnPropertyChanged(); }
         }
         public bool BackgroundStart
         {
@@ -160,6 +157,27 @@ namespace gamevault.ViewModels
             get { return m_RegistrationUser; }
             set { m_RegistrationUser = value; OnPropertyChanged(); }
         }
+        public ThemeItem[] Themes
+        {
+            get
+            {
+                return new ThemeItem[] {
+                    new  ThemeItem(){ Key="GameVault Dark",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultDark.xaml",IsPlus=false},
+                    new  ThemeItem(){ Key="GameVault Light",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultLight.xaml",IsPlus=false},
+                    new  ThemeItem(){ Key="Lime Dark",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeLimeDark.xaml",IsPlus=true},
+                    new  ThemeItem(){ Key="Lime Light",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeLimeLight.xaml",IsPlus=true}
+                };
+            }
+        }
+        public PhalcodeProduct License
+        {
+            get
+            {
+                if (license == null) { license = new PhalcodeProduct(); }
+                return license;
+            }
+            set { license = value; OnPropertyChanged(); }
+        }
         public System.Windows.Forms.DialogResult SelectDownloadPath()
         {
             using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
@@ -192,9 +210,15 @@ namespace gamevault.ViewModels
         {
             get
             {
-                return "1.8.2";
+                return "1.9.0";
             }
         }
 
+    }
+    public class ThemeItem
+    {
+        public string Key { get; set; }
+        public string Value { get; set; }
+        public bool IsPlus { get; set; }
     }
 }

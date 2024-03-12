@@ -52,7 +52,7 @@ namespace gamevault.Windows
                     {
                         MainWindowViewModel.Instance.ActiveControl = MainWindowViewModel.Instance.Downloads;
                         break;
-                    }              
+                    }
                 case MainControl.Community:
                     {
                         MainWindowViewModel.Instance.ActiveControl = MainWindowViewModel.Instance.Community;
@@ -126,6 +126,23 @@ namespace gamevault.Windows
                 Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
             }
             e.Handled = true;
+        }
+
+        private void Premium_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (SettingsViewModel.Instance.License.IsActive())
+            {
+                MainWindowViewModel.Instance.SetActiveControl(MainControl.Settings);
+                MainWindowViewModel.Instance.Settings.SetTabIndex(3);
+                return;
+            }
+            try
+            {
+                string url = ((FrameworkElement)sender).Tag as string;
+                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                e.Handled = true;
+            }
+            catch { }
         }
     }
 }

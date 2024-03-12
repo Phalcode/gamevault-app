@@ -7,6 +7,7 @@
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:local="clr-namespace:gamevault.UserControls"
              xmlns:settingsComponents="clr-namespace:gamevault.UserControls.SettingsComponents"
+             xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
     <UserControl.Resources>
@@ -19,16 +20,16 @@
             <RowDefinition Height="50"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Border Background="{StaticResource DarkBackground4}" Grid.Row="0">
+        <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Grid.Row="0">
             <Grid>
-                <TextBlock Text="Settings" FontSize="35" Margin="20,0,0,0" Foreground="White"/>
+                <TextBlock Text="Settings" FontSize="35" Margin="20,0,0,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
                 <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Version,StringFormat='{}V {0}'}" Margin="0,0,5,0"/>
             </Grid>
         </Border>
         <ScrollViewer Grid.Row="1" Margin="10" VerticalScrollBarVisibility="Auto">
-            <TabControl TabStripPlacement="Left" SelectionChanged="TabControl_SelectionChanged">
+            <TabControl x:Name="uiTabControl" TabStripPlacement="Left" SelectionChanged="TabControl_SelectionChanged">
                 <TabItem Header="Application">
-                    <StackPanel Margin="20,0,0,0">
+                    <StackPanel Margin="30,0,0,0">
                         <StackPanel Margin="0,0,0,0">
                             <TextBlock Text="General" FontSize="20" FontWeight="Bold"/>
                             <mah:ToggleSwitch Header="Auto-Load Library from Server on Startup" Margin="10,10,0,0" IsOn="{Binding LibStartup}"/>
@@ -39,8 +40,8 @@
                             <settingsComponents:ServerUrlUserControl Margin="10,10,0,0" HorizontalAlignment="Left"/>
                             <GroupBox Header="Download Limit" Margin="10,10,0,0" Width="510" HorizontalAlignment="Left" mah:ControlsHelper.CornerRadius="4">
                                 <StackPanel>
-                                    <TextBox Text="{Binding DownloadLimitUIValue,UpdateSourceTrigger=PropertyChanged}" Margin="0,10,0,5" MaxLength="8" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="{Binding DownloadLimitUIValue,Converter={StaticResource downloadLimitConv}}" PreviewTextInput="DownloadLimit_InputValidation" TextChanged="DownloadLimit_InputValidation" KeyDown="DownloadLimit_Save"/>
-                                    <Button Content="Save" FontSize="15" Width="80" HorizontalAlignment="Left" Click="DownloadLimit_Save"/>
+                                    <TextBox Text="{Binding DownloadLimitUIValue,UpdateSourceTrigger=PropertyChanged}" Margin="0,10,0,5" MaxLength="8" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.Watermark="{Binding DownloadLimitUIValue,Converter={StaticResource downloadLimitConv}}" PreviewTextInput="DownloadLimit_InputValidation" TextChanged="DownloadLimit_InputValidation" KeyDown="DownloadLimit_Save"/>
+                                    <local:IconButton Text="Save" FontSize="15" Icon="{StaticResource IconGameSettingsSave}" IconMargin="0,0,5,2" Width="80" Height="30" HorizontalAlignment="Left" Click="DownloadLimit_Save"/>
                                 </StackPanel>
                             </GroupBox>
                         </StackPanel>
@@ -49,21 +50,44 @@
                             <mah:ToggleSwitch x:Name="uiAutostartToggle" Header="Launch GameVault on Computer Startup" VerticalAlignment="Top" Margin="10,10,0,0"/>
                             <mah:ToggleSwitch Header="Minimize GameVault to System Tray on Startup" VerticalAlignment="Top" IsOn="{Binding BackgroundStart}" Margin="10,10,0,0"/>
                         </StackPanel>
+                        <StackPanel Margin="0,10,0,0">
+                            <TextBlock Text="Theme" FontSize="20" FontWeight="Bold"/>
+                            <ComboBox x:Name="uiCbTheme" ItemsSource="{Binding Themes}" SelectedValuePath="Value" Margin="0,10,0,0" Width="520" HorizontalAlignment="Left" SelectionChanged="Themes_SelectionChanged">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Width="496">
+                                            <TextBlock Text="{Binding Key}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                            <Path Fill="{DynamicResource MahApps.Brushes.Accent}" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                <Path.Style>
+                                                    <Style TargetType="Path">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsPlus}" Value="True">
+                                                                <Setter Property="Data" Value="{StaticResource IconLock}"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Path.Style>
+                                            </Path>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </StackPanel>
                     </StackPanel>
                 </TabItem>
                 <TabItem Header="User">
-                    <StackPanel Margin="20,0,0,0">
+                    <StackPanel Margin="30,0,0,0">
                         <StackPanel Margin="0,0,0,0">
                             <TextBlock Text="Account" FontSize="20" FontWeight="Bold"/>
                             <settingsComponents:LoginUserControl  Margin="10,10,0,0" HorizontalAlignment="Left"/>
-                            <Button Content="Logout" VerticalAlignment="Bottom" Height="32" Margin="10,10,0,0" HorizontalAlignment="Left" Width="205" FontSize="15" Click="Logout_Click"/>
+                            <local:IconButton Text="Logout" Icon="{StaticResource IconLogout}" IconMargin="0,0,5,2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="30" Margin="10,10,0,0" Width="205" FontSize="15" Click="Logout_Click"/>
                             <settingsComponents:RegisterUserControl Margin="10,10,0,0" HorizontalAlignment="Left"/>
-                            <Button Content="Edit your User" VerticalAlignment="Bottom" Height="32" Margin="10,10,0,0" HorizontalAlignment="Left" Width="205" FontSize="15" Click="EditUser_Click"/>
+                            <local:IconButton Text="Edit your User" Icon="{StaticResource IconInstalledGamesSettings}" IconMargin="0,0,5,2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="30" Margin="10,10,0,0" Width="205" FontSize="15" Click="EditUser_Click"/>
                         </StackPanel>
                     </StackPanel>
                 </TabItem>
                 <TabItem Header="Data">
-                    <StackPanel Margin="20,0,0,0">
+                    <StackPanel Margin="30,0,0,0">
                         <StackPanel Margin="0,0,0,0">
                             <TextBlock Text="File System" FontSize="20" FontWeight="Bold"/>
                             <settingsComponents:RootPathUserControl Margin="10,10,0,0"/>
@@ -71,18 +95,96 @@
                         <StackPanel Margin="0,10,0,0">
                             <TextBlock Text="Cache Management" FontSize="20" FontWeight="Bold"/>
                             <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
-                                <Button Content="Clear image cache"  FontSize="15" Width="175" HorizontalAlignment="Left" Click="ClearImageCache_Clicked" ToolTip="Clears the entire image cache"/>
+                                <local:IconButton Text="Clear image cache" FontSize="15" Icon="{StaticResource IconCleanup}" IconScale="0.08" IconMargin="-110,-100,-105,-100" Width="175" Height="30" HorizontalAlignment="Left" ToolTip="Clears the entire image cache" Click="ClearImageCache_Clicked"/>
                                 <TextBlock Text="{Binding ImageCacheSize,Converter={StaticResource sizeConv},StringFormat={}({0})}" FontSize="20" Margin="10,0,0,0"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="10,10,0,0">
-                                <Button Content="Clear offline cache" FontSize="15" Width="175" HorizontalAlignment="Left" Click="ClearOfflineCache_Clicked" ToolTip="Clears the entire offline cache"/>
+                                <local:IconButton Text="Clear offline cache" FontSize="15" Icon="{StaticResource IconCleanup}" IconScale="0.08" IconMargin="-110,-100,-105,-100" Width="175" Height="30" HorizontalAlignment="Left" Click="ClearOfflineCache_Clicked" ToolTip="Clears the entire offline cache"/>
                                 <TextBlock Text="{Binding OfflineCacheSize,Converter={StaticResource sizeConv},StringFormat={}({0})}" FontSize="20" Margin="10,0,0,0"/>
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
                 </TabItem>
+                <TabItem Header="GameVault+">
+                    <StackPanel Margin="30,0,0,0">
+                        <TextBlock Text="GameVault+" FontSize="20" FontWeight="Bold"/>
+                        <TextBlock Text="Here, you can enable GameVault+ if you are alredy subscribed." FontSize="15" Margin="0,5,0,0"/>
+                        <TextBlock Text="Your Phalcode Account" TextDecorations="Underline" FontSize="15" Margin="0,20,0,0"/>
+                        <Border CornerRadius="10" Height="50" Cursor="Hand" HorizontalAlignment="Left" Margin="0,10,0,0" MouseLeftButtonUp="PhalcodeLoginLogout_Click">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Background" Value="LightGray"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="Border.IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="WhiteSmoke"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="/Resources/Images/phalcode_Icon.png" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <StackPanel HorizontalAlignment="Left" Margin="0,8,5,5" VerticalAlignment="Center">
+                                    <Image Source="/Resources/Images/phalcode_Logo.png" Width="80" Margin="1,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                    <TextBlock FontWeight="Bold" Foreground="Black" FontSize="15">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Text" Value="{Binding License.UserName}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding License.UserName}" Value="{x:Null}">
+                                                        <Setter Property="TextBlock.Text" Value="Log in or Register"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                                <Path Name="LogoutIcon" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0,8,0" RenderTransformOrigin="0.5,0.5">
+                                    <Path.Style>
+                                        <Style TargetType="Path">
+                                            <Setter Property="Data" Value="{StaticResource IconLogout}"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding License.UserName}" Value="{x:Null}">
+                                                    <Setter Property="Data" Value="{x:Null}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Path.Style>
+                                    <Path.RenderTransform>
+                                        <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                    </Path.RenderTransform>
+                                </Path>
+                            </StackPanel>
+                        </Border>
+                        <TextBlock Text="Your GameVault+ Subscription" TextDecorations="Underline" FontSize="15" Margin="0,20,0,0"/>
+                        <TextBlock FontSize="15" Margin="0,10,0,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Text" Value="{Binding License.CurrentPeriodStart,StringFormat='{}Subscribed since {0}'}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding License.CurrentPeriodStart}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock FontSize="15" Margin="0,10,0,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Text" Value="{Binding License.CurrentPeriodEnd,StringFormat='{}Current period ends {0}'}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding License.CurrentPeriodEnd}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <local:IconButton Text="Manage Billing" FontSize="15" Icon="{StaticResource IconBilling}" IconScale="0.04" IconMargin="-180,-400,-175,-400" Width="150" Height="40" HorizontalAlignment="Left" Margin="0,20,0,0" Click="ManageBilling_Click"/>
+                    </StackPanel>
+                </TabItem>
             </TabControl>
         </ScrollViewer>
-        <Rectangle Grid.Row="1" Stroke="White" Width="1" HorizontalAlignment="Left" Margin="165,10,0,10"/>
+        <Rectangle Grid.Row="1" Stroke="{DynamicResource MahApps.Brushes.ThemeForeground}" Width="1" HorizontalAlignment="Left" Margin="175,10,0,10"/>
     </Grid>
 </UserControl>

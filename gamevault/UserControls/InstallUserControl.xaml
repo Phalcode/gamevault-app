@@ -11,11 +11,11 @@
         <Expander x:Name="uiInstalledGames" Margin="10" mah:ExpanderHelper.HeaderDownStyle="{StaticResource CustomExpanderToggleButton}" BorderBrush="{x:Null}" Expanded="InstalledGames_Toggled" Collapsed="InstalledGames_Toggled">
             <Expander.Header>
                 <Grid Height="35">
-                    <TextBlock Text="{Binding Path=InstalledGames.Count,StringFormat='{}Installed Games ({0})'}" FontWeight="Bold" HorizontalAlignment="Left" FontSize="20" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding Path=InstalledGames.Count,StringFormat='{}Installed Games ({0})'}" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" FontWeight="Bold" HorizontalAlignment="Left" FontSize="20" VerticalAlignment="Center"/>
                     <TextBox HorizontalAlignment="Center" Width="376" Margin="0,4,44,4" Style="{DynamicResource SearchTextBox}" TextChanged="Search_TextChanged"/>
                 </Grid>
             </Expander.Header>
-            <Border Background="{StaticResource DarkBackground4}" CornerRadius="5" Margin="-6,5,-6,0" VerticalAlignment="Top">
+            <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" CornerRadius="5" Margin="-6,5,-6,0" VerticalAlignment="Top">
                 <Grid>
                     <StackPanel Panel.ZIndex="1">
                         <StackPanel.Style>
@@ -30,8 +30,8 @@
                         </StackPanel.Style>
                         <Image Source="pack://application:,,,/gamevault;component/Resources/Images/library_NoGameFound.png" RenderOptions.EdgeMode="Aliased" Height="190"/>
                         <TextBlock Text="No Games found" FontSize="20" HorizontalAlignment="Center" Margin="0,-10,0,0"/>
-                        <TextBlock HorizontalAlignment="Center" FontSize="10" Margin="0,5,0,10">
-                            <Hyperlink TextDecorations="Baseline" NavigateUri="https://gamevau.lt/docs/troubleshooting/#games-not-appearing-in-the-installations--servers-list" RequestNavigate="Hyperlink_RequestNavigate" Foreground="#FFD4D4D4">
+                        <TextBlock HorizontalAlignment="Center" FontSize="10" Margin="0,5,0,10" Opacity="0.8">
+                            <Hyperlink TextDecorations="Baseline" NavigateUri="https://gamevau.lt/docs/troubleshooting/#games-not-appearing-in-the-installations--servers-list" RequestNavigate="Hyperlink_RequestNavigate" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}">
                                 <Hyperlink.Inlines>
                                     <Run Text="Troubleshooting"/>
                                 </Hyperlink.Inlines>
@@ -82,10 +82,10 @@
                                                 </Style.Triggers>
                                             </Style>
                                         </Grid.Style>
-                                        <Border Background="{StaticResource DarkBackground2}" CornerRadius="8">
+                                        <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground}" CornerRadius="8">
                                             <local:CacheImage Stretch="Fill" ImageCacheType="BoxArt" Data="{Binding Key}" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
-                                        <Border Name="banner" VerticalAlignment="Stretch" Background="#B2000000" CornerRadius="8">
+                                        <Border Name="banner" VerticalAlignment="Stretch" Background="{DynamicResource GameVault.Brushes.Blur}" CornerRadius="8">
                                             <Border.Style>
                                                 <Style TargetType="{x:Type Border}">
                                                     <Style.Triggers>
@@ -98,7 +98,7 @@
                                             <Grid>
                                                 <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,12,10,0" MouseLeftButtonUp="Settings_Click" Background="#02000000">
                                                     <Path Data="{StaticResource IconInstalledGamesSettings}"
-                                                      Fill="White" RenderTransformOrigin="0.5,0.5">
+                                                      Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
                                                         <Path.RenderTransform>
                                                             <ScaleTransform ScaleX="1.3" ScaleY="1.3"/>
                                                         </Path.RenderTransform>
@@ -107,9 +107,9 @@
                                                         <ScaleTransform/>
                                                     </Grid.RenderTransform>
                                                 </Grid>
-                                                <TextBlock Text="{Binding Path=Key.Title}" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" TextAlignment="Center" TextWrapping="Wrap"/>
+                                                <TextBlock Text="{Binding Path=Key.Title}" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}" TextAlignment="Center" TextWrapping="Wrap"/>
                                                 <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,40" MouseLeftButtonUp="Play_Click" Background="Transparent" Height="40" Width="40">
-                                                    <Path Data="{StaticResource IconInstalledGamesPlay}" Fill="White" RenderTransformOrigin="0.2,0.2">
+                                                    <Path Data="{StaticResource IconInstalledGamesPlay}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.2,0.2">
                                                         <Path.RenderTransform>
                                                             <ScaleTransform ScaleX="2.8" ScaleY="2.8"/>
                                                         </Path.RenderTransform>

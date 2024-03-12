@@ -28,8 +28,8 @@
         <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="1" Width="48" Height="50">
             <Border MouseLeftButtonUp="UserIcon_Clicked" Cursor="Hand">
                 <Grid>
-                    <uc:CacheImage ImageCacheType="UserIcon" Data="{Binding Path=UserIcon}"/>
-                    <Border Background="{DynamicResource DarkBackground3}" CornerRadius="5,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Visibility="{Binding OnlineState}">
+                    <uc:CacheImage ImageCacheType="UserIcon" Stretch="Fill" Data="{Binding Path=UserIcon}"/>
+                    <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" CornerRadius="5,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Visibility="{Binding OnlineState}">
                         <Path Data="{DynamicResource IconNoSignal}" Fill="IndianRed"/>
                     </Border>
                 </Grid>
@@ -55,6 +55,19 @@
                 <mah:TransitioningContentControl RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding ActiveControl}" FocusVisualStyle="{x:Null}"/>
             </mah:HamburgerMenu.Content>
         </mah:HamburgerMenu>
+        <Border CornerRadius="5" Padding="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="40" Width="40" Margin="4.1,0,0,4.1" Tag="https://gamevau.lt/gamevault-plus" MouseLeftButtonUp="Premium_Click" ToolTip="Open GameVault Plus Website" Cursor="Hand">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Background" Value="{DynamicResource GameVault.Brushes.Button}"/>
+                    <Style.Triggers>
+                        <Trigger Property="UIElement.IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource GameVault.Brushes.Button.MouseOver}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <Image Source="/Resources/Images/glyph_premium.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+        </Border>
         <Grid Panel.ZIndex="1">
             <Viewbox>
                 <mah:TransitioningContentControl RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding Popup}" FocusVisualStyle="{x:Null}"/>
@@ -70,7 +83,7 @@
                 </Style>
             </Grid.Style>
         </Grid>
-        <mah:Flyout IsOpen="{Binding IsAppBarOpen,UpdateSourceTrigger=PropertyChanged}" Background="{StaticResource DarkBackground2}" Height="80" IsAutoCloseEnabled="True" AutoCloseInterval="4000" Focusable="False" Panel.ZIndex="2"
+        <mah:Flyout IsOpen="{Binding IsAppBarOpen,UpdateSourceTrigger=PropertyChanged}" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" Height="80" IsAutoCloseEnabled="True" AutoCloseInterval="4000" Focusable="False" Panel.ZIndex="2"
                         CloseButtonVisibility="Collapsed"
                         Position="Bottom"
                         TitleVisibility="Collapsed">

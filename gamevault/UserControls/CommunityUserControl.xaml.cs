@@ -6,13 +6,11 @@ using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Diagnostics;
 
 namespace gamevault.UserControls
 {

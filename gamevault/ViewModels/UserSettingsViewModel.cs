@@ -16,7 +16,7 @@ namespace gamevault.ViewModels
         private bool backgroundImageChanged { get; set; }
         private bool avatarImageChanged { get; set; }
         private ImageSource backgroundImageSource { get; set; }
-        private ImageSource avatarImageSource { get; set; }
+        private string avatarImageUrl { get; set; }
         #endregion
         public User User
         {
@@ -43,10 +43,10 @@ namespace gamevault.ViewModels
             get { return backgroundImageSource; }
             set { backgroundImageSource = value; OnPropertyChanged(); BackgroundImageChanged = true; }
         }
-        public ImageSource AvatarImageSource
+        public string AvatarImageUrl
         {
-            get { return avatarImageSource; }
-            set { avatarImageSource = value; OnPropertyChanged(); AvatarImageChanged = true; }
+            get { return avatarImageUrl; }
+            set { avatarImageUrl = value; OnPropertyChanged(); AvatarImageChanged = true; }
         }
     }
 }
