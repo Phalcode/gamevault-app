@@ -10,13 +10,9 @@ using System.Windows.Forms;
 using Application = System.Windows.Application;
 using System.Linq;
 using gamevault.Helper;
-using System.Windows.Media.Imaging;
-using System.Windows.Media;
 using System.Threading.Tasks;
 using System.IO.Pipes;
 using System.Windows.Threading;
-using System.Diagnostics;
-using System.Collections.Generic;
 
 namespace gamevault
 {
@@ -37,10 +33,6 @@ namespace gamevault
         private async void Application_Startup(object sender, StartupEventArgs e)
         {
             Application.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(AppDispatcherUnhandledException);
-
-#if DEBUG
-            AppFilePath.InitDebugPaths();
-
             #region DirectoryCreation
             if (!Directory.Exists(AppFilePath.ImageCache))
             {
@@ -52,10 +44,17 @@ namespace gamevault
             }
             #endregion
 
+#if DEBUG
+            AppFilePath.InitDebugPaths();
+            RestoreTheme();
+
+            
+
             await CacheHelper.OptimizeCache();
 #else
             try
             {
+                RestoreTheme();
                 UpdateWindow updateWindow = new UpdateWindow();
                 updateWindow.ShowDialog();
             }
@@ -65,19 +64,8 @@ namespace gamevault
                 //m_StoreHelper.NoInternetException();              
             }
 #endif
-
-            #region DirectoryCreation
-            if (!Directory.Exists(AppFilePath.ImageCache))
-            {
-                Directory.CreateDirectory(AppFilePath.ImageCache);
-            }
-            if (!Directory.Exists(AppFilePath.ConfigDir))
-            {
-                Directory.CreateDirectory(AppFilePath.ConfigDir);
-            }
-            #endregion
-
             await LoginManager.Instance.StartupLogin();
+            await LoginManager.Instance.PhalcodeLogin(true);
             m_gameTimeTracker = new GameTimeTracker();
             await m_gameTimeTracker.Start();
 
@@ -147,7 +135,21 @@ namespace gamevault
             m_Icon.ContextMenuStrip.Items.Add("Exit", null, NotifyIcon_Exit_Click);
             m_Icon.Visible = true;
         }
-
+        private void RestoreTheme()
+        {
+            try
+            {
+                string currentTheme = Preferences.Get(AppConfigKey.Theme, AppFilePath.UserFile, true);
+                if (currentTheme != string.Empty)
+                {
+                    if (App.Current.Resources.MergedDictionaries[0].Source.OriginalString != currentTheme)
+                    {
+                        App.Current.Resources.MergedDictionaries[0] = new ResourceDictionary() { Source = new Uri(currentTheme) };
+                    }
+                }
+            }
+            catch { }
+        }
         private void NotifyIcon_DoubleClick(Object sender, EventArgs e)
         {
             if (MainWindow == null)

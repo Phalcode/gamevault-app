@@ -15,13 +15,11 @@ using System.Windows.Media.Imaging;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Net;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView.Extensions;
 using gamevault.Converter;
 using System.Windows.Media;
 using LiveChartsCore.SkiaSharpView.Painting;
-using SkiaSharp;
 
 namespace gamevault.UserControls
 {
@@ -144,14 +142,13 @@ namespace gamevault.UserControls
         {
             MainWindowViewModel.Instance.ClosePopup();
         }
-        #region INSTALLATION
-        private void OpenDirectory_Click(object sender, MouseButtonEventArgs e)
+        #region INSTALLATION        
+        private void OpenDirectory_Click(object sender, RoutedEventArgs e)
         {
             if (Directory.Exists(ViewModel.Directory))
                 Process.Start("explorer.exe", ViewModel.Directory);
         }
-
-        private async void Uninstall_Click(object sender, MouseButtonEventArgs e)
+        private async void Uninstall_Click(object sender, RoutedEventArgs e)
         {
             ((FrameworkElement)sender).IsEnabled = false;
             await UninstallGame();
@@ -303,9 +300,10 @@ namespace gamevault.UserControls
                 {
                     ViewModel.DiskSize = $"{gameSizeConverter.Convert(drive.TotalSize, null, null, null).ToString()}";
                 }
+                SolidColorBrush legendTextPaint = (SolidColorBrush)Application.Current.TryFindResource("MahApps.Brushes.Text");
                 App.Current.Dispatcher.Invoke((Action)delegate
                 {
-                    uiDiscUsagePieChart.LegendTextPaint = new SolidColorPaint(new SkiaSharp.SKColor(255, 255, 255));
+                    uiDiscUsagePieChart.LegendTextPaint = new SolidColorPaint(legendTextPaint == null ? new SkiaSharp.SKColor(0, 0, 0) : new SkiaSharp.SKColor(legendTextPaint.Color.R, legendTextPaint.Color.G, legendTextPaint.Color.B));
                     uiDiscUsagePieChart.Series = sliceSeries;
                 });
             });
@@ -401,8 +399,7 @@ namespace gamevault.UserControls
                 }
             }
         }
-
-        private async void CreateDesktopShortcut_Click(object sender, MouseButtonEventArgs e)
+        private async void CreateDesktopShortcut_Click(object sender, RoutedEventArgs e)
         {
             if (!File.Exists(SavedExecutable))
             {
@@ -546,7 +543,7 @@ namespace gamevault.UserControls
                     MainWindowViewModel.Instance.AppBarText = ex.Message;
             }
         }
-        private void FindImages_Click(object sender, MouseButtonEventArgs e)
+        private void FindImages_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -581,12 +578,12 @@ namespace gamevault.UserControls
                 boxImageUrldebounceTimer.Tick += BoxImageDebounceTimerElapsed;
             }
         }
-        private async void BoxImage_Save(object sender, MouseButtonEventArgs e)
+        private async void BoxImage_Save(object sender, RoutedEventArgs e)
         {
             ViewModel.BoxArtImageChanged = false;
             await SaveImage("box");
         }
-        private async void BackgroundImage_Save(object sender, MouseButtonEventArgs e)
+        private async void BackgroundImage_Save(object sender, RoutedEventArgs e)
         {
             ViewModel.BackgroundImageChanged = false;
             await SaveImage("");
@@ -777,6 +774,9 @@ namespace gamevault.UserControls
             MainWindowViewModel.Instance.Library.RefreshGame(ViewModel.Game);
             this.IsEnabled = true;
         }
+
+
+
 
         #endregion
 

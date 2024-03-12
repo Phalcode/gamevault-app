@@ -23,7 +23,10 @@ namespace gamevault.Models
         InstalledGamesOpen,
         LaunchParameter,
         ShowRawgTitle,
-        LastPlayed
+        LastPlayed,
+        Phalcode1,
+        Phalcode2,
+        Theme
     }
     public static class AppFilePath
     {
@@ -31,6 +34,7 @@ namespace gamevault.Models
         internal static string OfflineProgress = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/cache/prgs";
         internal static string OfflineCache = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/cache/local";
         internal static string ConfigDir = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/config";
+        internal static string WebConfigDir = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/config/web";
         internal static string UserFile = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/config/user";
         internal static string IgnoreList = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/cache/ignorelist";
         internal static string ErrorLog = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/errorlog";
@@ -42,6 +46,7 @@ namespace gamevault.Models
             OfflineProgress = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/debug/cache/prgs";
             OfflineCache = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/debug/cache/local";
             ConfigDir = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/debug/config";
+            WebConfigDir = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/debug/config/web";
             UserFile = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/debug/config/user";
             IgnoreList = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/debug/cache/ignorelist";
             ErrorLog = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/debug/errorlog";

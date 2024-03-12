@@ -17,12 +17,13 @@ namespace gamevault.ViewModels
         private string m_State { get; set; }
         private int m_GameDownloadProgress { get; set; }
         private int m_GameExtractionProgress { get; set; }
+        private int installationStepperProgress { get; set; } = -1;
         private string m_DownloadInfo { get; set; }
         private string m_ExtractionInfo { get; set; }
         private string m_InstallPath { get; set; }
         private Visibility m_DownloadUIVisibility { get; set; }
         private Visibility m_ExtractionUIVisibility { get; set; }
-        private Visibility m_DownloadFailedVisibility { get; set; }
+        private Visibility m_DownloadFailedVisibility { get; set; }       
 
         #endregion
 
@@ -45,6 +46,11 @@ namespace gamevault.ViewModels
         {
             get { return m_GameExtractionProgress; }
             set { m_GameExtractionProgress = value; OnPropertyChanged(); }
+        }
+        public int InstallationStepperProgress
+        {
+            get { return installationStepperProgress; }
+            set { installationStepperProgress = value; OnPropertyChanged(); }
         }
         public string DownloadInfo
         {

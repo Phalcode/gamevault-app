@@ -2,7 +2,6 @@
 using gamevault.Helper;
 using gamevault.Models;
 using gamevault.ViewModels;
-using ImageMagick.Formats;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System;
@@ -60,12 +59,14 @@ namespace gamevault.UserControls
                     ViewModel.State = "Extracted";
                     uiBtnExtract.IsEnabled = true;
                     uiBtnInstall.IsEnabled = true;
-                    ((TextBlock)uiBtnExtract.Child).Text = "Re-Extract";
+                    uiBtnExtract.Text = "Re-Extract";
+                    ViewModel.InstallationStepperProgress = 1;
                 }
                 else
                 {
                     ViewModel.State = "Downloaded";
                     uiBtnExtract.IsEnabled = true;
+                    ViewModel.InstallationStepperProgress = 0;
                 }
             }
         }
@@ -138,7 +139,7 @@ namespace gamevault.UserControls
                 ViewModel.DownloadFailedVisibility = System.Windows.Visibility.Visible;
             }
         }
-        private void RetryDownload_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void RetryDownload_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.DownloadInfo = string.Empty;
             ViewModel.GameDownloadProgress = 0;
@@ -170,6 +171,7 @@ namespace gamevault.UserControls
             IsDownloadActive = false;
             ViewModel.State = "Downloaded";
             uiBtnExtract.IsEnabled = true;
+            ViewModel.InstallationStepperProgress = 0;
             if (!Directory.Exists(ViewModel.InstallPath))
             {
                 Directory.CreateDirectory(ViewModel.InstallPath);
@@ -184,11 +186,11 @@ namespace gamevault.UserControls
             }
         }
 
-        private void CancelDownload_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void CancelDownload_Click(object sender, RoutedEventArgs e)
         {
             CancelDownload();
         }
-        private void CancelExtraction_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void CancelExtraction_Click(object sender, RoutedEventArgs e)
         {
             extractionCancelled = true;
             sevenZipHelper.Cancel();
@@ -272,11 +274,10 @@ namespace gamevault.UserControls
             ViewModel.ExtractionInfo = $"{$"{FormatBytesHumanReadable(totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds, 1000)}/s"} - {FormatBytesHumanReadable(totalBytesDownloaded)} of {FormatBytesHumanReadable(Convert.ToInt64(ViewModel.Game.Size))} | Time left: {CalculateTimeLeft(Convert.ToInt64(ViewModel.Game.Size), totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds)}";
             ViewModel.GameExtractionProgress = e.PercentageDone;
         }
-
-        private async void Extract_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private async void Extract_Click(object sender, RoutedEventArgs e)
         {
             await Extract();
-        }
+        }      
         private async Task Extract()
         {
             if (!Directory.Exists(m_DownloadPath))
@@ -308,8 +309,9 @@ namespace gamevault.UserControls
                 }
                 Preferences.Set(AppConfigKey.ExtractionFinished, "1", $"{m_DownloadPath}\\Extract\\gamevault-metadata");
                 ViewModel.State = "Extracted";
-                ((TextBlock)uiBtnExtract.Child).Text = "Re-Extract";
+                uiBtnExtract.Text = "Re-Extract";
                 uiBtnInstall.IsEnabled = true;
+                ViewModel.InstallationStepperProgress = 1;
                 ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
             }
             else
@@ -334,19 +336,15 @@ namespace gamevault.UserControls
                 ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
             }
         }
-
-        private void OpenInstallOptions_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void OpenInstallOptions_Click(object sender, RoutedEventArgs e)
         {
             uiInstallOptions.Visibility = System.Windows.Visibility.Visible;
             LoadSetupExecutables();
-
         }
-
-        private void InstallOptionCancel_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void InstallOptionCancel_Click(object sender, RoutedEventArgs e)
         {
             uiInstallOptions.Visibility = System.Windows.Visibility.Collapsed;
-        }
-
+        }        
         private void LoadSetupExecutables()
         {
             if (Directory.Exists($"{m_DownloadPath}\\Extract"))
@@ -378,8 +376,7 @@ namespace gamevault.UserControls
                 uiCbSetupExecutable.ItemsSource = null;
             }
         }
-
-        private async void Install_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private async void Install_Click(object sender, RoutedEventArgs e)
         {
             ((FrameworkElement)sender).IsEnabled = false;
             uiBtnExtract.IsEnabled = false;
@@ -408,7 +405,7 @@ namespace gamevault.UserControls
                 uiProgressRingInstall.IsActive = false;
                 ((FrameworkElement)sender).IsEnabled = true;
                 ViewModel.State = "Downloaded";
-                ((TextBlock)uiBtnExtract.Child).Text = "Extract";
+                uiBtnExtract.Text = "Extract";
                 if (error)
                 {
                     MainWindowViewModel.Instance.AppBarText = "Something wen't wrong during installation";
@@ -416,6 +413,7 @@ namespace gamevault.UserControls
                 else
                 {
                     MainWindowViewModel.Instance.AppBarText = $"Successfully installed '{ViewModel.Game.Title}'";
+                    ViewModel.InstallationStepperProgress = 2;
                 }
             }
             else if (ViewModel.Game.Type == GameType.WINDOWS_SETUP)
@@ -457,7 +455,7 @@ namespace gamevault.UserControls
             uiInstallOptions.Visibility = System.Windows.Visibility.Collapsed;
             uiProgressRingInstall.IsActive = false;
             uiBtnExtract.IsEnabled = true;
-        }
+        }      
 
         private void CopyInstallPathToClipboard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -467,6 +465,6 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.AppBarText = "Copied Installation Directory to Clipboard";
             }
             catch { }
-        }
+        }       
     }
 }

@@ -1,6 +1,7 @@
 ﻿using gamevault.Models;
 using gamevault.ViewModels;
 using ImageMagick;
+using LiveChartsCore.Drawing;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,7 +28,7 @@ namespace gamevault.Helper
             catch { }
         }
 
-        internal static async Task<BitmapImage> HandleImageCacheAsync(int identifier, int imageId, string cachePath, ImageCache cacheType)
+        internal static async Task HandleImageCacheAsync(int identifier, int imageId, string cachePath, ImageCache cacheType, System.Windows.Controls.Image img)
         {
             string cacheFile = $"{cachePath}/{identifier}.{imageId}";
             try
@@ -38,8 +39,21 @@ namespace gamevault.Helper
                 }
                 if (File.Exists(cacheFile))
                 {
-                    //if file exists then return it directly
-                    return BitmapHelper.GetBitmapImage(cacheFile);
+                    if (cacheType == ImageCache.UserIcon)
+                    {
+                        if (TaskQueue.Instance.IsAlreadyInProcess(imageId))
+                        {
+                            await TaskQueue.Instance.WaitForProcessToFinish(imageId);
+                        }
+                        if (GifHelper.IsGif(cacheFile))
+                        {
+                            await GifHelper.LoadGif(cacheFile, img);
+                            return;
+                        }
+                        img.BeginAnimation(System.Windows.Controls.Image.SourceProperty, null);
+                    }
+                    //if file exists then return it directly                   
+                    img.Source = BitmapHelper.GetBitmapImage(cacheFile);
                 }
                 else
                 {
@@ -55,7 +69,15 @@ namespace gamevault.Helper
                             File.Delete(files[0]);
                         }
                         await TaskQueue.Instance.Enqueue(() => WebHelper.DownloadImageFromUrlAsync($"{SettingsViewModel.Instance.ServerUrl}/api/images/{imageId}", cacheFile), imageId);
-                        return BitmapHelper.GetBitmapImage(cacheFile);
+                        if (cacheType == ImageCache.UserIcon)
+                        {
+                            if (GifHelper.IsGif(cacheFile))
+                            {
+                                await GifHelper.LoadGif(cacheFile, img);
+                                return;
+                            }
+                        }
+                        img.Source = BitmapHelper.GetBitmapImage(cacheFile);
                     }
                     else
                     {
@@ -63,7 +85,7 @@ namespace gamevault.Helper
                         {
                             //if we are offline, we will try to load an old image with the same identifier
                             cacheFile = files[0];
-                            return BitmapHelper.GetBitmapImage(cacheFile);
+                            img.Source = BitmapHelper.GetBitmapImage(cacheFile);
                         }
                         else
                         {
@@ -80,7 +102,8 @@ namespace gamevault.Helper
                     if (TaskQueue.Instance.IsAlreadyInProcess(imageId))
                     {
                         await TaskQueue.Instance.WaitForProcessToFinish(imageId);
-                        return BitmapHelper.GetBitmapImage(cacheFile);
+                        img.Source = BitmapHelper.GetBitmapImage(cacheFile);
+                        return;
                     }
                 }
                 catch { }
@@ -88,15 +111,18 @@ namespace gamevault.Helper
                 {
                     case ImageCache.BoxArt:
                         {
-                            return BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/library_NoBoxart.png");
+                            img.Source = BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/library_NoBoxart.png");
+                            break;
                         }
                     case ImageCache.UserIcon:
                         {
-                            return BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/com_NoUserIcon.png");
+                            img.Source = BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/com_NoUserIcon.png");
+                            break;
                         }
                     default:
                         {
-                            return BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/gameView_NoBackground.jpg");
+                            img.Source = BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/gameView_NoBackground.jpg");
+                            break;
                         }
                 }
             }
@@ -115,6 +141,16 @@ namespace gamevault.Helper
                         var image = new FileInfo(file);
                         if (image.Length > 0)
                         {
+                            if (file.Contains("uico"))
+                            {
+                                if (GifHelper.IsGif(file))
+                                {
+                                    int maxGifHeightWidth = 400;
+                                    GifHelper.OptimizeGIF(file, maxGifHeightWidth);
+                                    image.Refresh();
+                                    continue;
+                                }
+                            }
                             ResizeImage(file, Convert.ToInt32(maxHeight));
                             image.Refresh();
                         }
