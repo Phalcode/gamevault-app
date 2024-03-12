@@ -15,13 +15,11 @@ using System.Windows.Media.Imaging;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Net;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView.Extensions;
 using gamevault.Converter;
 using System.Windows.Media;
 using LiveChartsCore.SkiaSharpView.Painting;
-using SkiaSharp;
 
 namespace gamevault.UserControls
 {

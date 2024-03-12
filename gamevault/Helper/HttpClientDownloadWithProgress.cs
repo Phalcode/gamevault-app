@@ -111,14 +111,11 @@ namespace gamevault.Helper
                     await fileStream.WriteAsync(buffer, 0, bytesRead);
 
                     totalBytesRead += bytesRead;
-                    //readCount += 1;                    
                     if ((DateTime.Now - lastTime).TotalSeconds > 2)
                     {
                         TriggerProgressChanged(totalDownloadSize, totalBytesRead);
                         lastTime = DateTime.Now;
                     }
-                    //if (readCount % 100 == 0)
-                    //    TriggerProgressChanged(totalDownloadSize, totalBytesRead);
                 }
                 while (isMoreToRead);
             }

@@ -2,7 +2,6 @@
 using gamevault.Helper;
 using gamevault.Models;
 using gamevault.ViewModels;
-using ImageMagick.Formats;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System;

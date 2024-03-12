@@ -8,8 +8,6 @@ using gamevault.Helper;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
-using System.Collections.Generic;
-using System.Linq;
 using System.Diagnostics;
 using MahApps.Metro.Controls.Dialogs;
 using MahApps.Metro.Controls;

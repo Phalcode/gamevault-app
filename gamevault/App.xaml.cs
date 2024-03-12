@@ -10,14 +10,9 @@ using System.Windows.Forms;
 using Application = System.Windows.Application;
 using System.Linq;
 using gamevault.Helper;
-using System.Windows.Media.Imaging;
-using System.Windows.Media;
 using System.Threading.Tasks;
 using System.IO.Pipes;
 using System.Windows.Threading;
-using System.Diagnostics;
-using System.Collections.Generic;
-using LiveChartsCore.Kernel;
 
 namespace gamevault
 {
@@ -33,19 +28,7 @@ namespace gamevault
 
         private GameTimeTracker m_gameTimeTracker;
         private async void Application_Startup(object sender, StartupEventArgs e)
-        {
-            //var signinWindow = new Window()
-            //{
-            //    Width = 0,
-            //    Height = 0,
-            //    Title = "Sign In",
-            //    WindowStartupLocation = WindowStartupLocation.CenterScreen,
-            //    WindowStyle = WindowStyle.None,
-            //    Opacity = 0,
-            //    AllowsTransparency = true,              
-            //};
-            //signinWindow.Show();
-            //return;
+        {           
             Application.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(AppDispatcherUnhandledException);
             #region DirectoryCreation
             if (!Directory.Exists(AppFilePath.ImageCache))
