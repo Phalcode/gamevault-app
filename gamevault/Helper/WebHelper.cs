@@ -1,5 +1,4 @@
-﻿using ControlzEx.Standard;
-using gamevault.Models;
+﻿using gamevault.Models;
 using gamevault.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -7,14 +6,8 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net.Mime;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
-using System.Security.Policy;
-using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace gamevault.Helper
 {
@@ -43,7 +36,7 @@ namespace gamevault.Helper
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
 #if DEBUG
-            request.Timeout = 3000;
+            //request.Timeout = 3000;
 #endif
             request.UserAgent = $"GameVault/{SettingsViewModel.Instance.Version}";
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
@@ -61,7 +54,7 @@ namespace gamevault.Helper
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
 #if DEBUG
-            request.Timeout = 3000;
+            //request.Timeout = 3000;
 #endif
             request.UserAgent = $"GameVault/{SettingsViewModel.Instance.Version}";
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;

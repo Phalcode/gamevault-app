@@ -3,6 +3,7 @@ using gamevault.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 
 namespace gamevault.ViewModels
 {
@@ -210,7 +211,7 @@ namespace gamevault.ViewModels
         {
             get
             {
-                return "1.9.0";
+                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
             }
         }
 

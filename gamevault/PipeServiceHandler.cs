@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using gamevault.Helper;
 using gamevault.Models;
+using gamevault.UserControls;
 using gamevault.ViewModels;
 using Windows.Devices.Sms;
 
@@ -110,25 +111,32 @@ namespace gamevault
                 return;
 
 #if WINDOWS
-            var view = Microsoft.Win32.RegistryView.Registry32;
-            if (Environment.Is64BitOperatingSystem)
-                view = Microsoft.Win32.RegistryView.Registry64;
+            if (!App.IsWindowsPackage)
+            {
+                var view = Microsoft.Win32.RegistryView.Registry32;
+                if (Environment.Is64BitOperatingSystem)
+                    view = Microsoft.Win32.RegistryView.Registry64;
 
-            using var root = Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.CurrentUser, view);
-            using var classes = root.OpenSubKey(@"Software\Classes", true)!;
+                using var root = Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.CurrentUser, view);
+                using var classes = root.OpenSubKey(@"Software\Classes", true)!;
 
-            var openString = $"\"{executablePath}\" --uridata \"%1\"";
-            using var existing = classes.OpenSubKey(@$"{GAMEVAULT_URI_SCHEME}\shell\open\command");
+                var openString = $"\"{executablePath}\" --uridata \"%1\"";
+                using var existing = classes.OpenSubKey(@$"{GAMEVAULT_URI_SCHEME}\shell\open\command");
 
-            if (existing != null && existing.GetValue("")?.ToString() == openString)
-                return;
+                if (existing != null && existing.GetValue("")?.ToString() == openString)
+                    return;
 
-            using var newEntry = classes.CreateSubKey(GAMEVAULT_URI_SCHEME);
-            newEntry.SetValue("", $"URL:{GAMEVAULT_URI_NAME}");
-            newEntry.SetValue("URL Protocol", "");
+                using var newEntry = classes.CreateSubKey(GAMEVAULT_URI_SCHEME);
+                newEntry.SetValue("", $"URL:{GAMEVAULT_URI_NAME}");
+                newEntry.SetValue("URL Protocol", "");
 
-            using var command = newEntry.CreateSubKey(@"shell\open\command");
-            command.SetValue("", openString);
+                using var command = newEntry.CreateSubKey(@"shell\open\command");
+                command.SetValue("", openString);
+            }
+            else
+            {
+                //Add MC Store Code if necessary
+            }
 #endif
         }
 
@@ -452,7 +460,7 @@ namespace gamevault
 
                 }
             }
-            
+
             if (game == null)
             {
                 string compressedStringObject = Preferences.Get(id.ToString(), AppFilePath.OfflineCache);
@@ -480,12 +488,11 @@ namespace gamevault
             // Ensure we're on the UI thread
             await Dispatch(() =>
             {
-                var gameViewUserControl = new UserControls.GameViewUserControl(game, false);
 
+                var gameViewUserControl = new UserControls.GameViewUserControl(game, LoginManager.Instance.IsLoggedIn());
                 // Set the correct UI regardless of if it's visible to let the user manage it
                 MainWindowViewModel.Instance.SetActiveControl(gameViewUserControl);
-
-                gameViewUserControl.GamePlay();
+                InstallUserControl.PlayGame(game.ID);
             });
         }
 
@@ -520,7 +527,7 @@ namespace gamevault
             // Ensure we're on the UI thread
             await Dispatch(async () =>
             {
-                var gameSettingsUserControl = new UserControls.GameSettingsUserControl(game);
+                var gameSettingsUserControl = new UserControls.GameSettingsUserControl(game) { Width = 1200, Height = 800, Margin = new Thickness(50) };
 
                 // Would be nice to have this all in the background but there's potentially multiple popups that could have multiple options
                 MainWindowViewModel.Instance.OpenPopup(gameSettingsUserControl);
@@ -573,7 +580,7 @@ namespace gamevault
                 // Ensure we're on the UI thread
                 await Dispatch(() =>
                 {
-                    var gameViewUserControl = new UserControls.GameViewUserControl(game, false);
+                    var gameViewUserControl = new UserControls.GameViewUserControl(game, LoginManager.Instance.IsLoggedIn());
                     MainWindowViewModel.Instance.SetActiveControl(gameViewUserControl);
                 });
             }

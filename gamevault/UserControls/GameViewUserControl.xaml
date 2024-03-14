@@ -355,15 +355,15 @@
                         <StackPanel Orientation="Horizontal" Margin="0,-5,0,0">
                             <StackPanel>
                                 <TextBlock Text="PLAYTIME" FontWeight="Bold" FontSize="20" />
-                                <TextBlock Text="{Binding Path=Progress.MinutesPlayed,Converter={StaticResource timeConv}}" FontSize="20" HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding Path=CurrentUserProgress.MinutesPlayed,Converter={StaticResource timeConv}}" FontSize="20" HorizontalAlignment="Center"/>
                             </StackPanel>
                             <StackPanel Margin="20,0,0,0">
                                 <StackPanel.ToolTip>
                                     <TextBlock HorizontalAlignment="Center">
                                         <TextBlock.Text>
                                             <MultiBinding StringFormat="{}{0}:{1} h">
-                                                <Binding Path="Progress.LastPlayedAt.Hour"/>
-                                                <Binding Path="Progress.LastPlayedAt.Minute"/>
+                                                <Binding Path="CurrentUserProgress.LastPlayedAt.Hour"/>
+                                                <Binding Path="CurrentUserProgress.LastPlayedAt.Minute"/>
                                             </MultiBinding>
                                         </TextBlock.Text>
                                     </TextBlock>
@@ -376,15 +376,15 @@
                                                 <Setter Property="Text">
                                                     <Setter.Value>
                                                         <MultiBinding StringFormat="{}{0}.{1}.{2}">
-                                                            <Binding Path="Progress.LastPlayedAt.Day"/>
-                                                            <Binding Path="Progress.LastPlayedAt.Month"/>
-                                                            <Binding Path="Progress.LastPlayedAt.Year"/>
+                                                            <Binding Path="CurrentUserProgress.LastPlayedAt.Day"/>
+                                                            <Binding Path="CurrentUserProgress.LastPlayedAt.Month"/>
+                                                            <Binding Path="CurrentUserProgress.LastPlayedAt.Year"/>
                                                         </MultiBinding>
                                                     </Setter.Value>
                                                 </Setter>
                                             </Style.Setters>
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Path=Progress.LastPlayedAt}" Value="{x:Null}">
+                                                <DataTrigger Binding="{Binding Path=CurrentUserProgress.LastPlayedAt}" Value="{x:Null}">
                                                     <DataTrigger.Setters>
                                                         <Setter Property="Text" Value="never"/>
                                                     </DataTrigger.Setters>
@@ -399,7 +399,7 @@
                                 <TextBlock Text="{Binding Path=Game.AveragePlaytime,Converter={StaticResource timeConv}}" FontSize="20" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </StackPanel>
-                        <ComboBox ItemsSource="{Binding GameStates}" DisplayMemberPath="Key" SelectedValue="{Binding Path=Progress.State}" SelectedValuePath="Value" Margin="0,23,0,0" Height="60" FontSize="36" FontWeight="Bold" SelectionChanged="GameState_SelectionChanged">
+                        <ComboBox ItemsSource="{Binding GameStates}" DisplayMemberPath="Key" SelectedValue="{Binding Path=CurrentUserProgress.State}" SelectedValuePath="Value" Margin="0,23,0,0" Height="60" FontSize="36" FontWeight="Bold" SelectionChanged="GameState_SelectionChanged">
                             <ComboBox.ItemContainerStyle>
                                 <Style TargetType="{x:Type ComboBoxItem}" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
                                     <Setter Property="FontSize" Value="20"/>
@@ -408,7 +408,7 @@
                         </ComboBox>
                     </StackPanel>
                     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalAlignment="Right" VerticalAlignment="Top" Height="460" Width="410" Margin="0,160,0,0">
-                        <ItemsControl ItemsSource="{Binding UserProgress}">
+                        <ItemsControl ItemsSource="{Binding UserProgresses}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <StackPanel/>
