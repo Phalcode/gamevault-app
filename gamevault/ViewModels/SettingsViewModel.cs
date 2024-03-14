@@ -42,6 +42,7 @@ namespace gamevault.ViewModels
         private long m_DownloadLimitUIValue { get; set; }
         private User m_RegistrationUser = new User() { ProfilePicture = new Image(), BackgroundImage = new Image() };
         private PhalcodeProduct license { get; set; }
+        private List<ThemeItem> themes { get; set; }
         #endregion
 
         public SettingsViewModel()
@@ -158,17 +159,10 @@ namespace gamevault.ViewModels
             get { return m_RegistrationUser; }
             set { m_RegistrationUser = value; OnPropertyChanged(); }
         }
-        public ThemeItem[] Themes
+        public List<ThemeItem> Themes
         {
-            get
-            {
-                return new ThemeItem[] {
-                    new  ThemeItem(){ Key="GameVault Dark",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultDark.xaml",IsPlus=false},
-                    new  ThemeItem(){ Key="GameVault Light",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultLight.xaml",IsPlus=false},
-                    new  ThemeItem(){ Key="Lime Dark",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeLimeDark.xaml",IsPlus=true},
-                    new  ThemeItem(){ Key="Lime Light",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeLimeLight.xaml",IsPlus=true}
-                };
-            }
+            get { return themes; }
+            set { themes = value; OnPropertyChanged(); }
         }
         public PhalcodeProduct License
         {
@@ -220,6 +214,6 @@ namespace gamevault.ViewModels
     {
         public string Key { get; set; }
         public string Value { get; set; }
-        public bool IsPlus { get; set; }
+        public bool IsPlus { get; set; }        
     }
 }

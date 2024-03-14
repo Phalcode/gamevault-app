@@ -13,6 +13,7 @@ using gamevault.Helper;
 using System.Threading.Tasks;
 using System.IO.Pipes;
 using System.Windows.Threading;
+using System.Text.Json;
 
 namespace gamevault
 {
@@ -33,27 +34,15 @@ namespace gamevault
         private async void Application_Startup(object sender, StartupEventArgs e)
         {
             Application.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(AppDispatcherUnhandledException);
-            #region DirectoryCreation
-            if (!Directory.Exists(AppFilePath.ImageCache))
-            {
-                Directory.CreateDirectory(AppFilePath.ImageCache);
-            }
-            if (!Directory.Exists(AppFilePath.ConfigDir))
-            {
-                Directory.CreateDirectory(AppFilePath.ConfigDir);
-            }
-            #endregion
-
 #if DEBUG
             AppFilePath.InitDebugPaths();
+            CreateDirectories();
             RestoreTheme();
-
-            
-
             await CacheHelper.OptimizeCache();
 #else
             try
             {
+                CreateDirectories();
                 RestoreTheme();
                 UpdateWindow updateWindow = new UpdateWindow();
                 updateWindow.ShowDialog();
@@ -139,12 +128,14 @@ namespace gamevault
         {
             try
             {
-                string currentTheme = Preferences.Get(AppConfigKey.Theme, AppFilePath.UserFile, true);
-                if (currentTheme != string.Empty)
+                string currentThemeString = Preferences.Get(AppConfigKey.Theme, AppFilePath.UserFile, true);
+                if (currentThemeString != string.Empty)
                 {
-                    if (App.Current.Resources.MergedDictionaries[0].Source.OriginalString != currentTheme)
+                    ThemeItem currentTheme = JsonSerializer.Deserialize<ThemeItem>(currentThemeString);
+
+                    if (App.Current.Resources.MergedDictionaries[0].Source.OriginalString != currentTheme.Value)
                     {
-                        App.Current.Resources.MergedDictionaries[0] = new ResourceDictionary() { Source = new Uri(currentTheme) };
+                        App.Current.Resources.MergedDictionaries[0] = new ResourceDictionary() { Source = new Uri(currentTheme.Value) };
                     }
                 }
             }
@@ -198,6 +189,21 @@ namespace gamevault
                 m_Icon.Dispose();
             }
             Shutdown();
+        }
+        private void CreateDirectories()
+        {
+            if (!Directory.Exists(AppFilePath.ImageCache))
+            {
+                Directory.CreateDirectory(AppFilePath.ImageCache);
+            }
+            if (!Directory.Exists(AppFilePath.ConfigDir))
+            {
+                Directory.CreateDirectory(AppFilePath.ConfigDir);
+            }
+            if (!Directory.Exists(AppFilePath.ThemesLoadDir))
+            {
+                Directory.CreateDirectory(AppFilePath.ThemesLoadDir);
+            }
         }
     }
 }
