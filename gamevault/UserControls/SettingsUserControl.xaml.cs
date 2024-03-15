@@ -249,10 +249,11 @@ namespace gamevault.UserControls
             try
             {
                 ViewModel.Themes = new System.Collections.Generic.List<ThemeItem> {
-               new ThemeItem() { Key = "GameVault Dark", Value = "pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultDark.xaml", IsPlus = false },
-               new  ThemeItem(){ Key="GameVault Light",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultLight.xaml",IsPlus=false},
-               new  ThemeItem(){ Key="Lime Dark",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeLimeDark.xaml",IsPlus=true},
-               new  ThemeItem(){ Key="Lime Light",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeLimeLight.xaml",IsPlus=true}};
+               new ThemeItem() { Key = "GameVault (Dark)", Value = "pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultDark.xaml", IsPlus = false },
+               new  ThemeItem(){ Key="GameVault (Light)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultLight.xaml",IsPlus=false},
+               new  ThemeItem(){ Key="GameVault (Classic)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeClassic.xaml",IsPlus=false},
+               new  ThemeItem(){ Key="Phalcode (Dark)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemePhalcodeDark.xaml",IsPlus=true},
+               new  ThemeItem(){ Key="Phalcode (Light)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemePhalcodeLight.xaml",IsPlus=true}};
                 if (Directory.Exists(AppFilePath.ThemesLoadDir))
                 {
                     foreach (var file in Directory.GetFiles(AppFilePath.ThemesLoadDir, "*.xaml", SearchOption.AllDirectories))
@@ -276,11 +277,11 @@ namespace gamevault.UserControls
         }
 
         private void OpenThemeFolder_Click(object sender, RoutedEventArgs e)
-        {            
+        {
             if (Directory.Exists(AppFilePath.ThemesLoadDir))
             {
                 Process.Start("explorer.exe", AppFilePath.ThemesLoadDir);
-            }           
+            }
         }
     }
 }
