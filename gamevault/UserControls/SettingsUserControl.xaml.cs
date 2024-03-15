@@ -12,8 +12,6 @@ using System.Diagnostics;
 using MahApps.Metro.Controls.Dialogs;
 using MahApps.Metro.Controls;
 using System.Text.Json;
-using gamevault.Windows;
-using System.Windows.Markup;
 
 namespace gamevault.UserControls
 {
@@ -275,6 +273,14 @@ namespace gamevault.UserControls
                 }
             }
             catch { }
+        }
+
+        private void OpenThemeFolder_Click(object sender, RoutedEventArgs e)
+        {            
+            if (Directory.Exists(AppFilePath.ThemesLoadDir))
+            {
+                Process.Start("explorer.exe", AppFilePath.ThemesLoadDir);
+            }           
         }
     }
 }

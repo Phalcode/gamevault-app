@@ -52,26 +52,29 @@
                         </StackPanel>
                         <StackPanel Margin="0,10,0,0">
                             <TextBlock Text="Theme" FontSize="20" FontWeight="Bold"/>
-                            <ComboBox x:Name="uiCbTheme" ItemsSource="{Binding Themes}" Margin="0,10,0,0" Width="520" HorizontalAlignment="Left" SelectionChanged="Themes_SelectionChanged">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid Width="496">
-                                            <TextBlock Text="{Binding Key}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                            <Path Fill="{DynamicResource MahApps.Brushes.Accent}" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                                <Path.Style>
-                                                    <Style TargetType="Path">
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding IsPlus}" Value="True">
-                                                                <Setter Property="Data" Value="{StaticResource IconLock}"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Path.Style>
-                                            </Path>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
+                            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                <ComboBox x:Name="uiCbTheme" ItemsSource="{Binding Themes}" Width="520" HorizontalAlignment="Left" SelectionChanged="Themes_SelectionChanged">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Width="496">
+                                                <TextBlock Text="{Binding Key}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                                <Path Fill="{DynamicResource MahApps.Brushes.Accent}" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                    <Path.Style>
+                                                        <Style TargetType="Path">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsPlus}" Value="True">
+                                                                    <Setter Property="Data" Value="{StaticResource IconLock}"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Path.Style>
+                                                </Path>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                <local:IconButton Text="Open Theme Folder" FontSize="15" Icon="{StaticResource IconGameSettingsFolder}" IconMargin="0,0,5,2" Width="175" Margin="10,0,0,0" Click="OpenThemeFolder_Click"/>
+                            </StackPanel>
                         </StackPanel>
                     </StackPanel>
                 </TabItem>
