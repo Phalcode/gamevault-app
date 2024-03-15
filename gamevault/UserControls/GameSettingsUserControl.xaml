@@ -324,8 +324,8 @@
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="{Binding Path=Game.ID}" FontSize="15" Width="70"/>
-                                    <TextBlock Text="{Binding Path=Game.FilePath}" FontSize="15" Margin="20,0,0,0" Width="280"/>
-                                    <TextBlock Text="{Binding Path=Game.ReleaseDate,StringFormat='{}{0:dd/MM/yyyy}'}" Width="100" FontSize="15" Margin="42,0,0,0"/>
+                                    <TextBlock Text="{Binding Path=Game.FilePath}" FontSize="15" Margin="20,0,0,0" Width="310" TextTrimming="CharacterEllipsis" ToolTip="{Binding Path=Game.FilePath}"/>
+                                    <TextBlock Text="{Binding Path=Game.ReleaseDate,StringFormat='{}{0:dd/MM/yyyy}'}" Width="100" FontSize="15" Margin="12,0,0,0"/>
                                     <TextBlock Text="{Binding Path=Game.CreatedAt,StringFormat='{}{0:dd/MM/yyyy}'}" FontSize="15" Margin="98,0,0,0"/>
                                 </StackPanel>
                                 <TextBlock Text="Currently Mapped RAWG Game" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
