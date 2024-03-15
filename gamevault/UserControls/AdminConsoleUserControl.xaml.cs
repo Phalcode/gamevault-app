@@ -221,6 +221,7 @@ namespace gamevault.UserControls
                     MainWindowViewModel.Instance.AppBarText = msg;
                 }
             });
+            await MainWindowViewModel.Instance.Library.LoadLibrary();
             ((FrameworkElement)sender).IsEnabled = true;
         }
 

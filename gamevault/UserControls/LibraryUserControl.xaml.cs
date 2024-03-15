@@ -31,10 +31,7 @@ namespace gamevault.UserControls
         }
         public async Task LoadLibrary()
         {
-            if (Preferences.Get(AppConfigKey.LibStartup, AppFilePath.UserFile) == "1")
-            {
-                await Search();
-            }
+            await Search();
         }
         public void ShowLibraryError()
         {
