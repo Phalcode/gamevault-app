@@ -251,7 +251,7 @@ namespace gamevault.UserControls
                 ViewModel.Themes = new System.Collections.Generic.List<ThemeItem> {
                new ThemeItem() { Key = "GameVault (Dark)", Value = "pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultDark.xaml", IsPlus = false },
                new  ThemeItem(){ Key="GameVault (Light)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultLight.xaml",IsPlus=false},
-               new  ThemeItem(){ Key="GameVault (Classic)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeClassic.xaml",IsPlus=false},
+               new  ThemeItem(){ Key="GameVault (Classic)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultsClassic.xaml",IsPlus=false},
                new  ThemeItem(){ Key="Phalcode (Dark)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemePhalcodeDark.xaml",IsPlus=true},
                new  ThemeItem(){ Key="Phalcode (Light)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemePhalcodeLight.xaml",IsPlus=true}};
                 if (Directory.Exists(AppFilePath.ThemesLoadDir))
