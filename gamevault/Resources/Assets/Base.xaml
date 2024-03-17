@@ -4,7 +4,7 @@
     <SolidColorBrush x:Key="GameVault.Brushes.Button.MouseOver"  Color="{StaticResource GameVault.Colors.Accent2}" />
     <SolidColorBrush x:Key="GameVault.Brushes.Button.Focus"  Color="{StaticResource GameVault.Colors.Accent3}" />
     <SolidColorBrush x:Key="GameVault.Brushes.Button.Disabled"  Color="{StaticResource GameVault.Colors.Accent4}" />
-    <SolidColorBrush x:Key="GameVault.Brushes.Blur" Opacity="0.5" Color="Black" />
+    <SolidColorBrush x:Key="GameVault.Brushes.Blur" Opacity="0.7" Color="{StaticResource GameVault.Colors.Blur}" />
     <Color x:Key="Theme.PrimaryAccentColor">#FF6459DF</Color>
     <SolidColorBrush x:Key="Theme.ShowcaseBrush" Color="#FF6459DF" />
     <Color x:Key="MahApps.Colors.Highlight">#FF4A41A5</Color>

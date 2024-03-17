@@ -241,7 +241,7 @@ namespace gamevault.UserControls
             {
                 App.Current.Resources.MergedDictionaries[0] = new ResourceDictionary() { Source = new Uri(selectedTheme.Value) };
                 //Reload Base Styles to apply new colors
-                App.Current.Resources.MergedDictionaries[3] = new ResourceDictionary() { Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Base.xaml") };
+                App.Current.Resources.MergedDictionaries[1] = new ResourceDictionary() { Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Base.xaml") };
                 Preferences.Set(AppConfigKey.Theme, JsonSerializer.Serialize(selectedTheme), AppFilePath.UserFile, true);
             }
             catch (Exception ex) { MainWindowViewModel.Instance.AppBarText = ex.Message; }

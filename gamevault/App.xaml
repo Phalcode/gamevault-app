@@ -7,9 +7,9 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultDark.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/gamevault;component/Resources/Assets/Base.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/gamevault;component/Resources/Assets/Base.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/gamevault;component/Resources/Assets/Styles.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/gamevault;component/Resources/Assets/Colors.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/gamevault;component/Resources/Assets/Icons.xaml" />
