@@ -12,6 +12,7 @@ using System.Diagnostics;
 using MahApps.Metro.Controls.Dialogs;
 using MahApps.Metro.Controls;
 using System.Text.Json;
+using System.Security.Policy;
 
 namespace gamevault.UserControls
 {
@@ -275,7 +276,7 @@ namespace gamevault.UserControls
                     uiCbTheme.SelectedIndex = 0;
                 }
             }
-            catch { }
+            catch { uiCbTheme.SelectedIndex = 0; }
         }
 
         private void OpenThemeFolder_Click(object sender, RoutedEventArgs e)
@@ -284,6 +285,15 @@ namespace gamevault.UserControls
             {
                 Process.Start("explorer.exe", AppFilePath.ThemesLoadDir);
             }
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+            }
+            catch { }
         }
     }
 }
