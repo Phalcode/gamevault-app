@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.IO.Pipes;
 using System.Windows.Threading;
 using System.Text.Json;
+using System.Diagnostics;
 
 namespace gamevault
 {
@@ -76,9 +77,26 @@ namespace gamevault
             // After the app is created and most things are instantiated, handle any special command line stuff
             if (PipeServiceHandler.Instance != null)
             {
-                // Strictly speaking we should hold up all commands until we have a confirmed login & setup is complete, but for now we'll assume that auto-login has worked
-                PipeServiceHandler.Instance.IsReadyForCommands = true;
-                await PipeServiceHandler.Instance.HandleCommand(App.CommandLineOptions);
+                if (SettingsViewModel.Instance.License.IsActive())
+                {
+                    // Strictly speaking we should hold up all commands until we have a confirmed login & setup is complete, but for now we'll assume that auto-login has worked
+                    PipeServiceHandler.Instance.IsReadyForCommands = true;
+                    await PipeServiceHandler.Instance.HandleCommand(App.CommandLineOptions);
+                }
+                else
+                {
+                    try
+                    {
+#if DEBUG
+                        string url = "https://test.phalco.de/products/gamevault-plus/checkout?hit_paywall=true";
+#else
+                        string url = "https://phalco.de/products/gamevault-plus/checkout?hit_paywall=true";
+#endif
+
+                        Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                    }
+                    catch { }
+                }
             }
         }
 

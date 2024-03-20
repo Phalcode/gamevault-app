@@ -463,13 +463,17 @@ namespace gamevault
 
             if (game == null)
             {
-                string compressedStringObject = Preferences.Get(id.ToString(), AppFilePath.OfflineCache);
-                if (!string.IsNullOrEmpty(compressedStringObject))
+                try
                 {
-                    string decompressedObject = StringCompressor.DecompressString(compressedStringObject);
-                    Game? deserializedObject = JsonSerializer.Deserialize<Game>(decompressedObject);
-                    game = deserializedObject;
+                    string compressedStringObject = Preferences.Get(id.ToString(), AppFilePath.OfflineCache);
+                    if (!string.IsNullOrEmpty(compressedStringObject))
+                    {
+                        string decompressedObject = StringCompressor.DecompressString(compressedStringObject);
+                        Game? deserializedObject = JsonSerializer.Deserialize<Game>(decompressedObject);
+                        game = deserializedObject;
+                    }
                 }
+                catch (Exception) { }
             }
 
             return game;
