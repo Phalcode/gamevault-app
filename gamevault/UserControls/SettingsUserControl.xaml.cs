@@ -203,7 +203,12 @@ namespace gamevault.UserControls
             }
             ((FrameworkElement)sender).IsEnabled = true;
         }
-
+        private async void RefreshLicense_Click(object sender, RoutedEventArgs e)
+        {
+            ((FrameworkElement)sender).IsEnabled = false;
+            await LoginManager.Instance.PhalcodeLogin();
+            ((FrameworkElement)sender).IsEnabled = true;
+        }
         private void ManageBilling_Click(object sender, RoutedEventArgs e)
         {
 #if DEBUG
@@ -294,6 +299,6 @@ namespace gamevault.UserControls
                 Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
             }
             catch { }
-        }
+        }      
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
@@ -309,6 +310,21 @@ namespace gamevault
             if (options == null)
                 return null;
 
+            if (options.Action != CommandOptions.ActionEnum.Show && !SettingsViewModel.Instance.License.IsActive())
+            {
+                try
+                {
+#if DEBUG
+                    string url = "https://test.phalco.de/products/gamevault-plus/checkout?hit_paywall=true";
+#else
+                    string url = "https://phalco.de/products/gamevault-plus/checkout?hit_paywall=true";
+#endif
+                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                    return null;
+                }
+                catch { return null; }
+            }
+
             if (!IsReadyForCommands)
                 await isReadyForCommandsTCS.Task;
 
@@ -321,7 +337,7 @@ namespace gamevault
                 // There's a gameid and most of our actions want to know if it's already installed
                 isGameInstalled = await GetInstalledGame(options.GameId.Value) != null;
             }
-
+           
             // do stuff
             switch (options.Action)
             {

@@ -249,9 +249,6 @@ namespace gamevault.UserControls
                     if (System.Uri.IsWellFormedUriString(ViewModel.AvatarImageUrl, UriKind.Absolute))
                     {
                         ms = await BitmapHelper.UrlToMemoryStream(ViewModel.AvatarImageUrl);
-
-                        //string s = Encoding.UTF8.GetString(ms.ToArray());
-                        //File.WriteAllText("C:\\Users\\Philip Schäfer\\Downloads\\Dump\\Dump.txt", s);
                     }
                     else
                     {
