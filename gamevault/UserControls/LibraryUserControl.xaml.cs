@@ -83,7 +83,7 @@ namespace gamevault.UserControls
             string filterUrl = @$"{SettingsViewModel.Instance.ServerUrl}/api/games?search={inputTimer.Data}&sortBy={gameSortByFilter}:{gameOrderByFilter}&limit=50";
             filterUrl = ApplyFilter(filterUrl);
 
-            PaginatedData<Game>? gameResult = await GetGamesData(filterUrl);//add try catch
+            PaginatedData<Game>? gameResult = await GetGamesData(filterUrl);
             if (gameResult != null)
             {
                 ViewModel.CanLoadServerGames = true;
@@ -98,6 +98,19 @@ namespace gamevault.UserControls
             {
                 ViewModel.CanLoadServerGames = false;
             }
+        }
+        private async void ReloadLibrary_Click(object sender, EventArgs e)
+        {
+            if (e.GetType() == typeof(MouseButtonEventArgs))
+                ((MouseButtonEventArgs)e).Handled = true;
+
+            //Block spamming the reload button and F5 at the same time
+            if (uiBtnReloadLibrary.IsEnabled == false || (e.GetType() == typeof(KeyEventArgs) && ((KeyEventArgs)e).Key != Key.F5))
+                return;
+
+            uiBtnReloadLibrary.IsEnabled = false;
+            await Search();
+            uiBtnReloadLibrary.IsEnabled = true;
         }
         public InstallUserControl GetGameInstalls()
         {

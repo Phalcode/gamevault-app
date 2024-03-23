@@ -8,7 +8,7 @@
              xmlns:conv="clr-namespace:gamevault.Converter"
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800" KeyDown="ReloadLibrary_Click">
     <UserControl.Resources>
         <conv:GameSizeConverter x:Key="sizeConv"/>
         <conv:LibraryPermissionRoleToVisibilityConverter x:Key="libCardsPermVisConv"/>
@@ -22,7 +22,7 @@
         <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Grid.Row="0">
             <TextBlock Text="Library" FontSize="35" Margin="20,0,0,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
         </Border>
-        <ScrollViewer x:Name="uiMainScrollBar" Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer x:Name="uiMainScrollBar" Grid.Row="1" VerticalScrollBarVisibility="Auto" FocusVisualStyle="{x:Null}">
             <StackPanel>
                 <Viewbox>
                     <local:InstallUserControl x:Name="uiGameInstalls" Width="2000"/>
@@ -54,10 +54,20 @@
                                     </TextBlock.Text>
                                 </TextBlock>
                                 <TextBox HorizontalAlignment="Center" Width="378" Margin="0,4,45,4" Style="{DynamicResource SearchTextBox}" TextChanged="Search_TextChanged"/>
-                                <Grid Style="{DynamicResource HoverEffect}" Background="Transparent" Height="30" Width="35" Margin="400,0,0,0" Cursor="Hand" ToolTip="I'm Feeling Lucky" MouseLeftButtonDown="RandomGame_Click">
-                                    <Path Data="{StaticResource IconLibraryDices}" Fill="{DynamicResource MahApps.Brushes.IdealForeground}" Margin="-227" RenderTransformOrigin="0.5,0.5">
+                                <Grid x:Name="uiBtnReloadLibrary" Style="{DynamicResource HoverEffect}" Background="Transparent" Height="25" Width="25" Margin="394,0,0,0" Cursor="Hand" ToolTip="Reload Library (F5)" MouseLeftButtonDown="ReloadLibrary_Click">
+                                    <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.IdealForeground}" Margin="0,0.6,0,0" RenderTransformOrigin="0.5,0.5">
                                         <Path.RenderTransform>
-                                            <ScaleTransform ScaleX="0.06" ScaleY="0.06"/>
+                                            <ScaleTransform ScaleX="1.51" ScaleY="1.51"/>
+                                        </Path.RenderTransform>
+                                    </Path>
+                                    <Grid.RenderTransform>
+                                        <ScaleTransform/>
+                                    </Grid.RenderTransform>
+                                </Grid>
+                                <Grid Style="{DynamicResource HoverEffect}" Background="Transparent" Height="30" Width="33" Margin="480,0,0,0" Cursor="Hand" ToolTip="I'm Feeling Lucky" MouseLeftButtonDown="RandomGame_Click">
+                                    <Path Data="{StaticResource IconLibraryDices}" Fill="{DynamicResource MahApps.Brushes.IdealForeground}" Margin="-229,-229,-227,-227" RenderTransformOrigin="0.5,0.5">
+                                        <Path.RenderTransform>
+                                            <ScaleTransform ScaleX="0.057" ScaleY="0.057"/>
                                         </Path.RenderTransform>
                                     </Path>
                                     <Grid.RenderTransform>
