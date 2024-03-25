@@ -8,7 +8,7 @@
              xmlns:conv="clr-namespace:gamevault.Converter"
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" KeyDown="ReloadLibrary_Click">
+             d:DesignHeight="450" d:DesignWidth="800" KeyDown="ReloadLibrary_Click" Focusable="True" FocusVisualStyle="{x:Null}" IsVisibleChanged="UserControl_IsVisibleChanged">
     <UserControl.Resources>
         <conv:GameSizeConverter x:Key="sizeConv"/>
         <conv:LibraryPermissionRoleToVisibilityConverter x:Key="libCardsPermVisConv"/>
@@ -350,7 +350,7 @@
                                         <ItemsControl.Template>
                                             <ControlTemplate TargetType="vwp:VirtualizingItemsControl">
                                                 <Grid>
-                                                    <ScrollViewer Name="PART_ItemsScroll" Style="{DynamicResource SecondaryScrollView}" CanContentScroll="True" Padding="{TemplateBinding Padding}" Focusable="False" ScrollChanged="Library_ScrollChanged" PreviewMouseWheel="Library_PreviewMouseWheel">
+                                                    <ScrollViewer Name="PART_ItemsScroll" Style="{DynamicResource SecondaryScrollView}" CanContentScroll="True" Padding="{TemplateBinding Padding}" FocusVisualStyle="{x:Null}" ScrollChanged="Library_ScrollChanged" PreviewMouseWheel="Library_PreviewMouseWheel">
 
                                                         <ItemsPresenter Margin="5,0,5,0"/>
                                                     </ScrollViewer>

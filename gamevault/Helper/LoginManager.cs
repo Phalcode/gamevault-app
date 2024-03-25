@@ -158,7 +158,11 @@ namespace gamevault.Helper
                 timer.Tick += (s, e) =>
                 {
                     timer.Stop();
-                    wpfEmbeddedBrowser.ShowWindowIfHidden();
+                    try
+                    {
+                        wpfEmbeddedBrowser.ShowWindowIfHidden();
+                    }
+                    catch { }
                 };
                 timer.Start();
                 loginResult = await _oidcClient.LoginAsync();

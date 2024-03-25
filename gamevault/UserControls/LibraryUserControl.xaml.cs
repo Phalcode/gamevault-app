@@ -29,6 +29,13 @@ namespace gamevault.UserControls
             this.DataContext = ViewModel;
             InitTimer();
         }
+        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (this.IsVisible)
+            {
+                this.Focus();
+            }
+        }
         public async Task LoadLibrary()
         {
             await Search();

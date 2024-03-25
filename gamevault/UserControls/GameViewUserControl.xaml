@@ -275,7 +275,7 @@
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding Path=Game.WebsiteUrl}" Value="">
                                                             <Setter Property="Text" Value="N/A"/>
-                                                            <Setter Property="Foreground" Value="White"/>
+                                                            <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
