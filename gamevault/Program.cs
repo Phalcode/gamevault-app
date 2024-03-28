@@ -51,9 +51,6 @@ namespace gamevault
 
                     var help = CommandLine.Text.HelpText.AutoBuild(cmdLineParserResult, help =>
                     {
-                        help.Copyright = ""; // TODO: Add GameVault copyright information
-                                             //       ALTERNATIVELY, just add it to AssemblyInfo.cs
-
                         help.AddEnumValuesToHelpText = true;
                         help.AddNewLineBetweenHelpSections = true;
                         help.AdditionalNewLineAfterOption = false;

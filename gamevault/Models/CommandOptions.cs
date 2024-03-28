@@ -247,7 +247,7 @@ $",
 
     #region Verb instances of CommandOptions
 
-    [Verb(nameof(ActionEnum.Show), HelpText = "Open or show GameVault, optionally to a specific game.")]
+    [Verb("show", HelpText = "Show GameVault, or optionally a specific game.")]
     public class CommandOptions_Show : CommandOptions
     {
         public override ActionEnum Action { get => ActionEnum.Show; set => base.Action = ActionEnum.Show; }
@@ -259,7 +259,7 @@ $",
         public override int? GameId { get => base.GameId; set => base.GameId = value; }
     }
 
-    [Verb(nameof(ActionEnum.Install), HelpText = "Install a game into GameVault.")]
+    [Verb("install", HelpText = "Install a game from GameVault.")]
     public class CommandOptions_Install : CommandOptions
     {
         public override ActionEnum Action { get => ActionEnum.Install; set => base.Action = ActionEnum.Install; }
@@ -268,7 +268,7 @@ $",
         public new int GameId { get => base.GameId.GetValueOrDefault(); set => base.GameId = value; }
     }
 
-    [Verb(nameof(ActionEnum.Uninstall), HelpText = "Uninstall a game from GameVault.")]
+    [Verb("uninstall", HelpText = "Uninstall a game from GameVault.")]
     public class CommandOptions_Uninstall : CommandOptions
     {
         public override ActionEnum Action { get => ActionEnum.Uninstall; set => base.Action = ActionEnum.Uninstall; }
@@ -277,7 +277,7 @@ $",
         public new int GameId { get => base.GameId.GetValueOrDefault(); set => base.GameId = value; }
     }
 
-    [Verb(nameof(ActionEnum.Start), HelpText = "Start a game, installing it if necessary.")]
+    [Verb("start", HelpText = "Start a game, or install it if necessary.")]
     public class CommandOptions_Start : CommandOptions
     {
         public override ActionEnum Action { get => ActionEnum.Start; set => base.Action = ActionEnum.Start; }

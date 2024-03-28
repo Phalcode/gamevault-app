@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Markup;
@@ -11,6 +12,7 @@ using System.Windows.Markup;
                                               // app, or any theme specific resource dictionaries)
 )]
 [assembly: AssemblyVersion("1.9.0.0")]
+[assembly: AssemblyCopyright("© Phalcode™. All Rights Reserved.")]
 #if DEBUG
 [assembly: XmlnsDefinition("debug-mode", "Namespace")]
 #endif
