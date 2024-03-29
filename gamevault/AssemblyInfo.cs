@@ -1,3 +1,5 @@
+using System;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Markup;
 
@@ -9,7 +11,8 @@ using System.Windows.Markup;
                                               //(used if a resource is not found in the page,
                                               // app, or any theme specific resource dictionaries)
 )]
-
+[assembly: AssemblyVersion("1.9.0.0")]
+[assembly: AssemblyCopyright("© Phalcode™. All Rights Reserved.")]
 #if DEBUG
 [assembly: XmlnsDefinition("debug-mode", "Namespace")]
 #endif

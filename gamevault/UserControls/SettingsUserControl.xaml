@@ -13,7 +13,7 @@
     <UserControl.Resources>
         <conv:GameSizeConverter x:Key="sizeConv"/>
         <conv:DownloadLimitConverter x:Key="downloadLimitConv"/>
-
+        <conv:LicenseConverter x:Key="licenseConv"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -27,7 +27,7 @@
             </Grid>
         </Border>
         <ScrollViewer Grid.Row="1" Margin="10" VerticalScrollBarVisibility="Auto">
-            <TabControl x:Name="uiTabControl" TabStripPlacement="Left" SelectionChanged="TabControl_SelectionChanged">
+            <TabControl x:Name="uiTabControl" TabStripPlacement="Left" SelectionChanged="TabControl_SelectionChanged" FocusVisualStyle="{x:Null}">
                 <TabItem Header="Application">
                     <StackPanel Margin="30,0,0,0">
                         <StackPanel Margin="0,0,0,0">
@@ -52,26 +52,29 @@
                         </StackPanel>
                         <StackPanel Margin="0,10,0,0">
                             <TextBlock Text="Theme" FontSize="20" FontWeight="Bold"/>
-                            <ComboBox x:Name="uiCbTheme" ItemsSource="{Binding Themes}" SelectedValuePath="Value" Margin="0,10,0,0" Width="520" HorizontalAlignment="Left" SelectionChanged="Themes_SelectionChanged">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid Width="496">
-                                            <TextBlock Text="{Binding Key}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                            <Path Fill="{DynamicResource MahApps.Brushes.Accent}" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                                <Path.Style>
-                                                    <Style TargetType="Path">
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding IsPlus}" Value="True">
-                                                                <Setter Property="Data" Value="{StaticResource IconLock}"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Path.Style>
-                                            </Path>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
+                            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                <ComboBox x:Name="uiCbTheme" ItemsSource="{Binding Themes}" Width="520" HorizontalAlignment="Left" SelectionChanged="Themes_SelectionChanged">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Width="496">
+                                                <TextBlock Text="{Binding Key}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                                <Path Fill="{DynamicResource MahApps.Brushes.Accent}" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                    <Path.Style>
+                                                        <Style TargetType="Path">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsPlus}" Value="True">
+                                                                    <Setter Property="Data" Value="{StaticResource IconLock}"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Path.Style>
+                                                </Path>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                <local:IconButton Text="Open Theme Folder" FontSize="15" Icon="{StaticResource IconGameSettingsFolder}" IconMargin="0,0,5,2" Width="175" Margin="10,0,0,0" Click="OpenThemeFolder_Click"/>
+                            </StackPanel>
                         </StackPanel>
                     </StackPanel>
                 </TabItem>
@@ -108,9 +111,9 @@
                 <TabItem Header="GameVault+">
                     <StackPanel Margin="30,0,0,0">
                         <TextBlock Text="GameVault+" FontSize="20" FontWeight="Bold"/>
-                        <TextBlock Text="Here, you can enable GameVault+ if you are alredy subscribed." FontSize="15" Margin="0,5,0,0"/>
+                        <TextBlock Text="Here, you can enable GameVault+ if you are already subscribed." FontSize="15" Margin="0,5,0,0"/>
                         <TextBlock Text="Your Phalcode Account" TextDecorations="Underline" FontSize="15" Margin="0,20,0,0"/>
-                        <Border CornerRadius="10" Height="50" Cursor="Hand" HorizontalAlignment="Left" Margin="0,10,0,0" MouseLeftButtonUp="PhalcodeLoginLogout_Click">
+                        <Border CornerRadius="10" Height="50" HorizontalAlignment="Left" Cursor="Hand" Margin="0,10,0,0" MouseLeftButtonUp="PhalcodeLoginLogout_Click">
                             <Border.Style>
                                 <Style TargetType="Border">
                                     <Setter Property="Background" Value="LightGray"/>
@@ -138,7 +141,7 @@
                                         </TextBlock.Style>
                                     </TextBlock>
                                 </StackPanel>
-                                <Path Name="LogoutIcon" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0,8,0" RenderTransformOrigin="0.5,0.5">
+                                <Path Name="LogoutIcon" Fill="Black" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0,8,0" RenderTransformOrigin="0.5,0.5">
                                     <Path.Style>
                                         <Style TargetType="Path">
                                             <Setter Property="Data" Value="{StaticResource IconLogout}"/>
@@ -156,31 +159,113 @@
                             </StackPanel>
                         </Border>
                         <TextBlock Text="Your GameVault+ Subscription" TextDecorations="Underline" FontSize="15" Margin="0,20,0,0"/>
-                        <TextBlock FontSize="15" Margin="0,10,0,0">
+                        <TextBlock Text="You have no active GameVault+ license" FontSize="15" Margin="0,10,0,0">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
-                                    <Setter Property="Text" Value="{Binding License.CurrentPeriodStart,StringFormat='{}Subscribed since {0}'}"/>
+                                    <Setter Property="Visibility" Value="Collapsed"/>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding License.CurrentPeriodStart}" Value="{x:Null}">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        <DataTrigger Binding="{Binding License.UserName,Converter={StaticResource licenseConv}}" Value="False">
+                                            <Setter Property="Visibility" Value="Visible"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </TextBlock.Style>
                         </TextBlock>
-                        <TextBlock FontSize="15" Margin="0,10,0,0">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Text" Value="{Binding License.CurrentPeriodEnd,StringFormat='{}Current period ends {0}'}"/>
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="Visibility" Value="Hidden"/>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding License.CurrentPeriodEnd}" Value="{x:Null}">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        <DataTrigger Binding="{Binding License.UserName,Converter={StaticResource licenseConv}}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                        <local:IconButton Text="Manage Billing" FontSize="15" Icon="{StaticResource IconBilling}" IconScale="0.04" IconMargin="-180,-400,-175,-400" Width="150" Height="40" HorizontalAlignment="Left" Margin="0,20,0,0" Click="ManageBilling_Click"/>
+                            </StackPanel.Style>
+                            <Path Data="{StaticResource IconCheck}" Fill="Green" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5" Margin="0,0,30,10">
+                                <Path.RenderTransform>
+                                    <ScaleTransform ScaleX="3.0" ScaleY="3"/>
+                                </Path.RenderTransform>
+                            </Path>
+                            <StackPanel>
+                                <TextBlock Text="{Binding License.CurrentPeriodStart,StringFormat='{}Subscribed since {0}'}" FontSize="15" Margin="0,10,0,0"/>
+                                <TextBlock Text="{Binding License.CurrentPeriodEnd,StringFormat='{}Current period ends {0}'}" FontSize="15" Margin="0,10,0,0"/>
+                            </StackPanel>
+                        </StackPanel>
+                       
+                        <StackPanel Orientation="Horizontal">
+                            <local:IconButton Text="Refresh License" FontSize="15" Icon="{StaticResource IconReload}" IconMargin="0,0,5,2" Margin="0,20,20,0" HorizontalAlignment="Left" Width="150" Height="40" Click="RefreshLicense_Click">
+                                <local:IconButton.Style>
+                                    <Style TargetType="local:IconButton" BasedOn="{StaticResource {x:Type local:IconButton}}">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding License.UserName}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </local:IconButton.Style>
+                            </local:IconButton>
+                            <local:IconButton Text="Manage Billing" FontSize="15" Icon="{StaticResource IconBilling}" IconScale="0.04" IconMargin="-180,-400,-175,-400" Width="150" Height="40" HorizontalAlignment="Left" Margin="0,20,0,0" Click="ManageBilling_Click">
+                                <local:IconButton.Style>
+                                    <Style TargetType="local:IconButton" BasedOn="{StaticResource {x:Type local:IconButton}}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding License.UserName,Converter={StaticResource licenseConv}}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </local:IconButton.Style>
+                            </local:IconButton>
+                        </StackPanel>
+                    </StackPanel>
+                </TabItem>
+                <TabItem  Header="About">
+                    <StackPanel Margin="30,0,0,0" HorizontalAlignment="Left">
+                        <TextBlock Text="About" FontSize="20" FontWeight="Bold"/>
+                        <!--<TextBlock Text="Here, you can enable GameVault+ if you are alredy subscribed." FontSize="15" Margin="0,5,0,0"/>-->
+                        <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                            <TextBlock Text="Application Version" FontSize="15" Width="200"/>
+                            <TextBlock Text="{Binding Version}" FontSize="15"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                            <TextBlock Text="Developed by Phalcode" FontSize="15" Width="200"/>
+                            <TextBlock FontSize="15">
+                                <Hyperlink NavigateUri="https://phalco.de" RequestNavigate="Hyperlink_RequestNavigate">https://phalco.de</Hyperlink>
+                            </TextBlock>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                            <TextBlock Text="License" FontSize="15" Width="200"/>
+                            <TextBlock FontSize="15">
+                                <Hyperlink NavigateUri="https://gamevau.lt/license" RequestNavigate="Hyperlink_RequestNavigate">https://gamevau.lt/license</Hyperlink>
+                            </TextBlock>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                            <TextBlock Text="Legal Notice" FontSize="15" Width="200"/>
+                            <TextBlock FontSize="15">
+                                <Hyperlink NavigateUri="https://phalco.de/legal" RequestNavigate="Hyperlink_RequestNavigate">https://phalco.de/legal</Hyperlink>
+                            </TextBlock>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                            <TextBlock Text="Privacy Policy" FontSize="15" Width="200"/>
+                            <TextBlock FontSize="15">
+                                <Hyperlink NavigateUri="https://phalco.de/privacy" RequestNavigate="Hyperlink_RequestNavigate">https://phalco.de/privacy</Hyperlink>
+                            </TextBlock>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                            <TextBlock Text="Terms of Service" FontSize="15" Width="200"/>
+                            <TextBlock FontSize="15">
+                                <Hyperlink NavigateUri="https://phalco.de/tos" RequestNavigate="Hyperlink_RequestNavigate">https://phalco.de/tos</Hyperlink>
+                            </TextBlock>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                            <TextBlock Text="Metadata Providers:" FontSize="15" Width="200"/>
+                            <TextBlock Text="RAWG" FontSize="15"/>
+                            <TextBlock FontSize="15" Margin="10,0,0,0">
+                                <Hyperlink NavigateUri="https://rawg.io" RequestNavigate="Hyperlink_RequestNavigate">https://rawg.io</Hyperlink>
+                            </TextBlock>
+                        </StackPanel>
                     </StackPanel>
                 </TabItem>
             </TabControl>

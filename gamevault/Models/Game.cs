@@ -68,5 +68,7 @@ namespace gamevault.Models
         public Tag[] Tags { get; set; }
         [JsonPropertyName("genres")]
         public Genre[] Genres { get; set; }
+        [JsonPropertyName("progresses")]
+        public Progress[] Progresses { get; set; }
     }
 }

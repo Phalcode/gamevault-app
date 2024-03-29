@@ -7,7 +7,7 @@
              xmlns:local="clr-namespace:gamevault.UserControls"
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
+             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded" KeyDown="Reload_Click" Focusable="True" IsVisibleChanged="UserControl_IsVisibleChanged">
     <UserControl.Resources>
         <conv:InverseEmptyStringConverter x:Key="InvertStringConv"/>
     </UserControl.Resources>
@@ -41,7 +41,7 @@
                 </StackPanel>
                 <local:IconButton Text="Backup / Restore Database" Icon="{StaticResource IconDatabase}" IconMargin="0,0,5,2" HorizontalAlignment="Right" FontSize="15" Width="225" Margin="10,10,200,10" Click="BackupRestore_Click"/>
                 <local:IconButton Text="Reindex Games" HorizontalAlignment="Right" FontSize="15" Icon="{StaticResource IconReload}" IconMargin="0,0,5,2" Width="140" Margin="10,10,46,10" Click="Reindex_Click"/>
-                <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Center" HorizontalAlignment="Right" Background="Transparent" Cursor="Hand" Width="30" Height="30" Margin="0,0,5,0" RenderTransformOrigin="0.5,0.5" ToolTip="Refresh admin console" MouseLeftButtonUp="Reload_Click">
+                <Grid x:Name="uiBtnReload" Style="{DynamicResource HoverEffect}" VerticalAlignment="Center" HorizontalAlignment="Right" Background="Transparent" Cursor="Hand" Width="30" Height="30" Margin="0,0,5,0" RenderTransformOrigin="0.5,0.5" ToolTip="Refresh admin console (F5)" MouseLeftButtonUp="Reload_Click">
                     <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}">
                         <Path.RenderTransform>
                             <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
@@ -60,7 +60,7 @@
                 </Grid>
             </Viewbox>
         </Grid>
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" FocusVisualStyle="{x:Null}">
             <Viewbox VerticalAlignment="Top">
                 <ItemsControl ItemsSource="{Binding Path=Users}">
                     <ItemsControl.ItemsPanel>

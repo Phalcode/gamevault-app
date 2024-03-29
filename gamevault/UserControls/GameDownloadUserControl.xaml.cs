@@ -50,7 +50,7 @@ namespace gamevault.UserControls
             gameSizeConverter = new GameSizeConverter();
             if (download)
             {
-                DownloadGame();
+                _ = DownloadGame();
             }
             else
             {
@@ -108,45 +108,42 @@ namespace gamevault.UserControls
 
             MainWindowViewModel.Instance.UpdateTaskbarProgress();
         }
-        private void DownloadGame()
+        private async Task DownloadGame()
         {
-            Task.Run(async () =>
+            IsDownloadActive = true;
+            ViewModel.State = "Downloading...";
+            ViewModel.DownloadUIVisibility = System.Windows.Visibility.Visible;
+            ViewModel.DownloadFailedVisibility = System.Windows.Visibility.Hidden;
+
+            if (!Directory.Exists(m_DownloadPath)) { Directory.CreateDirectory(m_DownloadPath); }
+            KeyValuePair<string, string>? header = null;
+            if (SettingsViewModel.Instance.DownloadLimit > 0)
             {
-                IsDownloadActive = true;
-                ViewModel.State = "Downloading...";
-                ViewModel.DownloadUIVisibility = System.Windows.Visibility.Visible;
-                ViewModel.DownloadFailedVisibility = System.Windows.Visibility.Hidden;
+                header = new KeyValuePair<string, string>("X-Download-Speed-Limit", SettingsViewModel.Instance.DownloadLimit.ToString());
+            }
+            client = new HttpClientDownloadWithProgress($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}/download", m_DownloadPath, Path.GetFileName(ViewModel.Game.FilePath), header);
+            client.ProgressChanged += DownloadProgress;
+            startTime = DateTime.Now;
 
-                if (!Directory.Exists(m_DownloadPath)) { Directory.CreateDirectory(m_DownloadPath); }
-                KeyValuePair<string, string>? header = null;
-                if (SettingsViewModel.Instance.DownloadLimit > 0)
-                {
-                    header = new KeyValuePair<string, string>("X-Download-Speed-Limit", SettingsViewModel.Instance.DownloadLimit.ToString());
-                }
-                client = new HttpClientDownloadWithProgress($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}/download", m_DownloadPath, Path.GetFileName(ViewModel.Game.FilePath), header);
-                client.ProgressChanged += DownloadProgress;
-                startTime = DateTime.Now;
-
-                try
-                {
-                    await client.StartDownload();
-                    await CacheHelper.CreateOfflineCacheAsync(ViewModel.Game);
-                }
-                catch (Exception ex)
-                {
-                    client.Dispose();
-                    IsDownloadActive = false;
-                    ViewModel.State = $"Error: '{ex.Message}'";
-                    ViewModel.DownloadUIVisibility = System.Windows.Visibility.Hidden;
-                    ViewModel.DownloadFailedVisibility = System.Windows.Visibility.Visible;
-                }
-            });
+            try
+            {
+                await client.StartDownload();
+                await CacheHelper.CreateOfflineCacheAsync(ViewModel.Game);
+            }
+            catch (Exception ex)
+            {
+                client.Dispose();
+                IsDownloadActive = false;
+                ViewModel.State = $"Error: '{ex.Message}'";
+                ViewModel.DownloadUIVisibility = System.Windows.Visibility.Hidden;
+                ViewModel.DownloadFailedVisibility = System.Windows.Visibility.Visible;
+            }
         }
         private void RetryDownload_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.DownloadInfo = string.Empty;
             ViewModel.GameDownloadProgress = 0;
-            DownloadGame();
+            _ = DownloadGame();
         }
         private void DownloadProgress(long? totalFileSize, long totalBytesDownloaded, double? progressPercentage)
         {
@@ -225,8 +222,21 @@ namespace gamevault.UserControls
 
         private async void DeleteFile_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to delete '{(ViewModel.Game == null ? "this Game" : ViewModel.Game.Title)}' ?", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
-            if (result == MessageDialogResult.Affirmative)
+            await DeleteFile(confirm: true);
+        }
+
+        public async Task DeleteFile(bool confirm = true)
+        {
+            bool doDelete = true;
+
+            if (confirm)
+            {
+                MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to delete '{(ViewModel.Game == null ? "this Game" : ViewModel.Game.Title)}' ?", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+
+                doDelete = result == MessageDialogResult.Affirmative;
+            }
+
+            if (doDelete)
             {
                 try
                 {
@@ -246,6 +256,7 @@ namespace gamevault.UserControls
                 }
             }
         }
+
         private void OpenDirectory_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (Directory.Exists(m_DownloadPath))

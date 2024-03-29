@@ -12,7 +12,26 @@
         </Grid>
 
     </DataTemplate>
-
+    <DataTemplate x:Key="HamburgerMenuItem" DataType="{x:Type mah:HamburgerMenuIconItem}">
+        <DockPanel Height="48" LastChildFill="True">
+            <ContentControl x:Name="IconPart"
+                        Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type mah:HamburgerMenu}}, Path=CompactPaneLength}"
+                        Content="{Binding Icon}"
+                        DockPanel.Dock="Left"
+                        Focusable="False"
+                        IsTabStop="False" />
+            <TextBlock x:Name="TextPart"
+                   VerticalAlignment="Center"
+                   FontSize="16"
+                   Text="{Binding Label}" />
+        </DockPanel>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type mah:HamburgerMenu}}, Path=PanePlacement}" Value="Right">
+                <Setter TargetName="IconPart" Property="DockPanel.Dock" Value="Right" />
+                <Setter TargetName="TextPart" Property="Margin" Value="8 0 0 0" />
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
     <Style x:Key="GameCardAnimation" TargetType="{x:Type Grid}">
         <Style.Setters>
             <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>

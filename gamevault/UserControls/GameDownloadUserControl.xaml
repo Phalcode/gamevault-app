@@ -187,7 +187,7 @@
                         <TextBlock Text="{Binding InstallPath}" FontSize="3" Foreground="#FF424242" HorizontalAlignment="Left" Cursor="Hand"/>
                     </Border>
                 </Grid>
-                <Viewbox Width="9" Height="9" Margin="0,0,30,0" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                <Viewbox Width="9" Height="9" Margin="0,0,38,0" HorizontalAlignment="Right" VerticalAlignment="Bottom">
                     <mah:ProgressRing x:Name="uiProgressRingInstall" IsActive="False"/>
                 </Viewbox>
 

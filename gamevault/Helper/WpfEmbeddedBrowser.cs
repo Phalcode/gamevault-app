@@ -76,6 +76,14 @@ namespace gamevault.Helper
                     signinWindow.Close();
                 }
             };
+            webView.NavigationCompleted += (s, e) =>
+            {
+                try
+                {
+                    webView.ExecuteScriptAsync("document.getElementById(\"rememberMe\").checked=true;");
+                }
+                catch { }
+            };
 
             signinWindow.Content = webView;
             signinWindow.Show();

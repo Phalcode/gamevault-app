@@ -11,6 +11,8 @@ using System.Windows.Input;
 using System.Diagnostics;
 using MahApps.Metro.Controls.Dialogs;
 using MahApps.Metro.Controls;
+using System.Text.Json;
+using System.Security.Policy;
 
 namespace gamevault.UserControls
 {
@@ -20,22 +22,12 @@ namespace gamevault.UserControls
     public partial class SettingsUserControl : UserControl
     {
         private SettingsViewModel ViewModel { get; set; }
+        private bool loaded = false;
         public SettingsUserControl()
         {
             InitializeComponent();
             ViewModel = SettingsViewModel.Instance;
             this.DataContext = ViewModel;
-
-            string currentTheme = Preferences.Get(AppConfigKey.Theme, AppFilePath.UserFile, true);
-            int themeIndex = Array.FindIndex(ViewModel.Themes, i => i.Value == currentTheme);
-            if (themeIndex != -1 && (ViewModel.Themes[themeIndex].IsPlus == true ? ViewModel.License.IsActive() : true))
-            {
-                uiCbTheme.SelectedIndex = themeIndex;
-            }
-            else
-            {
-                uiCbTheme.SelectedIndex = 0;
-            }
         }
         public void SetTabIndex(int index)
         {
@@ -81,6 +73,10 @@ namespace gamevault.UserControls
         }
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            if (loaded)
+                return;
+
+            loaded = true;
             if (App.IsWindowsPackage)
             {
                 uiAutostartToggle.IsOn = await AutostartHelper.IsWindowsPackageAutostartEnabled();
@@ -90,6 +86,7 @@ namespace gamevault.UserControls
                 uiAutostartToggle.IsOn = AutostartHelper.RegistryAutoStartKeyExists();
             }
             uiAutostartToggle.Toggled += AppAutostart_Toggled;
+            await LoadThemes();
         }
         private async void AppAutostart_Toggled(object sender, RoutedEventArgs e)
         {
@@ -206,7 +203,12 @@ namespace gamevault.UserControls
             }
             ((FrameworkElement)sender).IsEnabled = true;
         }
-
+        private async void RefreshLicense_Click(object sender, RoutedEventArgs e)
+        {
+            ((FrameworkElement)sender).IsEnabled = false;
+            await LoginManager.Instance.PhalcodeLogin();
+            ((FrameworkElement)sender).IsEnabled = true;
+        }
         private void ManageBilling_Click(object sender, RoutedEventArgs e)
         {
 #if DEBUG
@@ -220,12 +222,12 @@ namespace gamevault.UserControls
         }
         private void Themes_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string selectedTheme = ((ComboBox)sender).SelectedValue.ToString();
+            ThemeItem selectedTheme = (ThemeItem)((ComboBox)sender).SelectedValue;
             if (((ComboBox)sender).SelectionBoxItem == string.Empty)
                 return;
-            if (((ThemeItem)((ComboBox)sender).SelectionBoxItem).Value == selectedTheme)
+            if (((ThemeItem)((ComboBox)sender).SelectionBoxItem).Value == selectedTheme.Value)
                 return;
-            if (((ThemeItem)e.AddedItems[0]).IsPlus == true && ViewModel.License.IsActive() == false)
+            if (selectedTheme.IsPlus == true && ViewModel.License.IsActive() == false)
             {
                 ((ComboBox)sender).SelectedItem = (ThemeItem)((ComboBox)sender).SelectionBoxItem;
                 try
@@ -241,8 +243,62 @@ namespace gamevault.UserControls
                 catch { }
                 return;
             }
-            App.Current.Resources.MergedDictionaries[0] = new ResourceDictionary() { Source = new System.Uri(selectedTheme) };
-            Preferences.Set(AppConfigKey.Theme, selectedTheme, AppFilePath.UserFile, true);
+            try
+            {
+                App.Current.Resources.MergedDictionaries[0] = new ResourceDictionary() { Source = new Uri(selectedTheme.Value) };
+                //Reload Base Styles to apply new colors
+                App.Current.Resources.MergedDictionaries[1] = new ResourceDictionary() { Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Base.xaml") };
+                Preferences.Set(AppConfigKey.Theme, JsonSerializer.Serialize(selectedTheme), AppFilePath.UserFile, true);
+            }
+            catch (Exception ex) { MainWindowViewModel.Instance.AppBarText = ex.Message; }
         }
+        private async Task LoadThemes()
+        {
+            try
+            {
+                ViewModel.Themes = new System.Collections.Generic.List<ThemeItem> {
+               new ThemeItem() { Key = "GameVault (Dark)", Value = "pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultDark.xaml", IsPlus = false },
+               new  ThemeItem(){ Key="GameVault (Light)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultLight.xaml",IsPlus=false},
+               new  ThemeItem(){ Key="GameVault (Classic)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultClassicDark.xaml",IsPlus=false},
+               new  ThemeItem(){ Key="Phalcode (Dark)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemePhalcodeDark.xaml",IsPlus=true},
+               new  ThemeItem(){ Key="Phalcode (Light)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemePhalcodeLight.xaml",IsPlus=true}};
+                if (Directory.Exists(AppFilePath.ThemesLoadDir))
+                {
+                    foreach (var file in Directory.GetFiles(AppFilePath.ThemesLoadDir, "*.xaml", SearchOption.AllDirectories))
+                    {
+                        ViewModel.Themes.Add(new ThemeItem() { Key = Path.GetFileNameWithoutExtension(file), Value = file, IsPlus = true });
+                    }
+                }
+                string currentThemeString = Preferences.Get(AppConfigKey.Theme, AppFilePath.UserFile, true);
+                ThemeItem currentTheme = JsonSerializer.Deserialize<ThemeItem>(currentThemeString);
+                int themeIndex = ViewModel.Themes.FindIndex(i => i.Value == currentTheme.Value);
+                if (themeIndex != -1 && (ViewModel.Themes[themeIndex].IsPlus == true ? ViewModel.License.IsActive() : true))
+                {
+                    uiCbTheme.SelectedIndex = themeIndex;
+                }
+                else
+                {
+                    uiCbTheme.SelectedIndex = 0;
+                }
+            }
+            catch { uiCbTheme.SelectedIndex = 0; }
+        }
+
+        private void OpenThemeFolder_Click(object sender, RoutedEventArgs e)
+        {
+            if (Directory.Exists(AppFilePath.ThemesLoadDir))
+            {
+                Process.Start("explorer.exe", AppFilePath.ThemesLoadDir);
+            }
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+            }
+            catch { }
+        }      
     }
 }

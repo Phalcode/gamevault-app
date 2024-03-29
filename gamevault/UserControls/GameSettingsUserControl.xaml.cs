@@ -146,11 +146,17 @@ namespace gamevault.UserControls
         private void OpenDirectory_Click(object sender, RoutedEventArgs e)
         {
             if (Directory.Exists(ViewModel.Directory))
-                Process.Start("explorer.exe", ViewModel.Directory);
+                Process.Start("explorer.exe", ViewModel.Directory.Replace("\\\\", "\\"));
         }
         private async void Uninstall_Click(object sender, RoutedEventArgs e)
         {
             ((FrameworkElement)sender).IsEnabled = false;
+            await UninstallGame();
+            ((FrameworkElement)sender).IsEnabled = true;
+        }
+
+        public async Task UninstallGame()
+        {
             if (ViewModel.Game.Type == GameType.WINDOWS_PORTABLE)
             {
                 MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to uninstall '{ViewModel.Game.Title}' ?", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
@@ -182,6 +188,11 @@ namespace gamevault.UserControls
                         System.Windows.Forms.DialogResult fileResult = dialog.ShowDialog();
                         if (fileResult == System.Windows.Forms.DialogResult.OK && File.Exists(dialog.FileName))
                         {
+                            MessageDialogResult pickResult = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to uninstall the game using '{Path.GetFileName(dialog.FileName)}' ?", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+                            if (pickResult != MessageDialogResult.Affirmative)
+                            {
+                                return;
+                            }
                             Process uninstProcess = null;
                             try
                             {
@@ -205,7 +216,10 @@ namespace gamevault.UserControls
                                 try
                                 {
                                     if (Directory.Exists(ViewModel.Directory))
+                                    {
+                                        //Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(ViewModel.Directory, Microsoft.VisualBasic.FileIO.UIOption.AllDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.DeletePermanently);                                        
                                         Directory.Delete(ViewModel.Directory, true);
+                                    }
 
                                     InstallViewModel.Instance.InstalledGames.Remove(InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).First());
                                 }
@@ -219,8 +233,8 @@ namespace gamevault.UserControls
             {
                 MainWindowViewModel.Instance.AppBarText = "Game Type cannot be determined";
             }
-            ((FrameworkElement)sender).IsEnabled = true;
         }
+
         private void InitDiskUsagePieChart()
         {
             Task.Run(() =>
