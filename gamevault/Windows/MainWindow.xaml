@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:local="clr-namespace:gamevault"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:uc="clr-namespace:gamevault.UserControls"
 		xmlns:conv="clr-namespace:gamevault.Converter"
         mc:Ignorable="d" Icon="/Resources/Images/icon.ico"
@@ -35,14 +36,34 @@
                 </Grid>
             </Border>
         </Grid>
-        <mah:HamburgerMenu HamburgerVisibility="Hidden" ItemInvoked="HamburgerMenuControl_OnItemInvoked" SelectedIndex="{Binding ActiveControlIndex}" RenderOptions.BitmapScalingMode="HighQuality">
+        <mah:HamburgerMenu HamburgerVisibility="Hidden" ItemInvoked="HamburgerMenuControl_OnItemInvoked" SelectedIndex="{Binding ActiveControlIndex}" ItemTemplate="{StaticResource HamburgerMenuItem}">
             <mah:HamburgerMenu.ItemsSource>
                 <mah:HamburgerMenuItemCollection>
-                    <mah:HamburgerMenuGlyphItem Glyph="pack://application:,,,/gamevault;component/Resources/Images/glyph_server.png"/>
-                    <mah:HamburgerMenuGlyphItem Glyph="pack://application:,,,/gamevault;component/Resources/Images/glyph_download.png"/>
-                    <mah:HamburgerMenuGlyphItem Glyph="pack://application:,,,/gamevault;component/Resources/Images/glyph_community.png"/>
-                    <mah:HamburgerMenuGlyphItem Glyph="pack://application:,,,/gamevault;component/Resources/Images/glyph_settings.png"/>
-                    <mah:HamburgerMenuGlyphItem Glyph="pack://application:,,,/gamevault;component/Resources/Images/glyph_admin.png" IsVisible="{Binding Path=UserIcon, Converter={StaticResource permissionRoleConv}}"/>
+                    <mah:HamburgerMenuIconItem>
+                        <mah:HamburgerMenuIconItem.Icon>
+                            <iconPacks:PackIconModern Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Center" Kind="ControllerXbox" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+                        </mah:HamburgerMenuIconItem.Icon>
+                    </mah:HamburgerMenuIconItem>
+                    <mah:HamburgerMenuIconItem>
+                        <mah:HamburgerMenuIconItem.Icon>
+                            <iconPacks:PackIconForkAwesome Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Center" Kind="CloudDownload" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+                        </mah:HamburgerMenuIconItem.Icon>
+                    </mah:HamburgerMenuIconItem>
+                    <mah:HamburgerMenuIconItem>
+                        <mah:HamburgerMenuIconItem.Icon>
+                            <iconPacks:PackIconForkAwesome Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Center" Kind="Users" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+                        </mah:HamburgerMenuIconItem.Icon>
+                    </mah:HamburgerMenuIconItem>
+                    <mah:HamburgerMenuIconItem>
+                        <mah:HamburgerMenuIconItem.Icon>
+                            <iconPacks:PackIconMaterial Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Center" Kind="Cog" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+                        </mah:HamburgerMenuIconItem.Icon>
+                    </mah:HamburgerMenuIconItem>
+                    <mah:HamburgerMenuIconItem IsVisible="{Binding Path=UserIcon, Converter={StaticResource permissionRoleConv}}">
+                        <mah:HamburgerMenuIconItem.Icon>
+                            <iconPacks:PackIconFontAwesome Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Center" Kind="UserShieldSolid" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+                        </mah:HamburgerMenuIconItem.Icon>
+                    </mah:HamburgerMenuIconItem>
                 </mah:HamburgerMenuItemCollection>
             </mah:HamburgerMenu.ItemsSource>
 

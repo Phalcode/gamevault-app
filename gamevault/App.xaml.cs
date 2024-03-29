@@ -59,17 +59,22 @@ namespace gamevault
             m_gameTimeTracker = new GameTimeTracker();
             await m_gameTimeTracker.Start();
 
-            bool startMinimized = false;
+            bool startMinimizedByPreferences = false;
+            bool startMinimizedByCLI = false;
 
             if ((CommandLineOptions?.Minimized).HasValue)
-                startMinimized = CommandLineOptions!.Minimized!.Value;
+                startMinimizedByCLI = CommandLineOptions!.Minimized!.Value;
             else if (SettingsViewModel.Instance.BackgroundStart)
-                startMinimized = true;
+                startMinimizedByPreferences = true;
 
-            if (!startMinimized && MainWindow == null)
+            if (!startMinimizedByPreferences && MainWindow == null)
             {
                 MainWindow = new MainWindow();
                 MainWindow.Show();
+            }
+            if (startMinimizedByCLI && MainWindow != null)
+            {
+                MainWindow.Hide();
             }
 
             InitNotifyIcon();

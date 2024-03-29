@@ -18,6 +18,9 @@
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="False">
                     <Setter Property="Fill" Value="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
                 </DataTrigger>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsMouseOver}" Value="True">
+                    <Setter Property="Opacity" Value="0.8"/>
+                </DataTrigger>
             </Style.Triggers>
         </Style>
         <Style x:Key="TabItemHeaderPathStroke" TargetType="Path">
@@ -27,6 +30,9 @@
                 </DataTrigger>
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="False">
                     <Setter Property="Stroke" Value="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsMouseOver}" Value="True">
+                    <Setter Property="Opacity" Value="0.8"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -40,6 +46,9 @@
                 </DataTrigger>
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="False">
                     <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsMouseOver}" Value="True">
+                    <Setter Property="Opacity" Value="0.8"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>

@@ -7,7 +7,7 @@
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
+             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded" KeyDown="ReloadUser_Clicked" Focusable="True" IsVisibleChanged="UserControl_IsVisibleChanged">
     <UserControl.Resources>
         <conv:PermissionRoleToVisibilityConverter x:Key="roleToVisConv"/>
         <conv:UrlImageConverter x:Key="urlImgConv"/>
@@ -62,7 +62,7 @@
                                 <ScaleTransform/>
                             </Grid.RenderTransform>
                         </Grid>
-                        <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Cursor="Hand" Width="25" Height="25" Margin="0,0,30,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="ReloadUser_Clicked">
+                        <Grid x:Name="uiBtnReloadUser" Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Cursor="Hand" Width="25" Height="25" Margin="0,0,30,0" RenderTransformOrigin="0.5,0.5" ToolTip="Reload current user (F5)" MouseLeftButtonUp="ReloadUser_Clicked">
                             <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}">
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="1" ScaleY="1"/>

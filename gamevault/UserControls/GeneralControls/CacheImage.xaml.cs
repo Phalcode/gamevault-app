@@ -1,6 +1,7 @@
 ﻿using gamevault.Helper;
 using gamevault.Models;
 using gamevault.ViewModels;
+using gamevault.Windows;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -125,13 +126,21 @@ namespace gamevault.UserControls
                 }
                 else
                 {
-                    if (GifHelper.IsGif(uri))
+                    try
                     {
-                        await GifHelper.LoadGif(uri, uiImg);
+                        if (GifHelper.IsGif(uri))
+                        {
+                            await GifHelper.LoadGif(uri, uiImg);
+                        }
+                        else
+                        {
+                            uiImg.Source = BitmapHelper.GetBitmapImage(uri);
+                            uiImg.BeginAnimation(System.Windows.Controls.Image.SourceProperty, null);
+                        }
                     }
-                    else
+                    catch(Exception ex)
                     {
-                        uiImg.Source = await BitmapHelper.GetBitmapImageAsync(uri);
+                        MainWindowViewModel.Instance.AppBarText=ex.Message;
                     }
                 }
                 return;

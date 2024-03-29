@@ -230,7 +230,8 @@ namespace gamevault.UserControls
                 {
                     App.Current.Dispatcher.Invoke((Action)delegate
                     {
-                        InstallViewModel.Instance.InstalledGames.Add(new KeyValuePair<Game, string>(game, dir));
+                        InstallViewModel.Instance.InstalledGames.Insert(0,new KeyValuePair<Game, string>(game, dir));
+                        SetLastPlayedGame(game.ID);
                     });
                 }
             }

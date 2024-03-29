@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -26,8 +27,16 @@ namespace gamevault
         /// <param name="args">Args passed to the application from the command line</param>
         [STAThread]
         public static void Main(string[] args)
-        {
+        {            
+            //string msg = $"File:Program.cs - Method:Main - Arg Lenght: {args.Length} - Arg content: {string.Join(",", args)}";
+            //System.Windows.MessageBox.Show(msg);
             CommandOptions cmdLineOptions;
+            if (args.Length > 0 && args.Any(s => s.Contains("gamevault://")) && !args[0].Contains("--uridata"))
+            {
+                List<string> stringList = new List<string>(args);
+                stringList.Insert(0, "--uridata");
+                args = stringList.ToArray();
+            }
 
             using (var parser = new Parser(with =>
             {

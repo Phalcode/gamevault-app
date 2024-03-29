@@ -228,13 +228,11 @@ namespace gamevault.UserControls
         }
         #endregion
         private async void BackgroundImage_Save(object sender, RoutedEventArgs e)
-        {
-            ViewModel.BackgroundImageChanged = false;
+        {           
             await SaveImage("");
         }
         private async void AvatarImage_Save(object sender, RoutedEventArgs e)
-        {
-            ViewModel.AvatarImageChanged = false;
+        {            
             await SaveImage("avatar");
         }
         private async Task SaveImage(string tag)
@@ -245,14 +243,16 @@ namespace gamevault.UserControls
                 MemoryStream ms = null;
                 string filename = "x.png";
                 if (tag == "avatar")
-                {
-                    if (System.Uri.IsWellFormedUriString(ViewModel.AvatarImageUrl, UriKind.Absolute))
+                {                   
+                    ViewModel.AvatarImageChanged = false;
+                    string avatarImageUrl = ViewModel.AvatarImageUrl.Replace("&amp;", "&");
+                    if (System.Uri.IsWellFormedUriString(avatarImageUrl, UriKind.Absolute))
                     {
-                        ms = await BitmapHelper.UrlToMemoryStream(ViewModel.AvatarImageUrl);
+                        ms = await BitmapHelper.UrlToMemoryStream(avatarImageUrl);
                     }
                     else
                     {
-                        ms = BitmapHelper.UriToMemoryStream(ViewModel.AvatarImageUrl);
+                        ms = BitmapHelper.UriToMemoryStream(avatarImageUrl);
                     }
                     if (GifHelper.IsGif(ms))
                     {
@@ -273,13 +273,21 @@ namespace gamevault.UserControls
                         }
                         filename = "x.gif";
                     }
-                    else
-                    {
-                        ms = BitmapHelper.BitmapSourceToMemoryStream(await BitmapHelper.GetBitmapImageAsync(ViewModel.AvatarImageUrl));
-                    }
+                    //else
+                    //{
+                    //    if (System.Uri.IsWellFormedUriString(ViewModel.AvatarImageUrl, UriKind.Absolute))
+                    //    {
+                    //        ms = BitmapHelper.BitmapSourceToMemoryStream(await BitmapHelper.GetBitmapImageAsync(ViewModel.AvatarImageUrl));
+                    //    }
+                    //    else
+                    //    {
+                    //        ms = BitmapHelper.BitmapSourceToMemoryStream(BitmapHelper.GetBitmapImage(ViewModel.AvatarImageUrl));
+                    //    }                    
+                    //}
                 }
                 else
                 {
+                    ViewModel.BackgroundImageChanged = false;
                     ms = BitmapHelper.BitmapSourceToMemoryStream((BitmapSource)ViewModel.BackgroundImageSource);
                 }
                 ms.Position = 0;

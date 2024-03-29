@@ -111,7 +111,7 @@
                 <TabItem Header="GameVault+">
                     <StackPanel Margin="30,0,0,0">
                         <TextBlock Text="GameVault+" FontSize="20" FontWeight="Bold"/>
-                        <TextBlock Text="Here, you can enable GameVault+ if you are alredy subscribed." FontSize="15" Margin="0,5,0,0"/>
+                        <TextBlock Text="Here, you can enable GameVault+ if you are already subscribed." FontSize="15" Margin="0,5,0,0"/>
                         <TextBlock Text="Your Phalcode Account" TextDecorations="Underline" FontSize="15" Margin="0,20,0,0"/>
                         <Border CornerRadius="10" Height="50" HorizontalAlignment="Left" Cursor="Hand" Margin="0,10,0,0" MouseLeftButtonUp="PhalcodeLoginLogout_Click">
                             <Border.Style>
@@ -159,7 +159,7 @@
                             </StackPanel>
                         </Border>
                         <TextBlock Text="Your GameVault+ Subscription" TextDecorations="Underline" FontSize="15" Margin="0,20,0,0"/>
-                        <TextBlock Text="You have no active GameVault + license" FontSize="15" Margin="0,10,0,0">
+                        <TextBlock Text="You have no active GameVault+ license" FontSize="15" Margin="0,10,0,0">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="Visibility" Value="Collapsed"/>

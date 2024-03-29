@@ -32,7 +32,13 @@ namespace gamevault.UserControls
             ViewModel = new AdminConsoleViewModel();
             this.DataContext = ViewModel;
         }
-
+        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (this.IsVisible)
+            {
+                this.Focus();
+            }
+        }
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             if (this.Visibility == Visibility.Visible)
@@ -41,6 +47,7 @@ namespace gamevault.UserControls
                 ViewModel.ServerVersionInfo = await GetServerVersionInfo();
             }
         }
+
         public async Task InitUserList()
         {
             try
@@ -225,11 +232,14 @@ namespace gamevault.UserControls
             ((FrameworkElement)sender).IsEnabled = true;
         }
 
-        private async void Reload_Click(object sender, MouseButtonEventArgs e)
+        private async void Reload_Click(object sender, EventArgs e)
         {
-            ((FrameworkElement)sender).IsEnabled = false;
+            if (!uiBtnReload.IsEnabled || (e.GetType() == typeof(KeyEventArgs) && ((KeyEventArgs)e).Key != Key.F5))
+                return;
+
+            uiBtnReload.IsEnabled = false;
             await InitUserList();
-            ((FrameworkElement)sender).IsEnabled = true;
+            uiBtnReload.IsEnabled = true;
         }
         private async Task<KeyValuePair<string, string>> GetServerVersionInfo()
         {
@@ -263,6 +273,6 @@ namespace gamevault.UserControls
             url = url.Replace("&", "^&");
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
             e.Handled = true;
-        }
+        }      
     }
 }

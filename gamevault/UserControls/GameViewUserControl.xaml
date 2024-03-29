@@ -184,7 +184,7 @@
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Border CornerRadius="5" Background="{Binding Name,Converter={StaticResource colorConv}}" Padding="0" Margin="10">
-                                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="15,8,15,8" FontSize="15" FontWeight="Bold"/>
+                                                    <TextBlock Text="{Binding Name}" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" VerticalAlignment="Center" Margin="15,8,15,8" FontSize="15" FontWeight="Bold"/>
                                                 </Border>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>

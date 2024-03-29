@@ -339,5 +339,23 @@ namespace gamevault.UserControls
                 ViewModel.GameCards[index] = gameToRefreshParam;
             }
         }
+        #region PREVENT WEIRD AUTO SCROLL
+        //The main scrollbar starts scrolling if i click in the server games section. Could not find a better solution for this Problem. Thats why this bad workaround.
+        bool isProgrammaticScroll = false;
+        private void uiMainScrollBar_RequestBringIntoView(object sender, RequestBringIntoViewEventArgs e)
+        {
+            isProgrammaticScroll = true;
+        }
+
+        private void uiMainScrollBar_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if (isProgrammaticScroll)
+            {
+                e.Handled = true;
+                isProgrammaticScroll = false;
+                ((ScrollViewer)sender).ScrollToVerticalOffset(e.VerticalOffset - e.VerticalChange);                
+            }
+        }
+        #endregion
     }
 }

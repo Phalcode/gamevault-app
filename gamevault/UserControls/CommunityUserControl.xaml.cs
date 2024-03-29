@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 
 namespace gamevault.UserControls
 {
@@ -23,6 +24,13 @@ namespace gamevault.UserControls
             InitializeComponent();
             ViewModel = new CommunityViewModel();
             this.DataContext = ViewModel;
+        }
+        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (this.IsVisible)
+            {
+                this.Focus();
+            }
         }
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
@@ -182,14 +190,17 @@ namespace gamevault.UserControls
             }
             MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(((Progress)((FrameworkElement)sender).DataContext).Game));
         }
-        private async void ReloadUser_Clicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private async void ReloadUser_Clicked(object sender, EventArgs e)
         {
             if (!LoginManager.Instance.IsLoggedIn())
             {
                 MainWindowViewModel.Instance.AppBarText = "You are not logged in";
                 return;
             }
-            ((FrameworkElement)sender).IsEnabled = false;
+            if (uiBtnReloadUser.IsEnabled == false || (e.GetType() == typeof(KeyEventArgs) && ((KeyEventArgs)e).Key != Key.F5))
+                return;
+
+            uiBtnReloadUser.IsEnabled = false;
             try
             {
                 int currentUserId = ViewModel.CurrentShownUser.ID;
@@ -203,7 +214,7 @@ namespace gamevault.UserControls
 
             }
             catch (Exception ex) { }
-            ((FrameworkElement)sender).IsEnabled = true;
+            uiBtnReloadUser.IsEnabled = true;
         }
         private void UserEdit_Clicked(object sender, RoutedEventArgs e)
         {
@@ -232,6 +243,6 @@ namespace gamevault.UserControls
             {
                 MainWindowViewModel.Instance.AppBarText = $"Could not delete. {WebExceptionHelper.TryGetServerMessage(ex)}";
             }
-        }
+        }     
     }
 }
