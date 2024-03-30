@@ -18,18 +18,6 @@ namespace gamevault.Helper
         public WpfEmbeddedBrowser(bool startWithoutWindow)
         {
             StartWithoutWindow = startWithoutWindow;
-        }
-        public async Task<BrowserResult> InvokeAsync(BrowserOptions options, CancellationToken cancellationToken = default)
-        {
-            _options = options;
-
-            var semaphoreSlim = new SemaphoreSlim(0, 1);
-            var browserResult = new BrowserResult()
-            {
-                ResultType = BrowserResultType.UserCancel
-            };
-
-
             if (StartWithoutWindow)
             {
                 signinWindow = new Window()
@@ -39,7 +27,7 @@ namespace gamevault.Helper
                     Title = "Phalcode Silent Sign-in",
                     WindowStartupLocation = WindowStartupLocation.Manual,
                     Top = int.MinValue,
-                    Left = int.MinValue,                    
+                    Left = int.MinValue,
                     ShowInTaskbar = false,
                 };
             }
@@ -53,6 +41,17 @@ namespace gamevault.Helper
                     WindowStartupLocation = WindowStartupLocation.CenterScreen
                 };
             }
+        }
+        public async Task<BrowserResult> InvokeAsync(BrowserOptions options, CancellationToken cancellationToken = default)
+        {
+            _options = options;
+
+            var semaphoreSlim = new SemaphoreSlim(0, 1);
+            var browserResult = new BrowserResult()
+            {
+                ResultType = BrowserResultType.UserCancel
+            };
+        
             //signinWindow.Owner = App.Current.MainWindow;
             signinWindow.Closing += (s, e) =>
             {
