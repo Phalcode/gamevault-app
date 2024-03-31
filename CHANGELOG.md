@@ -1,5 +1,23 @@
 # GameVault App Changelog
 
+## 1.9.0
+- Added GameVault Plus infrastructure
+- Added GameVault Client APIs (+)
+- Added GIF support for user profile pictures (+)
+- Added Theming and custom theme loader (+)
+- All buttons have now icons and effects
+- Applies new brand design
+- Added refresh button to library. Can also be triggered by F5 Key
+- Added F5 Key refresh to Community Tab and Admin Panel
+- Added About Setting Page
+- Display freshly installed games first in Installed Games View
+- Added text trimming to game settings archive file path
+- The library is now updated when reindexing
+- Improved error messages
+- Bug fix: Edge case where image was shown as not found
+- Bug fix: Game website link no longer clickable if empty
+- Bug fix: Redownload icon not appearing on library card
+- Bug fix: Bring window of running instance to foreground if you start gamevault
 ## 1.8.3
 Recommended Gamevault Server Version: `v10.2.0`
 ### Changes
