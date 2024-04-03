@@ -1,6 +1,8 @@
 ﻿using gamevault.Models;
 using gamevault.ViewModels;
+using IdentityModel.Client;
 using IdentityModel.OidcClient;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -131,7 +133,8 @@ namespace gamevault.Helper
         private WpfEmbeddedBrowser wpfEmbeddedBrowser = null;
         public async Task PhalcodeLogin(bool isStartup = false)
         {
-            if (isStartup && Preferences.Get(AppConfigKey.Phalcode1, AppFilePath.UserFile, true) != "true")
+            string? provider = Preferences.Get(AppConfigKey.Phalcode1, AppFilePath.UserFile, true);
+            if (isStartup && provider == "")
             {
                 return;
             }
@@ -165,12 +168,29 @@ namespace gamevault.Helper
                     catch { }
                 };
                 timer.Start();
-                loginResult = await _oidcClient.LoginAsync();
+
+
+                Parameters param = null;
+                if (provider == "microsoft" || provider == "google" || provider == "discord" || provider == "github")
+                {
+                    param = new Parameters();
+                    param.Add("kc_idp_hint", provider);
+                }
+
+                loginResult = await _oidcClient.LoginAsync(new LoginRequest() { FrontChannelExtraParameters = param });
                 timer.Stop();
                 //string token = loginResult.AccessToken;
                 username = loginResult.User == null ? null : loginResult.User.Identity.Name;
-                SettingsViewModel.Instance.License.UserName = username;
-                Preferences.Set(AppConfigKey.Phalcode1, "true", AppFilePath.UserFile, true);
+                SettingsViewModel.Instance.License = new PhalcodeProduct() { UserName=username };
+
+                var handler = new JwtSecurityTokenHandler();
+                var t = handler.ReadJwtToken(loginResult.AccessToken);
+                provider = t.Claims.FirstOrDefault(claim => claim.Type == "identity_provider")?.Value;
+                if (string.IsNullOrEmpty(provider))
+                {
+                    provider = "phalcode";
+                }
+                Preferences.Set(AppConfigKey.Phalcode1, provider, AppFilePath.UserFile, true);
             }
             catch (System.Exception exception)
             {

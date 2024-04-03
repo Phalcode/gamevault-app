@@ -18,7 +18,7 @@
     </mah:MetroWindow.Resources>
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
-            <Button Click="WindowCommand_Clicked" Content="💸 Ko-fi" FontSize="18" Cursor="Hand" Tag="https://ko-fi.com/phalcode"/>
+            <Button Click="WindowCommand_Clicked" Content="💸 Support Us" FontSize="18" Cursor="Hand" Tag="https://phalco.de/support-us"/>
             <Button Click="WindowCommand_Clicked" Content="💬 Discord" FontSize="18" Cursor="Hand" Tag="https://discord.com/invite/NEdNen2dSu"/>
             <Button Click="WindowCommand_Clicked" Content="📜 Documentation" FontSize="18" Cursor="Hand" Tag="https://gamevau.lt/docs/intro"/>
             <Button Click="WindowCommand_Clicked" Content="💻 GitHub" FontSize="18" Cursor="Hand" Tag="https://github.com/orgs/Phalcode/repositories"/>
