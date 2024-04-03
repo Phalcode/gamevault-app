@@ -83,9 +83,12 @@ namespace gamevault
                 return;
 
             Instance = new PipeServiceHandler();
-
-            Instance.RegisterUriScheme();
-
+            try
+            {
+                Instance.RegisterUriScheme();
+            }
+            catch {} //
+            
             try
             {
                 Instance.StartNamedPipeServer();
@@ -337,7 +340,7 @@ namespace gamevault
                 // There's a gameid and most of our actions want to know if it's already installed
                 isGameInstalled = await GetInstalledGame(options.GameId.Value) != null;
             }
-           
+
             // do stuff
             switch (options.Action)
             {

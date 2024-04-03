@@ -145,7 +145,7 @@ namespace gamevault.Helper
         {
             await Task.Run(() =>
             {
-                using (MagickImageCollection frames = new MagickImageCollection(path))
+                using (MagickImageCollection frames = new MagickImageCollection(path))//use apng:{mypath} to load frames for APNG
                 {
                     if (IsDisposableGif(frames))
                     {
