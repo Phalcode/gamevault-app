@@ -162,8 +162,7 @@ namespace gamevault.UserControls
             }
             catch (Exception ex) { MainWindowViewModel.Instance.AppBarText = ex.Message; }
         }
-
-        private void GameCard_Clicked(object sender, MouseButtonEventArgs e)
+        private void GameCard_Clicked(object sender, RoutedEventArgs e)
         {
             if ((Game)((FrameworkElement)sender).DataContext == null)
                 return;
@@ -304,15 +303,14 @@ namespace gamevault.UserControls
             }
             ((FrameworkElement)sender).IsEnabled = true;
         }
-
-        private void Settings_Click(object sender, MouseButtonEventArgs e)
+        private void Settings_Click(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
             var installedGame = InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ((Game)((FrameworkElement)sender).DataContext).ID).FirstOrDefault();
 
             MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl((Game)((FrameworkElement)sender).DataContext) { Width = 1200, Height = 800, Margin = new Thickness(50) });
         }
-        private async void Download_Click(object sender, MouseButtonEventArgs e)
+        private async void Download_Click(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
             await MainWindowViewModel.Instance.Downloads.TryStartDownload((Game)(((FrameworkElement)sender).DataContext));
@@ -353,9 +351,12 @@ namespace gamevault.UserControls
             {
                 e.Handled = true;
                 isProgrammaticScroll = false;
-                ((ScrollViewer)sender).ScrollToVerticalOffset(e.VerticalOffset - e.VerticalChange);                
+                ((ScrollViewer)sender).ScrollToVerticalOffset(e.VerticalOffset - e.VerticalChange);
             }
         }
+
         #endregion
+
+
     }
 }

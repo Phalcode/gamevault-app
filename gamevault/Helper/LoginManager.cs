@@ -144,7 +144,7 @@ namespace gamevault.Helper
                 Authority = "https://auth.platform.phalco.de/realms/phalcode",
                 ClientId = "gamevault-app",
                 Scope = "openid profile email",
-                RedirectUri = "http://127.0.0.1/gamevault",
+                RedirectUri = "http://127.0.0.1:11121/gamevault",
                 Browser = wpfEmbeddedBrowser,
                 Policy = new Policy
                 {
@@ -181,7 +181,7 @@ namespace gamevault.Helper
                 timer.Stop();
                 //string token = loginResult.AccessToken;
                 username = loginResult.User == null ? null : loginResult.User.Identity.Name;
-                SettingsViewModel.Instance.License = new PhalcodeProduct() { UserName=username };
+                SettingsViewModel.Instance.License = new PhalcodeProduct() { UserName = username };
 
                 var handler = new JwtSecurityTokenHandler();
                 var t = handler.ReadJwtToken(loginResult.AccessToken);
@@ -232,7 +232,7 @@ namespace gamevault.Helper
                     }
                     licenseData[0].UserName = username;
                     SettingsViewModel.Instance.License = licenseData[0];
-                    Preferences.Set(AppConfigKey.Phalcode2, JsonSerializer.Serialize(SettingsViewModel.Instance.License), AppFilePath.UserFile, true);
+                    Preferences.Set(AppConfigKey.Phalcode2, JsonSerializer.Serialize(SettingsViewModel.Instance.License), AppFilePath.UserFile, true)                   
                 }
             }
             catch (Exception ex)
@@ -248,6 +248,14 @@ namespace gamevault.Helper
                     return;
                 }
             }
+            try
+            {
+                if (!SettingsViewModel.Instance.License.IsActive())
+                {
+                    Preferences.DeleteKey(AppConfigKey.Theme, AppFilePath.UserFile);
+                }
+            }
+            catch { }
             return;
         }
         public void PhalcodeLogout()
@@ -255,6 +263,7 @@ namespace gamevault.Helper
             SettingsViewModel.Instance.License = new PhalcodeProduct();
             Preferences.DeleteKey(AppConfigKey.Phalcode1.ToString(), AppFilePath.UserFile);
             Preferences.DeleteKey(AppConfigKey.Phalcode2.ToString(), AppFilePath.UserFile);
+            Preferences.DeleteKey(AppConfigKey.Theme, AppFilePath.UserFile);
             try
             {
                 wpfEmbeddedBrowser.ClearAllCookies();

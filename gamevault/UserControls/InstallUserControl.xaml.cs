@@ -267,9 +267,8 @@ namespace gamevault.UserControls
                 return JsonSerializer.Deserialize<string[]>(result);
             }
             catch { return null; }
-        }
-
-        private void GameCard_Clicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        }      
+        private void GameCard_Clicked(object sender, RoutedEventArgs e)
         {
             if (((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key == null)
                 return;
@@ -291,7 +290,7 @@ namespace gamevault.UserControls
             };
         }
 
-        private void Play_Click(object sender, MouseButtonEventArgs e)
+        private void Play_Click(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
             PlayGame(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key.ID);           
@@ -348,9 +347,8 @@ namespace gamevault.UserControls
             {
                 MainWindowViewModel.Instance.AppBarText = $"Could not find Executable '{savedExecutable}'";
             }
-        }
-
-        private void Settings_Click(object sender, MouseButtonEventArgs e)
+        }       
+        private void Settings_Click(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
             MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key) { Width = 1200, Height = 800, Margin = new Thickness(50) });
