@@ -260,13 +260,9 @@ namespace gamevault.UserControls
                         {
                             try
                             {
-#if DEBUG
-                                string url = "https://test.phalco.de/products/gamevault-plus/checkout?hit_paywall=true";
-#else
-                                string url = "https://phalco.de/products/gamevault-plus/checkout?hit_paywall=true";
-#endif
-
-                                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                                MainWindowViewModel.Instance.SetActiveControl(MainControl.Settings);
+                                MainWindowViewModel.Instance.Settings.SetTabIndex(3);
+                                MainWindowViewModel.Instance.AppBarText = "Oops! You just reached a premium feature of GameVault - Upgrade now and support the devs!";
                             }
                             catch { }
                             return;

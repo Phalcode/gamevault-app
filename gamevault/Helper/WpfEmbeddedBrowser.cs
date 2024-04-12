@@ -56,6 +56,7 @@ namespace gamevault.Helper
             signinWindow.Closing += (s, e) =>
             {
                 semaphoreSlim.Release();
+                webView.Dispose();
             };
 
             webView = new WebView2();

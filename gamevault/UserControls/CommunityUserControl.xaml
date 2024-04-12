@@ -36,7 +36,9 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <local:CacheImage ImageCacheType="UserBackground" Data="{Binding Path=CurrentShownUser}" Grid.RowSpan="2" Grid.ColumnSpan="3"/>
+            <Viewbox Grid.RowSpan="2" Grid.ColumnSpan="3" Stretch="UniformToFill" HorizontalAlignment="Center">
+                <local:CacheImage ImageCacheType="UserBackground" Data="{Binding Path=CurrentShownUser}"/>
+            </Viewbox>
             <Grid Grid.Column="1" Grid.RowSpan="2" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Opacity="0.8"/>
             <Viewbox Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left">
                 <Grid>

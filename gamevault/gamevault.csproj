@@ -45,8 +45,6 @@
 		<None Remove="Resources\Images\install_NoGameFound.png" />		
 		<None Remove="Resources\Images\library_NoBoxart.png" />
 		<None Remove="Resources\Images\library_NoGameFound.png" />
-		<None Remove="Resources\Images\phalcode_Icon.png" />
-		<None Remove="Resources\Images\phalcode_Logo.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -71,8 +69,6 @@
 		<Resource Include="Resources\Images\install_NoGameFound.png" />		
 		<Resource Include="Resources\Images\library_NoBoxart.png" />
 		<Resource Include="Resources\Images\library_NoGameFound.png" />
-		<Resource Include="Resources\Images\phalcode_Icon.png" />
-		<Resource Include="Resources\Images\phalcode_Logo.png" />
 	</ItemGroup>
 
 	<ItemGroup>

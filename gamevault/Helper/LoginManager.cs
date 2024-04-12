@@ -131,14 +131,14 @@ namespace gamevault.Helper
             MainWindowViewModel.Instance.Community.Reset();
         }
         private WpfEmbeddedBrowser wpfEmbeddedBrowser = null;
-        public async Task PhalcodeLogin(bool isStartup = false)
+        public async Task PhalcodeLogin(bool startHidden = false)
         {
             string? provider = Preferences.Get(AppConfigKey.Phalcode1, AppFilePath.UserFile, true);
-            if (isStartup && provider == "")
+            if (startHidden && provider == "")
             {
                 return;
             }
-            wpfEmbeddedBrowser = new WpfEmbeddedBrowser(isStartup);
+            wpfEmbeddedBrowser = new WpfEmbeddedBrowser(startHidden);
             var options = new OidcClientOptions()
             {
                 Authority = "https://auth.platform.phalco.de/realms/phalcode",
@@ -232,7 +232,7 @@ namespace gamevault.Helper
                     }
                     licenseData[0].UserName = username;
                     SettingsViewModel.Instance.License = licenseData[0];
-                    Preferences.Set(AppConfigKey.Phalcode2, JsonSerializer.Serialize(SettingsViewModel.Instance.License), AppFilePath.UserFile, true)                   
+                    Preferences.Set(AppConfigKey.Phalcode2, JsonSerializer.Serialize(SettingsViewModel.Instance.License), AppFilePath.UserFile, true);               
                 }
             }
             catch (Exception ex)
@@ -266,7 +266,8 @@ namespace gamevault.Helper
             Preferences.DeleteKey(AppConfigKey.Theme, AppFilePath.UserFile);
             try
             {
-                wpfEmbeddedBrowser.ClearAllCookies();
+                Directory.Delete(AppFilePath.WebConfigDir,true);
+                //wpfEmbeddedBrowser.ClearAllCookies();
             }
             catch (Exception ex) { }
         }

@@ -18,6 +18,8 @@
 - Bug fix: Game website link no longer clickable if empty
 - Bug fix: Redownload icon not appearing on library card
 - Bug fix: Bring window of running instance to foreground if you start gamevault
+- Bug fix: Center user background image on window resize
+- Bug fix: Game settings form data flies in from outside the window
 ## 1.8.3
 Recommended Gamevault Server Version: `v10.2.0`
 ### Changes

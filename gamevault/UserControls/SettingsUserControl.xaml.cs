@@ -186,7 +186,7 @@ namespace gamevault.UserControls
             }
             else { MainWindowViewModel.Instance.AppBarText = "You are not logged in"; }
         }
-        private async void PhalcodeLoginLogout_Click(object sender, MouseButtonEventArgs e)
+        private async void PhalcodeLoginLogout_Click(object sender, RoutedEventArgs e)
         {
             ((FrameworkElement)sender).IsEnabled = false;
             if (string.IsNullOrEmpty(SettingsViewModel.Instance.License.UserName))
@@ -203,10 +203,10 @@ namespace gamevault.UserControls
             }
             ((FrameworkElement)sender).IsEnabled = true;
         }
-        private async void RefreshLicense_Click(object sender, RoutedEventArgs e)
+        private async void RefreshLicense_Click(object sender, MouseButtonEventArgs e)
         {
             ((FrameworkElement)sender).IsEnabled = false;
-            await LoginManager.Instance.PhalcodeLogin();
+            await LoginManager.Instance.PhalcodeLogin(true);
             ((FrameworkElement)sender).IsEnabled = true;
         }
         private void ManageBilling_Click(object sender, RoutedEventArgs e)
@@ -218,7 +218,20 @@ namespace gamevault.UserControls
 #endif
 
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-            e.Handled = true;
+        }
+        private void ManagePhalcodeUser_Click(object sender, RoutedEventArgs e)
+        {
+            ManageBilling_Click(null, null);//Will maybe change in the Future
+        }
+        private void SubscribeGVPlus_Click(object sender, RoutedEventArgs e)
+        {
+#if DEBUG
+            string url = "https://test.phalco.de/products/gamevault-plus/checkout";
+#else
+            string url = "https://phalco.de/products/gamevault-plus/checkout";
+#endif
+
+            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
         }
         private void Themes_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -232,13 +245,9 @@ namespace gamevault.UserControls
                 ((ComboBox)sender).SelectedItem = (ThemeItem)((ComboBox)sender).SelectionBoxItem;
                 try
                 {
-#if DEBUG
-                    string url = "https://test.phalco.de/products/gamevault-plus/checkout?hit_paywall=true";
-#else
-                    string url = "https://phalco.de/products/gamevault-plus/checkout?hit_paywall=true";
-#endif
-
-                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                    MainWindowViewModel.Instance.SetActiveControl(MainControl.Settings);
+                    MainWindowViewModel.Instance.Settings.SetTabIndex(3);
+                    MainWindowViewModel.Instance.AppBarText = "Oops! You just reached a premium feature of GameVault - Upgrade now and support the devs!";
                 }
                 catch { }
                 return;
@@ -299,6 +308,16 @@ namespace gamevault.UserControls
                 Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
             }
             catch { }
-        }      
+        }
+
+        private void Awesome_Click(object sender, MouseButtonEventArgs e)
+        {
+            ((FrameworkElement)sender).IsEnabled = false;
+#if DEBUG
+            imgAwesome.Data = "https://test.phalco.de/images/gamevault/eastereggs/awesome.gif";
+#else
+            imgAwesome.Data = "https://phalco.de/images/gamevault/eastereggs/awesome.gif";
+#endif
+        }
     }
 }

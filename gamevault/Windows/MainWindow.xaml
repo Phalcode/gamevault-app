@@ -76,7 +76,7 @@
                 <mah:TransitioningContentControl RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding ActiveControl}" FocusVisualStyle="{x:Null}"/>
             </mah:HamburgerMenu.Content>
         </mah:HamburgerMenu>
-        <Border CornerRadius="5" Padding="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="40" Width="40" Margin="4.1,0,0,4.1" Tag="https://gamevau.lt/gamevault-plus" MouseLeftButtonUp="Premium_Click" ToolTip="Open GameVault Plus Website" Cursor="Hand">
+        <Border CornerRadius="5" Padding="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="40" Width="40" Margin="4.1,0,0,4.1" MouseLeftButtonUp="Premium_Click" ToolTip="Open GameVault Plus Website" Cursor="Hand">
             <Border.Style>
                 <Style TargetType="Border">
                     <Setter Property="Background" Value="{DynamicResource GameVault.Brushes.Button}"/>

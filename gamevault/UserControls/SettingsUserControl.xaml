@@ -14,6 +14,8 @@
         <conv:GameSizeConverter x:Key="sizeConv"/>
         <conv:DownloadLimitConverter x:Key="downloadLimitConv"/>
         <conv:LicenseConverter x:Key="licenseConv"/>
+        <conv:InverseNullConverter x:Key="nullConv"/>
+        <conv:UTCtoLocalTimeConverter x:Key="utcToLocalTimeConv"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -117,67 +119,157 @@
                 <TabItem Header="GameVault+">
                     <StackPanel Margin="30,0,0,0">
                         <TextBlock Text="GameVault+" FontSize="20" FontWeight="Bold"/>
-                        <TextBlock Text="Here, you can enable GameVault+ if you are already subscribed." FontSize="15" Margin="0,5,0,0"/>
-                        <TextBlock Text="Your Phalcode Account" TextDecorations="Underline" FontSize="15" Margin="0,20,0,0"/>
-                        <Border CornerRadius="10" Height="50" HorizontalAlignment="Left" Cursor="Hand" Margin="0,10,0,0" MouseLeftButtonUp="PhalcodeLoginLogout_Click">
-                            <Border.Style>
-                                <Style TargetType="Border">
-                                    <Setter Property="Background" Value="LightGray"/>
-                                    <Style.Triggers>
-                                        <Trigger Property="Border.IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="WhiteSmoke"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                            <StackPanel Orientation="Horizontal">
-                                <Image Source="/Resources/Images/phalcode_Icon.png" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality"/>
-                                <StackPanel HorizontalAlignment="Left" Margin="0,8,5,5" VerticalAlignment="Center">
-                                    <Image Source="/Resources/Images/phalcode_Logo.png" Width="80" Margin="1,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality"/>
-                                    <TextBlock FontWeight="Bold" Foreground="Black" FontSize="15">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Text" Value="{Binding License.UserName}"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding License.UserName}" Value="{x:Null}">
-                                                        <Setter Property="TextBlock.Text" Value="Log in or Register"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </StackPanel>
-                                <Path Name="LogoutIcon" Fill="Black" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0,8,0" RenderTransformOrigin="0.5,0.5">
-                                    <Path.Style>
-                                        <Style TargetType="Path">
-                                            <Setter Property="Data" Value="{StaticResource IconLogout}"/>
+                        <TextBlock  FontSize="15" Margin="0,5,0,0">Upgrade to GameVault+ for a premium subscription that enhances your GameVault experience beyond the free version and gain access <LineBreak/> to exclusive features and benefits while supporting the developers. 
+                            <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://gamevau.lt/docs/gamevault-plus/introduction" TextDecorations="None" Foreground="{DynamicResource MahApps.Brushes.Accent}">
+                                Click here to learn more...
+                                </Hyperlink>
+                        </TextBlock>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                            <Path Data="{StaticResource IconPhalcode}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5" Margin="-600,-70,-590,-90">
+                                <Path.RenderTransform>
+                                    <ScaleTransform ScaleX="0.08" ScaleY="0.08"/>
+                                </Path.RenderTransform>
+                            </Path>
+                            <TextBlock Text="Account" FontSize="20" FontWeight="Bold" Margin="0,20,0,0"/>
+                        </StackPanel>
+                        <TextBlock Text="Link your Phalcode Account to your GameVault Client Application to access your GameVault+ subscription, or create a new account." FontSize="15"  Margin="0,10,0,0"/>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                <StackPanel.Style>
+                                    <Style TargetType="StackPanel">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding License.UserName}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
+                                <Path Data="{StaticResource IconWarning}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5" Margin="0,4,7,0">
+                                    <Path.RenderTransform>
+                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                    </Path.RenderTransform>
+                                </Path>
+                                <TextBlock Text="You are not logged in" FontSize="15" Margin="0,10,0,0"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                    <StackPanel.Style>
+                                        <Style TargetType="StackPanel">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding License.UserName}" Value="{x:Null}">
-                                                    <Setter Property="Data" Value="{x:Null}"/>
+                                                <DataTrigger Binding="{Binding License.UserName,Converter={StaticResource nullConv}}" Value="False">
+                                                    <Setter Property="Visibility" Value="Visible"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
-                                    </Path.Style>
+                                    </StackPanel.Style>
+                                    <Path Data="{StaticResource IconCheck}" Fill="Green" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5" Margin="0,4,5,0">
+                                        <Path.RenderTransform>
+                                            <ScaleTransform ScaleX="0.8" ScaleY="0.8"/>
+                                        </Path.RenderTransform>
+                                    </Path>
+                                    <TextBlock Text="{Binding License.UserName,StringFormat='{}Logged in as {0}'}" FontSize="15" Margin="0,5,0,0"/>
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="25,0,0,0">
+                                <local:IconButton Icon="{StaticResource IconUser}" Text="Manage" HorizontalAlignment="Left" FontSize="15" Height="30" IconMargin="0,0,5,2" Width="160" Margin="0,10,10,0" Click="ManagePhalcodeUser_Click">
+                                    <local:IconButton.Style>
+                                        <Style TargetType="local:IconButton" BasedOn="{StaticResource {x:Type local:IconButton}}">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding License.UserName}" Value="{x:Null}">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </local:IconButton.Style>
+                                </local:IconButton>
+                                <local:IconButton  HorizontalAlignment="Left" FontSize="15" Height="30" IconMargin="0,0,5,2" Width="160" Margin="0,10,0,0" Click="PhalcodeLoginLogout_Click">
+                                    <local:IconButton.Style>
+                                        <Style TargetType="local:IconButton" BasedOn="{StaticResource {x:Type local:IconButton}}">
+                                            <Setter Property="Text" Value="Logout"/>
+                                            <Setter Property="Icon" Value="{StaticResource IconLogout}"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding License.UserName}" Value="{x:Null}">
+                                                    <Setter Property="Text" Value="Login or Register"/>
+                                                    <Setter Property="Icon" Value="{StaticResource IconLogin}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </local:IconButton.Style>
+                                </local:IconButton>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Margin="0,20,0,0" Orientation="Horizontal">
+                            <TextBlock Text="Your GameVault+ Subscription" FontSize="20" FontWeight="Bold"/>
+                            <Grid Cursor="Hand" Background="Transparent" Height="25" Width="25" Margin="10,3,0,0" ToolTip="Recheck License" MouseLeftButtonDown="RefreshLicense_Click">
+                                <Grid.Style>
+                                    <Style TargetType="Grid" BasedOn="{StaticResource HoverEffect}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding License.UserName,Converter={StaticResource nullConv}}" Value="False">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Grid.Style>
+                                <Grid.RenderTransform>
+                                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                </Grid.RenderTransform>
+                                <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5" Margin="0.7,-5,0,0">
                                     <Path.RenderTransform>
-                                        <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                        <ScaleTransform ScaleX="1.3" ScaleY="1.3"/>
                                     </Path.RenderTransform>
                                 </Path>
-                            </StackPanel>
-                        </Border>
-                        <TextBlock Text="Your GameVault+ Subscription" TextDecorations="Underline" FontSize="15" Margin="0,20,0,0"/>
-                        <TextBlock Text="You have no active GameVault+ license" FontSize="15" Margin="0,10,0,0">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
+                            </Grid>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding License.UserName,Converter={StaticResource licenseConv}}" Value="False">
+                                        <DataTrigger Binding="{Binding License.UserName}" Value="{x:Null}">
                                             <Setter Property="Visibility" Value="Visible"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                        <StackPanel Orientation="Horizontal">
+                            </StackPanel.Style>
+                            <Path Data="{StaticResource IconWarning}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5" Margin="0,4,7,0">
+                                <Path.RenderTransform>
+                                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                </Path.RenderTransform>
+                            </Path>
+                            <TextBlock Text="Please link your Phalcode Account or create a new one to use GameVault+" FontSize="15" Margin="0,10,0,0"/>
+                        </StackPanel>
+                        <StackPanel Margin="0,5,0,0">
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding License.UserName,Converter={StaticResource nullConv}}" Value="False"/>
+                                                <Condition Binding="{Binding License.UserName,Converter={StaticResource licenseConv}}" Value="False"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Data="{StaticResource IconWarning}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5" Margin="0,4,7,0">
+                                        <Path.RenderTransform>
+                                            <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                        </Path.RenderTransform>
+                                    </Path>
+                                    <TextBlock Text="You are not subscribed to Gamevault+" FontSize="15" Margin="0,10,0,0"/>
+                                </StackPanel>
+                                <local:IconButton Icon="{StaticResource IconShoppingCart}" IconMargin="5,0,5,0" Text="Subscribe to GameVault+" FontSize="15" Height="30" Width="220" Margin="25,10,0,0" HorizontalAlignment="Left" Click="SubscribeGVPlus_Click"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Margin="0,5,0,0">
                             <StackPanel.Style>
                                 <Style TargetType="StackPanel">
                                     <Setter Property="Visibility" Value="Hidden"/>
@@ -188,49 +280,53 @@
                                     </Style.Triggers>
                                 </Style>
                             </StackPanel.Style>
-                            <Path Data="{StaticResource IconCheck}" Fill="Green" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5" Margin="0,0,30,10">
-                                <Path.RenderTransform>
-                                    <ScaleTransform ScaleX="3.0" ScaleY="3"/>
-                                </Path.RenderTransform>
-                            </Path>
-                            <StackPanel>
-                                <TextBlock Text="{Binding License.CurrentPeriodStart,StringFormat='{}Subscribed since {0}'}" FontSize="15" Margin="0,10,0,0"/>
-                                <TextBlock Text="{Binding License.CurrentPeriodEnd,StringFormat='{}Current period ends {0}'}" FontSize="15" Margin="0,10,0,0"/>
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{StaticResource IconCheck}" Fill="Green" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5" Margin="0,-1,5,0">
+                                    <Path.RenderTransform>
+                                        <ScaleTransform ScaleX="0.8" ScaleY="0.8"/>
+                                    </Path.RenderTransform>
+                                </Path>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Awesome!" FontSize="15" Cursor="Hand" MouseLeftButtonDown="Awesome_Click"/>
+                                    <TextBlock Text="You are subscribed to GameVault+" FontSize="15" Margin="5,0,0,0"/>
+                                </StackPanel>
                             </StackPanel>
+                            <TextBlock FontSize="12" Margin="27,5,0,0" ToolTip="{Binding License.CurrentPeriodStart,Converter={StaticResource utcToLocalTimeConv}}">
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}Subscribed since:    {0}.{1}.{2}">
+                                        <Binding Path="License.CurrentPeriodStart.Day" />
+                                        <Binding Path="License.CurrentPeriodStart.Month" />
+                                        <Binding Path="License.CurrentPeriodStart.Year" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                            <TextBlock FontSize="12" Margin="27,0,0,0" ToolTip="{Binding License.CurrentPeriodEnd,Converter={StaticResource utcToLocalTimeConv}}">
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}Renewal Date:         {0}.{1}.{2}">
+                                        <Binding Path="License.CurrentPeriodEnd.Day" />
+                                        <Binding Path="License.CurrentPeriodEnd.Month" />
+                                        <Binding Path="License.CurrentPeriodEnd.Year" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
                         </StackPanel>
-                       
-                        <StackPanel Orientation="Horizontal">
-                            <local:IconButton Text="Refresh License" FontSize="15" Icon="{StaticResource IconReload}" IconMargin="0,0,5,2" Margin="0,20,20,0" HorizontalAlignment="Left" Width="150" Height="40" Click="RefreshLicense_Click">
-                                <local:IconButton.Style>
-                                    <Style TargetType="local:IconButton" BasedOn="{StaticResource {x:Type local:IconButton}}">
-                                        <Setter Property="Visibility" Value="Visible"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding License.UserName}" Value="{x:Null}">
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </local:IconButton.Style>
-                            </local:IconButton>
-                            <local:IconButton Text="Manage Billing" FontSize="15" Icon="{StaticResource IconBilling}" IconScale="0.04" IconMargin="-180,-400,-175,-400" Width="150" Height="40" HorizontalAlignment="Left" Margin="0,20,0,0" Click="ManageBilling_Click">
-                                <local:IconButton.Style>
-                                    <Style TargetType="local:IconButton" BasedOn="{StaticResource {x:Type local:IconButton}}">
-                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding License.UserName,Converter={StaticResource licenseConv}}" Value="True">
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </local:IconButton.Style>
-                            </local:IconButton>
-                        </StackPanel>
+                        <local:IconButton Text="Manage Billing" FontSize="15" Icon="{StaticResource IconBilling}" IconScale="0.04" IconMargin="-180,-400,-175,-400" Width="160" Height="30" HorizontalAlignment="Left" Margin="25,15,0,0" Click="ManageBilling_Click">
+                            <local:IconButton.Style>
+                                <Style TargetType="local:IconButton" BasedOn="{StaticResource {x:Type local:IconButton}}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding License.UserName,Converter={StaticResource licenseConv}}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </local:IconButton.Style>
+                        </local:IconButton>
                     </StackPanel>
                 </TabItem>
                 <TabItem  Header="About">
                     <StackPanel Margin="30,0,0,0" HorizontalAlignment="Left">
                         <TextBlock Text="About" FontSize="20" FontWeight="Bold"/>
-                        <!--<TextBlock Text="Here, you can enable GameVault+ if you are alredy subscribed." FontSize="15" Margin="0,5,0,0"/>-->
                         <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
                             <TextBlock Text="Application Version" FontSize="15" Width="200"/>
                             <TextBlock Text="{Binding Version}" FontSize="15"/>
@@ -277,5 +373,6 @@
             </TabControl>
         </ScrollViewer>
         <Rectangle Grid.Row="1" Stroke="{DynamicResource MahApps.Brushes.ThemeForeground}" Width="1" HorizontalAlignment="Left" Margin="175,10,0,10"/>
+        <local:CacheImage Grid.Row="1" x:Name="imgAwesome" UseUriSource="True" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="100" Width="150" Margin="0,0,40,0"/>
     </Grid>
 </UserControl>
