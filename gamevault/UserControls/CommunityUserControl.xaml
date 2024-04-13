@@ -7,7 +7,7 @@
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
+             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded" KeyDown="ReloadUser_Clicked" Focusable="True" IsVisibleChanged="UserControl_IsVisibleChanged">
     <UserControl.Resources>
         <conv:PermissionRoleToVisibilityConverter x:Key="roleToVisConv"/>
         <conv:UrlImageConverter x:Key="urlImgConv"/>
@@ -20,9 +20,9 @@
             <RowDefinition Height="50"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Border Background="{StaticResource DarkBackground4}" Grid.Row="0">
+        <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Grid.Row="0">
             <Grid>
-                <TextBlock Text="Community" FontSize="35" Margin="20,0,0,0" Foreground="White"/>
+                <TextBlock Text="Community" FontSize="35" Margin="20,0,0,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
                 <ComboBox x:Name="uiSelectUser" ItemsSource="{Binding Users}" DisplayMemberPath="Username" Margin="5" HorizontalAlignment="Right" SelectionChanged="Users_SelectionChanged"/>
             </Grid>
         </Border>
@@ -36,15 +36,17 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <local:CacheImage ImageCacheType="UserBackground" Data="{Binding Path=CurrentShownUser}" Grid.RowSpan="2" Grid.ColumnSpan="3"/>
-            <Grid Grid.Column="1" Grid.RowSpan="2" Background="#B2000000" />
+            <Viewbox Grid.RowSpan="2" Grid.ColumnSpan="3" Stretch="UniformToFill" HorizontalAlignment="Center">
+                <local:CacheImage ImageCacheType="UserBackground" Data="{Binding Path=CurrentShownUser}"/>
+            </Viewbox>
+            <Grid Grid.Column="1" Grid.RowSpan="2" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Opacity="0.8"/>
             <Viewbox Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left">
                 <Grid>
                     <Grid>
-                        <local:CacheImage Height="130" Width="130" Margin="-340,5,0,0" ImageCacheType="UserIcon" CornerRadius="10" Data="{Binding Path=CurrentShownUser}"/>
+                        <local:CacheImage Height="130" Width="130" Margin="-340,5,0,0" Stretch="Fill" ImageCacheType="UserIcon" CornerRadius="10" Data="{Binding Path=CurrentShownUser}"/>
 
-                        <Border Background="{StaticResource MahApps.Brushes.Accent}" Width="46" Height="23" Padding="3" CornerRadius="10" Margin="145,70,0,0" HorizontalAlignment="Left">
-                            <TextBlock Text="{Binding Path=CurrentShownUser.Role}" TextAlignment="Center"/>
+                        <Border Background="{DynamicResource MahApps.Brushes.Accent}" Width="47" Height="23" Padding="3" CornerRadius="5" Margin="145,70,0,0" HorizontalAlignment="Left">
+                            <TextBlock Text="{Binding Path=CurrentShownUser.Role}" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" TextAlignment="Center"/>
                         </Border>
                         <StackPanel Margin="145,55,0,0">
                             <TextBlock Text="{Binding Path=CurrentShownUser.Username}" FontWeight="Bold"/>
@@ -53,7 +55,7 @@
                     </Grid>
                     <Grid HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,5,0">
                         <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Right" Visibility="{Binding SelectedIndex,ElementName=uiSelectUser,Converter={StaticResource roleToVisConv}}" Background="Transparent" Cursor="Hand" Width="25" Height="25" Margin="0,0,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="UserEdit_Clicked">
-                            <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="White">
+                            <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}">
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="1" ScaleY="1"/>
                                 </Path.RenderTransform>
@@ -62,8 +64,8 @@
                                 <ScaleTransform/>
                             </Grid.RenderTransform>
                         </Grid>
-                        <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Cursor="Hand" Width="25" Height="25" Margin="0,0,30,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="ReloadUser_Clicked">
-                            <Path Data="{StaticResource IconReload}" Fill="White">
+                        <Grid x:Name="uiBtnReloadUser" Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Cursor="Hand" Width="25" Height="25" Margin="0,0,30,0" RenderTransformOrigin="0.5,0.5" ToolTip="Reload current user (F5)" MouseLeftButtonUp="ReloadUser_Clicked">
+                            <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}">
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="1" ScaleY="1"/>
                                 </Path.RenderTransform>
@@ -74,7 +76,7 @@
                         </Grid>
                     </Grid>
                     <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="320,0,10,0">
-                        <TextBlock Text="Sort by: "/>
+                       
                         <ComboBox x:Name="uiSortBy" ItemsSource="{Binding SortBy}" SelectionChanged="SortBy_SelectionChanged"/>
                     </StackPanel>
 

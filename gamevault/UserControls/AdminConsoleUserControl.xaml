@@ -7,7 +7,7 @@
              xmlns:local="clr-namespace:gamevault.UserControls"
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
+             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded" KeyDown="Reload_Click" Focusable="True" IsVisibleChanged="UserControl_IsVisibleChanged">
     <UserControl.Resources>
         <conv:InverseEmptyStringConverter x:Key="InvertStringConv"/>
     </UserControl.Resources>
@@ -16,9 +16,9 @@
             <RowDefinition Height="50"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Border Background="{StaticResource DarkBackground4}" Grid.Row="0">
+        <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Grid.Row="0">
             <Grid>
-                <TextBlock Text="Admin Console" FontSize="35" Margin="20,0,0,0" Foreground="White"/>
+                <TextBlock Text="Admin Console" FontSize="35" Margin="20,0,0,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
                 <StackPanel Orientation="Horizontal" Margin="270,0,0,0" HorizontalAlignment="Left">
                     <TextBlock Text="{Binding Path=ServerVersionInfo.Key}" FontSize="20" VerticalAlignment="Center"/>
                     <TextBlock VerticalAlignment="Center" FontSize="20" Margin="5,0,0,0">
@@ -39,9 +39,18 @@
                         </Hyperlink>
                     </TextBlock>
                 </StackPanel>
-                <Button Content="Backup / Restore Database" HorizontalAlignment="Right" Margin="10,10,150,10" Click="BackupRestore_Click"/>
-                <Button Content="Reindex Games" HorizontalAlignment="Right" Margin="10,10,46,10" Click="Reindex_Click"/>
-                <TextBlock Text="↻" Cursor="Hand" ToolTip="Refresh admin console" HorizontalAlignment="Right" Margin="0,2,10,0" FontSize="30" MouseLeftButtonUp="Reload_Click"/>
+                <local:IconButton Text="Backup / Restore Database" Icon="{StaticResource IconDatabase}" IconMargin="0,0,5,2" HorizontalAlignment="Right" FontSize="15" Width="225" Margin="10,10,200,10" Click="BackupRestore_Click"/>
+                <local:IconButton Text="Reindex Games" HorizontalAlignment="Right" FontSize="15" Icon="{StaticResource IconReload}" IconMargin="0,0,5,2" Width="140" Margin="10,10,46,10" Click="Reindex_Click"/>
+                <Grid x:Name="uiBtnReload" Style="{DynamicResource HoverEffect}" VerticalAlignment="Center" HorizontalAlignment="Right" Background="Transparent" Cursor="Hand" Width="30" Height="30" Margin="0,0,5,0" RenderTransformOrigin="0.5,0.5" ToolTip="Refresh admin console (F5)" MouseLeftButtonUp="Reload_Click">
+                    <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}">
+                        <Path.RenderTransform>
+                            <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                        </Path.RenderTransform>
+                    </Path>
+                    <Grid.RenderTransform>
+                        <ScaleTransform/>
+                    </Grid.RenderTransform>
+                </Grid>
             </Grid>
         </Border>
         <Grid Grid.RowSpan="2" Panel.ZIndex="1">
@@ -51,7 +60,7 @@
                 </Grid>
             </Viewbox>
         </Grid>
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" FocusVisualStyle="{x:Null}">
             <Viewbox VerticalAlignment="Top">
                 <ItemsControl ItemsSource="{Binding Path=Users}">
                     <ItemsControl.ItemsPanel>
@@ -73,7 +82,7 @@
                                     </Style>
                                 </Grid.Style>
 
-                                <local:CacheImage ImageCacheType="UserIcon" Data="{Binding}" Width="6" CornerRadius="0.5" HorizontalAlignment="Left" Cursor="Hand" MouseLeftButtonUp="ShowUser_Click">
+                                <local:CacheImage ImageCacheType="UserIcon" Data="{Binding}" Stretch="Fill" Width="6" CornerRadius="0.5" HorizontalAlignment="Left" Cursor="Hand" MouseLeftButtonUp="ShowUser_Click">
                                 </local:CacheImage>
 
                                 <TextBlock FontSize="2" Margin="8,0,0,0" Text="{Binding Path=Username}" VerticalAlignment="Center"/>
@@ -85,10 +94,9 @@
                                 <Viewbox Width="11" Margin="0,0,10,0" HorizontalAlignment="Right">
                                     <ComboBox ItemsSource="{Binding Path=DataContext.PermissionRoleEnumTypes,RelativeSource={RelativeSource AncestorType=UserControl}}" SelectedItem="{Binding Path=Role}" SelectionChanged="PermissionRole_SelectionChanged"/>
                                 </Viewbox>
-
-                                <!--<TextBlock FontSize="2" Margin="0,0,5,0" Text="⚙️" HorizontalAlignment="Right" VerticalAlignment="Center" Cursor="Hand" ToolTip="Edit user" MouseLeftButtonUp="EditUser_Clicked"/>-->
+                               
                                 <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Cursor="Hand" Width="2.5" Height="2.5" Margin="0,1.8,5,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="EditUser_Clicked">
-                                    <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="White" Margin="0,0,-20,-20">
+                                    <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Margin="0,0,-20,-20">
                                         <Path.RenderTransform>
                                             <ScaleTransform ScaleX="0.1" ScaleY="0.1"/>
                                         </Path.RenderTransform>
@@ -102,7 +110,7 @@
                                         <Path.Style>
                                             <Style TargetType="{x:Type Path}">
                                                 <Setter Property="Data" Value="{DynamicResource IconReload}"/>
-                                                <Setter Property="Fill" Value="LightBlue"/>
+                                                <Setter Property="Fill" Value="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
                                                 <Setter Property="ToolTip" Value="Recover user"/>
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding Path=DeletedAt}" Value="{x:Null}">

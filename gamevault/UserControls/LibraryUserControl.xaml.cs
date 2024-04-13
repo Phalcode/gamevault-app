@@ -3,24 +3,13 @@ using gamevault.Models;
 using gamevault.ViewModels;
 using MahApps.Metro.Controls;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace gamevault.UserControls
 {
@@ -40,12 +29,16 @@ namespace gamevault.UserControls
             this.DataContext = ViewModel;
             InitTimer();
         }
+        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (this.IsVisible)
+            {
+                this.Focus();
+            }
+        }
         public async Task LoadLibrary()
         {
-            if (Preferences.Get(AppConfigKey.LibStartup, AppFilePath.UserFile) == "1")
-            {
-                await Search();
-            }
+            await Search();
         }
         public void ShowLibraryError()
         {
@@ -97,7 +90,7 @@ namespace gamevault.UserControls
             string filterUrl = @$"{SettingsViewModel.Instance.ServerUrl}/api/games?search={inputTimer.Data}&sortBy={gameSortByFilter}:{gameOrderByFilter}&limit=50";
             filterUrl = ApplyFilter(filterUrl);
 
-            PaginatedData<Game>? gameResult = await GetGamesData(filterUrl);//add try catch
+            PaginatedData<Game>? gameResult = await GetGamesData(filterUrl);
             if (gameResult != null)
             {
                 ViewModel.CanLoadServerGames = true;
@@ -112,6 +105,19 @@ namespace gamevault.UserControls
             {
                 ViewModel.CanLoadServerGames = false;
             }
+        }
+        private async void ReloadLibrary_Click(object sender, EventArgs e)
+        {
+            if (e.GetType() == typeof(MouseButtonEventArgs))
+                ((MouseButtonEventArgs)e).Handled = true;
+
+            //Block spamming the reload button and F5 at the same time
+            if (uiBtnReloadLibrary.IsEnabled == false || (e.GetType() == typeof(KeyEventArgs) && ((KeyEventArgs)e).Key != Key.F5))
+                return;
+
+            uiBtnReloadLibrary.IsEnabled = false;
+            await Search();
+            uiBtnReloadLibrary.IsEnabled = true;
         }
         public InstallUserControl GetGameInstalls()
         {
@@ -156,8 +162,7 @@ namespace gamevault.UserControls
             }
             catch (Exception ex) { MainWindowViewModel.Instance.AppBarText = ex.Message; }
         }
-
-        private void GameCard_Clicked(object sender, MouseButtonEventArgs e)
+        private void GameCard_Clicked(object sender, RoutedEventArgs e)
         {
             if ((Game)((FrameworkElement)sender).DataContext == null)
                 return;
@@ -298,15 +303,14 @@ namespace gamevault.UserControls
             }
             ((FrameworkElement)sender).IsEnabled = true;
         }
-
-        private void Settings_Click(object sender, MouseButtonEventArgs e)
+        private void Settings_Click(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
             var installedGame = InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ((Game)((FrameworkElement)sender).DataContext).ID).FirstOrDefault();
 
             MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl((Game)((FrameworkElement)sender).DataContext) { Width = 1200, Height = 800, Margin = new Thickness(50) });
         }
-        private async void Download_Click(object sender, MouseButtonEventArgs e)
+        private async void Download_Click(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
             await MainWindowViewModel.Instance.Downloads.TryStartDownload((Game)(((FrameworkElement)sender).DataContext));
@@ -333,5 +337,26 @@ namespace gamevault.UserControls
                 ViewModel.GameCards[index] = gameToRefreshParam;
             }
         }
+        #region PREVENT WEIRD AUTO SCROLL
+        //The main scrollbar starts scrolling if i click in the server games section. Could not find a better solution for this Problem. Thats why this bad workaround.
+        bool isProgrammaticScroll = false;
+        private void uiMainScrollBar_RequestBringIntoView(object sender, RequestBringIntoViewEventArgs e)
+        {
+            isProgrammaticScroll = true;
+        }
+
+        private void uiMainScrollBar_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if (isProgrammaticScroll)
+            {
+                e.Handled = true;
+                isProgrammaticScroll = false;
+                ((ScrollViewer)sender).ScrollToVerticalOffset(e.VerticalOffset - e.VerticalChange);
+            }
+        }
+
+        #endregion
+
+
     }
 }

@@ -52,7 +52,7 @@ namespace gamevault.Windows
                     {
                         MainWindowViewModel.Instance.ActiveControl = MainWindowViewModel.Instance.Downloads;
                         break;
-                    }              
+                    }
                 case MainControl.Community:
                     {
                         MainWindowViewModel.Instance.ActiveControl = MainWindowViewModel.Instance.Community;
@@ -80,7 +80,10 @@ namespace gamevault.Windows
             LoginState state = LoginManager.Instance.GetState();
             if (LoginState.Success == state)
             {
-                await MainWindowViewModel.Instance.Library.LoadLibrary();
+                if (Preferences.Get(AppConfigKey.LibStartup, AppFilePath.UserFile) == "1")
+                {
+                    await MainWindowViewModel.Instance.Library.LoadLibrary();
+                }
             }
             else if (LoginState.Unauthorized == state || LoginState.Forbidden == state)
             {
@@ -126,6 +129,12 @@ namespace gamevault.Windows
                 Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
             }
             e.Handled = true;
+        }
+
+        private void Premium_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {           
+            MainWindowViewModel.Instance.SetActiveControl(MainControl.Settings);
+            MainWindowViewModel.Instance.Settings.SetTabIndex(3);           
         }
     }
 }

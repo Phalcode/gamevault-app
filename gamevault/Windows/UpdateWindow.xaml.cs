@@ -38,6 +38,7 @@ namespace gamevault.Windows
                 m_StoreHelper = new StoreHelper();
                 if (true == await m_StoreHelper.UpdatesAvailable())
                 {
+                    uiTxtStatus.Text = "Updating...";
                     await m_StoreHelper.DownloadAndInstallAllUpdatesAsync(this);
                 }
                 App.IsWindowsPackage = true;

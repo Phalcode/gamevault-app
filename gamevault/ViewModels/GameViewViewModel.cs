@@ -13,8 +13,8 @@ namespace gamevault.ViewModels
     {
         #region PrivateMembers
         private Game? game { get; set; }
-        private Progress? progress { get; set; }
-        private Progress[]? userProgress { get; set; }
+        private Progress? currentUserProgress { get; set; }
+        private Progress[]? userProgresses { get; set; }
         private Dictionary<string, string> gameStates { get; set; }
         private bool isInstalled { get; set; }
         private bool? isDownloaded { get; set; }
@@ -25,15 +25,15 @@ namespace gamevault.ViewModels
             get { return game; }
             set { game = value; OnPropertyChanged(); }
         }
-        public Progress? Progress
+        public Progress? CurrentUserProgress
         {
-            get { return progress; }
-            set { progress = value; OnPropertyChanged(); }
+            get { return currentUserProgress; }
+            set { currentUserProgress = value; OnPropertyChanged(); }
         }
-        public Progress[]? UserProgress
+        public Progress[]? UserProgresses
         {
-            get { return userProgress; }
-            set { userProgress = value; OnPropertyChanged(); }
+            get { return userProgresses; }
+            set { userProgresses = value; OnPropertyChanged(); }
         }
         public Dictionary<string, string>? GameStates
         {

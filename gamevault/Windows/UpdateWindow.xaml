@@ -10,7 +10,7 @@
     <mah:MetroWindow.Resources>
 
     </mah:MetroWindow.Resources>
-    <Grid Background="{StaticResource DarkBackground3}">
+    <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground2}">
         <Image x:Name="RotateImage" Source="pack://application:,,,/gamevault;component/Resources/Images/icon.ico" Height="130" VerticalAlignment="Top" Margin="15" RenderTransformOrigin="0.5,0.5">
             <Image.RenderTransform>
                 <RotateTransform CenterX="0" CenterY="0" />
@@ -36,6 +36,6 @@
                 </Style>
             </Image.Style>
         </Image>
-        <TextBlock x:Name="uiTxtStatus" Text="Searching for updates..." VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="10" FontSize="15" FontWeight="Bold" Foreground="White"/>
+        <TextBlock x:Name="uiTxtStatus" Text="Searching for updates..." VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="10" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
     </Grid>
 </mah:MetroWindow>

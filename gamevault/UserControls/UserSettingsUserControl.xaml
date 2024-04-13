@@ -13,20 +13,26 @@
         <Style x:Key="TabItemHeaderPath" TargetType="Path">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="True">
-                    <Setter Property="Fill" Value="{DynamicResource MainColor}"/>
+                    <Setter Property="Fill" Value="{DynamicResource MahApps.Brushes.Accent}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="False">
-                    <Setter Property="Fill" Value="White"/>
+                    <Setter Property="Fill" Value="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsMouseOver}" Value="True">
+                    <Setter Property="Opacity" Value="0.8"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
         <Style x:Key="TabItemHeaderPathStroke" TargetType="Path">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="True">
-                    <Setter Property="Stroke" Value="{DynamicResource MainColor}"/>
+                    <Setter Property="Stroke" Value="{DynamicResource MahApps.Brushes.Accent}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="False">
-                    <Setter Property="Stroke" Value="White"/>
+                    <Setter Property="Stroke" Value="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsMouseOver}" Value="True">
+                    <Setter Property="Opacity" Value="0.8"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -36,10 +42,13 @@
             <Setter Property="Margin" Value="5,0,0,0"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="True">
-                    <Setter Property="Foreground" Value="{DynamicResource MainColor}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.Accent}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="False">
-                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsMouseOver}" Value="True">
+                    <Setter Property="Opacity" Value="0.8"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -74,11 +83,11 @@
                 <ColumnDefinition Width="101*"/>
                 <ColumnDefinition Width="299*"/>
             </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0" Background="{DynamicResource DarkBackground2}">
-                <TextBlock Text="User Settings" FontSize="30" Margin="10" Foreground="White"/>
+            <Grid Grid.Column="0" Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
+                <TextBlock Text="User Settings" FontSize="30" Margin="10" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
                 <StackPanel VerticalAlignment="Top" Margin="60,70,0,0">
                     <StackPanel>
-                        <!--<TextBlock Text="Head" FontSize="30" Foreground="White"/>-->
+                        <!--<TextBlock Text="Head" FontSize="30" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>-->
                         <TabControl TabStripPlacement="Left" Background="Transparent" SelectionChanged="SettingsTabControl_SelectionChanged">
                             <TabItem>
                                 <TabItem.Header>
@@ -114,27 +123,27 @@
                 <TextBlock Text="{Binding Path=User.CreatedAt,StringFormat='{}Created {0:dd/MM/yyyy}',TargetNullValue='Created N/A'}" FontSize="16"/>
             </StackPanel>
 
-            <Grid Grid.Column="1" Background="{DynamicResource DarkBackground3}">
+            <Grid Grid.Column="1" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}">
                 <mah:MetroAnimatedTabControl x:Name="uiSettingsContent" Background="Transparent">
                     <mah:MetroTabItem>
                         <Grid Margin="0,20,0,0">
                             <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
-                                <Path Data="{DynamicResource IconGameSettingsEditImages}" Fill="White" Margin="0,1,0,0"/>
+                                <Path Data="{DynamicResource IconGameSettingsEditImages}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Margin="0,1,0,0"/>
                                 <TextBlock Text="Edit Images" FontSize="20" FontWeight="Bold" Margin="5,0,0,0"/>
                             </StackPanel>
                             <TextBlock Text="Here, you can update the images of the user profile." VerticalAlignment="Top" FontSize="15" Margin="10,35,0,0"/>
-                            <Border CornerRadius="5" Margin="10,70,0,50" Width="425" HorizontalAlignment="Left" Background="{DynamicResource DarkBackground}">
+                            <Border CornerRadius="5" Margin="10,70,0,50" Width="425" HorizontalAlignment="Left" Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
                                 <StackPanel>
                                     <TextBlock Text="Background" HorizontalAlignment="Center" FontSize="15" Margin="0,5,0,0"/>
-                                    <Border CornerRadius="5" BorderThickness="2" Margin="10" Height="380" Background="{DynamicResource DarkBackground2}" Cursor="Hand" AllowDrop="True" Drop="Image_Drop" MouseLeftButtonUp="ChooseImage" Focusable="True" KeyDown="Image_Paste">
+                                    <Border CornerRadius="5" BorderThickness="2" Margin="10" Height="380" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" Cursor="Hand" AllowDrop="True" Drop="Image_Drop" MouseLeftButtonUp="ChooseImage" Focusable="True" KeyDown="Image_Paste">
                                         <Border.Style>
                                             <Style TargetType="Border">
-                                                <Setter Property="BorderBrush" Value="LightGray"/>
+                                                <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Button.Border}"/>
                                                 <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
                                                 <Style.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
                                                         <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}" />
-                                                        <Setter Property="BorderBrush" Value="{DynamicResource DarkBackground3}"/>
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Button.Border.MouseOver}"/>
                                                     </Trigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -161,37 +170,36 @@
                                             <StackPanel HorizontalAlignment="Center" Margin="0,65,0,0">
                                                 <TextBlock Text="Click to Upload, Paste or Drag and Drop" FontWeight="Bold"/>
                                                 <TextBlock Text="JPG, PNG, GIF, TIF, ICO or BMP" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                                                <TextBlock Text="For optimal display, use an image that is 1920px wide and 1080px high." FontSize="8" HorizontalAlignment="Center" Margin="0,5,0,0"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </Border>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                        <Rectangle Fill="White" Width="70" Height="2"/>
+                                        <Rectangle Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Width="70" Height="2"/>
                                         <StackPanel Margin="10,0,10,0">
                                             <TextBlock Text="OR" HorizontalAlignment="Center"/>
                                             <TextBlock Text="Upload via URL" FontWeight="Bold"/>
                                         </StackPanel>
-                                        <Rectangle Fill="White" Width="70" Height="2"/>
+                                        <Rectangle Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Width="70" Height="2"/>
                                     </StackPanel>
                                     <TextBox Margin="10" Height="28" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="https://example.com/example.png" TextChanged="BackgoundImageUrl_TextChanged"/>
                                     <Grid Margin="10,95,10,0">
-                                        <local:IconButton Content="Save" Icon="{DynamicResource IconGameSettingsSave}" IsEnabled="{Binding BackgroundImageChanged}" Width="70" Height="33" HorizontalAlignment="Right" MouseLeftButtonUp="BackgroundImage_Save"/>
-
-                                        <!--<local:IconButton Content="Find Images" Icon="{DynamicResource IconGameSettingsGoogle}" HorizontalAlignment="Left" Height="33" Width="115" Tag="Game Background Art" MouseLeftButtonUp="FindImages_Click"/>-->
+                                        <local:IconButton Text="Save" FontSize="15" Icon="{DynamicResource IconGameSettingsSave}" IconMargin="0,0,5,2" IsEnabled="{Binding BackgroundImageChanged}" Width="115" Height="33" HorizontalAlignment="Right" Click="BackgroundImage_Save"/>
                                     </Grid>
                                 </StackPanel>
                             </Border>
-                            <Border CornerRadius="5" Margin="0,70,10,50" Width="425" HorizontalAlignment="Right" Background="{DynamicResource DarkBackground}">
+                            <Border CornerRadius="5" Margin="0,70,10,50" Width="425" HorizontalAlignment="Right" Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
                                 <StackPanel>
                                     <TextBlock Text="Avatar" HorizontalAlignment="Center" FontSize="15" Margin="0,5,0,0"/>
-                                    <Border CornerRadius="5" BorderThickness="2" Margin="10" Height="380" Background="{DynamicResource DarkBackground2}" Cursor="Hand" AllowDrop="True" Drop="Image_Drop" MouseLeftButtonUp="ChooseImage" Focusable="True" KeyDown="Image_Paste" Tag="avatar">
+                                    <Border CornerRadius="5" BorderThickness="2" Margin="10" Height="380" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" Cursor="Hand" AllowDrop="True" Drop="Image_Drop" MouseLeftButtonUp="ChooseImage" Focusable="True" KeyDown="Image_Paste" Tag="avatar">
                                         <Border.Style>
                                             <Style TargetType="Border">
-                                                <Setter Property="BorderBrush" Value="LightGray"/>
+                                                <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Button.Border}"/>
                                                 <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
                                                 <Style.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
                                                         <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}" />
-                                                        <Setter Property="BorderBrush" Value="{DynamicResource DarkBackground3}"/>
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Button.Border.MouseOver}"/>
                                                     </Trigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -202,37 +210,33 @@
                                                     <local:CacheImage.Style>
                                                         <Style TargetType="local:CacheImage">
                                                             <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding AvatarImageSource,Converter={StaticResource invNullConv}}" Value="False">
+                                                                <DataTrigger Binding="{Binding AvatarImageUrl,Converter={StaticResource invNullConv}}" Value="False">
                                                                     <Setter Property="Visibility" Value="Hidden" />
                                                                 </DataTrigger>
                                                             </Style.Triggers>
                                                         </Style>
                                                     </local:CacheImage.Style>
                                                 </local:CacheImage>
-                                                <Border CornerRadius="5" Height="214" Width="214" Margin="0,30,0,0">
-                                                    <Border.Background>
-                                                        <ImageBrush ImageSource="{Binding AvatarImageSource}" Stretch="Fill"/>
-                                                    </Border.Background>
-                                                </Border>
+                                                <local:CacheImage UseUriSource="True" Data="{Binding AvatarImageUrl}" CornerRadius="5" Stretch="Fill" Height="214" Width="214" Margin="0,30,0,0"/>
                                             </Grid>
                                             <StackPanel HorizontalAlignment="Center" Margin="0,65,0,0">
                                                 <TextBlock Text="Click to Upload, Paste or Drag and Drop" FontWeight="Bold"/>
                                                 <TextBlock Text="JPG, PNG, GIF, TIF, ICO or BMP" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                                                <TextBlock Text="For optimal display, use an image that is 264px wide and 264px high." FontSize="8" HorizontalAlignment="Center" Margin="0,5,0,0"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </Border>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                        <Rectangle Fill="White" Width="70" Height="2"/>
+                                        <Rectangle Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Width="70" Height="2"/>
                                         <StackPanel Margin="10,0,10,0">
                                             <TextBlock Text="OR" HorizontalAlignment="Center"/>
                                             <TextBlock Text="Upload via URL" FontWeight="Bold"/>
                                         </StackPanel>
-                                        <Rectangle Fill="White" Width="70" Height="2"/>
+                                        <Rectangle Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Width="70" Height="2"/>
                                     </StackPanel>
                                     <TextBox Margin="10" Height="28" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="https://example.com/example.png" TextChanged="AvatarImageUrl_TextChanged"/>
                                     <Grid Margin="10,95,10,0">
-                                        <local:IconButton Content="Save" Icon="{DynamicResource IconGameSettingsSave}" IsEnabled="{Binding AvatarImageChanged}" Width="70" Height="33" HorizontalAlignment="Right" MouseLeftButtonUp="AvatarImage_Save"/>
-                                        <!--<local:IconButton Content="Find Images" Icon="{DynamicResource IconGameSettingsGoogle}" HorizontalAlignment="Left" Height="33" Width="115" Tag="Game Box Art" MouseLeftButtonUp="FindImages_Click"/>-->
+                                        <local:IconButton Text="Save" FontSize="15" Icon="{DynamicResource IconGameSettingsSave}" IconMargin="0,0,5,2" IsEnabled="{Binding AvatarImageChanged}" Width="115" Height="33" HorizontalAlignment="Right" Click="AvatarImage_Save"/>
                                     </Grid>
                                 </StackPanel>
                             </Border>
@@ -241,7 +245,7 @@
                     <mah:MetroTabItem>
                         <Grid Margin="0,20,0,0">
                             <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
-                                <Path Data="{DynamicResource IconGameSettingsEditDetails}" Fill="White" Margin="0,1,0,0"/>
+                                <Path Data="{DynamicResource IconGameSettingsEditDetails}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Margin="0,1,0,0"/>
                                 <TextBlock Text="Edit Details" FontSize="20" FontWeight="Bold" Margin="5,0,0,0"/>
                             </StackPanel>
                             <TextBlock Text="Here, you can update the details of the user profile." VerticalAlignment="Top" FontSize="15" Margin="10,35,0,0"/>
@@ -269,7 +273,7 @@
                                     <TextBox Text="{Binding Path=User.LastName,UpdateSourceTrigger=PropertyChanged}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" Height="30" Width="400" TextChanged="UserDetails_TextChanged"/>
                                 </StackPanel>
                             </Grid>
-                            <local:IconButton Content="Save" Icon="{DynamicResource IconGameSettingsSave}" IsEnabled="{Binding UserDetailsChanged}" Width="70" Height="33" Margin="0,0,10,0" HorizontalAlignment="Right" MouseLeftButtonUp="SaveUserDetails_Click"/>
+                            <local:IconButton Text="Save" FontSize="15" Icon="{DynamicResource IconGameSettingsSave}" IconMargin="0,0,5,2" IsEnabled="{Binding UserDetailsChanged}" Width="115" Height="33" Margin="0,0,10,0" HorizontalAlignment="Right" Click="SaveUserDetails_Click"/>
                         </Grid>
                     </mah:MetroTabItem>
                 </mah:MetroAnimatedTabControl>
@@ -277,7 +281,7 @@
             </Grid>
 
             <Grid Grid.Column="1" Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" Margin="0,10,10,0" Cursor="Hand" MouseLeftButtonUp="Close_Click">
-                <Path Fill="White" Stroke="White" Data="{DynamicResource IconClose}" RenderTransformOrigin="1.2,1.2">
+                <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Stroke="{DynamicResource MahApps.Brushes.ThemeForeground}" Data="{DynamicResource IconClose}" RenderTransformOrigin="1.2,1.2">
                     <Path.RenderTransform>
                         <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
                     </Path.RenderTransform>
@@ -287,7 +291,7 @@
                 </Grid.RenderTransform>
             </Grid>
             <Grid Grid.Column="1" Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" Margin="0,8,50,0" Cursor="Hand" MouseLeftButtonUp="Help_Click">
-                <Path Fill="White" Data="{DynamicResource IconGameSettingsHelp}">
+                <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Data="{DynamicResource IconGameSettingsHelp}">
                     <Path.RenderTransform>
                         <ScaleTransform ScaleX="1" ScaleY="1"/>
                     </Path.RenderTransform>

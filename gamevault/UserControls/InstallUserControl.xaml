@@ -11,11 +11,11 @@
         <Expander x:Name="uiInstalledGames" Margin="10" mah:ExpanderHelper.HeaderDownStyle="{StaticResource CustomExpanderToggleButton}" BorderBrush="{x:Null}" Expanded="InstalledGames_Toggled" Collapsed="InstalledGames_Toggled">
             <Expander.Header>
                 <Grid Height="35">
-                    <TextBlock Text="{Binding Path=InstalledGames.Count,StringFormat='{}Installed Games ({0})'}" FontWeight="Bold" HorizontalAlignment="Left" FontSize="20" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding Path=InstalledGames.Count,StringFormat='{}Installed Games ({0})'}" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" FontWeight="Bold" HorizontalAlignment="Left" FontSize="20" VerticalAlignment="Center"/>
                     <TextBox HorizontalAlignment="Center" Width="376" Margin="0,4,44,4" Style="{DynamicResource SearchTextBox}" TextChanged="Search_TextChanged"/>
                 </Grid>
             </Expander.Header>
-            <Border Background="{StaticResource DarkBackground4}" CornerRadius="5" Margin="-6,5,-6,0" VerticalAlignment="Top">
+            <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" CornerRadius="5" Margin="-6,5,-6,0" VerticalAlignment="Top">
                 <Grid>
                     <StackPanel Panel.ZIndex="1">
                         <StackPanel.Style>
@@ -30,8 +30,8 @@
                         </StackPanel.Style>
                         <Image Source="pack://application:,,,/gamevault;component/Resources/Images/library_NoGameFound.png" RenderOptions.EdgeMode="Aliased" Height="190"/>
                         <TextBlock Text="No Games found" FontSize="20" HorizontalAlignment="Center" Margin="0,-10,0,0"/>
-                        <TextBlock HorizontalAlignment="Center" FontSize="10" Margin="0,5,0,10">
-                            <Hyperlink TextDecorations="Baseline" NavigateUri="https://gamevau.lt/docs/troubleshooting/#games-not-appearing-in-the-installations--servers-list" RequestNavigate="Hyperlink_RequestNavigate" Foreground="#FFD4D4D4">
+                        <TextBlock HorizontalAlignment="Center" FontSize="10" Margin="0,5,0,10" Opacity="0.8">
+                            <Hyperlink TextDecorations="Baseline" NavigateUri="https://gamevau.lt/docs/troubleshooting/#games-not-appearing-in-the-installations--servers-list" RequestNavigate="Hyperlink_RequestNavigate" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}">
                                 <Hyperlink.Inlines>
                                     <Run Text="Troubleshooting"/>
                                 </Hyperlink.Inlines>
@@ -53,75 +53,81 @@
                         </ItemsControl.Template>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Grid Cursor="Hand" Name="ParentGrid" Background="Transparent" MaxHeight="267" MaxWidth="178" Height="267" Width="178" Margin="9,10,10,10" MouseLeftButtonUp="GameCard_Clicked">
-                                    <Grid RenderTransformOrigin="0.5,0.5">
-                                        <Grid.RenderTransform>
-                                            <ScaleTransform/>
-                                        </Grid.RenderTransform>
-                                        <Grid.Style>
-                                            <Style TargetType="{x:Type Grid}">
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsMouseOver, ElementName=ParentGrid}" Value="True">
-                                                        <DataTrigger.EnterActions>
-                                                            <BeginStoryboard>
-                                                                <Storyboard>
-                                                                    <DoubleAnimation Duration="0:0:0.15" Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)" To="0.95"/>
-                                                                    <DoubleAnimation Duration="0:0:0.15" Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)" To="0.95"/>
-                                                                </Storyboard>
-                                                            </BeginStoryboard>
-                                                        </DataTrigger.EnterActions>
-                                                        <DataTrigger.ExitActions>
-                                                            <BeginStoryboard>
-                                                                <Storyboard>
-                                                                    <DoubleAnimation Duration="0:0:0.05" Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)" To="1"/>
-                                                                    <DoubleAnimation Duration="0:0:0.05" Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)" To="1"/>
-                                                                </Storyboard>
-                                                            </BeginStoryboard>
-                                                        </DataTrigger.ExitActions>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Grid.Style>
-                                        <Border Background="{StaticResource DarkBackground2}" CornerRadius="8">
-                                            <local:CacheImage Stretch="Fill" ImageCacheType="BoxArt" Data="{Binding Key}" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Border>
-                                        <Border Name="banner" VerticalAlignment="Stretch" Background="#B2000000" CornerRadius="8">
-                                            <Border.Style>
-                                                <Style TargetType="{x:Type Border}">
+                                <Button Cursor="Hand" Name="cardRoot" Style="{StaticResource ButtonWrapper}" Click="GameCard_Clicked">
+                                    <Grid Background="Transparent" MaxHeight="267" MaxWidth="178" Height="267" Width="178" Margin="9,10,10,10">
+                                        <Grid RenderTransformOrigin="0.5,0.5">
+                                            <Grid.RenderTransform>
+                                                <ScaleTransform/>
+                                            </Grid.RenderTransform>
+                                            <Grid.Style>
+                                                <Style TargetType="{x:Type Grid}">
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsMouseOver, ElementName=ParentGrid}" Value="False">
-                                                            <Setter Property="Height" Value="0" />
+                                                        <DataTrigger Binding="{Binding IsMouseOver, ElementName=cardRoot}" Value="True">
+                                                            <DataTrigger.EnterActions>
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <DoubleAnimation Duration="0:0:0.15" Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)" To="0.95"/>
+                                                                        <DoubleAnimation Duration="0:0:0.15" Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)" To="0.95"/>
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </DataTrigger.EnterActions>
+                                                            <DataTrigger.ExitActions>
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <DoubleAnimation Duration="0:0:0.05" Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)" To="1"/>
+                                                                        <DoubleAnimation Duration="0:0:0.05" Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)" To="1"/>
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </DataTrigger.ExitActions>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
-                                            </Border.Style>
-                                            <Grid>
-                                                <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,12,10,0" MouseLeftButtonUp="Settings_Click" Background="#02000000">
-                                                    <Path Data="{StaticResource IconInstalledGamesSettings}"
-                                                      Fill="White" RenderTransformOrigin="0.5,0.5">
-                                                        <Path.RenderTransform>
-                                                            <ScaleTransform ScaleX="1.3" ScaleY="1.3"/>
-                                                        </Path.RenderTransform>
-                                                    </Path>
-                                                    <Grid.RenderTransform>
-                                                        <ScaleTransform/>
-                                                    </Grid.RenderTransform>
+                                            </Grid.Style>
+                                            <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground}" CornerRadius="8">
+                                                <local:CacheImage Stretch="Fill" ImageCacheType="BoxArt" Data="{Binding Key}" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <Border Name="banner" VerticalAlignment="Stretch" Background="{DynamicResource GameVault.Brushes.Blur}" CornerRadius="8">
+                                                <Border.Style>
+                                                    <Style TargetType="{x:Type Border}">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsMouseOver, ElementName=cardRoot}" Value="False">
+                                                                <Setter Property="Height" Value="0" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <Grid>
+                                                    <Button Style="{StaticResource ButtonWrapper}" Click="Settings_Click">
+                                                        <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,12,10,0" Background="#02000000">
+                                                            <Path Data="{StaticResource IconInstalledGamesSettings}"
+                                                      Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
+                                                                <Path.RenderTransform>
+                                                                    <ScaleTransform ScaleX="1.3" ScaleY="1.3"/>
+                                                                </Path.RenderTransform>
+                                                            </Path>
+                                                            <Grid.RenderTransform>
+                                                                <ScaleTransform/>
+                                                            </Grid.RenderTransform>
+                                                        </Grid>
+                                                    </Button>
+                                                    <TextBlock Text="{Binding Path=Key.Title}" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}" TextAlignment="Center" TextWrapping="Wrap"/>
+                                                    <Button Style="{StaticResource ButtonWrapper}" Click="Play_Click">
+                                                        <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,40" Background="Transparent" Height="40" Width="40">
+                                                            <Path Data="{StaticResource IconInstalledGamesPlay}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.2,0.2">
+                                                                <Path.RenderTransform>
+                                                                    <ScaleTransform ScaleX="2.8" ScaleY="2.8"/>
+                                                                </Path.RenderTransform>
+                                                            </Path>
+                                                            <Grid.RenderTransform>
+                                                                <ScaleTransform/>
+                                                            </Grid.RenderTransform>
+                                                        </Grid>
+                                                    </Button>
                                                 </Grid>
-                                                <TextBlock Text="{Binding Path=Key.Title}" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" TextAlignment="Center" TextWrapping="Wrap"/>
-                                                <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,40" MouseLeftButtonUp="Play_Click" Background="Transparent" Height="40" Width="40">
-                                                    <Path Data="{StaticResource IconInstalledGamesPlay}" Fill="White" RenderTransformOrigin="0.2,0.2">
-                                                        <Path.RenderTransform>
-                                                            <ScaleTransform ScaleX="2.8" ScaleY="2.8"/>
-                                                        </Path.RenderTransform>
-                                                    </Path>
-                                                    <Grid.RenderTransform>
-                                                        <ScaleTransform/>
-                                                    </Grid.RenderTransform>
-                                                </Grid>
-                                            </Grid>
-                                        </Border>
+                                            </Border>
+                                        </Grid>
                                     </Grid>
-                                </Grid>
+                                </Button>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

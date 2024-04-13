@@ -62,6 +62,7 @@ namespace gamevault.Helper
                 m_Semaphore.Dispose();
             }
             m_Semaphore = new SemaphoreSlim(maxProcessCount, maxProcessCount);
+            m_ProcessedIds.Clear();
         }
         public bool IsAlreadyInProcess(int id)
         {

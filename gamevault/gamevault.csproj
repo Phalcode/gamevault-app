@@ -9,6 +9,23 @@
 		<UseWindowsForms>True</UseWindowsForms>
 		<ApplicationIcon>Resources\Images\icon.ico</ApplicationIcon>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<StartupObject>gamevault.Program</StartupObject>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+	  <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+	  <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -20,40 +37,46 @@
 
 	<ItemGroup>
 		<None Remove="Resources\Images\com_NoUserIcon.png" />
+		<None Remove="Resources\Images\ContextMenuIcon_Community.png" />
+		<None Remove="Resources\Images\ContextMenuIcon_Downloads.png" />
+		<None Remove="Resources\Images\ContextMenuIcon_Exit.png" />
+		<None Remove="Resources\Images\ContextMenuIcon_Library.png" />
+		<None Remove="Resources\Images\ContextMenuIcon_Settings.png" />
 		<None Remove="Resources\Images\gameView_NoBackground.jpg" />
-		<None Remove="Resources\Images\glyph_admin.png" />
-		<None Remove="Resources\Images\glyph_community.png" />
-		<None Remove="Resources\Images\glyph_download.png" />
 		<None Remove="Resources\Images\glyph_installs_NoInstalls.png" />
-		<None Remove="Resources\Images\glyph_settings.png" />
+		<None Remove="Resources\Images\glyph_premium.png" />
 		<None Remove="Resources\Images\icon.ico" />
 		<None Remove="Resources\Images\InstallsEmptySpace.jpg" />
-		<None Remove="Resources\Images\install_NoGameFound.png" />
-		<None Remove="Resources\Images\library_dice.png" />
+		<None Remove="Resources\Images\install_NoGameFound.png" />		
 		<None Remove="Resources\Images\library_NoBoxart.png" />
 		<None Remove="Resources\Images\library_NoGameFound.png" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="IdentityModel.OidcClient" Version="5.2.1" />
+		<PackageReference Include="CommandLineParser" Version="2.9.1" />
 		<PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.0-rc2" />
 		<PackageReference Include="Magick.NET-Q8-x64" Version="13.5.0" />
 		<PackageReference Include="MahApps.Metro" Version="2.4.10" />
+		<PackageReference Include="MahApps.Metro.IconPacks" Version="4.11.0" />
 		<PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
+		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2365.46" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.3.1" />
 		<PackageReference Include="System.Management" Version="8.0.0" />
 		<PackageReference Include="VirtualizingWrapPanel" Version="1.5.8" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<Resource Include="Resources\Images\com_NoUserIcon.png" />
+		<Resource Include="Resources\Images\ContextMenuIcon_Community.png" />
+		<Resource Include="Resources\Images\ContextMenuIcon_Downloads.png" />
+		<Resource Include="Resources\Images\ContextMenuIcon_Exit.png" />
+		<Resource Include="Resources\Images\ContextMenuIcon_Library.png" />
+		<Resource Include="Resources\Images\ContextMenuIcon_Settings.png" />
 		<Resource Include="Resources\Images\gameView_NoBackground.jpg" />
-		<Resource Include="Resources\Images\glyph_admin.png" />
-		<Resource Include="Resources\Images\glyph_community.png" />
-		<Resource Include="Resources\Images\glyph_download.png" />
-		<Resource Include="Resources\Images\glyph_server.png" />
-		<Resource Include="Resources\Images\glyph_settings.png" />
+		<Resource Include="Resources\Images\glyph_premium.png" />
 		<Resource Include="Resources\Images\icon.ico" />
-		<Resource Include="Resources\Images\install_NoGameFound.png" />
-		<Resource Include="Resources\Images\library_dice.png" />
+		<Resource Include="Resources\Images\install_NoGameFound.png" />		
 		<Resource Include="Resources\Images\library_NoBoxart.png" />
 		<Resource Include="Resources\Images\library_NoGameFound.png" />
 	</ItemGroup>

@@ -1,7 +1,9 @@
 ﻿using gamevault.Helper;
 using gamevault.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 
 namespace gamevault.ViewModels
 {
@@ -29,7 +31,7 @@ namespace gamevault.ViewModels
         #region PrivateMembers       
         private string m_UserName { get; set; }
         private string m_RootPath { get; set; }
-        private bool m_IsOnIdle = true;
+
         private bool m_BackgroundStart { get; set; }
         private bool m_LibStartup { get; set; }
         private bool m_AutoExtract { get; set; }
@@ -39,6 +41,8 @@ namespace gamevault.ViewModels
         private long m_DownloadLimit { get; set; }
         private long m_DownloadLimitUIValue { get; set; }
         private User m_RegistrationUser = new User() { ProfilePicture = new Image(), BackgroundImage = new Image() };
+        private PhalcodeProduct license { get; set; }
+        private List<ThemeItem> themes { get; set; }
         #endregion
 
         public SettingsViewModel()
@@ -79,11 +83,6 @@ namespace gamevault.ViewModels
         {
             get { return m_RootPath; }
             set { m_RootPath = value; OnPropertyChanged(); }
-        }
-        public bool IsOnIdle
-        {
-            get { return m_IsOnIdle; }
-            set { m_IsOnIdle = value; OnPropertyChanged(); }
         }
         public bool BackgroundStart
         {
@@ -160,6 +159,20 @@ namespace gamevault.ViewModels
             get { return m_RegistrationUser; }
             set { m_RegistrationUser = value; OnPropertyChanged(); }
         }
+        public List<ThemeItem> Themes
+        {
+            get { return themes; }
+            set { themes = value; OnPropertyChanged(); }
+        }
+        public PhalcodeProduct License
+        {
+            get
+            {
+                if (license == null) { license = new PhalcodeProduct(); }
+                return license;
+            }
+            set { license = value; OnPropertyChanged(); }
+        }
         public System.Windows.Forms.DialogResult SelectDownloadPath()
         {
             using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
@@ -192,9 +205,15 @@ namespace gamevault.ViewModels
         {
             get
             {
-                return "1.8.2";
+                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
             }
         }
 
+    }
+    public class ThemeItem
+    {
+        public string Key { get; set; }
+        public string Value { get; set; }
+        public bool IsPlus { get; set; }        
     }
 }

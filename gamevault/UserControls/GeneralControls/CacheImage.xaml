@@ -13,7 +13,7 @@
                 <VisualBrush.Visual>
                     <Border x:Name="uiBorder" Height="{Binding ElementName=container, Path=ActualHeight}" 
              Width="{Binding ElementName=container, Path=ActualWidth}"
-             Background="White" CornerRadius="0" />
+             Background="{DynamicResource MahApps.Brushes.ThemeBackground}" CornerRadius="0" />
                 </VisualBrush.Visual>
             </VisualBrush>
         </WrapPanel.OpacityMask>

@@ -28,9 +28,9 @@ namespace gamevault.UserControls.SettingsComponents
         }
         private async void Login_Clicked(object sender, System.Windows.RoutedEventArgs e)
         {
-            ((Button)sender).IsEnabled = false;
+            ((FrameworkElement)sender).IsEnabled = false;
             await Login();
-            ((Button)sender).IsEnabled = true;
+            ((FrameworkElement)sender).IsEnabled = true;
         }
 
         private async void Login_KeyDown(object sender, KeyEventArgs e)

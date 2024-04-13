@@ -230,7 +230,8 @@ namespace gamevault.UserControls
                 {
                     App.Current.Dispatcher.Invoke((Action)delegate
                     {
-                        InstallViewModel.Instance.InstalledGames.Add(new KeyValuePair<Game, string>(game, dir));
+                        InstallViewModel.Instance.InstalledGames.Insert(0,new KeyValuePair<Game, string>(game, dir));
+                        SetLastPlayedGame(game.ID);
                     });
                 }
             }
@@ -266,9 +267,8 @@ namespace gamevault.UserControls
                 return JsonSerializer.Deserialize<string[]>(result);
             }
             catch { return null; }
-        }
-
-        private void GameCard_Clicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        }      
+        private void GameCard_Clicked(object sender, RoutedEventArgs e)
         {
             if (((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key == null)
                 return;
@@ -290,21 +290,32 @@ namespace gamevault.UserControls
             };
         }
 
-        private void Play_Click(object sender, MouseButtonEventArgs e)
+        private void Play_Click(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            if (!Directory.Exists($"{((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Value}"))
+            PlayGame(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key.ID);           
+        }
+
+        public static void PlayGame(int gameId)
+        {
+            string path = "";
+            KeyValuePair<Game, string> result = InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == gameId).FirstOrDefault();
+            if (!result.Equals(default(KeyValuePair<Game, string>)))
             {
-                MainWindowViewModel.Instance.AppBarText = $"Can not find part of '{((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Value}'";
+                path = result.Value;
+            }
+            if (!Directory.Exists(path))
+            {
+                MainWindowViewModel.Instance.AppBarText = $"Can not find part of '{path}'";
                 return;
             }
-            string savedExecutable = Preferences.Get(AppConfigKey.Executable, $"{((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Value}\\gamevault-exec");
-            string parameter = Preferences.Get(AppConfigKey.LaunchParameter, $"{((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Value}\\gamevault-exec");
+            string savedExecutable = Preferences.Get(AppConfigKey.Executable, $"{path}\\gamevault-exec");
+            string parameter = Preferences.Get(AppConfigKey.LaunchParameter, $"{path}\\gamevault-exec");
             if (savedExecutable == string.Empty)
             {
-                if (GameSettingsUserControl.TryPrepareLaunchExecutable(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Value))
+                if (GameSettingsUserControl.TryPrepareLaunchExecutable(path))
                 {
-                    savedExecutable = Preferences.Get(AppConfigKey.Executable, $"{((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Value}\\gamevault-exec");
+                    savedExecutable = Preferences.Get(AppConfigKey.Executable, $"{path}\\gamevault-exec");
                 }
                 else
                 {
@@ -330,16 +341,14 @@ namespace gamevault.UserControls
                         MainWindowViewModel.Instance.AppBarText = $"Can not execute '{savedExecutable}'";
                     }
                 }
-                SetLastPlayedGame(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key.ID);
-                //Preferences.Set(AppConfigKey.LastPlayed, DateTime.Now.ToString(), $"{((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Value}\\gamevault-exec");
+                MainWindowViewModel.Instance.Library.GetGameInstalls().SetLastPlayedGame(result.Key.ID);              
             }
             else
             {
                 MainWindowViewModel.Instance.AppBarText = $"Could not find Executable '{savedExecutable}'";
             }
-        }
-
-        private void Settings_Click(object sender, MouseButtonEventArgs e)
+        }       
+        private void Settings_Click(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
             MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key) { Width = 1200, Height = 800, Margin = new Thickness(50) });

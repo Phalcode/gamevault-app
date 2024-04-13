@@ -2,28 +2,20 @@
 using gamevault.Models;
 using gamevault.UserControls.SettingsComponents;
 using gamevault.ViewModels;
-using gamevault.Windows;
 using MahApps.Metro.Controls.Dialogs;
 using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace gamevault.UserControls
 {
@@ -40,7 +32,13 @@ namespace gamevault.UserControls
             ViewModel = new AdminConsoleViewModel();
             this.DataContext = ViewModel;
         }
-
+        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (this.IsVisible)
+            {
+                this.Focus();
+            }
+        }
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             if (this.Visibility == Visibility.Visible)
@@ -49,13 +47,14 @@ namespace gamevault.UserControls
                 ViewModel.ServerVersionInfo = await GetServerVersionInfo();
             }
         }
+
         public async Task InitUserList()
         {
             try
             {
                 ViewModel.Users = await Task<User[]>.Run(() =>
                 {
-                    string userList = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/all");
+                    string userList = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/users");
                     return JsonSerializer.Deserialize<User[]>(userList);
                 });
             }
@@ -215,7 +214,7 @@ namespace gamevault.UserControls
 
         private async void Reindex_Click(object sender, RoutedEventArgs e)
         {
-            ((Button)sender).IsEnabled = false;
+            ((FrameworkElement)sender).IsEnabled = false;
             await Task.Run(() =>
             {
                 try
@@ -229,12 +228,18 @@ namespace gamevault.UserControls
                     MainWindowViewModel.Instance.AppBarText = msg;
                 }
             });
-            ((Button)sender).IsEnabled = true;
+            await MainWindowViewModel.Instance.Library.LoadLibrary();
+            ((FrameworkElement)sender).IsEnabled = true;
         }
 
-        private async void Reload_Click(object sender, MouseButtonEventArgs e)
+        private async void Reload_Click(object sender, EventArgs e)
         {
+            if (!uiBtnReload.IsEnabled || (e.GetType() == typeof(KeyEventArgs) && ((KeyEventArgs)e).Key != Key.F5))
+                return;
+
+            uiBtnReload.IsEnabled = false;
             await InitUserList();
+            uiBtnReload.IsEnabled = true;
         }
         private async Task<KeyValuePair<string, string>> GetServerVersionInfo()
         {
@@ -268,6 +273,6 @@ namespace gamevault.UserControls
             url = url.Replace("&", "^&");
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
             e.Handled = true;
-        }
+        }      
     }
 }
