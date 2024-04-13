@@ -123,6 +123,7 @@ namespace gamevault
         private void InitNotifyIcon()
         {
             m_Icon = new NotifyIcon();
+            m_Icon.Text = "GameVault";
             m_Icon.MouseDoubleClick += NotifyIcon_DoubleClick;
             Stream iconStream = Application.GetResourceStream(new Uri("pack://application:,,,/gamevault;component/Resources/Images/icon.ico")).Stream;
             m_Icon.Icon = new System.Drawing.Icon(iconStream);
