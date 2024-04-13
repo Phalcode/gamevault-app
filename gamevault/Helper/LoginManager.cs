@@ -219,7 +219,7 @@ namespace gamevault.Helper
 #if DEBUG
                     var getRequest = new HttpRequestMessage(HttpMethod.Get, $"https://customer-backend-test.platform.phalco.de/api/v1/customers/me/subscriptions/prod_PuyurQTh7H5uZe");
 #else
-                    var getRequest = new HttpRequestMessage(HttpMethod.Get, $"https://customer-backend.platform.phalco.de/api/v1/products/prod_PEZqFd8bFRNg6R");
+                    var getRequest = new HttpRequestMessage(HttpMethod.Get, $"https://customer-backend.platform.phalco.de/api/v1/customers/me/subscriptions/prod_PEZqFd8bFRNg6R");
 #endif
                     getRequest.Headers.Add("Authorization", $"Bearer {token}");
                     var licenseResponse = await client.SendAsync(getRequest);

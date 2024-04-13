@@ -1,7 +1,14 @@
 # GameVault App Changelog
 
+## 1.9.1
+Recommended Gamevault Server Version: `v11.0.2`
+### Changes
+- Bug fix: GameVault+ license was not loaded correctly
+
 ## 1.9.0
-- Added GameVault Plus infrastructure
+Recommended Gamevault Server Version: `v11.0.2`
+### Changes
+- Added GameVault+ infrastructure
 - Added GameVault Client APIs (+)
 - Added GIF support for user profile pictures (+)
 - Added Theming and custom theme loader (+)
@@ -21,11 +28,13 @@
 - Bug fix: Bring window of running instance to foreground if you start gamevault
 - Bug fix: Center user background image on window resize
 - Bug fix: Game settings form data flies in from outside the window
+
 ## 1.8.3
 Recommended Gamevault Server Version: `v10.2.0`
 ### Changes
 - Bug fix: Re-Download icon not appearing on library cards. Also improved loading times by create library cards content only by hover over.
 - Bug fix: Game webite text no longer has the clickable style if no value has been set on GameView 
+
 ## 1.8.2
 Recommended Gamevault Server Version: `v10.1.0`
 ### Changes
