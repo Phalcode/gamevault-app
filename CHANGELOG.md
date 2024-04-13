@@ -14,6 +14,7 @@
 - Added text trimming to game settings archive file path
 - The library is now updated when reindexing
 - Improved error messages
+- Extended Windows context menu
 - Bug fix: Edge case where image was shown as not found
 - Bug fix: Game website link no longer clickable if empty
 - Bug fix: Redownload icon not appearing on library card

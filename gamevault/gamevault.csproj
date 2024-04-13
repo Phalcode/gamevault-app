@@ -37,6 +37,11 @@
 
 	<ItemGroup>
 		<None Remove="Resources\Images\com_NoUserIcon.png" />
+		<None Remove="Resources\Images\ContextMenuIcon_Community.png" />
+		<None Remove="Resources\Images\ContextMenuIcon_Downloads.png" />
+		<None Remove="Resources\Images\ContextMenuIcon_Exit.png" />
+		<None Remove="Resources\Images\ContextMenuIcon_Library.png" />
+		<None Remove="Resources\Images\ContextMenuIcon_Settings.png" />
 		<None Remove="Resources\Images\gameView_NoBackground.jpg" />
 		<None Remove="Resources\Images\glyph_installs_NoInstalls.png" />
 		<None Remove="Resources\Images\glyph_premium.png" />
@@ -63,6 +68,11 @@
 
 	<ItemGroup>
 		<Resource Include="Resources\Images\com_NoUserIcon.png" />
+		<Resource Include="Resources\Images\ContextMenuIcon_Community.png" />
+		<Resource Include="Resources\Images\ContextMenuIcon_Downloads.png" />
+		<Resource Include="Resources\Images\ContextMenuIcon_Exit.png" />
+		<Resource Include="Resources\Images\ContextMenuIcon_Library.png" />
+		<Resource Include="Resources\Images\ContextMenuIcon_Settings.png" />
 		<Resource Include="Resources\Images\gameView_NoBackground.jpg" />
 		<Resource Include="Resources\Images\glyph_premium.png" />
 		<Resource Include="Resources\Images\icon.ico" />

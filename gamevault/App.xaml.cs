@@ -15,6 +15,7 @@ using System.IO.Pipes;
 using System.Windows.Threading;
 using System.Text.Json;
 using System.Diagnostics;
+using System.Drawing;
 
 namespace gamevault
 {
@@ -125,9 +126,12 @@ namespace gamevault
             m_Icon.MouseDoubleClick += NotifyIcon_DoubleClick;
             Stream iconStream = Application.GetResourceStream(new Uri("pack://application:,,,/gamevault;component/Resources/Images/icon.ico")).Stream;
             m_Icon.Icon = new System.Drawing.Icon(iconStream);
-            m_Icon.ContextMenuStrip = new ContextMenuStrip();
-            m_Icon.ContextMenuStrip.Items.Add("Show", null, NotifyIcon_DoubleClick);
-            m_Icon.ContextMenuStrip.Items.Add("Exit", null, NotifyIcon_Exit_Click);
+            m_Icon.ContextMenuStrip = new ContextMenuStrip();            
+            m_Icon.ContextMenuStrip.Items.Add("Library", new Bitmap(Application.GetResourceStream(new Uri("pack://application:,,,/gamevault;component/Resources/Images/ContextMenuIcon_Library.png")).Stream), Navigate_Tab_Click);
+            m_Icon.ContextMenuStrip.Items.Add("Downloads", new Bitmap(Application.GetResourceStream(new Uri("pack://application:,,,/gamevault;component/Resources/Images/ContextMenuIcon_Downloads.png")).Stream), Navigate_Tab_Click);
+            m_Icon.ContextMenuStrip.Items.Add("Community", new Bitmap(Application.GetResourceStream(new Uri("pack://application:,,,/gamevault;component/Resources/Images/ContextMenuIcon_Community.png")).Stream), Navigate_Tab_Click);
+            m_Icon.ContextMenuStrip.Items.Add("Settings", new Bitmap(Application.GetResourceStream(new Uri("pack://application:,,,/gamevault;component/Resources/Images/ContextMenuIcon_Settings.png")).Stream), Navigate_Tab_Click);           
+            m_Icon.ContextMenuStrip.Items.Add("Exit", new Bitmap(Application.GetResourceStream(new Uri("pack://application:,,,/gamevault;component/Resources/Images/ContextMenuIcon_Exit.png")).Stream), NotifyIcon_Exit_Click);
             m_Icon.Visible = true;
         }
         private void RestoreTheme()
@@ -182,6 +186,18 @@ namespace gamevault
             else
             {
                 ShutdownApp();
+            }
+        }
+        private void Navigate_Tab_Click(Object sender, EventArgs e)
+        {
+            NotifyIcon_DoubleClick(null, null);
+            for (int count = 0; count < m_Icon.ContextMenuStrip.Items.Count; count++)
+            {
+                if (m_Icon.ContextMenuStrip.Items[count].Text == sender.ToString())
+                {
+                    MainWindowViewModel.Instance.SetActiveControl((MainControl)count);
+                    break;
+                }
             }
         }
 
