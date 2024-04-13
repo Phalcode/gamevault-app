@@ -10,19 +10,19 @@ namespace gamevault.Models
     public class PhalcodeProduct
     {
         [JsonPropertyName("stripe_id")]
-        public string StripeID { get; set; }
+        public string? StripeID { get; set; }
         [JsonPropertyName("stripe_subscription_item_id")]
-        public string StripeSubscriptionItemID { get; set; }
+        public string? StripeSubscriptionItemID { get; set; }
         [JsonPropertyName("price_stripe_id")]
-        public string PriceStripeID { get; set; }
+        public string? PriceStripeID { get; set; }
         [JsonPropertyName("product_stripe_id")]
-        public string ProductStripeID { get; set; }
+        public string? ProductStripeID { get; set; }
         [JsonPropertyName("customer_stripe_id")]
-        public string CustomerStripeID { get; set; }
+        public string? CustomerStripeID { get; set; }
         [JsonPropertyName("status")]
-        public string Status { get; set; }
+        public string? Status { get; set; }
         [JsonPropertyName("currency")]
-        public string Currency { get; set; }
+        public string? Currency { get; set; }
         [JsonPropertyName("current_period_start")]
         public DateTime? CurrentPeriodStart { get; set; }
         [JsonPropertyName("current_period_end")]
