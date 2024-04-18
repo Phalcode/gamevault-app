@@ -70,5 +70,7 @@ namespace gamevault.Models
         public Genre[] Genres { get; set; }
         [JsonPropertyName("progresses")]
         public Progress[] Progresses { get; set; }
+        [JsonPropertyName("bookmarked_users")]
+        public User[]? BookmarkedUsers { get; set; }
     }
 }

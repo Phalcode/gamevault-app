@@ -13,6 +13,7 @@
         <conv:GameSizeConverter x:Key="sizeConv"/>
         <conv:LibraryPermissionRoleToVisibilityConverter x:Key="libCardsPermVisConv"/>
         <conv:IsGameDownloadedConverter x:Key="isGameDownloadedConv"/>
+        <conv:ContainsCurrentUserConverter x:Key="containsCurrentUserConv"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -112,11 +113,77 @@
                                     <local:TagSelector x:Name="uiFilterGameTypeSelector" SelectionType="GameType" Margin="12,0,24,0" Width="175" EntriesUpdated="FilterUpdated"/>
                                     <local:TagSelector x:Name="uiFilterTagSelector" SelectionType="Tags" Margin="0,0,24,0" Width="175" EntriesUpdated="FilterUpdated"/>
                                     <local:TagSelector x:Name="uiFilterGenreSelector" SelectionType="Genres" Margin="0,0,23,0" Width="175" EntriesUpdated="FilterUpdated"/>
-                                    <StackPanel Margin="0,0,99,0">
+                                    <StackPanel Margin="0,0,97,0">
                                         <TextBlock Text="Release Year" FontSize="15"/>
                                         <local:DateRangeSelector x:Name="uiFilterReleaseDateRangeSelector" EntriesUpdated="FilterUpdated"/>
                                     </StackPanel>
-                                    <mah:ToggleSwitch x:Name="uiFilterEarlyAccess" VerticalAlignment="Top" Header="Early Access Only" Toggled="FilterUpdated"/>
+                                    <StackPanel Margin="0,0,119,0">
+                                        <TextBlock Text="Early Access" FontSize="15"/>
+                                        <ToggleButton x:Name="uiFilterEarlyAccess" Cursor="Hand" Margin="3,3,0,0" HorizontalAlignment="Left" Click="FilterUpdated">
+                                            <ToggleButton.Style>
+                                                <Style TargetType="ToggleButton">
+                                                    <Style.Setters>
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="ToggleButton">
+                                                                    <Grid Style="{DynamicResource HoverEffect}" Background="Transparent" Width="{TemplateBinding Width}" RenderTransformOrigin="0.5,0.5">
+                                                                        <Path Name="PART_Icon" Data="{StaticResource IconEarlyAccess}" StrokeThickness="2" Stroke="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
+                                                                            <Path.RenderTransform>
+                                                                                <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
+                                                                            </Path.RenderTransform>
+                                                                        </Path>
+                                                                        <Grid.RenderTransform>
+                                                                            <ScaleTransform/>
+                                                                        </Grid.RenderTransform>
+                                                                    </Grid>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsChecked" Value="True">
+                                                                            <!--<Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource IconEarlyAccessFilled}"/>-->
+                                                                            <Setter TargetName="PART_Icon" Property="Fill" Value="LightBlue"/>
+                                                                            <Setter TargetName="PART_Icon" Property="Stroke" Value="LightBlue"/>
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style.Setters>
+                                                </Style>
+                                            </ToggleButton.Style>
+                                        </ToggleButton>
+                                    </StackPanel>
+                                    <StackPanel>
+                                        <TextBlock Text="Bookmarks" FontSize="15"/>
+                                        <ToggleButton x:Name="uiFilterBookmarks"  Cursor="Hand" Margin="3,3,0,0" HorizontalAlignment="Left" Click="FilterUpdated">
+                                            <ToggleButton.Style>
+                                                <Style TargetType="ToggleButton">
+                                                    <Style.Setters>
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="ToggleButton">
+                                                                    <Grid Style="{DynamicResource HoverEffect}" Background="Transparent" Width="{TemplateBinding Width}" RenderTransformOrigin="0.5,0.5">
+                                                                        <Path Name="PART_Icon" Data="{StaticResource IconBookmark}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
+                                                                            <Path.RenderTransform>
+                                                                                <ScaleTransform ScaleX="1.4" ScaleY="1.4"/>
+                                                                            </Path.RenderTransform>
+                                                                        </Path>
+                                                                        <Grid.RenderTransform>
+                                                                            <ScaleTransform/>
+                                                                        </Grid.RenderTransform>
+                                                                    </Grid>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsChecked" Value="True">
+                                                                            <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource IconBookmarkFilled}"/>
+                                                                            <Setter TargetName="PART_Icon" Property="Fill" Value="Yellow"/>
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style.Setters>
+                                                </Style>
+                                            </ToggleButton.Style>
+                                        </ToggleButton>
+                                    </StackPanel>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
                                     <ToggleButton Width="35" Height="35" Cursor="Hand" Margin="0,10,0,0" Checked="OrderBy_Changed" Unchecked="OrderBy_Changed">
@@ -262,10 +329,13 @@
                                                                 <ContentControl>
                                                                     <ContentControl.Resources>
                                                                         <Style x:Key="SettingsKey" TargetType="Button" BasedOn="{StaticResource ButtonWrapper}">
-                                                                            <EventSetter Event="Click" Handler="Settings_Click"/>
+                                                                            <EventSetter Event="Click" Handler="CardSettings_Click"/>
                                                                         </Style>
                                                                         <Style x:Key="DownloadKey" TargetType="Button" BasedOn="{StaticResource ButtonWrapper}">
                                                                             <EventSetter Event="Click" Handler="Download_Click"/>
+                                                                        </Style>
+                                                                        <Style x:Key="BookmarkKey" TargetType="ToggleButton">
+                                                                            <EventSetter Event="Click" Handler="CardBookmark_Click"/>
                                                                         </Style>
                                                                     </ContentControl.Resources>
                                                                     <ContentControl.Style>
@@ -288,6 +358,36 @@
                                                                                                             </Grid.RenderTransform>
                                                                                                         </Grid>
                                                                                                     </Button>
+                                                                                                    <ToggleButton Cursor="Hand" Margin="10,12,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Validation.ErrorTemplate="{x:Null}" IsChecked="{Binding Path=BookmarkedUsers,Converter={StaticResource containsCurrentUserConv}}">
+                                                                                                        <ToggleButton.Style>
+                                                                                                            <Style TargetType="ToggleButton" BasedOn="{StaticResource BookmarkKey}">
+                                                                                                                <Style.Setters>
+                                                                                                                    <Setter Property="Template">
+                                                                                                                        <Setter.Value>
+                                                                                                                            <ControlTemplate TargetType="ToggleButton">
+                                                                                                                                <Grid Style="{DynamicResource HoverEffect}" Background="Transparent" Width="{TemplateBinding Width}" RenderTransformOrigin="0.5,0.5">
+                                                                                                                                    <Path Name="PART_Icon" Data="{StaticResource IconBookmark}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
+                                                                                                                                        <Path.RenderTransform>
+                                                                                                                                            <ScaleTransform ScaleX="1.4" ScaleY="1.4"/>
+                                                                                                                                        </Path.RenderTransform>
+                                                                                                                                    </Path>
+                                                                                                                                    <Grid.RenderTransform>
+                                                                                                                                        <ScaleTransform/>
+                                                                                                                                    </Grid.RenderTransform>
+                                                                                                                                </Grid>
+                                                                                                                                <ControlTemplate.Triggers>
+                                                                                                                                    <Trigger Property="IsChecked" Value="True">
+                                                                                                                                        <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource IconBookmarkFilled}"/>
+                                                                                                                                        <Setter TargetName="PART_Icon" Property="Fill" Value="Yellow"/>
+                                                                                                                                    </Trigger>
+                                                                                                                                </ControlTemplate.Triggers>
+                                                                                                                            </ControlTemplate>
+                                                                                                                        </Setter.Value>
+                                                                                                                    </Setter>
+                                                                                                                </Style.Setters>
+                                                                                                            </Style>
+                                                                                                        </ToggleButton.Style>
+                                                                                                    </ToggleButton>
                                                                                                     <TextBlock Text="{Binding Path=Title}" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}" TextAlignment="Center" TextWrapping="Wrap"/>
                                                                                                     <Button Style="{StaticResource DownloadKey}">
                                                                                                         <Grid Style="{StaticResource HoverEffect}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,30" Background="Transparent" Height="61" Width="65">

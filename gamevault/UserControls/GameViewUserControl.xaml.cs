@@ -9,7 +9,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Navigation;
 
 namespace gamevault.UserControls
@@ -56,7 +58,7 @@ namespace gamevault.UserControls
                             return System.Text.Json.JsonSerializer.Deserialize<Game>(game);
                         });
                         ViewModel.UserProgresses = ViewModel.Game.Progresses.Where(p => p.User.ID != LoginManager.Instance.GetCurrentUser().ID).ToArray();
-                        ViewModel.CurrentUserProgress = ViewModel.Game.Progresses.FirstOrDefault(progress => progress.User.ID == LoginManager.Instance.GetCurrentUser()?.ID) ?? new Progress { MinutesPlayed = 0, State = State.UNPLAYED.ToString() };                        
+                        ViewModel.CurrentUserProgress = ViewModel.Game.Progresses.FirstOrDefault(progress => progress.User.ID == LoginManager.Instance.GetCurrentUser()?.ID) ?? new Progress { MinutesPlayed = 0, State = State.UNPLAYED.ToString() };
                     }
                     catch (Exception ex) { }
                 }
@@ -163,6 +165,32 @@ namespace gamevault.UserControls
                 Preferences.Set(AppConfigKey.ShowRawgTitle, ViewModel.ShowRawgTitle ? "1" : "0", AppFilePath.UserFile);
             }
             catch { }
+        }
+
+
+        private async void Bookmark_Click(object sender, RoutedEventArgs e)
+        {
+            ((FrameworkElement)sender).IsEnabled = false;
+            try
+            {
+                if ((bool)((ToggleButton)sender).IsChecked == false)
+                {
+                    await WebHelper.DeleteAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me/bookmark/{ViewModel.Game.ID}");
+                    ViewModel.Game.BookmarkedUsers = new User[0];
+                }
+                else
+                {
+                    await WebHelper.PostAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me/bookmark/{ViewModel.Game.ID}");
+                    ViewModel.Game.BookmarkedUsers = new User[] { LoginManager.Instance.GetCurrentUser() };
+                }
+                MainWindowViewModel.Instance.Library.RefreshGame(ViewModel.Game);
+            }
+            catch (Exception ex)
+            {
+                string message = WebExceptionHelper.TryGetServerMessage(ex);
+                MainWindowViewModel.Instance.AppBarText = message;
+            }
+            ((FrameworkElement)sender).IsEnabled = true;
         }
     }
 }

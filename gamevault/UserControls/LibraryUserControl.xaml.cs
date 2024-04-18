@@ -9,7 +9,9 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace gamevault.UserControls
 {
@@ -185,14 +187,13 @@ namespace gamevault.UserControls
             uiFilterGenreSelector.ClearEntries();
             uiFilterTagSelector.ClearEntries();
             uiFilterReleaseDateRangeSelector.ClearSelection();
-            //Reset the Controls without trigger the Filter Updated Function
-            //uiFilterSortBy.SelectionChanged -= FilterUpdated;
-            //uiFilterSortBy.SelectedIndex = 0;
-            //uiFilterSortBy.SelectionChanged += FilterUpdated;
 
-            uiFilterEarlyAccess.Toggled -= FilterUpdated;
-            uiFilterEarlyAccess.IsOn = false;
-            uiFilterEarlyAccess.Toggled += FilterUpdated;
+            uiFilterBookmarks.IsChecked = false;
+            uiFilterEarlyAccess.IsChecked = false;
+
+            //uiFilterEarlyAccess.Toggled -= FilterUpdated;
+            //uiFilterEarlyAccess.IsOn = false;
+            //uiFilterEarlyAccess.Toggled += FilterUpdated;
 
             RefreshFilterCounter();
             await Search();
@@ -248,7 +249,7 @@ namespace gamevault.UserControls
             {
                 filter += $"&filter.type=$in:{gameType}";
             }
-            if (uiFilterEarlyAccess.IsOn == true)
+            if (uiFilterEarlyAccess.IsChecked == true)
             {
                 filter += "&filter.early_access=$eq:true";
             }
@@ -265,6 +266,10 @@ namespace gamevault.UserControls
             if (tags != string.Empty)
             {
                 filter += $"&filter.tags.name=$in:{tags}";
+            }
+            if (uiFilterBookmarks.IsChecked == true)
+            {
+                filter += $"&filter.bookmarked_users.id=$eq:{LoginManager.Instance.GetCurrentUser().ID}";
             }
             return filter;
         }
@@ -303,12 +308,37 @@ namespace gamevault.UserControls
             }
             ((FrameworkElement)sender).IsEnabled = true;
         }
-        private void Settings_Click(object sender, RoutedEventArgs e)
+        private void CardSettings_Click(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            var installedGame = InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ((Game)((FrameworkElement)sender).DataContext).ID).FirstOrDefault();
-
+            //var installedGame = InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ((Game)((FrameworkElement)sender).DataContext).ID).FirstOrDefault();
             MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl((Game)((FrameworkElement)sender).DataContext) { Width = 1200, Height = 800, Margin = new Thickness(50) });
+        }
+        private async void CardBookmark_Click(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+            ((FrameworkElement)sender).IsEnabled = false;
+            try
+            {
+                Game currentGame = (Game)((FrameworkElement)sender).DataContext;
+                if ((bool)((ToggleButton)sender).IsChecked == false)
+                {
+                    await WebHelper.DeleteAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me/bookmark/{currentGame.ID}");
+                    currentGame.BookmarkedUsers = new User[0];
+                }
+                else
+                {
+                    await WebHelper.PostAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me/bookmark/{currentGame.ID}");
+                    currentGame.BookmarkedUsers = new User[] { LoginManager.Instance.GetCurrentUser() };
+                }
+
+            }
+            catch (Exception ex)
+            {
+                string message = WebExceptionHelper.TryGetServerMessage(ex);
+                MainWindowViewModel.Instance.AppBarText = message;
+            }
+            ((FrameworkElement)sender).IsEnabled = true;
         }
         private async void Download_Click(object sender, RoutedEventArgs e)
         {
@@ -321,9 +351,9 @@ namespace gamevault.UserControls
             filterCount += uiFilterGameTypeSelector.HasEntries() ? 1 : 0;
             filterCount += uiFilterGenreSelector.HasEntries() ? 1 : 0;
             filterCount += uiFilterTagSelector.HasEntries() ? 1 : 0;
-            filterCount += uiFilterEarlyAccess.IsOn ? 1 : 0;
-            //filterCount += ViewModel.SelectedGameFilterSortBy.Key != "Title" ? 1 : 0;
-            //filterCount += ViewModel.OrderByValue != "DESC" ? 1 : 0;
+            filterCount += (bool)uiFilterEarlyAccess.IsChecked ? 1 : 0;
+            filterCount += (bool)uiFilterBookmarks.IsChecked ? 1 : 0;
+
             filterCount += (uiFilterReleaseDateRangeSelector.IsValid()) ? 1 : 0;
             ViewModel.FilterCounter = filterCount == 0 ? string.Empty : filterCount.ToString();
         }
@@ -355,8 +385,8 @@ namespace gamevault.UserControls
             }
         }
 
-        #endregion
 
+        #endregion
 
     }
 }
