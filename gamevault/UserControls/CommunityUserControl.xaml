@@ -14,6 +14,7 @@
         <conv:GameStateColorConverter x:Key="gameStateColorConv"/>
         <conv:GameStateDescriptionConverter x:Key="gameStateDescConv"/>
         <conv:GameTimeConverter x:Key="gameTimeConv"/>
+        <conv:UTCtoLocalTimeConverter x:Key="UtcTimeConv"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -120,24 +121,14 @@
                                                 </Grid.RenderTransform>
                                             </Grid>
                                             <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,1,3">
-                                                <TextBlock Text="{Binding Path=MinutesPlayed,StringFormat='{}Time played: {0}',Converter={StaticResource gameTimeConv}}" FontSize="2"/>
-                                                <TextBlock FontSize="2">
-                                                    <TextBlock.Text>
-                                                        <MultiBinding StringFormat="{}Last played: {0}.{1}.{2}">
-                                                            <Binding Path="LastPlayedAt.Day"/>
-                                                            <Binding Path="LastPlayedAt.Month"/>
-                                                            <Binding Path="LastPlayedAt.Year"/>
-                                                        </MultiBinding>
-                                                    </TextBlock.Text>
+                                                <TextBlock Text="{Binding Path=MinutesPlayed,StringFormat='{}Time played: {0}',Converter={StaticResource gameTimeConv}}" FontSize="2">
                                                     <TextBlock.ToolTip>
-                                                        <TextBlock>
-                                                            <TextBlock.Text>
-                                                                <MultiBinding StringFormat="{}{0}:{1} h">
-                                                                    <Binding Path="LastPlayedAt.Hour"/>
-                                                                    <Binding Path="LastPlayedAt.Minute"/>
-                                                                </MultiBinding>
-                                                            </TextBlock.Text>
-                                                        </TextBlock>
+                                                        <TextBlock Text="{Binding Path=MinutesPlayed,StringFormat='{}{0} min'}"/>
+                                                    </TextBlock.ToolTip>
+                                                </TextBlock>
+                                                <TextBlock FontSize="2" DataContext="{Binding Path=LastPlayedAt,Converter={StaticResource UtcTimeConv}}" Text="{Binding StringFormat='{}Last played: {0:dd.MM.yyyy}'}">
+                                                    <TextBlock.ToolTip>
+                                                        <TextBlock Text="{Binding StringFormat='{}{0:HH:mm:ss&#x0a;dd.MM.yyyy}'}"/>
                                                     </TextBlock.ToolTip>
                                             </TextBlock>
                                             </StackPanel>

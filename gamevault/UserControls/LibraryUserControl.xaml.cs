@@ -191,10 +191,6 @@ namespace gamevault.UserControls
             uiFilterBookmarks.IsChecked = false;
             uiFilterEarlyAccess.IsChecked = false;
 
-            //uiFilterEarlyAccess.Toggled -= FilterUpdated;
-            //uiFilterEarlyAccess.IsOn = false;
-            //uiFilterEarlyAccess.Toggled += FilterUpdated;
-
             RefreshFilterCounter();
             await Search();
         }
@@ -317,7 +313,12 @@ namespace gamevault.UserControls
         private async void CardBookmark_Click(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            ((FrameworkElement)sender).IsEnabled = false;
+            if(((FrameworkElement)sender).Tag == "busy")
+            {
+                ((ToggleButton)sender).IsChecked = !((ToggleButton)sender).IsChecked;
+                return;
+            }
+            ((FrameworkElement)sender).Tag = "busy";
             try
             {
                 Game currentGame = (Game)((FrameworkElement)sender).DataContext;
@@ -338,7 +339,7 @@ namespace gamevault.UserControls
                 string message = WebExceptionHelper.TryGetServerMessage(ex);
                 MainWindowViewModel.Instance.AppBarText = message;
             }
-            ((FrameworkElement)sender).IsEnabled = true;
+            ((FrameworkElement)sender).Tag = "";
         }
         private async void Download_Click(object sender, RoutedEventArgs e)
         {

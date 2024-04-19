@@ -181,7 +181,10 @@ namespace gamevault.UserControls
             {
                 App.Current.Dispatcher.Invoke((Action)async delegate
                 {
+                    uiBtnExtract.IsEnabled = false;
+                    await Task.Delay(3000);
                     await Extract();
+                    uiBtnExtract.IsEnabled = true;
                 });
             }
         }

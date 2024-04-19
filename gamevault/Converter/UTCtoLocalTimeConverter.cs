@@ -14,7 +14,7 @@ namespace gamevault.Converter
         {
             if (value != null)
             {
-                return ((DateTime)value).ToLocalTime().ToString();
+                return ((DateTime)value).ToLocalTime();
             }
             return null;
         }
