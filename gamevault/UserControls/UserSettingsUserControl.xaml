@@ -53,6 +53,7 @@
             </Style.Triggers>
         </Style>
         <conv:InverseNullConverter x:Key="invNullConv"/>
+        <conv:UTCtoLocalTimeConverter x:Key="utcToLocalTimeConv"/>
     </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Key="Esc">
@@ -120,9 +121,12 @@
                     </TextBlock.Text>
                 </TextBlock>
                 <TextBlock Text="{Binding Path=User.ID,StringFormat='{}ID {0}'}" FontSize="16"/>
-                <TextBlock Text="{Binding Path=User.CreatedAt,StringFormat='{}Created {0:dd/MM/yyyy}',TargetNullValue='Created N/A'}" FontSize="16"/>
+                <TextBlock DataContext="{Binding User.CreatedAt,Converter={StaticResource utcToLocalTimeConv}}" Text="{Binding StringFormat='{}Created {0:dd.MM.yyyy}',TargetNullValue='Created N/A'}" FontSize="16">
+                    <TextBlock.ToolTip>
+                        <TextBlock Text="{Binding StringFormat='{}{0:HH:mm:ss&#x0a;dd.MM.yyyy}'}"/>
+                    </TextBlock.ToolTip>                              
+                </TextBlock>
             </StackPanel>
-
             <Grid Grid.Column="1" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}">
                 <mah:MetroAnimatedTabControl x:Name="uiSettingsContent" Background="Transparent">
                     <mah:MetroTabItem>
