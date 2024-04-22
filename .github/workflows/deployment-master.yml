@@ -33,7 +33,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag: "v$semver.0"
+        tag: "$semver.0"
         
     - name: Upload Release Artifact
       id: upload
