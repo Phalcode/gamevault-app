@@ -291,23 +291,15 @@
                                     <TextBlock Text="You are subscribed to GameVault+" FontSize="15" Margin="5,0,0,0"/>
                                 </StackPanel>
                             </StackPanel>
-                            <TextBlock FontSize="12" Margin="27,5,0,0" ToolTip="{Binding License.CurrentPeriodStart,Converter={StaticResource utcToLocalTimeConv}}">
-                                <TextBlock.Text>
-                                    <MultiBinding StringFormat="{}Subscribed since:    {0}.{1}.{2}">
-                                        <Binding Path="License.CurrentPeriodStart.Day" />
-                                        <Binding Path="License.CurrentPeriodStart.Month" />
-                                        <Binding Path="License.CurrentPeriodStart.Year" />
-                                    </MultiBinding>
-                                </TextBlock.Text>
+                            <TextBlock FontSize="12" Margin="27,5,0,0" DataContext="{Binding License.CurrentPeriodStart,Converter={StaticResource utcToLocalTimeConv}}" Text="{Binding StringFormat='{}Subscribed since:    {0:dd.MM.yyyy}'}">
+                                <TextBlock.ToolTip>
+                                    <TextBlock Text="{Binding StringFormat='{}{0:HH:mm:ss&#x0a;dd.MM.yyyy}'}"/>
+                                </TextBlock.ToolTip>                              
                             </TextBlock>
-                            <TextBlock FontSize="12" Margin="27,0,0,0" ToolTip="{Binding License.CurrentPeriodEnd,Converter={StaticResource utcToLocalTimeConv}}">
-                                <TextBlock.Text>
-                                    <MultiBinding StringFormat="{}Renewal Date:         {0}.{1}.{2}">
-                                        <Binding Path="License.CurrentPeriodEnd.Day" />
-                                        <Binding Path="License.CurrentPeriodEnd.Month" />
-                                        <Binding Path="License.CurrentPeriodEnd.Year" />
-                                    </MultiBinding>
-                                </TextBlock.Text>
+                            <TextBlock FontSize="12" Margin="27,0,0,0" DataContext="{Binding License.CurrentPeriodEnd,Converter={StaticResource utcToLocalTimeConv}}" Text="{Binding StringFormat='{}Renewal Date:         {0:dd.MM.yyyy}'}">
+                                <TextBlock.ToolTip>
+                                    <TextBlock Text="{Binding StringFormat='{}{0:HH:mm:ss&#x0a;dd.MM.yyyy}'}"/>
+                                </TextBlock.ToolTip>                                     
                             </TextBlock>
                         </StackPanel>
                         <local:IconButton Text="Manage Billing" FontSize="15" Icon="{StaticResource IconBilling}" IconScale="0.04" IconMargin="-180,-400,-175,-400" Width="160" Height="30" HorizontalAlignment="Left" Margin="25,15,0,0" Click="ManageBilling_Click">

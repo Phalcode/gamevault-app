@@ -18,6 +18,7 @@
         <conv:StringToColorConverter x:Key="nameColorConv"/>
         <conv:StringToColorConverter x:Key="colorConv"/>
         <conv:GameViewSettingsPermissionRoleToVisibilityConverter x:Key="settingsPermRoleVisConv"/>
+        <conv:ContainsCurrentUserConverter x:Key="containsCurrentUserConv"/>
     </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Key="Esc">
@@ -122,6 +123,36 @@
                                 <ScaleTransform/>
                             </Grid.RenderTransform>
                         </Grid>
+                        <ToggleButton Width="70" Height="70" Cursor="Hand" Margin="45,-9,0,0" Validation.ErrorTemplate="{x:Null}" IsChecked="{Binding Path=Game.BookmarkedUsers,Converter={StaticResource containsCurrentUserConv}}" Click="Bookmark_Click">
+                            <ToggleButton.Style>
+                                <Style TargetType="ToggleButton">
+                                    <Style.Setters>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ToggleButton">
+                                                    <Grid Style="{DynamicResource HoverEffect}" Background="Transparent" Width="{TemplateBinding Width}">
+                                                        <Path Name="PART_Icon" Data="{StaticResource IconBookmark}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0,0">
+                                                            <Path.RenderTransform>
+                                                                <ScaleTransform ScaleX="3" ScaleY="3"/>
+                                                            </Path.RenderTransform>
+                                                        </Path>
+                                                        <Grid.RenderTransform>
+                                                            <ScaleTransform/>
+                                                        </Grid.RenderTransform>
+                                                    </Grid>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsChecked" Value="True">
+                                                            <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource IconBookmarkFilled}"/>
+                                                            <Setter TargetName="PART_Icon" Property="Fill" Value="Yellow"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style.Setters>
+                                </Style>
+                            </ToggleButton.Style>
+                        </ToggleButton>
                     </StackPanel>
                     <!--TAGS_GENRES-->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="400,150,0,10">

@@ -1,5 +1,6 @@
 ﻿using gamevault.Models;
 using gamevault.ViewModels;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -122,6 +123,31 @@ namespace gamevault.Helper
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             string returnString = response.StatusCode.ToString();
         }
+        internal static async Task<string> PostAsync(string uri, string payload = "")
+        {
+            var request = (HttpWebRequest)WebRequest.Create(uri);
+            request.UserAgent = $"GameVault/{SettingsViewModel.Instance.Version}";
+            request.Method = "POST";
+            request.ContentType = "application/json";
+            if (payload != null)
+            {
+                var authenticationString = $"{m_UserName}:{m_Password}";
+                var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.ASCIIEncoding.UTF8.GetBytes(authenticationString));
+                request.Headers.Add("Authorization", "Basic " + base64EncodedAuthenticationString);
+                request.ContentLength = System.Text.UTF8Encoding.UTF8.GetByteCount(payload);
+                Stream dataStream = request.GetRequestStream();
+                using (StreamWriter sr = new StreamWriter(dataStream))
+                {
+                    await sr.WriteAsync(payload);
+                }
+                dataStream.Close();
+            }
+            var response = await request.GetResponseAsync();
+            using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+            {
+                return await reader.ReadToEndAsync();
+            }
+        }
         internal static string Delete(string uri)
         {
             var request = (HttpWebRequest)WebRequest.Create(uri);
@@ -135,6 +161,21 @@ namespace gamevault.Helper
             using (StreamReader reader = new StreamReader(stream))
             {
                 return reader.ReadToEnd();
+            }
+        }
+        internal static async Task<string> DeleteAsync(string uri)
+        {
+            var request = (HttpWebRequest)WebRequest.Create(uri);
+            request.UserAgent = $"GameVault/{SettingsViewModel.Instance.Version}";
+            request.Method = "DELETE";
+            var authenticationString = $"{m_UserName}:{m_Password}";
+            var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.ASCIIEncoding.UTF8.GetBytes(authenticationString));
+            request.Headers.Add("Authorization", "Basic " + base64EncodedAuthenticationString);
+            using (var response = await request.GetResponseAsync())
+            using (Stream stream = ((HttpWebResponse)response).GetResponseStream())
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                return await reader.ReadToEndAsync();
             }
         }
         public static async Task DownloadImageFromUrlAsync(string imageUrl, string cacheFile)
