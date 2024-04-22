@@ -313,33 +313,38 @@ namespace gamevault.UserControls
         private async void CardBookmark_Click(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            if(((FrameworkElement)sender).Tag == "busy")
-            {
-                ((ToggleButton)sender).IsChecked = !((ToggleButton)sender).IsChecked;
-                return;
-            }
-            ((FrameworkElement)sender).Tag = "busy";
             try
             {
-                Game currentGame = (Game)((FrameworkElement)sender).DataContext;
-                if ((bool)((ToggleButton)sender).IsChecked == false)
+                ContentControl parent = ((Grid)((FrameworkElement)sender).Parent).TemplatedParent as ContentControl;
+                if (parent.Tag == "busy")
                 {
-                    await WebHelper.DeleteAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me/bookmark/{currentGame.ID}");
-                    currentGame.BookmarkedUsers = new User[0];
+                    ((ToggleButton)sender).IsChecked = !((ToggleButton)sender).IsChecked;
+                    return;
                 }
-                else
+                parent.Tag = "busy";
+                try
                 {
-                    await WebHelper.PostAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me/bookmark/{currentGame.ID}");
-                    currentGame.BookmarkedUsers = new User[] { LoginManager.Instance.GetCurrentUser() };
-                }
+                    Game currentGame = (Game)((FrameworkElement)sender).DataContext;
+                    if ((bool)((ToggleButton)sender).IsChecked == false)
+                    {
+                        await WebHelper.DeleteAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me/bookmark/{currentGame.ID}");
+                        currentGame.BookmarkedUsers = new User[0];
+                    }
+                    else
+                    {
+                        await WebHelper.PostAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me/bookmark/{currentGame.ID}");
+                        currentGame.BookmarkedUsers = new User[] { LoginManager.Instance.GetCurrentUser() };
+                    }
 
+                }
+                catch (Exception ex)
+                {
+                    string message = WebExceptionHelper.TryGetServerMessage(ex);
+                    MainWindowViewModel.Instance.AppBarText = message;
+                }
+                parent.Tag = "";
             }
-            catch (Exception ex)
-            {
-                string message = WebExceptionHelper.TryGetServerMessage(ex);
-                MainWindowViewModel.Instance.AppBarText = message;
-            }
-            ((FrameworkElement)sender).Tag = "";
+            catch { }
         }
         private async void Download_Click(object sender, RoutedEventArgs e)
         {

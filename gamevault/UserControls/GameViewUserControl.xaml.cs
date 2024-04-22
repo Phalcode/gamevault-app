@@ -170,7 +170,12 @@ namespace gamevault.UserControls
 
         private async void Bookmark_Click(object sender, RoutedEventArgs e)
         {
-            ((FrameworkElement)sender).IsEnabled = false;
+            if (((FrameworkElement)sender).Tag == "busy")
+            {
+                ((ToggleButton)sender).IsChecked = !((ToggleButton)sender).IsChecked;
+                return;
+            }
+            ((FrameworkElement)sender).Tag = "busy";
             try
             {
                 if ((bool)((ToggleButton)sender).IsChecked == false)
@@ -190,7 +195,7 @@ namespace gamevault.UserControls
                 string message = WebExceptionHelper.TryGetServerMessage(ex);
                 MainWindowViewModel.Instance.AppBarText = message;
             }
-            ((FrameworkElement)sender).IsEnabled = true;
+            ((FrameworkElement)sender).Tag = "";
         }
     }
 }
