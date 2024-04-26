@@ -28,11 +28,13 @@
         </KeyBinding>
     </UserControl.InputBindings>
     <Grid>
-        <local:CacheImage Data="{Binding Game}" ClipToBounds="True" ImageCacheType="GameBackground">
-            <local:CacheImage.Effect>
-                <BlurEffect Radius="20"/>
-            </local:CacheImage.Effect>
-        </local:CacheImage>
+        <Viewbox Stretch="UniformToFill" HorizontalAlignment="Center">
+            <local:CacheImage Data="{Binding Game}" ImageCacheType="GameBackground">
+                <local:CacheImage.Effect>
+                    <BlurEffect Radius="20"/>
+                </local:CacheImage.Effect>
+            </local:CacheImage>
+        </Viewbox>
         <Grid Background="{DynamicResource GameVault.Brushes.Blur}"/>
         <Grid VerticalAlignment="Top" Margin="20">
             <Viewbox>
