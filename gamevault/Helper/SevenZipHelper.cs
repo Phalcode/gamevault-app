@@ -56,28 +56,58 @@ namespace gamevault.Helper
             info.FileName = $"{AppDomain.CurrentDomain.BaseDirectory}Lib\\7z\\7z.exe";
             return info;
         }
-
-        internal async Task<int> ExtractArchive(string archivePath, string outputDir)
+        internal async Task<bool> IsArchiveEncrypted(string archivePath)
         {
+            bool result = false;
+            Process process = new Process();
+            ProcessShepherd.AddProcess(process);
+            process.StartInfo = CreateProcessHeader();
+            process.StartInfo.Arguments = $"l -slt \"{archivePath}\"";
+            process.Start();
+            string stdout = await process.StandardOutput.ReadToEndAsync();
+            await process.WaitForExitAsync();
+            if (stdout.Contains("Encrypted = +"))
+            {
+                result = true;
+            }
+            ProcessShepherd.RemoveProcess(process);
+            return result;
+        }
+        internal async Task<int> ExtractArchive(string archivePath, string outputDir, string password = "")
+        {
+            int exitCode = -1;
             await Task.Run(() =>
              {
                  process = new Process();
                  ProcessShepherd.AddProcess(process);
                  process.StartInfo = CreateProcessHeader();
+                 process.StartInfo.RedirectStandardError = true;
                  process.StartInfo.Arguments = $"x -y -bsp1 -o\"{outputDir}\" \"{archivePath}\"";
+                 if (password != "")
+                 {
+                     process.StartInfo.Arguments += $" -p{password}";
+                 }
                  process.EnableRaisingEvents = true;
+                 process.ErrorDataReceived += (sender, e) =>
+                 {
+                     if (e.Data != null && e.Data.Contains("Wrong password"))
+                     {
+                         exitCode = 69;
+                     }
+                 };
                  process.OutputDataReceived += (sender, e) =>
                  {
-                     if (Process != null)
+                     if (Process == null)
                      {
-                         if (e.Data != null && e.Data.Contains("%"))
+                         return;
+                     }
+                     if (e.Data != null && e.Data.Contains("%"))
+                     {
+                         int index = e.Data.IndexOf("%");
+                         string percentageStr = e.Data.Substring(0, index).Replace(" ", "");
+                         if (int.TryParse(percentageStr, out int percentage))
                          {
-                             int index = e.Data.IndexOf("%");
-                             string percentageStr = e.Data.Substring(0, index).Replace(" ", "");
-                             if (int.TryParse(percentageStr, out int percentage))
-                             {
-                                 Process(this, new SevenZipProgressEventArgs(percentage));
-                             }
+                             Process(this, new SevenZipProgressEventArgs(percentage));
                          }
                      }
                  };
@@ -89,16 +119,21 @@ namespace gamevault.Helper
 
                  process.Start();
                  process.BeginOutputReadLine();
+                 process.BeginErrorReadLine();
                  process.WaitForExit();
                  ProcessShepherd.RemoveProcess(process);
              });
             try
             {
-                return process.ExitCode;
+                if (exitCode == -1)
+                {
+                    return process.ExitCode;
+                }
+                return exitCode;
             }
             catch
             {
-                return -1;
+                return exitCode;
             }
         }
         internal void Cancel()

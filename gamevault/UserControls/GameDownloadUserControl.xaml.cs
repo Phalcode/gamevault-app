@@ -280,7 +280,7 @@ namespace gamevault.UserControls
         private async void Extract_Click(object sender, RoutedEventArgs e)
         {
             await Extract();
-        }      
+        }
         private async Task Extract()
         {
             if (!Directory.Exists(m_DownloadPath))
@@ -303,7 +303,30 @@ namespace gamevault.UserControls
 
             sevenZipHelper.Process += ExtractionProgress;
             startTime = DateTime.Now;
-            int result = await sevenZipHelper.ExtractArchive($"{m_DownloadPath}\\{files[0].Name}", $"{m_DownloadPath}\\Extract");
+            int result;
+            bool isEncrypted = await sevenZipHelper.IsArchiveEncrypted($"{m_DownloadPath}\\{files[0].Name}");
+            if (isEncrypted)
+            {
+                string extractionPassword = Preferences.Get(AppConfigKey.ExtractionPassword, AppFilePath.UserFile, true);
+                if (string.IsNullOrEmpty(extractionPassword))
+                {
+                    extractionPassword = await ((MetroWindow)App.Current.MainWindow).ShowInputAsync("Exctraction Message", "Your Archive reqires a Password to extract");
+                    result = await sevenZipHelper.ExtractArchive($"{m_DownloadPath}\\{files[0].Name}", $"{m_DownloadPath}\\Extract", extractionPassword);
+                }
+                else
+                {
+                    result = await sevenZipHelper.ExtractArchive($"{m_DownloadPath}\\{files[0].Name}", $"{m_DownloadPath}\\Extract", extractionPassword);
+                    if (result == 69)//Error  code for wrong password
+                    {
+                        extractionPassword = await ((MetroWindow)App.Current.MainWindow).ShowInputAsync("Exctraction Message", "Your Archive reqires a Password to extract");
+                        result = await sevenZipHelper.ExtractArchive($"{m_DownloadPath}\\{files[0].Name}", $"{m_DownloadPath}\\Extract", extractionPassword);
+                    }
+                }
+            }
+            else
+            {
+                result = await sevenZipHelper.ExtractArchive($"{m_DownloadPath}\\{files[0].Name}", $"{m_DownloadPath}\\Extract");
+            }
             if (result == 0)
             {
                 if (!File.Exists($"{m_DownloadPath}\\Extract\\gamevault-metadata"))
@@ -332,6 +355,10 @@ namespace gamevault.UserControls
                     extractionCancelled = false;
                     ViewModel.State = "Extraction cancelled";
                 }
+                else if (result == 69)
+                {
+                    ViewModel.State = "Error: Wrong password";
+                }
                 else
                 {
                     ViewModel.State = "Something went wrong during extraction";
@@ -347,7 +374,7 @@ namespace gamevault.UserControls
         private void InstallOptionCancel_Click(object sender, RoutedEventArgs e)
         {
             uiInstallOptions.Visibility = System.Windows.Visibility.Collapsed;
-        }        
+        }
         private void LoadSetupExecutables()
         {
             if (Directory.Exists($"{m_DownloadPath}\\Extract"))
@@ -458,7 +485,7 @@ namespace gamevault.UserControls
             uiInstallOptions.Visibility = System.Windows.Visibility.Collapsed;
             uiProgressRingInstall.IsActive = false;
             uiBtnExtract.IsEnabled = true;
-        }      
+        }
 
         private void CopyInstallPathToClipboard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -468,6 +495,6 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.AppBarText = "Copied Installation Directory to Clipboard";
             }
             catch { }
-        }       
+        }
     }
 }

@@ -1,5 +1,11 @@
 # GameVault App Changelog
 
+## 1.10.0.0
+Recommended Gamevault Server Version: `v12.0.0`
+### Changes
+- Added Encrypted (password protected) archive support. Including a default password setting.
+- Bug fix: Center game view background image on window resize
+
 ## 1.9.2.0
 Recommended Gamevault Server Version: `v12.0.0`
 ### Changes
