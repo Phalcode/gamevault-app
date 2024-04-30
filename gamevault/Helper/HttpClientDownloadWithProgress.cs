@@ -1,4 +1,5 @@
-﻿using gamevault.UserControls;
+﻿using gamevault.Models;
+using gamevault.UserControls;
 using gamevault.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,8 @@ namespace gamevault.Helper
         private string _fallbackFileName;
         KeyValuePair<string, string>? _additionalHeader;
         private bool _Cancelled = false;
+        private bool _Paused = false;
+        private long _ResumePosition = -1;
         private DateTime lastTime;
         private HttpClient _httpClient;
 
@@ -35,7 +38,7 @@ namespace gamevault.Helper
             _additionalHeader = additionalHeader;
         }
 
-        public async Task StartDownload()
+        public async Task StartDownload(bool tryResume = false)
         {
             _httpClient = new HttpClient { Timeout = TimeSpan.FromDays(7) };
             string[] auth = WebHelper.GetCredentials();
@@ -47,6 +50,22 @@ namespace gamevault.Helper
             {
                 _httpClient.DefaultRequestHeaders.Add(_additionalHeader.Value.Key, _additionalHeader.Value.Value);
             }
+            if (tryResume)
+            {
+                string resumeData = Preferences.Get(AppConfigKey.DownloadProgress, $"{_destinationFolderPath}\\gamevault-metadata");
+                if (!string.IsNullOrEmpty(resumeData))
+                {
+                    try
+                    {
+                        string[] resumeDataToProcess = resumeData.Split(";");
+                        _ResumePosition = long.Parse(resumeDataToProcess[0]);
+                        _httpClient.DefaultRequestHeaders.Range = new RangeHeaderValue(long.Parse(resumeDataToProcess[0]), null);
+                        TriggerProgressChanged(long.Parse(resumeDataToProcess[1]), long.Parse(resumeDataToProcess[0]));
+                    }
+                    catch { }
+                }
+            }
+
             using (var response = await _httpClient.GetAsync(_downloadUrl, HttpCompletionOption.ResponseHeadersRead))
                 await DownloadFileFromHttpResponseMessage(response);
         }
@@ -84,12 +103,27 @@ namespace gamevault.Helper
             var isMoreToRead = true;
             lastTime = DateTime.Now;
             string fullFilePath = $"{_destinationFolderPath}\\{_fileName}";
-            using (var fileStream = new FileStream(fullFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true))
+            FileMode fileMode = FileMode.Create;
+            if (_ResumePosition != -1)
             {
+                fileMode = FileMode.Open;
+            }
+            using (var fileStream = new FileStream(fullFilePath, fileMode, FileAccess.Write, FileShare.None, 8192, true))
+            {
+                if (_ResumePosition != -1)
+                {
+                    fileStream.Position = _ResumePosition;
+                }
                 do
                 {
                     if (_Cancelled)
                     {
+                        if (_Paused)
+                        {
+                            Preferences.Set(AppConfigKey.DownloadProgress, $"{fileStream.Position};{totalDownloadSize}", $"{_destinationFolderPath}\\gamevault-metadata");
+                            fileStream.Close();
+                            return;
+                        }
                         fileStream.Close();
                         try
                         {
@@ -134,7 +168,24 @@ namespace gamevault.Helper
         }
         public void Cancel()
         {
+            if (_Paused)
+            {
+                try
+                {
+                    File.Delete($"{_destinationFolderPath}\\{_fileName}");
+                    File.Delete($"{_destinationFolderPath}\\gamevault-metadata");
+                }
+                catch { }
+                return;
+            }
             _Cancelled = true;
+            Dispose();
+        }
+        public void Pause()
+        {
+            _Paused = true;
+            _Cancelled = true;
+            Dispose();
         }
         public void Dispose()
         {

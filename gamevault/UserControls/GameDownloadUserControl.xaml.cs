@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -64,6 +65,23 @@ namespace gamevault.UserControls
                 }
                 else
                 {
+                    //Try recreate the last UI pause state after app restart
+                    string resumeData = Preferences.Get(AppConfigKey.DownloadProgress, $"{m_DownloadPath}\\gamevault-metadata");
+                    if (!string.IsNullOrEmpty(resumeData))
+                    {
+                        try
+                        {
+                            string[] resumeDataToProcess = resumeData.Split(";");
+                            long totalFileSize = 0;
+                            long totalBytesDownloaded = 0;
+                            DownloadProgress(totalFileSize, totalBytesDownloaded, Math.Round((double)totalBytesDownloaded / (double)totalFileSize * 100, 0));
+                            ViewModel.IsDownloadPaused = true;
+                            ViewModel.State = "Download Paused";
+                            return;
+                        }
+                        catch { }
+                    }
+                    //If no valid pause data, its downloaded
                     ViewModel.State = "Downloaded";
                     uiBtnExtract.IsEnabled = true;
                     ViewModel.InstallationStepperProgress = 0;
@@ -100,7 +118,7 @@ namespace gamevault.UserControls
                 return;
 
             client.Cancel();
-            client.Dispose();
+            //client.Dispose();
             IsDownloadActive = false;
             ViewModel.State = "Download Cancelled";
             ViewModel.DownloadUIVisibility = System.Windows.Visibility.Hidden;
@@ -108,7 +126,7 @@ namespace gamevault.UserControls
 
             MainWindowViewModel.Instance.UpdateTaskbarProgress();
         }
-        private async Task DownloadGame()
+        private async Task DownloadGame(bool tryResume = false)
         {
             IsDownloadActive = true;
             ViewModel.State = "Downloading...";
@@ -127,7 +145,7 @@ namespace gamevault.UserControls
 
             try
             {
-                await client.StartDownload();
+                await client.StartDownload(tryResume);
                 await CacheHelper.CreateOfflineCacheAsync(ViewModel.Game);
             }
             catch (Exception ex)
@@ -144,6 +162,24 @@ namespace gamevault.UserControls
             ViewModel.DownloadInfo = string.Empty;
             ViewModel.GameDownloadProgress = 0;
             _ = DownloadGame();
+        }
+        private void PauseResume_Click(object sender, RoutedEventArgs e)
+        {
+            if (client == null)
+                return;
+
+            if (ViewModel.IsDownloadPaused)
+            {
+                ViewModel.IsDownloadPaused = false;
+                _ = DownloadGame(true);
+            }
+            else
+            {
+                ViewModel.IsDownloadPaused = true;
+                client.Pause();
+                IsDownloadActive = false;
+                ViewModel.State = "Download Paused";
+            }
         }
         private void DownloadProgress(long? totalFileSize, long totalBytesDownloaded, double? progressPercentage)
         {
