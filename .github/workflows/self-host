@@ -1,0 +1,16 @@
+# Create a folder
+$ mkdir actions-runner && cd actions-runner
+# Download the latest runner package
+$ curl -o actions-runner-osx-arm64-2.316.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.316.0/actions-runner-osx-arm64-2.316.0.tar.gz
+# Optional: Validate the hash
+$ echo "8442d39e3d91b67807703ec0825cec4384837b583305ea43a495a9867b7222ca  actions-runner-osx-arm64-2.316.0.tar.gz" | shasum -a 256 -c
+# Extract the installer
+$ tar xzf ./actions-runner-osx-arm64-2.316.0.tar.gz
+
+# Create the runner and start the configuration experience
+$ ./config.sh --url https://github.com/Dirtyhabitsonline/gamevault-app --token BHYWRRKC7XSE4EULJYG5QTTGGMPMI
+# Last step, run it!
+$ ./run.sh
+
+# Use this YAML in your workflow file for each job
+runs-on: self-hosted
