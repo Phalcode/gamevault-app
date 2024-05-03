@@ -173,12 +173,19 @@ namespace gamevault.UserControls
                 ViewModel.State = "Download Paused";
             }
         }
-        private void DownloadProgress(long preResumeSize, long? totalFileSize, long currentBytesDownloaded, long totalBytesDownloaded, double? progressPercentage)
+        private void DownloadProgress(long totalFileSize, long currentBytesDownloaded, long totalBytesDownloaded, double? progressPercentage, long resumePosition)
         {
             App.Current.Dispatcher.Invoke((Action)delegate
             {
+                bool isResume = resumePosition != -1;
+                var numerator = isResume ? currentBytesDownloaded : totalBytesDownloaded;
+                var denumirator = isResume ? totalFileSize - resumePosition : totalFileSize;
 
-                ViewModel.DownloadInfo = $"{$"{FormatBytesHumanReadable(currentBytesDownloaded, (DateTime.Now - startTime).TotalSeconds, 1000)}/s"} - {FormatBytesHumanReadable(totalBytesDownloaded)} of {FormatBytesHumanReadable((double)(preResumeSize == -1 ? totalFileSize : preResumeSize))} | Time left: {CalculateTimeLeft(preResumeSize == -1 ? totalFileSize : preResumeSize, totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds)}";
+                ViewModel.DownloadInfo = $"{$"{FormatBytesHumanReadable(currentBytesDownloaded, (DateTime.Now - startTime).TotalMilliseconds / 1000, 1000)}/s"}" +
+                $" - {FormatBytesHumanReadable(totalBytesDownloaded)}" +
+                $" of {FormatBytesHumanReadable((double)totalFileSize)}" +
+                $" | Time left: {CalculateTimeLeft(denumirator, numerator, (DateTime.Now - startTime).TotalMilliseconds)}";
+
                 if (ViewModel.GameDownloadProgress == (int)progressPercentage)
                 {
                     return;
@@ -245,17 +252,23 @@ namespace gamevault.UserControls
             }
         }
 
-        private string CalculateTimeLeft(long? totalFileSize, long bytesDownloaded, double tspan)
+        private string CalculateTimeLeft(long? totalFileSize, long totalBytesRead, double tspanMilliseconds)
         {
-            var averagespeed = bytesDownloaded / tspan;
-            var timeleft = (totalFileSize / averagespeed) - (tspan);
+
+            double tspanSeconds = tspanMilliseconds / 1000; // Convert milliseconds to seconds
+            //Debug.WriteLine($"{totalBytesRead / 100000}/{totalFileSize / 100000} - {tspanSeconds}");
+            var averageSpeed = totalBytesRead / tspanSeconds;
+            double timeLeftSeconds = (double)((totalFileSize - totalBytesRead) / averageSpeed);
+
             TimeSpan t = TimeSpan.FromSeconds(0);
-            if (!double.IsInfinity(Convert.ToDouble(timeleft)) && !double.IsNaN(Convert.ToDouble(timeleft)))
+            if (timeLeftSeconds > 0 && !double.IsInfinity(timeLeftSeconds) && !double.IsNaN(timeLeftSeconds))
             {
-                t = TimeSpan.FromSeconds(Convert.ToInt32(timeleft));
+                t = TimeSpan.FromSeconds(timeLeftSeconds);
             }
+            //Debug.WriteLine(string.Format("{0:00}:{1:00}:{2:00}", ((int)t.TotalHours), t.Minutes, t.Seconds) + "\n");
             return string.Format("{0:00}:{1:00}:{2:00}", ((int)t.TotalHours), t.Minutes, t.Seconds);
         }
+
 
         private async void DeleteFile_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
