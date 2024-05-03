@@ -65,21 +65,12 @@ namespace gamevault.UserControls
                 }
                 else
                 {
-                    //Try recreate the last UI pause state after app restart
+                    //Try resume paused download after app restart
                     string resumeData = Preferences.Get(AppConfigKey.DownloadProgress, $"{m_DownloadPath}\\gamevault-metadata");
                     if (!string.IsNullOrEmpty(resumeData))
                     {
-                        try
-                        {
-                            string[] resumeDataToProcess = resumeData.Split(";");
-                            long totalFileSize = 0;
-                            long totalBytesDownloaded = 0;
-                            DownloadProgress(totalFileSize, totalBytesDownloaded, Math.Round((double)totalBytesDownloaded / (double)totalFileSize * 100, 0));
-                            ViewModel.IsDownloadPaused = true;
-                            ViewModel.State = "Download Paused";
-                            return;
-                        }
-                        catch { }
+                        _ = DownloadGame(true);
+                        return;
                     }
                     //If no valid pause data, its downloaded
                     ViewModel.State = "Downloaded";
@@ -120,6 +111,7 @@ namespace gamevault.UserControls
             client.Cancel();
             //client.Dispose();
             IsDownloadActive = false;
+            ViewModel.IsDownloadPaused = false;
             ViewModel.State = "Download Cancelled";
             ViewModel.DownloadUIVisibility = System.Windows.Visibility.Hidden;
             ViewModel.DownloadFailedVisibility = System.Windows.Visibility.Visible;
@@ -181,12 +173,12 @@ namespace gamevault.UserControls
                 ViewModel.State = "Download Paused";
             }
         }
-        private void DownloadProgress(long? totalFileSize, long totalBytesDownloaded, double? progressPercentage)
+        private void DownloadProgress(long preResumeSize, long? totalFileSize, long currentBytesDownloaded, long totalBytesDownloaded, double? progressPercentage)
         {
             App.Current.Dispatcher.Invoke((Action)delegate
             {
 
-                ViewModel.DownloadInfo = $"{$"{FormatBytesHumanReadable(totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds, 1000)}/s"} - {FormatBytesHumanReadable(totalBytesDownloaded)} of {FormatBytesHumanReadable((double)totalFileSize)} | Time left: {CalculateTimeLeft(totalFileSize, totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds)}";
+                ViewModel.DownloadInfo = $"{$"{FormatBytesHumanReadable(currentBytesDownloaded, (DateTime.Now - startTime).TotalSeconds, 1000)}/s"} - {FormatBytesHumanReadable(totalBytesDownloaded)} of {FormatBytesHumanReadable((double)(preResumeSize == -1 ? totalFileSize : preResumeSize))} | Time left: {CalculateTimeLeft(preResumeSize == -1 ? totalFileSize : preResumeSize, totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds)}";
                 if (ViewModel.GameDownloadProgress == (int)progressPercentage)
                 {
                     return;
@@ -208,6 +200,12 @@ namespace gamevault.UserControls
             ViewModel.State = "Downloaded";
             uiBtnExtract.IsEnabled = true;
             ViewModel.InstallationStepperProgress = 0;
+            try
+            {
+                if (File.Exists($"{m_DownloadPath}\\gamevault-metadata"))
+                    File.Delete($"{m_DownloadPath}\\gamevault-metadata");
+            }
+            catch { }
             if (!Directory.Exists(ViewModel.InstallPath))
             {
                 Directory.CreateDirectory(ViewModel.InstallPath);
@@ -247,9 +245,9 @@ namespace gamevault.UserControls
             }
         }
 
-        private string CalculateTimeLeft(long? totalFileSize, long totalBytesDownloaded, double tspan)
+        private string CalculateTimeLeft(long? totalFileSize, long bytesDownloaded, double tspan)
         {
-            var averagespeed = totalBytesDownloaded / tspan;
+            var averagespeed = bytesDownloaded / tspan;
             var timeleft = (totalFileSize / averagespeed) - (tspan);
             TimeSpan t = TimeSpan.FromSeconds(0);
             if (!double.IsInfinity(Convert.ToDouble(timeleft)) && !double.IsNaN(Convert.ToDouble(timeleft)))
