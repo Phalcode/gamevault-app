@@ -113,7 +113,7 @@
                                                     <TextBlock Text="{Binding Path=Key.Title}" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}" TextAlignment="Center" TextWrapping="Wrap"/>
                                                     <Button Style="{StaticResource ButtonWrapper}" Click="Play_Click">
                                                         <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,40" Background="Transparent" Height="40" Width="40">
-                                                            <Path Data="{StaticResource IconInstalledGamesPlay}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.2,0.2">
+                                                            <Path Data="{StaticResource IconPlay}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.2,0.2">
                                                                 <Path.RenderTransform>
                                                                     <ScaleTransform ScaleX="2.8" ScaleY="2.8"/>
                                                                 </Path.RenderTransform>

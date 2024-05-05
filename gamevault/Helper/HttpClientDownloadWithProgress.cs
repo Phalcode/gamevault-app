@@ -1,4 +1,5 @@
-﻿using gamevault.UserControls;
+﻿using gamevault.Models;
+using gamevault.UserControls;
 using gamevault.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -14,41 +15,72 @@ namespace gamevault.Helper
 {
     public class HttpClientDownloadWithProgress : IDisposable
     {
-        private readonly string _downloadUrl;
-        private readonly string _destinationFolderPath;
-        private string _fileName;
-        private string _fallbackFileName;
-        KeyValuePair<string, string>? _additionalHeader;
-        private bool _Cancelled = false;
-        private DateTime lastTime;
-        private HttpClient _httpClient;
+        private readonly string DownloadUrl;
+        private readonly string DestinationFolderPath;
+        private string FileName;
+        private string FallbackFileName;
+        private KeyValuePair<string, string>? AdditionalHeader;
+        private bool Cancelled = false;
+        private bool Paused = false;
+        private long ResumePosition = -1;
+        private long PreResumeSize = -1;
+        private DateTime LastTime;
+        private HttpClient HttpClient;
 
-        public delegate void ProgressChangedHandler(long? totalFileSize, long totalBytesDownloaded, double? progressPercentage);
+        public delegate void ProgressChangedHandler(long totalFileSize, long currentBytesDownloaded, long totalBytesDownloaded, double? progressPercentage, long resumePosition);
 
         public event ProgressChangedHandler ProgressChanged;
 
         public HttpClientDownloadWithProgress(string downloadUrl, string destinationFolderPath, string fallbackFileName, KeyValuePair<string, string>? additionalHeader = null)
         {
-            _downloadUrl = downloadUrl;
-            _destinationFolderPath = destinationFolderPath;
-            _fallbackFileName = fallbackFileName;
-            _additionalHeader = additionalHeader;
+            DownloadUrl = downloadUrl;
+            DestinationFolderPath = destinationFolderPath;
+            FallbackFileName = fallbackFileName;
+            AdditionalHeader = additionalHeader;
         }
 
-        public async Task StartDownload()
+        public async Task StartDownload(bool tryResume = false)
         {
-            _httpClient = new HttpClient { Timeout = TimeSpan.FromDays(7) };
-            string[] auth = WebHelper.GetCredentials();
-            _httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Basic", Convert.ToBase64String(System.Text.ASCIIEncoding.UTF8.GetBytes($"{auth[0]}:{auth[1]}")));
-            _httpClient.DefaultRequestHeaders.Add("User-Agent", $"GameVault/{SettingsViewModel.Instance.Version}");
-
-            if (_additionalHeader != null)
+            HttpClient = new HttpClient { Timeout = TimeSpan.FromDays(7) };
+            CreateHeader();
+            if (tryResume)
             {
-                _httpClient.DefaultRequestHeaders.Add(_additionalHeader.Value.Key, _additionalHeader.Value.Value);
+                InitResume();
             }
-            using (var response = await _httpClient.GetAsync(_downloadUrl, HttpCompletionOption.ResponseHeadersRead))
+            else
+            {
+                //Edge case where the Library download overrrides the current download. But if its was a paused download, we have also have to reset the metadata
+                if (File.Exists($"{DestinationFolderPath}\\gamevault-metadata"))
+                    File.Delete($"{DestinationFolderPath}\\gamevault-metadata");
+            }
+
+            using (var response = await HttpClient.GetAsync(DownloadUrl, HttpCompletionOption.ResponseHeadersRead))
                 await DownloadFileFromHttpResponseMessage(response);
+        }
+        private void CreateHeader()
+        {
+            string[] auth = WebHelper.GetCredentials();
+            HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(System.Text.ASCIIEncoding.UTF8.GetBytes($"{auth[0]}:{auth[1]}")));
+            HttpClient.DefaultRequestHeaders.Add("User-Agent", $"GameVault/{SettingsViewModel.Instance.Version}");
+
+            if (AdditionalHeader != null)
+                HttpClient.DefaultRequestHeaders.Add(AdditionalHeader.Value.Key, AdditionalHeader.Value.Value);
+        }
+        private void InitResume()
+        {
+            string resumeData = Preferences.Get(AppConfigKey.DownloadProgress, $"{DestinationFolderPath}\\gamevault-metadata");
+            if (!string.IsNullOrEmpty(resumeData))
+            {
+                try
+                {
+                    string[] resumeDataToProcess = resumeData.Split(";");
+                    ResumePosition = long.Parse(resumeDataToProcess[0]);
+                    PreResumeSize = long.Parse(resumeDataToProcess[1]);
+                    HttpClient.DefaultRequestHeaders.Range = new RangeHeaderValue(long.Parse(resumeDataToProcess[0]), null);
+                    //TriggerProgressChanged(PreResumeSize, 0, ResumePosition);
+                }
+                catch { }
+            }
         }
 
         private async Task DownloadFileFromHttpResponseMessage(HttpResponseMessage response)
@@ -57,42 +89,55 @@ namespace gamevault.Helper
 
             try
             {
-                _fileName = response.Content.Headers.ContentDisposition.FileName.Replace("\"", "");
-                if (string.IsNullOrEmpty(_fileName))
+                FileName = response.Content.Headers.ContentDisposition.FileName.Replace("\"", "");
+                if (string.IsNullOrEmpty(FileName))
                 {
                     throw new Exception("Missing response header (Content-Disposition)");
                 }
             }
             catch
             {
-                _fileName = _fallbackFileName;
+                FileName = FallbackFileName;
             }
-            var totalBytes = response.Content.Headers.ContentLength;
-            if (totalBytes == null || totalBytes == 0)
+            var responseContentLength = response.Content.Headers.ContentLength;
+            if (responseContentLength == null || responseContentLength == 0)
             {
                 throw new Exception("Missing response header (Content-Length)");
             }
 
             using (var contentStream = await response.Content.ReadAsStreamAsync())
-                await ProcessContentStream(totalBytes, contentStream);
+                await ProcessContentStream(responseContentLength.Value, contentStream);
         }
 
-        private async Task ProcessContentStream(long? totalDownloadSize, Stream contentStream)
+        private async Task ProcessContentStream(long currentDownloadSize, Stream contentStream)
         {
-            var totalBytesRead = 0L;
-            var buffer = new byte[8192];
-            var isMoreToRead = true;
-            lastTime = DateTime.Now;
-            string fullFilePath = $"{_destinationFolderPath}\\{_fileName}";
-            using (var fileStream = new FileStream(fullFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true))
+            long currentBytesRead = 0;
+            byte[] buffer = new byte[8192];
+            bool isMoreToRead = true;
+            LastTime = DateTime.Now;
+            string fullFilePath = $"{DestinationFolderPath}\\{FileName}";
+            using (var fileStream = new FileStream(fullFilePath, ResumePosition == -1 ? FileMode.Create : FileMode.Open, FileAccess.Write, FileShare.None, 8192, true))
             {
+                if (ResumePosition != -1)
+                {
+                    fileStream.Position = ResumePosition;
+                }
                 do
                 {
-                    if (_Cancelled)
+                    if (Cancelled)
                     {
+                        if (Paused)
+                        {
+                            Preferences.Set(AppConfigKey.DownloadProgress, $"{fileStream.Position};{(PreResumeSize == -1 ? currentDownloadSize : PreResumeSize)}", $"{DestinationFolderPath}\\gamevault-metadata");
+                            TriggerProgressChanged(currentDownloadSize, 0, fileStream.Position);
+                            fileStream.Close();
+                            return;
+                        }
                         fileStream.Close();
                         try
                         {
+                            await Task.Delay(1000);
+                            File.Delete($"{DestinationFolderPath}\\gamevault-metadata");
                             File.Delete(fullFilePath);
                         }
                         catch { }
@@ -103,42 +148,57 @@ namespace gamevault.Helper
                     if (bytesRead == 0)
                     {
                         isMoreToRead = false;
+                        TriggerProgressChanged(currentDownloadSize, currentBytesRead, fileStream.Position);
                         fileStream.Close();
-                        TriggerProgressChanged(totalDownloadSize, totalBytesRead);
                         continue;
                     }
 
                     await fileStream.WriteAsync(buffer, 0, bytesRead);
 
-                    totalBytesRead += bytesRead;
-                    if ((DateTime.Now - lastTime).TotalSeconds > 2)
+                    currentBytesRead += bytesRead;
+                    if ((DateTime.Now - LastTime).TotalMilliseconds > 2000)
                     {
-                        TriggerProgressChanged(totalDownloadSize, totalBytesRead);
-                        lastTime = DateTime.Now;
+                        TriggerProgressChanged(currentDownloadSize, currentBytesRead, fileStream.Position);
+                        LastTime = DateTime.Now;
                     }
                 }
                 while (isMoreToRead);
             }
         }
 
-        private void TriggerProgressChanged(long? totalDownloadSize, long totalBytesRead)
+        private void TriggerProgressChanged(long totalDownloadSize, long currentBytesRead, long totalBytesRead)
         {
             if (ProgressChanged == null)
                 return;
 
-            double? progressPercentage = null;
-            if (totalDownloadSize.HasValue)
-                progressPercentage = Math.Round((double)totalBytesRead / totalDownloadSize.Value * 100, 0);
-
-            ProgressChanged(totalDownloadSize, totalBytesRead, progressPercentage);
+            totalDownloadSize = PreResumeSize == -1 ? totalDownloadSize : PreResumeSize;
+            double progressPercentage = Math.Round((double)totalBytesRead / totalDownloadSize * 100, 0);
+            ProgressChanged(totalDownloadSize, currentBytesRead, totalBytesRead, progressPercentage, ResumePosition);
         }
         public void Cancel()
         {
-            _Cancelled = true;
+            if (Paused)
+            {
+                try
+                {
+                    File.Delete($"{DestinationFolderPath}\\gamevault-metadata");
+                    File.Delete($"{DestinationFolderPath}\\{FileName}");
+                }
+                catch { }
+                return;
+            }
+            Cancelled = true;
+            Dispose();
+        }
+        public void Pause()
+        {
+            Paused = true;
+            Cancelled = true;
+            Dispose();
         }
         public void Dispose()
         {
-            _httpClient?.Dispose();
+            HttpClient?.Dispose();
         }
     }
 }
