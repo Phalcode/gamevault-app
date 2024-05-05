@@ -47,6 +47,12 @@ namespace gamevault.Helper
             {
                 InitResume();
             }
+            else
+            {
+                //Edge case where the Library download overrrides the current download. But if its was a paused download, we have also have to reset the metadata
+                if (File.Exists($"{DestinationFolderPath}\\gamevault-metadata"))
+                    File.Delete($"{DestinationFolderPath}\\gamevault-metadata");
+            }
 
             using (var response = await HttpClient.GetAsync(DownloadUrl, HttpCompletionOption.ResponseHeadersRead))
                 await DownloadFileFromHttpResponseMessage(response);
@@ -71,7 +77,7 @@ namespace gamevault.Helper
                     ResumePosition = long.Parse(resumeDataToProcess[0]);
                     PreResumeSize = long.Parse(resumeDataToProcess[1]);
                     HttpClient.DefaultRequestHeaders.Range = new RangeHeaderValue(long.Parse(resumeDataToProcess[0]), null);
-                    TriggerProgressChanged(PreResumeSize, 0, ResumePosition);
+                    //TriggerProgressChanged(PreResumeSize, 0, ResumePosition);
                 }
                 catch { }
             }
@@ -131,8 +137,8 @@ namespace gamevault.Helper
                         try
                         {
                             await Task.Delay(1000);
-                            File.Delete(fullFilePath);
                             File.Delete($"{DestinationFolderPath}\\gamevault-metadata");
+                            File.Delete(fullFilePath);
                         }
                         catch { }
                         return;
@@ -150,7 +156,7 @@ namespace gamevault.Helper
                     await fileStream.WriteAsync(buffer, 0, bytesRead);
 
                     currentBytesRead += bytesRead;
-                    if ((DateTime.Now - LastTime).TotalMilliseconds > 100)
+                    if ((DateTime.Now - LastTime).TotalMilliseconds > 2000)
                     {
                         TriggerProgressChanged(currentDownloadSize, currentBytesRead, fileStream.Position);
                         LastTime = DateTime.Now;
@@ -175,8 +181,8 @@ namespace gamevault.Helper
             {
                 try
                 {
-                    File.Delete($"{DestinationFolderPath}\\{FileName}");
                     File.Delete($"{DestinationFolderPath}\\gamevault-metadata");
+                    File.Delete($"{DestinationFolderPath}\\{FileName}");
                 }
                 catch { }
                 return;

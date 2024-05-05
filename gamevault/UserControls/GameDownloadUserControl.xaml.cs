@@ -65,19 +65,36 @@ namespace gamevault.UserControls
                 }
                 else
                 {
-                    //Try resume paused download after app restart
-                    string resumeData = Preferences.Get(AppConfigKey.DownloadProgress, $"{m_DownloadPath}\\gamevault-metadata");
-                    if (!string.IsNullOrEmpty(resumeData))
-                    {
-                        _ = DownloadGame(true);
+                    //Try resume paused UI
+                    if (TryRecreatePausedUI())
                         return;
-                    }
                     //If no valid pause data, its downloaded
                     ViewModel.State = "Downloaded";
                     uiBtnExtract.IsEnabled = true;
                     ViewModel.InstallationStepperProgress = 0;
                 }
             }
+        }
+        private bool TryRecreatePausedUI()
+        {
+            string resumeData = Preferences.Get(AppConfigKey.DownloadProgress, $"{m_DownloadPath}\\gamevault-metadata");
+            if (!string.IsNullOrEmpty(resumeData))
+            {
+                try
+                {
+                    string[] resumeDataToProcess = resumeData.Split(";");
+                    var resumePos = long.Parse(resumeDataToProcess[0]);
+                    var preResumeSize = long.Parse(resumeDataToProcess[1]);
+                    double progressPercentage = Math.Round((double)resumePos / preResumeSize * 100, 0);
+                    DownloadProgress(preResumeSize, 0, resumePos, progressPercentage, resumePos);
+                    ViewModel.IsDownloadPaused = true;
+                    ViewModel.DownloadUIVisibility = Visibility.Visible;
+                    ViewModel.State = "Download Paused";
+                    return true;
+                }
+                catch { }
+            }
+            return false;
         }
         public bool IsDownloading()
         {
@@ -106,9 +123,18 @@ namespace gamevault.UserControls
         public void CancelDownload()
         {
             if (client == null)
-                return;
-
-            client.Cancel();
+            {
+                try
+                {
+                    File.Delete($"{m_DownloadPath}\\gamevault-metadata");
+                    File.Delete($"{m_DownloadPath}\\{Path.GetFileName(ViewModel.Game.FilePath)}");
+                }
+                catch { }
+            }
+            else
+            {
+                client.Cancel();
+            }
             //client.Dispose();
             IsDownloadActive = false;
             ViewModel.IsDownloadPaused = false;
@@ -157,16 +183,17 @@ namespace gamevault.UserControls
         }
         private void PauseResume_Click(object sender, RoutedEventArgs e)
         {
-            if (client == null)
-                return;
-
             if (ViewModel.IsDownloadPaused)
             {
+                ViewModel.IsDownloadResumed = false;
                 ViewModel.IsDownloadPaused = false;
                 _ = DownloadGame(true);
             }
             else
             {
+                if (client == null)
+                    return;
+
                 ViewModel.IsDownloadPaused = true;
                 client.Pause();
                 IsDownloadActive = false;
@@ -180,11 +207,22 @@ namespace gamevault.UserControls
                 bool isResume = resumePosition != -1;
                 var numerator = isResume ? currentBytesDownloaded : totalBytesDownloaded;
                 var denumirator = isResume ? totalFileSize - resumePosition : totalFileSize;
+                if (isResume)
+                {
+                    ViewModel.IsDownloadResumed = true;
+                }
+                if (currentBytesDownloaded == 0)
+                {
+                    ViewModel.DownloadInfo = $"{FormatBytesHumanReadable(totalBytesDownloaded)}" + $" of {FormatBytesHumanReadable((double)totalFileSize)}";
+                }
+                else
+                {
+                    ViewModel.DownloadInfo = $"{$"{FormatBytesHumanReadable(currentBytesDownloaded, (DateTime.Now - startTime).TotalMilliseconds / 1000, 1000)}/s"}" +
+               $" - {FormatBytesHumanReadable(totalBytesDownloaded)}" +
+               $" of {FormatBytesHumanReadable((double)totalFileSize)}" +
+               $" | Time left: {CalculateTimeLeft(denumirator, numerator, (DateTime.Now - startTime).TotalMilliseconds)}";
+                }
 
-                ViewModel.DownloadInfo = $"{$"{FormatBytesHumanReadable(currentBytesDownloaded, (DateTime.Now - startTime).TotalMilliseconds / 1000, 1000)}/s"}" +
-                $" - {FormatBytesHumanReadable(totalBytesDownloaded)}" +
-                $" of {FormatBytesHumanReadable((double)totalFileSize)}" +
-                $" | Time left: {CalculateTimeLeft(denumirator, numerator, (DateTime.Now - startTime).TotalMilliseconds)}";
 
                 if (ViewModel.GameDownloadProgress == (int)progressPercentage)
                 {
@@ -321,7 +359,7 @@ namespace gamevault.UserControls
         private void ExtractionProgress(object sender, SevenZipProgressEventArgs e)
         {
             long totalBytesDownloaded = (Convert.ToInt64(ViewModel.Game.Size) / 100) * e.PercentageDone;
-            ViewModel.ExtractionInfo = $"{$"{FormatBytesHumanReadable(totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds, 1000)}/s"} - {FormatBytesHumanReadable(totalBytesDownloaded)} of {FormatBytesHumanReadable(Convert.ToInt64(ViewModel.Game.Size))} | Time left: {CalculateTimeLeft(Convert.ToInt64(ViewModel.Game.Size), totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds)}";
+            ViewModel.ExtractionInfo = $"{$"{FormatBytesHumanReadable(totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds, 1000)}/s"} - {FormatBytesHumanReadable(totalBytesDownloaded)} of {FormatBytesHumanReadable(Convert.ToInt64(ViewModel.Game.Size))} | Time left: {CalculateTimeLeft(Convert.ToInt64(ViewModel.Game.Size), totalBytesDownloaded, (DateTime.Now - startTime).TotalMilliseconds)}";
             ViewModel.GameExtractionProgress = e.PercentageDone;
         }
         private async void Extract_Click(object sender, RoutedEventArgs e)

@@ -4,6 +4,7 @@
 Recommended Gamevault Server Version: `v12.0.0`
 ### Changes
 - Added Encrypted (password protected) archive support. Including a default password setting.
+- Added the possibility to pause/resume downloads. Paused downloads are restored after the restart.
 - Bug fix: Center game view background image on window resize
 
 ## 1.9.2.0

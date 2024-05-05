@@ -22,9 +22,10 @@ namespace gamevault.ViewModels
         private string m_ExtractionInfo { get; set; }
         private string m_InstallPath { get; set; }
         private bool m_IsDownloadPaused { get; set; }
+        private bool m_IsDownloadResumed { get; set; } = true;
         private Visibility m_DownloadUIVisibility { get; set; }
         private Visibility m_ExtractionUIVisibility { get; set; }
-        private Visibility m_DownloadFailedVisibility { get; set; }       
+        private Visibility m_DownloadFailedVisibility { get; set; }
 
         #endregion
 
@@ -88,6 +89,11 @@ namespace gamevault.ViewModels
         {
             get { return m_IsDownloadPaused; }
             set { m_IsDownloadPaused = value; OnPropertyChanged(); }
+        }
+        public bool IsDownloadResumed
+        {
+            get { return m_IsDownloadResumed; }
+            set { m_IsDownloadResumed = value; OnPropertyChanged(); }
         }
         public string[] SupportedArchives
         {
