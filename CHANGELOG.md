@@ -7,6 +7,7 @@ Recommended Gamevault Server Version: `v12.1.0`
 - Added the possibility to pause/resume downloads. Paused downloads are restored after the restart.
 - Bug fix: Center game view background image on window resize
 - Bug fix: Tag names that are too long could not be selected in the filters
+- Bug fix: Displayed download speed has adjusted very slowly with larger fluctuations
 - Bug fix: Too much offset of the bookmark button if game setting button was not visible
 
 ## 1.9.2.0

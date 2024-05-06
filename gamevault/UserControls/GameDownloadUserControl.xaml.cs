@@ -16,11 +16,9 @@ using System.Windows.Controls;
 
 namespace gamevault.UserControls
 {
-    /// <summary>
-    /// Interaction logic for GameInstallUserControl.xaml
-    /// </summary>
     public partial class GameDownloadUserControl : UserControl
     {
+        private DownloadSpeedCalculator downloadSpeedCalc { get; set; }
         private GameDownloadViewModel ViewModel { get; set; }
         private bool IsDownloadActive = false;
 
@@ -160,7 +158,7 @@ namespace gamevault.UserControls
             client = new HttpClientDownloadWithProgress($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}/download", m_DownloadPath, Path.GetFileName(ViewModel.Game.FilePath), header);
             client.ProgressChanged += DownloadProgress;
             startTime = DateTime.Now;
-
+            downloadSpeedCalc = new DownloadSpeedCalculator();
             try
             {
                 await client.StartDownload(tryResume);
@@ -217,12 +215,16 @@ namespace gamevault.UserControls
                 }
                 else
                 {
-                    ViewModel.DownloadInfo = $"{$"{FormatBytesHumanReadable(currentBytesDownloaded, (DateTime.Now - startTime).TotalMilliseconds / 1000, 1000)}/s"}" +
+                    downloadSpeedCalc.UpdateSpeed(currentBytesDownloaded);
+                    ViewModel.DownloadInfo = $"{$"{FormatBytesHumanReadable(downloadSpeedCalc.GetCurrentSpeed(), 1, 1000)}/s"}" +
                $" - {FormatBytesHumanReadable(totalBytesDownloaded)}" +
                $" of {FormatBytesHumanReadable((double)totalFileSize)}" +
                $" | Time left: {CalculateTimeLeft(denumirator, numerator, (DateTime.Now - startTime).TotalMilliseconds)}";
                 }
 
+                //downloadSpeedCalc.UpdateSpeed(currentBytesDownloaded);
+                //double speed = downloadSpeedCalc.GetCurrentSpeed();
+                //Debug.WriteLine(ViewModel.Game.ID + ": " + (string)gameSizeConverter.Convert(speed.ToString(), null, 1000, null));
 
                 if (ViewModel.GameDownloadProgress == (int)progressPercentage)
                 {
@@ -293,10 +295,10 @@ namespace gamevault.UserControls
         private string CalculateTimeLeft(long? totalFileSize, long totalBytesRead, double tspanMilliseconds)
         {
 
-            double tspanSeconds = tspanMilliseconds / 1000; // Convert milliseconds to seconds
+            //double tspanSeconds = tspanMilliseconds / 1000; // Convert milliseconds to seconds
             //Debug.WriteLine($"{totalBytesRead / 100000}/{totalFileSize / 100000} - {tspanSeconds}");
-            var averageSpeed = totalBytesRead / tspanSeconds;
-            double timeLeftSeconds = (double)((totalFileSize - totalBytesRead) / averageSpeed);
+            //var averageSpeed = totalBytesRead / tspanSeconds;
+            double timeLeftSeconds = (double)((totalFileSize - totalBytesRead) / downloadSpeedCalc.GetCurrentSpeed());
 
             TimeSpan t = TimeSpan.FromSeconds(0);
             if (timeLeftSeconds > 0 && !double.IsInfinity(timeLeftSeconds) && !double.IsNaN(timeLeftSeconds))
