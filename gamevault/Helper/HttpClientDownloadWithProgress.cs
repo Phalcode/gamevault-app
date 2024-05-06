@@ -118,51 +118,62 @@ namespace gamevault.Helper
             string fullFilePath = $"{DestinationFolderPath}\\{FileName}";
             using (var fileStream = new FileStream(fullFilePath, ResumePosition == -1 ? FileMode.Create : FileMode.Open, FileAccess.Write, FileShare.None, 8192, true))
             {
-                if (ResumePosition != -1)
+                try
                 {
-                    fileStream.Position = ResumePosition;
-                }
-                do
-                {
-                    if (Cancelled)
+                    if (ResumePosition != -1)
                     {
-                        if (Paused)
+                        fileStream.Position = ResumePosition;
+                    }
+                    do
+                    {
+                        if (Cancelled)
                         {
-                            Preferences.Set(AppConfigKey.DownloadProgress, $"{fileStream.Position};{(PreResumeSize == -1 ? currentDownloadSize : PreResumeSize)}", $"{DestinationFolderPath}\\gamevault-metadata");
-                            TriggerProgressChanged(currentDownloadSize, 0, fileStream.Position);
+                            if (Paused)
+                            {
+                                Preferences.Set(AppConfigKey.DownloadProgress, $"{fileStream.Position};{(PreResumeSize == -1 ? currentDownloadSize : PreResumeSize)}", $"{DestinationFolderPath}\\gamevault-metadata");
+                                TriggerProgressChanged(currentDownloadSize, 0, fileStream.Position);
+                                fileStream.Close();
+                                return;
+                            }
                             fileStream.Close();
+                            try
+                            {
+                                await Task.Delay(1000);
+                                File.Delete($"{DestinationFolderPath}\\gamevault-metadata");
+                                File.Delete(fullFilePath);
+                            }
+                            catch { }
                             return;
                         }
-                        fileStream.Close();
-                        try
+
+                        var bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length);
+                        if (bytesRead == 0)
                         {
-                            await Task.Delay(1000);
-                            File.Delete($"{DestinationFolderPath}\\gamevault-metadata");
-                            File.Delete(fullFilePath);
+                            isMoreToRead = false;
+                            TriggerProgressChanged(currentDownloadSize, currentBytesRead, fileStream.Position);
+                            fileStream.Close();
+                            continue;
                         }
-                        catch { }
-                        return;
-                    }
 
-                    var bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length);
-                    if (bytesRead == 0)
-                    {
-                        isMoreToRead = false;
-                        TriggerProgressChanged(currentDownloadSize, currentBytesRead, fileStream.Position);
-                        fileStream.Close();
-                        continue;
-                    }
+                        await fileStream.WriteAsync(buffer, 0, bytesRead);
 
-                    await fileStream.WriteAsync(buffer, 0, bytesRead);
-
-                    currentBytesRead += bytesRead;
-                    if ((DateTime.Now - LastTime).TotalMilliseconds > 2000)
-                    {
-                        TriggerProgressChanged(currentDownloadSize, currentBytesRead, fileStream.Position);
-                        LastTime = DateTime.Now;
+                        currentBytesRead += bytesRead;
+                        if ((DateTime.Now - LastTime).TotalMilliseconds > 2000)
+                        {
+                            TriggerProgressChanged(currentDownloadSize, currentBytesRead, fileStream.Position);
+                            LastTime = DateTime.Now;
+                        }
                     }
+                    while (isMoreToRead);
                 }
-                while (isMoreToRead);
+                catch (Exception ex)//On exception try to save the download progress and forward the exception
+                {
+                    if (currentBytesRead > 0)
+                    {
+                        Preferences.Set(AppConfigKey.DownloadProgress, $"{fileStream.Position};{(PreResumeSize == -1 ? currentDownloadSize : PreResumeSize)}", $"{DestinationFolderPath}\\gamevault-metadata");
+                    }
+                    throw;
+                }
             }
         }
 

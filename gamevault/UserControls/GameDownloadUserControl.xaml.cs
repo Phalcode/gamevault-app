@@ -177,7 +177,7 @@ namespace gamevault.UserControls
         {
             ViewModel.DownloadInfo = string.Empty;
             ViewModel.GameDownloadProgress = 0;
-            _ = DownloadGame();
+            _ = DownloadGame(true);
         }
         private void PauseResume_Click(object sender, RoutedEventArgs e)
         {
