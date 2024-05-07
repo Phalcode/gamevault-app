@@ -4,6 +4,7 @@ using gamevault.Models;
 using gamevault.ViewModels;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
+using Microsoft.Toolkit.Uwp.Notifications;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -30,6 +31,7 @@ namespace gamevault.UserControls
         private SevenZipHelper sevenZipHelper { get; set; }
 
         private GameSizeConverter gameSizeConverter { get; set; }
+        private InputTimer downloadRetryTimer { get; set; }
 
         public GameDownloadUserControl(Game game, bool download)
         {
@@ -47,6 +49,7 @@ namespace gamevault.UserControls
             ViewModel.InstallPath = ViewModel.InstallPath.Replace(@"\\", @"\");
             sevenZipHelper = new SevenZipHelper();
             gameSizeConverter = new GameSizeConverter();
+            InitRetryTimer();
             if (download)
             {
                 _ = DownloadGame();
@@ -165,16 +168,45 @@ namespace gamevault.UserControls
                 await CacheHelper.CreateOfflineCacheAsync(ViewModel.Game);
             }
             catch (Exception ex)
-            {
-                client.Dispose();
+            {             
                 IsDownloadActive = false;
+                client.Dispose();
                 ViewModel.State = $"Error: '{ex.Message}'";
                 ViewModel.DownloadUIVisibility = System.Windows.Visibility.Hidden;
                 ViewModel.DownloadFailedVisibility = System.Windows.Visibility.Visible;
+
+                if (downloadRetryTimer.Data != "error")
+                {
+                    ToastMessageHelper.CreateToastMessage("Notification", $"Download of {ViewModel.Game.Title} Failed");
+                }
+                downloadRetryTimer.Start();
+
+                MainWindowViewModel.Instance.UpdateTaskbarProgress();
             }
+        }
+        private void InitRetryTimer()
+        {
+            downloadRetryTimer = new InputTimer();
+            downloadRetryTimer.Interval = TimeSpan.FromSeconds(10);
+            downloadRetryTimer.Tick += AutoRetryDownload_Tick;
+        }
+        private void AutoRetryDownload_Tick(object sender, EventArgs e)
+        {
+            downloadRetryTimer?.Stop();
+            downloadRetryTimer.Data = "error";
+            RetryDownload();
         }
         private void RetryDownload_Click(object sender, RoutedEventArgs e)
         {
+            downloadRetryTimer?.Stop();
+            downloadRetryTimer.Data = "";
+            RetryDownload();
+        }
+        private void RetryDownload()
+        {
+            if (IsDownloading())
+                return;
+
             ViewModel.DownloadInfo = string.Empty;
             ViewModel.GameDownloadProgress = 0;
             _ = DownloadGame(true);
@@ -222,10 +254,6 @@ namespace gamevault.UserControls
                $" | Time left: {CalculateTimeLeft(denumirator, numerator, (DateTime.Now - startTime).TotalMilliseconds)}";
                 }
 
-                //downloadSpeedCalc.UpdateSpeed(currentBytesDownloaded);
-                //double speed = downloadSpeedCalc.GetCurrentSpeed();
-                //Debug.WriteLine(ViewModel.Game.ID + ": " + (string)gameSizeConverter.Convert(speed.ToString(), null, 1000, null));
-
                 if (ViewModel.GameDownloadProgress == (int)progressPercentage)
                 {
                     return;
@@ -268,6 +296,7 @@ namespace gamevault.UserControls
                     uiBtnExtract.IsEnabled = true;
                 });
             }
+            ToastMessageHelper.CreateToastMessage("Notification", $"Download of {ViewModel.Game.Title} Complete");
         }
 
         private void CancelDownload_Click(object sender, RoutedEventArgs e)
@@ -330,6 +359,8 @@ namespace gamevault.UserControls
             {
                 try
                 {
+                    downloadRetryTimer?.Stop();
+
                     if (Directory.Exists(m_DownloadPath))
                         Directory.Delete(m_DownloadPath, true);
 
@@ -403,7 +434,7 @@ namespace gamevault.UserControls
                 else
                 {
                     result = await sevenZipHelper.ExtractArchive($"{m_DownloadPath}\\{files[0].Name}", $"{m_DownloadPath}\\Extract", extractionPassword);
-                    if (result == 69)//Error  code for wrong password
+                    if (result == 69)//Error code for wrong password
                     {
                         extractionPassword = await ((MetroWindow)App.Current.MainWindow).ShowInputAsync("Exctraction Message", "Your Archive reqires a Password to extract");
                         result = await sevenZipHelper.ExtractArchive($"{m_DownloadPath}\\{files[0].Name}", $"{m_DownloadPath}\\Extract", extractionPassword);
@@ -426,6 +457,7 @@ namespace gamevault.UserControls
                 uiBtnInstall.IsEnabled = true;
                 ViewModel.InstallationStepperProgress = 1;
                 ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
+                ToastMessageHelper.CreateToastMessage("Notification", $"Extraction of {ViewModel.Game.Title} Complete");
             }
             else
             {
@@ -449,6 +481,7 @@ namespace gamevault.UserControls
                 else
                 {
                     ViewModel.State = "Something went wrong during extraction";
+                    ToastMessageHelper.CreateToastMessage("Notification", $"Extraction of {ViewModel.Game.Title} Failed");
                 }
                 ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
             }
