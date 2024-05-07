@@ -44,21 +44,37 @@
 
             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="56,10,0,0" Text="{Binding State,StringFormat={}State: {0}}" ToolTip="{Binding State}" FontSize="4" Width="122"/>
 
-
-
             <local:IconButton Text="Retry" FontSize="5" Icon="{StaticResource IconReload}" IconScale="0.3" IconMargin="-9,-5.5,-5,-5" Visibility="{Binding DownloadFailedVisibility}" CornerRadius="2" Height="9" Width="34" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="64,18.3,0,0" ToolTip="Download Game" Click="RetryDownload_Click"/>
             <TextBlock Visibility="{Binding DownloadUIVisibility}" Text="{Binding DownloadInfo}" FontSize="4" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="64,18,0,0" Width="115"/>
 
-            <local:IconButton Kind="Danger" Text="Cancel" FontSize="4" Visibility="{Binding DownloadUIVisibility}" CornerRadius="2" Height="9" Width="14" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,19.1,1,0" ToolTip="Cancel Download" Click="CancelDownload_Click"/>
-            <ProgressBar Visibility="{Binding DownloadUIVisibility}" VerticalAlignment="Top" Margin="64,24,16,52"  Minimum="0" Maximum="100" Value="{Binding GameDownloadProgress}" BorderThickness="0"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,30,3,0">
+                <local:IconButton Kind="Danger" Text="Cancel" FontSize="4" Visibility="{Binding DownloadUIVisibility}" CornerRadius="2" Height="8" Width="22" ToolTip="Cancel Download" Click="CancelDownload_Click"/>
+                <local:IconButton IsEnabled="{Binding IsDownloadResumed}" FontSize="4" IconScale="0.3" IconMargin="-8,-6.3,-4.5,-5" Visibility="{Binding DownloadUIVisibility}" CornerRadius="2" Height="8" Width="22" Margin="2,0,0,0" Click="PauseResume_Click">
+                    <local:IconButton.Style>
+                        <Style TargetType="local:IconButton" BasedOn="{StaticResource {x:Type local:IconButton}}">
+                            <Setter Property="Text" Value="Pause"/>
+                            <Setter Property="Icon" Value="{StaticResource IconPause}"/>
+                            <Setter Property="ToolTip" Value="Pause Download"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsDownloadPaused}" Value="True">
+                                    <Setter Property="Text" Value="Resume"/>
+                                    <Setter Property="Icon" Value="{StaticResource IconPlay}"/>
+                                    <Setter Property="ToolTip" Value="Resume Download"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </local:IconButton.Style>
+                </local:IconButton>
+            </StackPanel>
+            <ProgressBar Visibility="{Binding DownloadUIVisibility}" VerticalAlignment="Top" Margin="64,24,3,52"  Minimum="0" Maximum="100" Value="{Binding GameDownloadProgress}" BorderThickness="0"/>
 
             <local:IconButton x:Name="uiBtnExtract" IsEnabled="False" Text="Extract" FontSize="5" Icon="{StaticResource IconExtract}" IconScale="0.3" IconMargin="-9,-6.5,-5,-6" Height="9" Width="34" CornerRadius="2" Visibility="{Binding ExtractionUIVisibility,Converter={StaticResource visConv}}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="64,42.4,0,0" ToolTip="Extract Game" Click="Extract_Click"/>
 
 
             <TextBlock Visibility="{Binding ExtractionUIVisibility}" Text="{Binding ExtractionInfo}" FontSize="4" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="64,41,0,0" Width="115"/>
 
-            <local:IconButton Kind="Danger" Text="Cancel" FontSize="4" Visibility="{Binding ExtractionUIVisibility}" CornerRadius="2" Height="9" Width="14" HorizontalAlignment="Right" Margin="0,13.2,1,0" Click="CancelExtraction_Click"/>
-            <ProgressBar Visibility="{Binding ExtractionUIVisibility}" VerticalAlignment="Top" Margin="64,47,16,29"  Minimum="0" Maximum="100" Value="{Binding GameExtractionProgress}" BorderThickness="0"/>
+            <local:IconButton Kind="Danger" Text="Cancel" FontSize="4" Visibility="{Binding ExtractionUIVisibility}" CornerRadius="2" Height="8" Width="22" HorizontalAlignment="Right" Margin="0,34,3,0" Click="CancelExtraction_Click"/>
+            <ProgressBar Visibility="{Binding ExtractionUIVisibility}" VerticalAlignment="Top" Margin="64,47,3,29"  Minimum="0" Maximum="100" Value="{Binding GameExtractionProgress}" BorderThickness="0"/>
 
 
             <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left" Margin="56,20,0,0">

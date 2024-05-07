@@ -26,7 +26,9 @@ namespace gamevault.Models
         LastPlayed,
         Phalcode1,
         Phalcode2,
-        Theme
+        Theme,
+        ExtractionPassword,
+        DownloadProgress
     }
     public static class AppFilePath
     {

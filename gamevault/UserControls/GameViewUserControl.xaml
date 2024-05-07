@@ -28,11 +28,13 @@
         </KeyBinding>
     </UserControl.InputBindings>
     <Grid>
-        <local:CacheImage Data="{Binding Game}" ClipToBounds="True" ImageCacheType="GameBackground">
-            <local:CacheImage.Effect>
-                <BlurEffect Radius="20"/>
-            </local:CacheImage.Effect>
-        </local:CacheImage>
+        <Viewbox Stretch="UniformToFill" HorizontalAlignment="Center">
+            <local:CacheImage Data="{Binding Game}" ImageCacheType="GameBackground">
+                <local:CacheImage.Effect>
+                    <BlurEffect Radius="20"/>
+                </local:CacheImage.Effect>
+            </local:CacheImage>
+        </Viewbox>
         <Grid Background="{DynamicResource GameVault.Brushes.Blur}"/>
         <Grid VerticalAlignment="Top" Margin="20">
             <Viewbox>
@@ -71,7 +73,7 @@
                     <!--ACTION BUTTONS-->
                     <StackPanel Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="390,70,0,0" Orientation="Horizontal">
                         <Grid VerticalAlignment="Top" HorizontalAlignment="Left" Background="Transparent" Cursor="Hand" Width="60" Height="60" Margin="0,1,45,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="GamePlay_Click">
-                            <Path Data="{StaticResource IconInstalledGamesPlay}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.13,0.12">
+                            <Path Data="{StaticResource IconPlay}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.13,0.12">
                                 <Path.RenderTransform>
                                     <ScaleTransform ScaleX="4.7" ScaleY="4.7"/>
                                 </Path.RenderTransform>

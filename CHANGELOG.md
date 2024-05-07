@@ -1,5 +1,17 @@
 # GameVault App Changelog
 
+## 1.10.0.0
+Recommended Gamevault Server Version: `v12.1.0`
+### Changes
+- Added Encrypted (password protected) archive support. Including a default password setting.
+- Added the possibility to pause/resume downloads. Paused downloads are restored after the restart. Also pause is triggered on error.
+- Added auto retry after download failed.
+- Show system notifications for download/extraction
+- Bug fix: Center game view background image on window resize
+- Bug fix: Tag names that are too long could not be selected in the filters
+- Bug fix: Displayed download speed has adjusted very slowly with larger fluctuations
+- Bug fix: Too much offset of the bookmark button if game setting button was not visible
+
 ## 1.9.2.0
 Recommended Gamevault Server Version: `v12.0.0`
 ### Changes

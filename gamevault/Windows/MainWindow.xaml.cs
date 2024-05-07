@@ -108,11 +108,7 @@ namespace gamevault.Windows
                 if (Preferences.Get(AppConfigKey.RunningInTrayMessage, AppFilePath.UserFile) != "1")
                 {
                     Preferences.Set(AppConfigKey.RunningInTrayMessage, "1", AppFilePath.UserFile);
-                    try
-                    {
-                        new ToastContentBuilder().AddText("Notification").AddText("App is still running in the system tray").Show();
-                    }
-                    catch { }
+                    ToastMessageHelper.CreateToastMessage("Notification", "App is still running in the system tray");
                 }
             }
         }
@@ -123,18 +119,22 @@ namespace gamevault.Windows
         }
         private void WindowCommand_Clicked(object sender, RoutedEventArgs e)
         {
-            string? url = (string)((FrameworkElement)sender).Tag;
-            if (Uri.IsWellFormedUriString(url, UriKind.Absolute))
+            try
             {
-                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                string? url = (string)((FrameworkElement)sender).Tag;
+                if (Uri.IsWellFormedUriString(url, UriKind.Absolute))
+                {
+                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                }
+                e.Handled = true;
             }
-            e.Handled = true;
+            catch { }
         }
 
         private void Premium_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {           
+        {
             MainWindowViewModel.Instance.SetActiveControl(MainControl.Settings);
-            MainWindowViewModel.Instance.Settings.SetTabIndex(3);           
+            MainWindowViewModel.Instance.Settings.SetTabIndex(3);
         }
     }
 }

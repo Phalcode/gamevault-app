@@ -87,6 +87,7 @@ namespace gamevault.UserControls
             }
             uiAutostartToggle.Toggled += AppAutostart_Toggled;
             await LoadThemes();
+            uiPwExtraction.Password = Preferences.Get(AppConfigKey.ExtractionPassword, AppFilePath.UserFile, true);
         }
         private async void AppAutostart_Toggled(object sender, RoutedEventArgs e)
         {
@@ -318,6 +319,12 @@ namespace gamevault.UserControls
 #else
             imgAwesome.Data = "https://phalco.de/images/gamevault/eastereggs/awesome.gif";
 #endif
+        }
+
+        private void ExtractionPasswordSave_Click(object sender, RoutedEventArgs e)
+        {
+            Preferences.Set(AppConfigKey.ExtractionPassword, uiPwExtraction.Password, AppFilePath.UserFile, true);
+            MainWindowViewModel.Instance.AppBarText = "Successfully saved extraction password";
         }
     }
 }
