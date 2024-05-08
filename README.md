@@ -1,4 +1,4 @@
-![logo](https://gamevau.lt/img/logo-text-and-image-sbs.png)
+[![logo](https://gamevau.lt/img/logo-text-and-image-sbs.png)](https://gamevau.lt)
 
 # GameVault Application
 
