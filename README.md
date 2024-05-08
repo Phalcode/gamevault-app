@@ -17,10 +17,10 @@ It would mean a lot to us if you could support us developers by [getting GameVau
 
 Alternatively, you can support us by donating us some spare dollars on any of these platforms:
 
-- Ko-Fi
-- Liberapay
-- GitHub Sponsors
-- PayPal
+- [Ko-Fi](https://ko-fi.com/phalcode)
+- [Liberapay](https://liberapay.com/Phalcode)
+- [GitHub Sponsors](https://github.com/sponsors/Phalcode)
+- [PayPal](https://paypal.me/phalcode)
 
 **TIP FOR DONATORS:**  
 If you connect your Discord account to Ko-Fi, you'll automatically receive the "@Supporters" role and permanently stand out in our Discord members list. If you donate through a different platform and want to obtain the role, simply send us a message with your receipt as proof that you're truly a Supporter. 🌟
