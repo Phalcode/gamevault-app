@@ -29,6 +29,7 @@ namespace gamevault.UserControls
     public partial class GameSettingsUserControl : UserControl
     {
         private bool startup = true;
+        private bool loaded = false;
         private GameSettingsViewModel ViewModel { get; set; }
         private string SavedExecutable { get; set; }
         private GameSizeConverter gameSizeConverter { get; set; }
@@ -52,7 +53,11 @@ namespace gamevault.UserControls
         }
         private void GameSettings_Loaded(object sender, RoutedEventArgs e)
         {
-            this.Focus();
+            if (!loaded)
+            {
+                loaded = true;
+                this.Focus();
+            }
         }
         private void KeyBindingEscape_OnExecuted(object sender, object e)
         {

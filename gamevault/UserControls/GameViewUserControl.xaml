@@ -7,7 +7,7 @@
              xmlns:helper="clr-namespace:gamevault.Helper"
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded" Focusable="True">
+             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded" Focusable="True" FocusVisualStyle="{x:Null}">
     <UserControl.Resources>
         <conv:GameSizeConverter x:Key="sizeConv"/>
         <conv:GameTimeConverter x:Key="timeConv"/>
