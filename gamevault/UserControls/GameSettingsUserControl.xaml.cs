@@ -740,7 +740,7 @@ namespace gamevault.UserControls
             });
             this.Cursor = null;
         }
-        private async void Recache_Click(object sender, MouseButtonEventArgs e)
+        private async void Recache_Click(object sender, RoutedEventArgs e)
         {
             this.IsEnabled = false;
             await Task.Run(() =>

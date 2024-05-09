@@ -353,7 +353,7 @@
                             </StackPanel>
                             <TextBlock Text="Recache Game" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
                             <TextBlock Text="When pressed, this Button will re-fetch all data for the mapped RAWG Game from RAWG.IO and cache it on the Server." FontSize="15" Margin="0,5,0,0"/>
-                            <local:IconButton Text="Recache Game" FontSize="15" Icon="{DynamicResource IconReload}" IconMargin="0,0,5,2" HorizontalAlignment="Left" Margin="0,5,0,0" Width="140" Height="33" MouseLeftButtonUp="Recache_Click"/>
+                            <local:IconButton Text="Recache Game" FontSize="15" Icon="{DynamicResource IconReload}" IconMargin="0,0,5,2" HorizontalAlignment="Left" Margin="0,5,0,0" Width="140" Height="33" Click="Recache_Click"/>
 
                             <TextBlock Text="Remap Game" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
                             <TextBlock Text="Is the currently mapped Game incorrect or missing? Manually search the RAWG API and re-map your Game here." FontSize="15" Margin="0,5,0,0"/>
