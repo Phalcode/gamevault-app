@@ -762,6 +762,7 @@ namespace gamevault.UserControls
                 }
             });
             this.IsEnabled = true;
+            this.Focus();
         }
         private async void RawgGameRemap_Click(object sender, RoutedEventArgs e)
         {
@@ -786,6 +787,7 @@ namespace gamevault.UserControls
             InstallViewModel.Instance.RefreshGame(ViewModel.Game);
             MainWindowViewModel.Instance.Library.RefreshGame(ViewModel.Game);
             this.IsEnabled = true;
+            this.Focus();
         }
 
 
