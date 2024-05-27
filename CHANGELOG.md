@@ -1,5 +1,17 @@
 # GameVault App Changelog
 
+## 1.10.1.0
+Recommended Gamevault Server Version: `v12.1.1`
+### Changes
+
+- Total size of all files is now displayed on the download cards
+- An empty release year is no longer displayed in the gameview
+- Bug fix: The escape key sometimes did not work in the game settings
+- Bug fix: Game settings recache button did nothing
+- Bug fix: Rare crash when starting the app if at least one non-extracted game is downloaded. 
+- Bug fix: Crash on download game - restart app - extract game
+- Bug fix: Download UI sometimes did not display the status correctly when the game was installed
+
 ## 1.10.0.0
 Recommended Gamevault Server Version: `v12.1.0`
 ### Changes

@@ -21,6 +21,7 @@ namespace gamevault.ViewModels
         private string m_DownloadInfo { get; set; }
         private string m_ExtractionInfo { get; set; }
         private string m_InstallPath { get; set; }
+        private double totalDataSize { get; set; }
         private bool m_IsDownloadPaused { get; set; }
         private bool m_IsDownloadResumed { get; set; } = true;
         private Visibility m_DownloadUIVisibility { get; set; }
@@ -84,6 +85,11 @@ namespace gamevault.ViewModels
         {
             get { return m_InstallPath; }
             set { m_InstallPath = value; OnPropertyChanged(); }
+        }
+        public double TotalDataSize
+        {
+            get { return totalDataSize; }
+            set { totalDataSize = value; OnPropertyChanged(); }
         }
         public bool IsDownloadPaused
         {

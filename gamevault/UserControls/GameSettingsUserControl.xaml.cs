@@ -29,6 +29,7 @@ namespace gamevault.UserControls
     public partial class GameSettingsUserControl : UserControl
     {
         private bool startup = true;
+        private bool loaded = false;
         private GameSettingsViewModel ViewModel { get; set; }
         private string SavedExecutable { get; set; }
         private GameSizeConverter gameSizeConverter { get; set; }
@@ -52,7 +53,11 @@ namespace gamevault.UserControls
         }
         private void GameSettings_Loaded(object sender, RoutedEventArgs e)
         {
-            this.Focus();
+            if (!loaded)
+            {
+                loaded = true;
+                this.Focus();
+            }
         }
         private void KeyBindingEscape_OnExecuted(object sender, object e)
         {
@@ -740,7 +745,7 @@ namespace gamevault.UserControls
             });
             this.Cursor = null;
         }
-        private async void Recache_Click(object sender, MouseButtonEventArgs e)
+        private async void Recache_Click(object sender, RoutedEventArgs e)
         {
             this.IsEnabled = false;
             await Task.Run(() =>
@@ -757,6 +762,7 @@ namespace gamevault.UserControls
                 }
             });
             this.IsEnabled = true;
+            this.Focus();
         }
         private async void RawgGameRemap_Click(object sender, RoutedEventArgs e)
         {
@@ -781,6 +787,7 @@ namespace gamevault.UserControls
             InstallViewModel.Instance.RefreshGame(ViewModel.Game);
             MainWindowViewModel.Instance.Library.RefreshGame(ViewModel.Game);
             this.IsEnabled = true;
+            this.Focus();
         }
 
 

@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Runtime;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -56,6 +57,7 @@ namespace gamevault.UserControls
             }
             else
             {
+                UpdateDataSizeUI();
                 if (File.Exists($"{m_DownloadPath}\\Extract\\gamevault-metadata") && Preferences.Get(AppConfigKey.ExtractionFinished, $"{m_DownloadPath}\\Extract\\gamevault-metadata") == "1")
                 {
                     ViewModel.State = "Extracted";
@@ -76,12 +78,30 @@ namespace gamevault.UserControls
                 }
             }
         }
-        private bool TryRecreatePausedUI()
+        private void UpdateDataSizeUI()
         {
-            string resumeData = Preferences.Get(AppConfigKey.DownloadProgress, $"{m_DownloadPath}\\gamevault-metadata");
-            if (!string.IsNullOrEmpty(resumeData))
+            Task.Run(() =>
             {
                 try
+                {
+                    double size = 0;
+                    foreach (FileInfo file in new DirectoryInfo(m_DownloadPath).GetFiles("*", SearchOption.AllDirectories))
+                    {
+                        file.Refresh();
+                        size += file.Length;
+                    }
+                    ViewModel.TotalDataSize = size;
+                }
+                catch { }
+            });
+
+        }
+        private bool TryRecreatePausedUI()
+        {
+            try
+            {
+                string resumeData = Preferences.Get(AppConfigKey.DownloadProgress, $"{m_DownloadPath}\\gamevault-metadata");
+                if (!string.IsNullOrEmpty(resumeData))
                 {
                     string[] resumeDataToProcess = resumeData.Split(";");
                     var resumePos = long.Parse(resumeDataToProcess[0]);
@@ -93,8 +113,9 @@ namespace gamevault.UserControls
                     ViewModel.State = "Download Paused";
                     return true;
                 }
-                catch { }
             }
+            catch { }
+
             return false;
         }
         public bool IsDownloading()
@@ -168,7 +189,7 @@ namespace gamevault.UserControls
                 await CacheHelper.CreateOfflineCacheAsync(ViewModel.Game);
             }
             catch (Exception ex)
-            {             
+            {
                 IsDownloadActive = false;
                 client.Dispose();
                 ViewModel.State = $"Error: '{ex.Message}'";
@@ -269,6 +290,7 @@ namespace gamevault.UserControls
 
         private void DownloadCompleted()
         {
+            UpdateDataSizeUI();
             ViewModel.DownloadUIVisibility = System.Windows.Visibility.Hidden;
             client.Dispose();
             IsDownloadActive = false;
@@ -286,6 +308,7 @@ namespace gamevault.UserControls
                 Directory.CreateDirectory(ViewModel.InstallPath);
             }
             MainWindowViewModel.Instance.Library.GetGameInstalls().AddSystemFileWatcher(ViewModel.InstallPath);
+            ToastMessageHelper.CreateToastMessage("Notification", $"Download of {ViewModel.Game.Title} Complete");
             if (SettingsViewModel.Instance.AutoExtract)
             {
                 App.Current.Dispatcher.Invoke((Action)async delegate
@@ -296,7 +319,6 @@ namespace gamevault.UserControls
                     uiBtnExtract.IsEnabled = true;
                 });
             }
-            ToastMessageHelper.CreateToastMessage("Notification", $"Download of {ViewModel.Game.Title} Complete");
         }
 
         private void CancelDownload_Click(object sender, RoutedEventArgs e)
@@ -391,9 +413,13 @@ namespace gamevault.UserControls
 
         private void ExtractionProgress(object sender, SevenZipProgressEventArgs e)
         {
-            long totalBytesDownloaded = (Convert.ToInt64(ViewModel.Game.Size) / 100) * e.PercentageDone;
-            ViewModel.ExtractionInfo = $"{$"{FormatBytesHumanReadable(totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds, 1000)}/s"} - {FormatBytesHumanReadable(totalBytesDownloaded)} of {FormatBytesHumanReadable(Convert.ToInt64(ViewModel.Game.Size))} | Time left: {CalculateTimeLeft(Convert.ToInt64(ViewModel.Game.Size), totalBytesDownloaded, (DateTime.Now - startTime).TotalMilliseconds)}";
-            ViewModel.GameExtractionProgress = e.PercentageDone;
+            try
+            {
+                ViewModel.GameExtractionProgress = e.PercentageDone;
+                long totalBytesDownloaded = (Convert.ToInt64(ViewModel.Game.Size) / 100) * e.PercentageDone;
+                ViewModel.ExtractionInfo = $"{$"{FormatBytesHumanReadable(totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds, 1000)}/s"} - {FormatBytesHumanReadable(totalBytesDownloaded)} of {FormatBytesHumanReadable(Convert.ToInt64(ViewModel.Game.Size))} | Time left: {CalculateTimeLeft(Convert.ToInt64(ViewModel.Game.Size), totalBytesDownloaded, (DateTime.Now - startTime).TotalMilliseconds)}";
+            }
+            catch { }
         }
         private async void Extract_Click(object sender, RoutedEventArgs e)
         {
@@ -418,7 +444,7 @@ namespace gamevault.UserControls
             ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
             ViewModel.State = "Extracting...";
             ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Visible;
-
+            downloadSpeedCalc = new DownloadSpeedCalculator();//Reuse download speed calculator as extraction speed calculator and set new instance to reset it
             sevenZipHelper.Process += ExtractionProgress;
             startTime = DateTime.Now;
             int result;
@@ -458,6 +484,7 @@ namespace gamevault.UserControls
                 ViewModel.InstallationStepperProgress = 1;
                 ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
                 ToastMessageHelper.CreateToastMessage("Notification", $"Extraction of {ViewModel.Game.Title} Complete");
+                UpdateDataSizeUI();
             }
             else
             {
@@ -530,6 +557,15 @@ namespace gamevault.UserControls
         {
             ((FrameworkElement)sender).IsEnabled = false;
             uiBtnExtract.IsEnabled = false;
+            try
+            {
+                if (!Directory.Exists(ViewModel.InstallPath))//make sure install path exists with file watcher attached
+                {
+                    Directory.CreateDirectory(ViewModel.InstallPath);
+                }
+                MainWindowViewModel.Instance.Library.GetGameInstalls().AddSystemFileWatcher(ViewModel.InstallPath);
+            }
+            catch { }
             if (ViewModel.Game.Type == GameType.WINDOWS_PORTABLE || ViewModel.Game.Type == GameType.LINUX_PORTABLE)
             {
                 bool error = false;
@@ -564,6 +600,7 @@ namespace gamevault.UserControls
                 {
                     MainWindowViewModel.Instance.AppBarText = $"Successfully installed '{ViewModel.Game.Title}'";
                     ViewModel.InstallationStepperProgress = 2;
+                    ViewModel.State = "Installed";
                 }
             }
             else if (ViewModel.Game.Type == GameType.WINDOWS_SETUP)
@@ -594,6 +631,12 @@ namespace gamevault.UserControls
                     if (setupProcess != null)
                     {
                         await setupProcess.WaitForExitAsync();
+                        ViewModel.InstallationStepperProgress = 2;
+                        if (InstallViewModel.Instance.InstalledGames.Any(g => g.Key.ID == ViewModel.Game.ID))
+                        {
+                            ViewModel.InstallationStepperProgress = 2;
+                            ViewModel.State = "Installed";
+                        }
                     }
                 }
                 else

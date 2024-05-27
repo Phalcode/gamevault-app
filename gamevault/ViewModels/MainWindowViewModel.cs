@@ -146,6 +146,10 @@ namespace gamevault.ViewModels
         public void ClosePopup()
         {
             Popup = null;
+            if (ActiveControl != null)
+            {
+                ActiveControl.Focus();//Bring back focus to the current page to restore keyboard key press.
+            }
         }
         internal SettingsUserControl Settings
         {
