@@ -1,5 +1,12 @@
 # GameVault App Changelog
 
+## 1.10.2.0
+Recommended Gamevault Server Version: `v12.1.1`
+### Changes
+
+- Bug fix: Crash on local download directory has wrong name format
+- Added setting to the admin panel to hide/show deleted users
+
 ## 1.10.1.0
 Recommended Gamevault Server Version: `v12.1.1`
 ### Changes

@@ -10,6 +10,7 @@
              d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded" KeyDown="Reload_Click" Focusable="True" IsVisibleChanged="UserControl_IsVisibleChanged">
     <UserControl.Resources>
         <conv:InverseEmptyStringConverter x:Key="InvertStringConv"/>
+        <conv:InverseNullConverter x:Key="InvertNullConv"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -39,6 +40,7 @@
                         </Hyperlink>
                     </TextBlock>
                 </StackPanel>
+                <mah:ToggleSwitch Header="Show deleted Users" IsOn="{Binding ShowDeletedUsers,Mode=TwoWay}" HorizontalAlignment="Right" Margin="0,0,430,0" Padding="0,0,0,0"/>
                 <local:IconButton Text="Backup / Restore Database" Icon="{StaticResource IconDatabase}" IconMargin="0,0,5,2" HorizontalAlignment="Right" FontSize="15" Width="225" Margin="10,10,200,10" Click="BackupRestore_Click"/>
                 <local:IconButton Text="Reindex Games" HorizontalAlignment="Right" FontSize="15" Icon="{StaticResource IconReload}" IconMargin="0,0,5,2" Width="140" Margin="10,10,46,10" Click="Reindex_Click"/>
                 <Grid x:Name="uiBtnReload" Style="{DynamicResource HoverEffect}" VerticalAlignment="Center" HorizontalAlignment="Right" Background="Transparent" Cursor="Hand" Width="30" Height="30" Margin="0,0,5,0" RenderTransformOrigin="0.5,0.5" ToolTip="Refresh admin console (F5)" MouseLeftButtonUp="Reload_Click">
@@ -73,8 +75,16 @@
                             <Grid Height="6" Width="100" Margin="1,1,0,0">
                                 <Grid.Style>
                                     <Style TargetType="{x:Type Grid}">
+                                        <Setter Property="Visibility" Value="Visible"/>
                                         <Setter Property="Background" Value="#26FF0000"/>
                                         <Style.Triggers>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding Path=DataContext.ShowDeletedUsers,RelativeSource={RelativeSource AncestorType=UserControl}}" Value="False" />
+                                                    <Condition Binding="{Binding Path=DeletedAt,Converter={StaticResource InvertNullConv}}" Value="False" />
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </MultiDataTrigger>
                                             <DataTrigger Binding="{Binding Path=DeletedAt}" Value="{x:Null}">
                                                 <Setter Property="Background" Value="{x:Null}"/>
                                             </DataTrigger>
@@ -94,7 +104,7 @@
                                 <Viewbox Width="11" Margin="0,0,10,0" HorizontalAlignment="Right">
                                     <ComboBox ItemsSource="{Binding Path=DataContext.PermissionRoleEnumTypes,RelativeSource={RelativeSource AncestorType=UserControl}}" SelectedItem="{Binding Path=Role}" SelectionChanged="PermissionRole_SelectionChanged"/>
                                 </Viewbox>
-                               
+
                                 <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Cursor="Hand" Width="2.5" Height="2.5" Margin="0,1.8,5,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="EditUser_Clicked">
                                     <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Margin="0,0,-20,-20">
                                         <Path.RenderTransform>
