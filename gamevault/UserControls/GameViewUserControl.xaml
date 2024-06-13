@@ -158,19 +158,21 @@
                     </StackPanel>
                     <!--TAGS_GENRES-->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="400,150,0,10">
-                        <Border CornerRadius="5" Background="Gainsboro" Margin="0,10,10,10">
-                            <Border.Style>
-                                <Style TargetType="{x:Type Border}">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Path=Game.Type}" Value="UNDETECTABLE">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                            <TextBlock Text="{Binding Path=Game.Type,Converter={StaticResource enumDescConv}}" VerticalAlignment="Center" Margin="15,8,15,8" FontSize="15" FontWeight="Bold" Foreground="#FF424242"/>
-                        </Border>
+                        <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" Margin="0,10,10,10" Click="GameType_Clicked">
+                            <Border CornerRadius="5" Background="Gainsboro" >
+                                <Border.Style>
+                                    <Style TargetType="{x:Type Border}">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=Game.Type}" Value="UNDETECTABLE">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock Text="{Binding Path=Game.Type,Converter={StaticResource enumDescConv}}" VerticalAlignment="Center" Margin="15,8,15,8" FontSize="15" FontWeight="Bold" Foreground="#FF424242"/>
+                            </Border>
+                        </Button>
                         <Border CornerRadius="5" Background="Gainsboro" Margin="0,10,10,10">
                             <Border.Style>
                                 <Style TargetType="{x:Type Border}">
@@ -192,9 +194,11 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border CornerRadius="5" Background="{Binding Name,Converter={StaticResource nameColorConv}}" Padding="0" Margin="0,10,10,10">
-                                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="10,10,10,10" FontSize="15" FontWeight="Bold"/>
-                                    </Border>
+                                    <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" Margin="0,10,10,10" Click="Genre_Clicked">
+                                        <Border CornerRadius="5" Background="{Binding Name,Converter={StaticResource nameColorConv}}" Padding="0" >
+                                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="10,10,10,10" FontSize="15" FontWeight="Bold"/>
+                                        </Border>
+                                    </Button>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
@@ -216,9 +220,11 @@
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Border CornerRadius="5" Background="{Binding Name,Converter={StaticResource colorConv}}" Padding="0" Margin="10">
-                                                    <TextBlock Text="{Binding Name}" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" VerticalAlignment="Center" Margin="15,8,15,8" FontSize="15" FontWeight="Bold"/>
-                                                </Border>
+                                                <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand"  Margin="10" Click="Tag_Clicked">
+                                                    <Border CornerRadius="5" Background="{Binding Name,Converter={StaticResource colorConv}}" Padding="0">
+                                                        <TextBlock Text="{Binding Name}" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" VerticalAlignment="Center" Margin="15,8,15,8" FontSize="15" FontWeight="Bold"/>
+                                                    </Border>
+                                                </Button>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>

@@ -4,8 +4,9 @@
 Recommended Gamevault Server Version: `v12.1.1`
 ### Changes
 
-- Bug fix: Crash on local download directory has wrong name format
+- Library filter is set when you click on game type/Genre/Tag in the gameview.
 - Added setting to the admin panel to hide/show deleted users
+- Bug fix: Crash on local download directory has wrong name format
 
 ## 1.10.1.0
 Recommended Gamevault Server Version: `v12.1.1`

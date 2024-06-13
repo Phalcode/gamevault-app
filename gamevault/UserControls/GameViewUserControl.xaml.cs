@@ -1,6 +1,8 @@
-﻿using gamevault.Helper;
+﻿using gamevault.Converter;
+using gamevault.Helper;
 using gamevault.Models;
 using gamevault.ViewModels;
+using HarfBuzzSharp;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -196,6 +198,40 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.AppBarText = message;
             }
             ((FrameworkElement)sender).Tag = "";
+        }
+
+        private void Genre_Clicked(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Genre data = (Genre)((FrameworkElement)sender).DataContext;
+                MainWindowViewModel.Instance.Library.ClearAllFilters();
+                MainWindowViewModel.Instance.Library.uiFilterGenreSelector.SetEntries(new Genre_Tag[] { new Genre_Tag() { ID = data.ID, Name = data.Name, RawgId = data.RawgId } });
+                MainWindowViewModel.Instance.SetActiveControl(MainControl.Library);
+            }
+            catch { }
+        }
+
+        private void Tag_Clicked(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Models.Tag data = (Models.Tag)((FrameworkElement)sender).DataContext;
+                MainWindowViewModel.Instance.Library.ClearAllFilters();
+                MainWindowViewModel.Instance.Library.uiFilterTagSelector.SetEntries(new Genre_Tag[] { new Genre_Tag() { ID = data.ID, Name = data.Name, RawgId = data.RawgId } });
+                MainWindowViewModel.Instance.SetActiveControl(MainControl.Library);
+            }
+            catch { }
+        }
+        private void GameType_Clicked(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                MainWindowViewModel.Instance.Library.ClearAllFilters();
+                MainWindowViewModel.Instance.Library.uiFilterGameTypeSelector.SetEntries(new Genre_Tag[] { new Genre_Tag() { OriginName = ViewModel.Game.Type.ToString(), Name = (string)new EnumDescriptionConverter().Convert(ViewModel.Game.Type, null, null, null) } });
+                MainWindowViewModel.Instance.SetActiveControl(MainControl.Library);
+            }
+            catch { }
         }
     }
 }

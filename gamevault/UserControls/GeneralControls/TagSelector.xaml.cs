@@ -71,6 +71,19 @@ namespace gamevault.UserControls
             selectedEntries.Clear();
             uiSelectedEntries.ItemsSource = null;
         }
+        public void SetEntries(Genre_Tag[] data)
+        {
+            ClearEntries();
+            foreach (Genre_Tag dataEntry in data)
+            {
+                selectedEntries.Add(dataEntry);             
+            }
+            uiSelectedEntries.ItemsSource = selectedEntries;
+            if (EntriesUpdated != null)
+            {
+                EntriesUpdated(this, null);
+            }
+        }
         private async void DebounceTimerElapsed(object? sender, EventArgs e)
         {
             debounceTimer.Stop();
