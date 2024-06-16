@@ -546,6 +546,23 @@ namespace gamevault.UserControls
                 if (allExecutables.Count == 1)
                 {
                     uiCbSetupExecutable.SelectedIndex = 0;
+                } else
+                {
+
+                    int i = 0;
+                    foreach (var exe in allExecutables)
+                    {
+                        if (exe.Key.ToLower().Contains("setup"))
+                        {
+                            uiCbSetupExecutable.SelectedIndex = i;
+                            break;
+                        }
+
+                        if (exe.Key.ToLower().Contains("install"))
+                            uiCbSetupExecutable.SelectedIndex = i;
+
+                        i++;
+                    }
                 }
             }
             else
