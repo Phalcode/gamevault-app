@@ -42,7 +42,7 @@ namespace gamevault.Helper
             request.UserAgent = $"GameVault/{SettingsViewModel.Instance.Version}";
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             var authenticationString = $"{m_UserName}:{m_Password}";
-            var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.ASCIIEncoding.UTF8.GetBytes(authenticationString));
+            var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(authenticationString));
             request.Headers.Add("Authorization", "Basic " + base64EncodedAuthenticationString);
             using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
             using (Stream stream = response.GetResponseStream())
@@ -60,7 +60,7 @@ namespace gamevault.Helper
             request.UserAgent = $"GameVault/{SettingsViewModel.Instance.Version}";
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             var authenticationString = $"{m_UserName}:{m_Password}";
-            var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.ASCIIEncoding.UTF8.GetBytes(authenticationString));
+            var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(authenticationString));
             request.Headers.Add("Authorization", "Basic " + base64EncodedAuthenticationString);
             using (HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync())
             using (Stream stream = response.GetResponseStream())
@@ -78,7 +78,7 @@ namespace gamevault.Helper
             if (payload != null)
             {
                 var authenticationString = $"{m_UserName}:{m_Password}";
-                var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.ASCIIEncoding.UTF8.GetBytes(authenticationString));
+                var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(authenticationString));
                 request.Headers.Add("Authorization", "Basic " + base64EncodedAuthenticationString);
                 request.ContentLength = System.Text.UTF8Encoding.UTF8.GetByteCount(payload);
                 Stream dataStream = request.GetRequestStream();
@@ -110,7 +110,7 @@ namespace gamevault.Helper
             if (payload != null)
             {
                 var authenticationString = $"{m_UserName}:{m_Password}";
-                var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.ASCIIEncoding.UTF8.GetBytes(authenticationString));
+                var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(authenticationString));
                 request.Headers.Add("Authorization", "Basic " + base64EncodedAuthenticationString);
                 request.ContentLength = System.Text.UTF8Encoding.UTF8.GetByteCount(payload);
                 Stream dataStream = request.GetRequestStream();
@@ -132,7 +132,7 @@ namespace gamevault.Helper
             if (payload != null)
             {
                 var authenticationString = $"{m_UserName}:{m_Password}";
-                var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.ASCIIEncoding.UTF8.GetBytes(authenticationString));
+                var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(authenticationString));
                 request.Headers.Add("Authorization", "Basic " + base64EncodedAuthenticationString);
                 request.ContentLength = System.Text.UTF8Encoding.UTF8.GetByteCount(payload);
                 Stream dataStream = request.GetRequestStream();
@@ -154,7 +154,7 @@ namespace gamevault.Helper
             request.UserAgent = $"GameVault/{SettingsViewModel.Instance.Version}";
             request.Method = "DELETE";
             var authenticationString = $"{m_UserName}:{m_Password}";
-            var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.ASCIIEncoding.UTF8.GetBytes(authenticationString));
+            var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(authenticationString));
             request.Headers.Add("Authorization", "Basic " + base64EncodedAuthenticationString);
             using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
             using (Stream stream = response.GetResponseStream())
@@ -169,7 +169,7 @@ namespace gamevault.Helper
             request.UserAgent = $"GameVault/{SettingsViewModel.Instance.Version}";
             request.Method = "DELETE";
             var authenticationString = $"{m_UserName}:{m_Password}";
-            var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.ASCIIEncoding.UTF8.GetBytes(authenticationString));
+            var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(authenticationString));
             request.Headers.Add("Authorization", "Basic " + base64EncodedAuthenticationString);
             using (var response = await request.GetResponseAsync())
             using (Stream stream = ((HttpWebResponse)response).GetResponseStream())
@@ -181,8 +181,8 @@ namespace gamevault.Helper
         public static async Task DownloadImageFromUrlAsync(string imageUrl, string cacheFile)
         {
             using (WebClient client = new WebClient())
-            {
-                client.Headers.Add(HttpRequestHeader.Authorization, "Basic " + Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes($"{m_UserName}:{m_Password}")));
+            {              
+                client.Headers.Add(HttpRequestHeader.Authorization, "Basic " + Convert.ToBase64String(System.Text.UTF8Encoding.UTF8.GetBytes($"{m_UserName}:{m_Password}")));
                 client.Headers.Add($"User-Agent: GameVault/{SettingsViewModel.Instance.Version}");
                 await client.DownloadFileTaskAsync(new Uri(imageUrl), cacheFile);
             }
@@ -192,7 +192,7 @@ namespace gamevault.Helper
             using (var httpClient = new HttpClient())
             {
                 var authenticationString = $"{m_UserName}:{m_Password}";
-                var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.ASCIIEncoding.UTF8.GetBytes(authenticationString));
+                var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(authenticationString));
                 httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + base64EncodedAuthenticationString);
                 if (additionalHeader != null)
                 {

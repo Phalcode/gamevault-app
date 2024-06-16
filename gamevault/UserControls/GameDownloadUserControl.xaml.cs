@@ -198,7 +198,7 @@ namespace gamevault.UserControls
 
                 if (downloadRetryTimer.Data != "error")
                 {
-                    ToastMessageHelper.CreateToastMessage("Notification", $"Download of {ViewModel.Game.Title} Failed");
+                    ToastMessageHelper.CreateToastMessage("Download Failed", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.BoxImage.ID}");
                 }
                 downloadRetryTimer.Start();
 
@@ -308,7 +308,7 @@ namespace gamevault.UserControls
                 Directory.CreateDirectory(ViewModel.InstallPath);
             }
             MainWindowViewModel.Instance.Library.GetGameInstalls().AddSystemFileWatcher(ViewModel.InstallPath);
-            ToastMessageHelper.CreateToastMessage("Notification", $"Download of {ViewModel.Game.Title} Complete");
+            ToastMessageHelper.CreateToastMessage("Download Complete", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.BoxImage.ID}");
             if (SettingsViewModel.Instance.AutoExtract)
             {
                 App.Current.Dispatcher.Invoke((Action)async delegate
@@ -483,7 +483,7 @@ namespace gamevault.UserControls
                 uiBtnInstall.IsEnabled = true;
                 ViewModel.InstallationStepperProgress = 1;
                 ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
-                ToastMessageHelper.CreateToastMessage("Notification", $"Extraction of {ViewModel.Game.Title} Complete");
+                ToastMessageHelper.CreateToastMessage("Extraction Complete", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.BoxImage.ID}");
                 UpdateDataSizeUI();
             }
             else
@@ -508,7 +508,7 @@ namespace gamevault.UserControls
                 else
                 {
                     ViewModel.State = "Something went wrong during extraction";
-                    ToastMessageHelper.CreateToastMessage("Notification", $"Extraction of {ViewModel.Game.Title} Failed");
+                    ToastMessageHelper.CreateToastMessage("Extraction Failed", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.BoxImage.ID}");
                 }
                 ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
             }

@@ -95,7 +95,7 @@ namespace gamevault.Helper
         internal static bool IsGif(string filePath)
         {
             // GIF signature: 47 49 46 38 39 (47 49 46 37 61 for GIF87a)
-            byte[] gifSignature = Encoding.ASCII.GetBytes("GIF");
+            byte[] gifSignature = Encoding.UTF8.GetBytes("GIF");
             try
             {
                 using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
@@ -112,7 +112,7 @@ namespace gamevault.Helper
         }
         internal static bool IsGif(MemoryStream ms)
         {
-            byte[] gifSignature = Encoding.ASCII.GetBytes("GIF");
+            byte[] gifSignature = Encoding.UTF8.GetBytes("GIF");
             try
             {
                 byte[] buffer = new byte[3];

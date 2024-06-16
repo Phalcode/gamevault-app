@@ -4,9 +4,11 @@
 Recommended Gamevault Server Version: `v12.1.1`
 ### Changes
 
+- Notifications about download/extraction events now also display the game box image
 - Library filter is set when you click on game type/Genre/Tag in the gameview.
 - Added setting to the admin panel to hide/show deleted users
 - Bug fix: Crash on local download directory has wrong name format
+- Bug fix: The header of the image downloader was sometimes encoded incorrectly
 
 ## 1.10.1.0
 Recommended Gamevault Server Version: `v12.1.1`

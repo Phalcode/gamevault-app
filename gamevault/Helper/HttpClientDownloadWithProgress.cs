@@ -60,7 +60,7 @@ namespace gamevault.Helper
         private void CreateHeader()
         {
             string[] auth = WebHelper.GetCredentials();
-            HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(System.Text.ASCIIEncoding.UTF8.GetBytes($"{auth[0]}:{auth[1]}")));
+            HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{auth[0]}:{auth[1]}")));
             HttpClient.DefaultRequestHeaders.Add("User-Agent", $"GameVault/{SettingsViewModel.Instance.Version}");
 
             if (AdditionalHeader != null)
