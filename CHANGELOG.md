@@ -1,6 +1,6 @@
 # GameVault App Changelog
 
-## 1.10.2.0
+## 1.11.0.0
 Recommended Gamevault Server Version: `v12.1.1`
 ### Changes
 

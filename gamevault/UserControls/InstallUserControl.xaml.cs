@@ -45,7 +45,7 @@ namespace gamevault.UserControls
             Dictionary<int, string> foundGames = new Dictionary<int, string>();
             Game[]? games = await Task<Game[]>.Run(() =>
             {
-                string installationPath = $"{SettingsViewModel.Instance.RootPath}\\GameVault\\Installations";
+                string installationPath = Path.Combine(SettingsViewModel.Instance.RootPath, "GameVault\\Installations");
                 if (SettingsViewModel.Instance.RootPath != string.Empty && Directory.Exists(installationPath))
                 {
                     foreach (string dir in Directory.GetDirectories(installationPath))

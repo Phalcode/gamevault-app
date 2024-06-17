@@ -30,9 +30,8 @@ namespace gamevault.Helper
         private void TimerCallback(object sender, ElapsedEventArgs e)
         {
             Task.Run(() =>
-            {
-                string installationPath = $"{SettingsViewModel.Instance.RootPath}\\GameVault\\Installations";
-                installationPath = installationPath.Replace(@"\\", @"\");
+            {               
+                string installationPath = Path.Combine(SettingsViewModel.Instance.RootPath, "GameVault\\Installations");             
 
                 if (!Directory.Exists(installationPath))
                     return;
