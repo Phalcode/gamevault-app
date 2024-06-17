@@ -87,8 +87,8 @@ namespace gamevault
             {
                 Instance.RegisterUriScheme();
             }
-            catch {} //
-            
+            catch { } //
+
             try
             {
                 Instance.StartNamedPipeServer();
@@ -313,7 +313,7 @@ namespace gamevault
             if (options == null)
                 return null;
 
-            if (options.Action != CommandOptions.ActionEnum.Show && !SettingsViewModel.Instance.License.IsActive())
+            if (options.Action != CommandOptions.ActionEnum.Show && options.Action != CommandOptions.ActionEnum.Start && !SettingsViewModel.Instance.License.IsActive())
             {
                 try
                 {
@@ -347,6 +347,10 @@ namespace gamevault
                 case CommandOptions.ActionEnum.Show:
                     showMainWindow = true;
 
+                    if (options.JumpListCommand.HasValue)
+                    {
+                        task = ExecuteJumpListCommand(options.JumpListCommand.Value);
+                    }
                     if (options.GameId.HasValue)
                     {
                         task = ShowGame(options.GameId.Value);
@@ -382,7 +386,7 @@ namespace gamevault
                         {
                             showMainWindow = true;
 
-                            if (options.AutoInstall == true)
+                            if (options.AutoInstall == true && SettingsViewModel.Instance.License.IsActive())
                                 task = InstallGame(options.GameId.Value);
                             else
                                 task = ShowGame(options.GameId.Value);
@@ -611,6 +615,31 @@ namespace gamevault
             {
                 MessageBox.Show($"Game with ID {id} not found", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+        private async Task ExecuteJumpListCommand(int id)
+        {
+            // Ensure we're on the UI thread
+            await Dispatch(async() =>
+            {
+                switch (id)
+                {                   
+                    case 15:
+                        {
+                            await App.Instance.ExitApp();
+                            break;
+                        }
+                    default:
+                        {
+                            if (Enum.TryParse(id.ToString(), out MainControl mainControl))
+                            {
+                                MainWindowViewModel.Instance.SetActiveControl(mainControl);
+                            }
+                            break;
+                        }
+                }
+
+            });
+
         }
 
         public enum ActionQueryEnum

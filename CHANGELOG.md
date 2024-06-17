@@ -4,6 +4,7 @@
 Recommended Gamevault Server Version: `v12.1.1`
 ### Changes
 
+- Implemented Jumplist to taskbar icon.
 - Allow user to specify rows displayed of installed games.
 - Notifications about download/extraction events now also display the game box image
 - Library filter is set when you click on game type/Genre/Tag in the gameview.

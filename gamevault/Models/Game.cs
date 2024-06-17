@@ -62,8 +62,7 @@ namespace gamevault.Models
         public Developer[] Developers { get; set; }
         [JsonPropertyName("publishers")]
         public Publisher[] Publishers { get; set; }
-        [JsonPropertyName("stores")]
-        public Store[] Stores { get; set; }
+        
         [JsonPropertyName("tags")]
         public Tag[] Tags { get; set; }
         [JsonPropertyName("genres")]
