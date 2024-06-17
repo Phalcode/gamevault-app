@@ -85,7 +85,7 @@ namespace gamevault.Windows
                     await MainWindowViewModel.Instance.Library.LoadLibrary();
                 }
             }
-            else if (LoginState.Unauthorized == state || LoginState.Forbidden == state)
+            else if ((LoginState.Unauthorized == state || LoginState.Forbidden == state) && SettingsViewModel.Instance.SetupCompleted())
             {
                 MainWindowViewModel.Instance.AppBarText = "You are not logged in";
             }

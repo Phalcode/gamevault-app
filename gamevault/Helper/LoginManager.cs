@@ -77,6 +77,13 @@ namespace gamevault.Helper
         {
             LoginState state = LoginState.Success;
             if (IsLoggedIn()) return;
+
+            if (Preferences.Get(AppConfigKey.Username, AppFilePath.UserFile).IsNullOrEmpty() && !SettingsViewModel.Instance.ServerUrl.IsNullOrEmpty())
+            {
+                m_LoginState = LoginState.Unauthorized;
+                return;
+            }
+
             User? user = await Task<User>.Run(() =>
             {
                 try
