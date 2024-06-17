@@ -25,10 +25,19 @@ namespace gamevault.UserControls.SettingsComponents
     /// </summary>
     public partial class RegisterUserControl : UserControl
     {
+        private Wizard? _wizard;
+
         public RegisterUserControl()
         {
             InitializeComponent();
         }
+
+        public RegisterUserControl(Wizard parent)
+        {
+            InitializeComponent();
+            _wizard = parent;
+        }
+
         private async void Registration_Clicked(object sender, System.Windows.RoutedEventArgs e)
         {
             await Register();
@@ -54,41 +63,60 @@ namespace gamevault.UserControls.SettingsComponents
         private async Task Register()
         {
             uiBtnRegister.IsEnabled = false;
-            await Task.Run(async () =>
+            var t = await Task.Run<bool>(async () =>
             {
+                string message = string.Empty;
+                bool success = false;
                 try
                 {
-                    string message = string.Empty;
                     if (!HasEmptyFields())
                     {
                         if (SettingsViewModel.Instance.RegistrationUser.Password != SettingsViewModel.Instance.RegistrationUser.RepeatPassword)
                         {
-                            MainWindowViewModel.Instance.AppBarText = "Password must be equal";
-                            return;
+                            message = "Passwords must be the same";
+                            success = false;
                         }
-                        string jsonObject = JsonSerializer.Serialize(SettingsViewModel.Instance.RegistrationUser);
-                        WebHelper.Post($"{SettingsViewModel.Instance.ServerUrl}/api/users/register", jsonObject);
-                        message = "Successfully registered";
-                        SettingsViewModel.Instance.RegistrationUser = new User();
-                        App.Current.Dispatcher.Invoke((Action)delegate
+                        else
                         {
-                            uiPwReg.Password = string.Empty;
-                            uiPwRegRepeat.Password = string.Empty;
-                        });
+                            string jsonObject = JsonSerializer.Serialize(SettingsViewModel.Instance.RegistrationUser);
+                            WebHelper.Post($"{SettingsViewModel.Instance.ServerUrl}/api/users/register", jsonObject);
+                            message = "Successfully registered";
+                            SettingsViewModel.Instance.RegistrationUser = new User();
+                            App.Current.Dispatcher.Invoke((Action)delegate
+                            {
+                                uiPwReg.Password = string.Empty;
+                                uiPwRegRepeat.Password = string.Empty;
+                            });
+                            success = true;
+                        }
                     }
                     else
                     {
                         message = "All mandatory fields must be filled";
                     }
-                    MainWindowViewModel.Instance.AppBarText = message;
                 }
                 catch (Exception ex)
                 {
-                    string errMessage = WebExceptionHelper.TryGetServerMessage(ex);
-                    MainWindowViewModel.Instance.AppBarText = errMessage;
+                    message = WebExceptionHelper.TryGetServerMessage(ex);
                 }
+
+                MainWindowViewModel.Instance.AppBarText = message;
+                return success;
             });
             uiBtnRegister.IsEnabled = true;
+
+            //need to get return result from task
+            if (_wizard != null && t == true)
+            {
+                _wizard.uiLoginRegisterPopup.IsOpen = false;
+                _wizard.Login_Clicked(this, new RoutedEventArgs());
+            }
+
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            uiLoginBox.Focus();
         }
     }
 }
