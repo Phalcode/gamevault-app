@@ -4,6 +4,7 @@
 Recommended Gamevault Server Version: `v12.1.1`
 ### Changes
 
+- Allow user to specify rows displayed of installed games.
 - Notifications about download/extraction events now also display the game box image
 - Library filter is set when you click on game type/Genre/Tag in the gameview.
 - Added setting to the admin panel to hide/show deleted users

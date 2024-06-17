@@ -34,6 +34,8 @@ namespace gamevault.ViewModels
         #region PrivateMembers      
         private ObservableCollection<KeyValuePair<Game, string>> m_InstalledGames { get; set; }
         public ICollectionView? installedGamesFilter { get; set; }
+        private int rows { get; set; } = 0;
+        private int colums { get; set; } = 0;
         #endregion      
         public ObservableCollection<KeyValuePair<Game, string>> InstalledGames
         {
@@ -60,6 +62,24 @@ namespace gamevault.ViewModels
             {
                 int index = InstalledGames.IndexOf(gameToRefresh);
                 InstalledGames[index] = new KeyValuePair<Game, string>(gameToRefreshParam, gameToRefresh.Value);
+            }
+        }
+        public int Rows
+        {
+            get { return rows; }
+
+            set
+            {
+                rows = value; OnPropertyChanged();
+            }
+        }
+        public int Colums
+        {
+            get { return colums; }
+
+            set
+            {
+                colums = value; OnPropertyChanged();
             }
         }
     }
