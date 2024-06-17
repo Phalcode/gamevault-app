@@ -99,9 +99,9 @@
                             </Border>
                             <StackPanel Width="330" Height="200">
                                 <TextBlock Text="Step 3 Login or Register" FontSize="10" FontWeight="Bold" Margin="0,30,0,10"/>
+                                <TextBlock FontSize="6" TextWrapping="Wrap" Text="{Binding ServerUrl, StringFormat={}You will need to log in to your GameVault account at {0}}"/>
+
                                 <TextBlock FontSize="6" TextWrapping="Wrap">
-                                You'll need to log in to your GameVault account on the selected backend server.
-                                <LineBreak/>
                                 <LineBreak/>
                                 If you already have a GameVault account on this server, select Login and enter your login credentials 
                                 (username and password) in the provided fields. These credentials are specific to the GameVault backend server you've chosen.
@@ -119,6 +119,27 @@
                                     <local:IconButton Text="Register" FontSize="5" Height="10" Width="20" CornerRadius="1" Margin="5,10.4,0,0" Click="Register_Clicked"/>                                  
                                 </StackPanel>
                                 <Grid Margin="0,13.4,0,0">
+                                    <local:IconButton Kind="Skeleton" BorderThickness="0.3" CornerRadius="1" Text="Back" FontSize="5" Height="10" Width="20" HorizontalAlignment="Left" Click="Back_Clicked"/>
+                                    <local:IconButton x:Name="btnFinish" Visibility="Hidden" Text="Finish" FontSize="5" Height="10" Width="20" CornerRadius="1" HorizontalAlignment="Right" Click="Next_Clicked"/>
+                                </Grid>
+                            </StackPanel>
+                        </Grid>
+                    </TabItem>
+                    <TabItem>
+                        <Grid>
+                            <Border CornerRadius="10" Background="{DynamicResource MahApps.Brushes.Accent}" Height="8" Width="8" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,33,0,0" Cursor="Hand" MouseLeftButtonUp="Help_Clicked" Panel.ZIndex="1" ToolTip="Open help site" Tag="https://gamevau.lt/docs/client-docs/setup/#step-3-login-or-register">
+                                <TextBlock Text="?" TextAlignment="Center" Padding="0,0,0,0" FontSize="6"/>
+                            </Border>
+                            <StackPanel Width="200" Height="200">
+                                <Image Source="pack://application:,,,/gamevault;component/Resources/Images/icon.ico" Width="50" Margin="0,30,0,0"/>
+                                <TextBlock Text="You're all done!" TextAlignment="Center" FontSize="10" Margin="0,5,0,0"/>
+                                <TextBlock TextAlignment="Center" VerticalAlignment="Center" FontSize="5" Margin="0,10,0,0">
+                                You're ready to browse, download and install games from your server.
+                                <LineBreak/>
+                                Everything in this setup can be changed manually later in the settings menu.
+                                </TextBlock>
+
+                                <Grid Margin="70,13.4,70,0">
                                     <local:IconButton Kind="Skeleton" BorderThickness="0.3" CornerRadius="1" Text="Back" FontSize="5" Height="10" Width="20" HorizontalAlignment="Left" Click="Back_Clicked"/>
                                     <local:IconButton Text="Finish" FontSize="5" Height="10" Width="20" CornerRadius="1" HorizontalAlignment="Right" Click="Finish_Clicked"/>
                                 </Grid>
