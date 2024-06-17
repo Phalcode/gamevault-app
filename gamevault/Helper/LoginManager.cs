@@ -286,5 +286,19 @@ namespace gamevault.Helper
             }
             return LoginState.Error;
         }
+
+        public async Task<bool> IsServerAvailable()
+        {
+            if (SettingsViewModel.Instance.ServerUrl.IsNullOrEmpty())
+                return false;
+
+            try
+            {
+                if ((await WebHelper.GetRequestAsync(SettingsViewModel.Instance.ServerUrl)).Contains("GameVault"))
+                    return true;
+            }
+            catch { }
+            return false;
+        }
     }
 }
