@@ -180,6 +180,14 @@ namespace gamevault.ViewModels
                 System.Windows.Forms.DialogResult result = dialog.ShowDialog();
                 if (result == System.Windows.Forms.DialogResult.OK && Directory.Exists(dialog.SelectedPath))
                 {
+                    DirectoryInfo path = new DirectoryInfo(dialog.SelectedPath);
+
+                    if (path.Parent.Name.Equals("GameVault", StringComparison.OrdinalIgnoreCase))
+                        path = new DirectoryInfo(path.Parent.FullName);
+
+                    if (path.Name.Equals("GameVault", StringComparison.OrdinalIgnoreCase))
+                        dialog.SelectedPath = path.Parent.FullName;
+
                     try
                     {
                         File.Create(@$"{dialog.SelectedPath}\accesscheck.file").Close();
