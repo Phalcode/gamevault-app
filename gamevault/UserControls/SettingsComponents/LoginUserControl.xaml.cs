@@ -97,7 +97,7 @@ namespace gamevault.UserControls.SettingsComponents
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            uiLoginbox.Focus();
+            uiLoginBox.Focus();
         }
     }
 }
