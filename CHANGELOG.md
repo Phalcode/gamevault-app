@@ -4,6 +4,7 @@
 Recommended Gamevault Server Version: `v12.1.1`
 ### Changes
 
+- Desktop shortcuts start the game via GameVault. So changed executable or parameters are updated immediately as well.
 - Implemented Jumplist to taskbar icon.
 - Allow user to specify rows displayed of installed games.
 - Notifications about download/extraction events now also display the game box image
