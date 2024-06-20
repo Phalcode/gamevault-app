@@ -648,6 +648,20 @@ namespace gamevault.UserControls
             uiInstallOptions.Visibility = System.Windows.Visibility.Collapsed;
             uiProgressRingInstall.IsActive = false;
             uiBtnExtract.IsEnabled = true;
+            if (ViewModel.CreateShortcut == true)
+            {
+                await Task.Delay(1000);
+                var game = InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).FirstOrDefault();
+                if (game.Key == null)
+                    return;
+
+                if (!GameSettingsUserControl.TryPrepareLaunchExecutable(game.Value))
+                {
+                    MainWindowViewModel.Instance.AppBarText = $"Can not create shortcut. No valid Executable found";
+                    return;
+                }
+                await DesktopHelper.CreateShortcut(game.Key, Preferences.Get(AppConfigKey.Executable, $"{game.Value}\\gamevault-exec"), false);
+            }
         }
 
         private void CopyInstallPathToClipboard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)

@@ -173,7 +173,7 @@ namespace gamevault.UserControls
                             Directory.Delete(ViewModel.Directory, true);
 
                         InstallViewModel.Instance.InstalledGames.Remove(InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).First());
-                        RemoveShotcut();
+                        DesktopHelper.RemoveShotcut(ViewModel.Game);
                         MainWindowViewModel.Instance.ClosePopup();
                     }
                     catch
@@ -228,7 +228,7 @@ namespace gamevault.UserControls
                                     }
 
                                     InstallViewModel.Instance.InstalledGames.Remove(InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).First());
-                                    RemoveShotcut();
+                                    DesktopHelper.RemoveShotcut(ViewModel.Game);
                                 }
                                 catch { }
                             }
@@ -240,19 +240,6 @@ namespace gamevault.UserControls
             {
                 MainWindowViewModel.Instance.AppBarText = "Game Type cannot be determined";
             }
-        }
-        private void RemoveShotcut()
-        {
-            try
-            {
-                string desktopDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-                string shortcutPath = desktopDir + @"\\" + ViewModel.Game.Title + ".url";
-                if (File.Exists(shortcutPath))
-                {
-                    File.Delete(shortcutPath);
-                }
-            }
-            catch { }
         }
 
         private void InitDiskUsagePieChart()
@@ -398,11 +385,12 @@ namespace gamevault.UserControls
                 {
                     if (!ContainsValueFromIgnoreList(entry))
                     {
-                        if (File.Exists($"{directory}\\gamevault-exec"))
+                        if (!File.Exists($"{directory}\\gamevault-exec"))
                         {
-                            Preferences.Set(AppConfigKey.Executable, entry, $"{directory}\\gamevault-exec");
-                            return true;
+                            File.Create($"{directory}\\gamevault-exec").Close();
                         }
+                        Preferences.Set(AppConfigKey.Executable, entry, $"{directory}\\gamevault-exec");
+                        return true;
                     }
                 }
             }
@@ -429,31 +417,7 @@ namespace gamevault.UserControls
         }
         private async void CreateDesktopShortcut_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                string desktopDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-                string shortcutPath = desktopDir + @"\\" + ViewModel.Game.Title + ".url";
-                if (File.Exists(shortcutPath))
-                {
-                    MainWindowViewModel.Instance.AppBarText = "Desktop shortcut already exists";
-                    return;
-                }
-                MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Do you want to create a desktop shortcut for {ViewModel.Game.Title}?", "",
-                    MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
-                if (result == MessageDialogResult.Affirmative)
-                {
-                    using (StreamWriter writer = new StreamWriter(shortcutPath))
-                    {
-                        writer.Write("[InternetShortcut]\r\n");
-                        writer.Write($"URL=gamevault://start?gameid={ViewModel.Game.ID}" + "\r\n");
-                        writer.Write("IconIndex=0\r\n");
-                        writer.Write("IconFile=" + SavedExecutable.Replace('\\', '/') + "\r\n");
-                        //writer.WriteLine($"WorkingDirectory={Path.GetDirectoryName(SavedExecutable).Replace('\\', '/')}");
-                        writer.Flush();
-                    }
-                }
-            }
-            catch { }
+            await DesktopHelper.CreateShortcut(ViewModel.Game, SavedExecutable, true);
         }
 
         private void LaunchParameter_Changed(object sender, RoutedEventArgs e)

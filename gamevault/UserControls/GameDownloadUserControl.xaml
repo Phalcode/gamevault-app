@@ -127,7 +127,7 @@
                 </Ellipse>
             </StackPanel>
             <local:IconButton x:Name="uiBtnInstall" Kind="Primary" IsEnabled="False" Text="Install" FontSize="5" Icon="{StaticResource IconInstalledGamesSettings}" IconScale="0.29" IconMargin="-9,-7,-5.5,-7" CornerRadius="2" Height="9" Width="34" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="64,62,1,0" ToolTip="Install Game" Click="OpenInstallOptions_Click"/>
-            <Grid x:Name="uiInstallOptions" Visibility="Collapsed" Margin="56,10,1,2"  MaxWidth="130" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}">
+            <Grid x:Name="uiInstallOptions" Visibility="Collapsed" Margin="56,10,1,2" Width="122" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}">
                 <Grid>
                     <Grid.Style>
                         <Style TargetType="{x:Type Grid}">
@@ -215,10 +215,32 @@
                         <TextBlock Text="{Binding InstallPath}" FontSize="3" Foreground="#FF424242" HorizontalAlignment="Left" Cursor="Hand"/>
                     </Border>
                 </Grid>
-                <Viewbox Width="9" Height="9" Margin="0,0,38,0" HorizontalAlignment="Right" VerticalAlignment="Bottom">
-                    <mah:ProgressRing x:Name="uiProgressRingInstall" IsActive="False"/>
-                </Viewbox>
 
+                <mah:ProgressRing x:Name="uiProgressRingInstall" IsActive="False" Margin="0,0,0,0" RenderTransformOrigin="0.85,1.08">
+                    <mah:ProgressRing.RenderTransform>
+                        <ScaleTransform ScaleX="0.15" ScaleY="0.15"/>
+                    </mah:ProgressRing.RenderTransform>
+                </mah:ProgressRing>
+
+                <Grid Background="Transparent" MaxHeight="10" MaxWidth="20" VerticalAlignment="Bottom" Margin="30,0,0,-0.1">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=Game.Type}" Value="UNDETECTABLE">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=IsActive,ElementName=uiProgressRingInstall}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <mah:ToggleSwitch Header="Create Shortcut" RenderTransformOrigin="0,0" Margin="0,0,-80,-40" IsOn="{Binding CreateShortcut,Mode=TwoWay}" FocusVisualStyle="{x:Null}">
+                        <mah:ToggleSwitch.RenderTransform>
+                            <ScaleTransform ScaleX="0.2" ScaleY="0.2"/>
+                        </mah:ToggleSwitch.RenderTransform>
+                    </mah:ToggleSwitch>
+                </Grid>
                 <local:IconButton Kind="Skeleton" Text="Back" FontSize="5" CornerRadius="2" Height="9" Width="34" BorderThickness="0.2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,43,1,0" Click="InstallOptionCancel_Click"/>
             </Grid>
         </Grid>

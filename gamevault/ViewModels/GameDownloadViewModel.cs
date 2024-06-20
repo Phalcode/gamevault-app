@@ -27,6 +27,7 @@ namespace gamevault.ViewModels
         private Visibility m_DownloadUIVisibility { get; set; }
         private Visibility m_ExtractionUIVisibility { get; set; }
         private Visibility m_DownloadFailedVisibility { get; set; }
+        private bool? createShortcut { get; set; }
 
         #endregion
 
@@ -100,6 +101,23 @@ namespace gamevault.ViewModels
         {
             get { return m_IsDownloadResumed; }
             set { m_IsDownloadResumed = value; OnPropertyChanged(); }
+        }
+        public bool? CreateShortcut
+        {
+            get
+            {
+                if (createShortcut == null)
+                {
+                    createShortcut = Preferences.Get(AppConfigKey.CreateDesktopShortcut, AppFilePath.UserFile) == "1";
+                }
+                return createShortcut;
+            }
+
+            set
+            {
+                createShortcut = value; OnPropertyChanged();
+                Preferences.Set(AppConfigKey.CreateDesktopShortcut, createShortcut == true ? "1" : "0", AppFilePath.UserFile);
+            }
         }
         public string[] SupportedArchives
         {

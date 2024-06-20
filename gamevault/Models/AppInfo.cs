@@ -29,7 +29,8 @@ namespace gamevault.Models
         Theme,
         ExtractionPassword,
         DownloadProgress,
-        InstalledGamesRows
+        InstalledGamesRows,
+        CreateDesktopShortcut
     }
     public static class AppFilePath
     {
