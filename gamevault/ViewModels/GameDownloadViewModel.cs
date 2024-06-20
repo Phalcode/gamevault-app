@@ -1,4 +1,5 @@
-﻿using gamevault.Models;
+﻿using gamevault.Converter;
+using gamevault.Models;
 using gamevault.UserControls;
 using System;
 using System.Collections.Generic;
@@ -124,6 +125,13 @@ namespace gamevault.ViewModels
             get
             {
                 return new string[] { ".7z", ".xz", ".bz2", ".gz", ".tar", ".zip", ".wim", ".ar", ".arj", ".cab", ".chm", ".cpio", ".cramfs", ".dmg", ".ext", ".fat", ".gpt", ".hfs", ".ihex", ".iso", ".lzh", ".lzma", ".mbr", ".msi", ".nsis", ".ntfs", ".qcow2", ".rar", ".rpm", ".squashfs", ".udf", ".uefi", ".vdi", ".vhd", ".vmdk", ".wim", ".xar", ".z" };
+            }
+        }
+        public Dictionary<GameType, string?> GameTypes
+        {
+            get
+            {
+                return Enum.GetValues(typeof(GameType)).Cast<GameType>().Where(v => v != GameType.UNDETECTABLE && v != GameType.LINUX_PORTABLE).ToDictionary(v => v, v => new EnumDescriptionConverter().Convert(v, null, null, null) as string);
             }
         }
     }

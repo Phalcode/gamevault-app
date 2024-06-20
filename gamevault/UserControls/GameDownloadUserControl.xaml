@@ -140,8 +140,8 @@
                         </Style>
                     </Grid.Style>
 
-                    <Border Background="Gainsboro" CornerRadius="2" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="1">
-                        <TextBlock Text="{Binding Path=Game.Type,Converter={StaticResource enumDescConv}}" FontSize="4" Foreground="#FF424242"/>
+                    <Border Background="Gainsboro" Width="48" CornerRadius="2" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="1">
+                        <TextBlock Text="{Binding Path=Game.Type,Converter={StaticResource enumDescConv}}" FontSize="4" Foreground="#FF424242" HorizontalAlignment="Center"/>
                     </Border>
                     <TextBlock Text="To install this game, please follow the steps below:" FontWeight="Bold" Margin="0,10,0,0" FontSize="4"/>
 
@@ -190,8 +190,8 @@
                         </Style>
                     </Grid.Style>
 
-                    <Border Background="Gainsboro" CornerRadius="2" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="1">
-                        <TextBlock Text="{Binding Path=Game.Type,Converter={StaticResource enumDescConv}}" FontSize="4" Foreground="#FF424242"/>
+                    <Border Background="Gainsboro" Width="48" CornerRadius="2" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="1">
+                        <TextBlock Text="{Binding Path=Game.Type,Converter={StaticResource enumDescConv}}" FontSize="4" Foreground="#FF424242" HorizontalAlignment="Center"/>
                     </Border>
                     <TextBlock Text="To install this game, please follow the steps below:" FontWeight="Bold" Margin="0,10,0,0" FontSize="4"/>
 
@@ -210,10 +210,23 @@
                             </Style.Triggers>
                         </Style>
                     </Grid.Style>
-                    <TextBlock Text="Could not determine game type. Please install this game manually to the folder below." FontSize="4" TextWrapping="Wrap" MaxWidth="126" Margin="0,17,0,0"/>
-                    <Border Background="Gainsboro" CornerRadius="2" Margin="0,31,1,0"  VerticalAlignment="Top" Padding="1" ToolTip="Copy to clipboard" MouseLeftButtonUp="CopyInstallPathToClipboard_Click">
-                        <TextBlock Text="{Binding InstallPath}" FontSize="3" Foreground="#FF424242" HorizontalAlignment="Left" Cursor="Hand"/>
-                    </Border>
+                    <StackPanel Margin="0,5,0,0">
+                        <TextBlock Text="Unable to detect game type. You can try forcing an installation procedure by selecting it from the options below." FontSize="4" TextWrapping="Wrap" MaxWidth="126" Margin="0,0,0,3"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Grid Width="45" Height="10" Background="Transparent" HorizontalAlignment="Left">
+                                <ComboBox x:Name="uiCbOverwriteGameType" Margin="0,0.7,-155,-30" ItemsSource="{Binding GameTypes}" DisplayMemberPath="Value" SelectedValuePath="Key">
+                                    <ComboBox.RenderTransform>
+                                        <ScaleTransform ScaleX="0.22" ScaleY="0.22"/>
+                                    </ComboBox.RenderTransform>
+                                </ComboBox>
+                            </Grid>
+                            <local:IconButton Kind="Danger" Text="Force Install" FontSize="5" CornerRadius="2" Height="9" Width="30" Margin="3,0,0,0" Click="ContinueOverwriteGameType_Click"/>
+                        </StackPanel>
+                        <TextBlock Text="Or alternatively install the game manually to this folder:" FontSize="4" TextWrapping="Wrap" MaxWidth="126" Margin="0,5,0,0"/>
+                        <Border Background="Gainsboro" CornerRadius="2" Margin="0,3,0,0"  VerticalAlignment="Top" Padding="1" ToolTip="Copy to clipboard" MouseLeftButtonUp="CopyInstallPathToClipboard_Click">
+                            <TextBlock Text="{Binding InstallPath}" FontSize="3" Foreground="#FF424242" HorizontalAlignment="Left" Cursor="Hand"/>
+                        </Border>
+                    </StackPanel>
                 </Grid>
 
                 <mah:ProgressRing x:Name="uiProgressRingInstall" IsActive="False" Margin="0,0,0,0" RenderTransformOrigin="0.85,1.08">
@@ -229,6 +242,9 @@
                                 <DataTrigger Binding="{Binding Path=Game.Type}" Value="UNDETECTABLE">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                 </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=Game.Type}" Value="LINUX_PORTABLE">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
                                 <DataTrigger Binding="{Binding Path=IsActive,ElementName=uiProgressRingInstall}" Value="True">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                 </DataTrigger>
@@ -240,6 +256,31 @@
                             <ScaleTransform ScaleX="0.2" ScaleY="0.2"/>
                         </mah:ToggleSwitch.RenderTransform>
                     </mah:ToggleSwitch>
+                </Grid>
+                <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Background="Transparent" ToolTip="Overwrite game type" Cursor="Hand" Width="8" Height="8" Margin="49,0,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="InitOverwriteGameType_Click">
+                    <Grid.Style>
+                        <Style TargetType="Grid" BasedOn="{StaticResource HoverEffect}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=Game.Type}" Value="UNDETECTABLE">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=Game.Type}" Value="LINUX_PORTABLE">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=IsActive,ElementName=uiProgressRingInstall}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <Path Data="{StaticResource IconGameSettingsEditDetails}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Margin="0,0,-14,-13">
+                        <Path.RenderTransform>
+                            <ScaleTransform ScaleX="0.28" ScaleY="0.28"/>
+                        </Path.RenderTransform>
+                    </Path>
+                    <Grid.RenderTransform>
+                        <ScaleTransform/>
+                    </Grid.RenderTransform>
                 </Grid>
                 <local:IconButton Kind="Skeleton" Text="Back" FontSize="5" CornerRadius="2" Height="9" Width="34" BorderThickness="0.2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,43,1,0" Click="InstallOptionCancel_Click"/>
             </Grid>

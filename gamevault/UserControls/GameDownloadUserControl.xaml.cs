@@ -673,5 +673,28 @@ namespace gamevault.UserControls
             }
             catch { }
         }
+
+        private void ContinueOverwriteGameType_Click(object sender, RoutedEventArgs e)
+        {
+            if (uiCbOverwriteGameType.SelectedValue != null)
+            {
+                var temp = ViewModel.Game;
+                temp.Type = (GameType)uiCbOverwriteGameType.SelectedValue;
+                ViewModel.Game = null;
+                ViewModel.Game = temp;
+            }
+            else
+            {
+                MainWindowViewModel.Instance.AppBarText = "No gametype selected for overwriting";
+            }
+        }
+
+        private void InitOverwriteGameType_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var temp = ViewModel.Game;
+            temp.Type = GameType.UNDETECTABLE;
+            ViewModel.Game = null;
+            ViewModel.Game = temp;
+        }
     }
 }
