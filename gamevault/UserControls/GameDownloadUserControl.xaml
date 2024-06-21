@@ -186,6 +186,9 @@
                                 <DataTrigger Binding="{Binding Path=Game.Type}" Value="WINDOWS_PORTABLE">
                                     <Setter Property="Visibility" Value="Visible" />
                                 </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=Game.Type}" Value="LINUX_PORTABLE">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </Grid.Style>
@@ -220,7 +223,17 @@
                                     </ComboBox.RenderTransform>
                                 </ComboBox>
                             </Grid>
-                            <local:IconButton Kind="Danger" Text="Force Install" FontSize="5" CornerRadius="2" Height="9" Width="30" Margin="3,0,0,0" Click="ContinueOverwriteGameType_Click"/>
+                            <local:IconButton Kind="Danger" Text="Force Install" FontSize="5" CornerRadius="2" Height="9" Width="30" Margin="3,0,0,0" Click="ContinueOverwriteGameType_Click">
+                                <local:IconButton.Style>
+                                    <Style TargetType="local:IconButton" BasedOn="{StaticResource {x:Type local:IconButton}}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding SelectedValue,ElementName=uiCbOverwriteGameType}" Value="{x:Null}">
+                                                <Setter Property="IsEnabled" Value="False"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </local:IconButton.Style>
+                            </local:IconButton>
                         </StackPanel>
                         <TextBlock Text="Or alternatively install the game manually to this folder:" FontSize="4" TextWrapping="Wrap" MaxWidth="126" Margin="0,5,0,0"/>
                         <Border Background="Gainsboro" CornerRadius="2" Margin="0,3,0,0"  VerticalAlignment="Top" Padding="1" ToolTip="Copy to clipboard" MouseLeftButtonUp="CopyInstallPathToClipboard_Click">
@@ -235,14 +248,11 @@
                     </mah:ProgressRing.RenderTransform>
                 </mah:ProgressRing>
 
-                <Grid Background="Transparent" MaxHeight="10" MaxWidth="20" VerticalAlignment="Bottom" Margin="30,0,0,-0.1">
+                <Grid Background="Transparent" MaxHeight="10" MaxWidth="21" VerticalAlignment="Bottom" Margin="30,0,0,-0.1">
                     <Grid.Style>
                         <Style TargetType="Grid">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Path=Game.Type}" Value="UNDETECTABLE">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Path=Game.Type}" Value="LINUX_PORTABLE">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Path=IsActive,ElementName=uiProgressRingInstall}" Value="True">
@@ -251,7 +261,7 @@
                             </Style.Triggers>
                         </Style>
                     </Grid.Style>
-                    <mah:ToggleSwitch Header="Create Shortcut" RenderTransformOrigin="0,0" Margin="0,0,-80,-40" IsOn="{Binding CreateShortcut,Mode=TwoWay}" FocusVisualStyle="{x:Null}">
+                    <mah:ToggleSwitch Header="Create Shortcut" RenderTransformOrigin="0,0" Margin="1,0,-80,-40" IsOn="{Binding CreateShortcut,Mode=TwoWay}" FocusVisualStyle="{x:Null}">
                         <mah:ToggleSwitch.RenderTransform>
                             <ScaleTransform ScaleX="0.2" ScaleY="0.2"/>
                         </mah:ToggleSwitch.RenderTransform>
@@ -262,9 +272,6 @@
                         <Style TargetType="Grid" BasedOn="{StaticResource HoverEffect}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Path=Game.Type}" Value="UNDETECTABLE">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Path=Game.Type}" Value="LINUX_PORTABLE">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Path=IsActive,ElementName=uiProgressRingInstall}" Value="True">

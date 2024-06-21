@@ -131,7 +131,7 @@ namespace gamevault.ViewModels
         {
             get
             {
-                return Enum.GetValues(typeof(GameType)).Cast<GameType>().Where(v => v != GameType.UNDETECTABLE && v != GameType.LINUX_PORTABLE).ToDictionary(v => v, v => new EnumDescriptionConverter().Convert(v, null, null, null) as string);
+                return Enum.GetValues(typeof(GameType)).Cast<GameType>().Where(v => v != GameType.UNDETECTABLE).ToDictionary(v => v, v => new EnumDescriptionConverter().Convert(v, null, null, null) as string);
             }
         }
     }
