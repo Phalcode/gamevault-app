@@ -176,5 +176,22 @@ namespace gamevault.UserControls
             }
             return false;
         }
+
+        private async void DeleteAllDownloads_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to delete all Downloads?\nThis cannot be undone.", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+
+            if (result == MessageDialogResult.Affirmative)
+            {
+                try
+                {
+                    for (int count = DownloadsViewModel.Instance.DownloadedGames.Count - 1; count >= 0; count--)
+                    {
+                        await DownloadsViewModel.Instance.DownloadedGames[count].DeleteFile(false);
+                    }
+                }
+                catch { }
+            }
+        }
     }
 }

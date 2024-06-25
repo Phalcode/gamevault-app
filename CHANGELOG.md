@@ -1,9 +1,12 @@
 # GameVault App Changelog
 
 ## 1.11.0.0
-Recommended Gamevault Server Version: `v12.1.3`
+Recommended Gamevault Server Version: `v12.2.0`
 ### Changes
 
+- You can now delete all downloads at once
+- Added setting to automatically delete files from portable games after successful installation
+- Added setting to automatically install portable games
 - Ability to change and overwrite the Installation Procedure
 - Desktop shortcuts start the game via GameVault. So changed executable or parameters are updated immediately as well.
 - Option to create a shortcut upon clicking install. Remembers the last input as default.

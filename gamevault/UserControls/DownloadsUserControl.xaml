@@ -12,7 +12,19 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Grid.Row="0">
-            <TextBlock Text="Downloads" FontSize="35" Margin="20,0,0,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+            <Grid>
+                <TextBlock Text="Downloads" FontSize="35" Margin="20,0,0,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+                <Grid Style="{DynamicResource HoverEffect}" Background="Transparent" ToolTip="Delete all Downloads" Cursor="Hand" HorizontalAlignment="Right" Width="30" Height="30" Margin="0,0,2,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="DeleteAllDownloads_Click">
+                    <Path Data="{StaticResource IconTrash}" Fill="IndianRed" Margin="0,0,-20,-20">
+                        <Path.RenderTransform>
+                            <ScaleTransform ScaleX="1.3" ScaleY="1.3"/>
+                        </Path.RenderTransform>
+                    </Path>
+                    <Grid.RenderTransform>
+                        <ScaleTransform/>
+                    </Grid.RenderTransform>
+                </Grid>
+            </Grid>
         </Border>
         <TextBlock Grid.Row="1" Text="Downloads empty" FontSize="50" HorizontalAlignment="Center" VerticalAlignment="Center">
             <TextBlock.Style>

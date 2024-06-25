@@ -166,7 +166,7 @@
                         <TextBlock Text="{Binding InstallPath}" FontSize="3" IsHitTestVisible="False" Foreground="#FF424242" HorizontalAlignment="Left"/>
                     </Border>
 
-                    <local:IconButton Kind="Primary" Text="Install" FontSize="5" Icon="{StaticResource IconInstalledGamesSettings}" IconScale="0.29" IconMargin="-8,-7,-5.5,-7" CornerRadius="2" Height="9" Width="34" BorderThickness="0.2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,1,0" Click="Install_Click">
+                    <local:IconButton x:Name="uiBtnInstallSetup" Kind="Primary" Text="Install" FontSize="5" Icon="{StaticResource IconInstalledGamesSettings}" IconScale="0.29" IconMargin="-8,-7,-5.5,-7" CornerRadius="2" Height="9" Width="34" BorderThickness="0.2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,1,0" Click="Install_Click">
                         <local:IconButton.Style>
                             <Style TargetType="{x:Type local:IconButton}" BasedOn="{StaticResource {x:Type local:IconButton}}">
                                 <Style.Triggers>
@@ -200,7 +200,7 @@
 
                     <TextBlock FontSize="4" TextWrapping="Wrap" Text="This is a Portable Game, so there's no need for any setup. Once you click 'Install', the files will be automatically moved to the installation folder." MaxWidth="126" Margin="0,18,0,0"/>
 
-                    <local:IconButton Kind="Primary" Text="Install" FontSize="5" Icon="{StaticResource IconInstalledGamesSettings}" IconScale="0.29" IconMargin="-8,-7,-5.5,-7" CornerRadius="2" Height="9" Width="34" BorderThickness="0.2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,1,0" Click="Install_Click"/>
+                    <local:IconButton x:Name="uiBtnInstallPortable" Kind="Primary" Text="Install" FontSize="5" Icon="{StaticResource IconInstalledGamesSettings}" IconScale="0.29" IconMargin="-8,-7,-5.5,-7" CornerRadius="2" Height="9" Width="34" BorderThickness="0.2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,1,0" Click="Install_Click"/>
                 </Grid>
                 <Grid>
                     <Grid.Style>

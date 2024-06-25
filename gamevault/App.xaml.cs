@@ -298,5 +298,12 @@ namespace gamevault
                 Directory.CreateDirectory(AppFilePath.ThemesLoadDir);
             }
         }
+        public bool IsWindowActiveAndControlInFocus(MainControl control)
+        {
+            if (Current.MainWindow == null)
+                return false;
+
+            return Current.MainWindow.IsActive && MainWindowViewModel.Instance.ActiveControlIndex == (int)control;
+        }
     }
 }

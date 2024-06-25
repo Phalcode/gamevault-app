@@ -198,7 +198,8 @@ namespace gamevault.UserControls
 
                 if (downloadRetryTimer.Data != "error")
                 {
-                    ToastMessageHelper.CreateToastMessage("Download Failed", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.BoxImage.ID}");
+                    if (!App.Instance.IsWindowActiveAndControlInFocus(MainControl.Downloads))
+                        ToastMessageHelper.CreateToastMessage("Download Failed", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.BoxImage.ID}");
                 }
                 downloadRetryTimer.Start();
 
@@ -308,7 +309,10 @@ namespace gamevault.UserControls
                 Directory.CreateDirectory(ViewModel.InstallPath);
             }
             MainWindowViewModel.Instance.Library.GetGameInstalls().AddSystemFileWatcher(ViewModel.InstallPath);
-            ToastMessageHelper.CreateToastMessage("Download Complete", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.BoxImage.ID}");
+
+            if (!App.Instance.IsWindowActiveAndControlInFocus(MainControl.Downloads))
+                ToastMessageHelper.CreateToastMessage("Download Complete", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.BoxImage.ID}");
+
             if (SettingsViewModel.Instance.AutoExtract)
             {
                 App.Current.Dispatcher.Invoke((Action)async delegate
@@ -388,6 +392,7 @@ namespace gamevault.UserControls
 
                     DownloadsViewModel.Instance.DownloadedGames.Remove(this);
 
+                    //Delete Installation Directory if it is empty (Because GV should not create a filewatcher for it anymore)
                     if (Directory.Exists(ViewModel.InstallPath) && !Directory.EnumerateFileSystemEntries(ViewModel.InstallPath).Any())
                     {
                         Directory.Delete(ViewModel.InstallPath);
@@ -480,10 +485,23 @@ namespace gamevault.UserControls
                 Preferences.Set(AppConfigKey.ExtractionFinished, "1", $"{m_DownloadPath}\\Extract\\gamevault-metadata");
                 ViewModel.State = "Extracted";
                 uiBtnExtract.Text = "Re-Extract";
-                uiBtnInstall.IsEnabled = true;
+
                 ViewModel.InstallationStepperProgress = 1;
                 ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
-                ToastMessageHelper.CreateToastMessage("Extraction Complete", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.BoxImage.ID}");
+
+                if (!App.Instance.IsWindowActiveAndControlInFocus(MainControl.Downloads))
+                    ToastMessageHelper.CreateToastMessage("Extraction Complete", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.BoxImage.ID}");
+
+                if (SettingsViewModel.Instance.AutoInstallPortable && (ViewModel.Game.Type == GameType.WINDOWS_PORTABLE || ViewModel.Game.Type == GameType.LINUX_PORTABLE))
+                {
+                    await Task.Delay(1000);//Just to be sure the extraction stream is closed and the files are ready to copy
+                    await Install();
+                }
+                else
+                {
+                    uiBtnInstall.IsEnabled = true;
+                }
+
                 UpdateDataSizeUI();
             }
             else
@@ -508,7 +526,8 @@ namespace gamevault.UserControls
                 else
                 {
                     ViewModel.State = "Something went wrong during extraction";
-                    ToastMessageHelper.CreateToastMessage("Extraction Failed", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.BoxImage.ID}");
+                    if (!App.Instance.IsWindowActiveAndControlInFocus(MainControl.Downloads))
+                        ToastMessageHelper.CreateToastMessage("Extraction Failed", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.BoxImage.ID}");
                 }
                 ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
             }
@@ -553,9 +572,14 @@ namespace gamevault.UserControls
                 uiCbSetupExecutable.ItemsSource = null;
             }
         }
-        private async void Install_Click(object sender, RoutedEventArgs e)
+        private async void Install_Click(object s, RoutedEventArgs e)
         {
-            ((FrameworkElement)sender).IsEnabled = false;
+            await Install();
+        }
+        private async Task Install()
+        {
+            uiBtnInstallPortable.IsEnabled = false;
+            uiBtnInstallSetup.IsEnabled = false;
             uiBtnExtract.IsEnabled = false;
             try
             {
@@ -589,7 +613,10 @@ namespace gamevault.UserControls
                 });
                 uiBtnInstall.IsEnabled = false;
                 uiProgressRingInstall.IsActive = false;
-                ((FrameworkElement)sender).IsEnabled = true;
+
+                uiBtnInstallPortable.IsEnabled = true;
+                uiBtnInstallSetup.IsEnabled = true;
+
                 ViewModel.State = "Downloaded";
                 uiBtnExtract.Text = "Extract";
                 if (error)
@@ -601,6 +628,12 @@ namespace gamevault.UserControls
                     MainWindowViewModel.Instance.AppBarText = $"Successfully installed '{ViewModel.Game.Title}'";
                     ViewModel.InstallationStepperProgress = 2;
                     ViewModel.State = "Installed";
+
+                    //Auto delete files of portable games after successful installation
+                    if (SettingsViewModel.Instance.AutoDeletePortableGameFiles)
+                    {
+                        await DeleteFile(false);
+                    }
                 }
             }
             else if (ViewModel.Game.Type == GameType.WINDOWS_SETUP)
@@ -643,7 +676,8 @@ namespace gamevault.UserControls
                 {
                     MainWindowViewModel.Instance.AppBarText = $"Could not find executable '{setupEexecutable}'";
                 }
-                 ((FrameworkElement)sender).IsEnabled = true;
+                uiBtnInstallPortable.IsEnabled = true;
+                uiBtnInstallSetup.IsEnabled = true;
             }
             uiInstallOptions.Visibility = System.Windows.Visibility.Collapsed;
             uiProgressRingInstall.IsActive = false;
