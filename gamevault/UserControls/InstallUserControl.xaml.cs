@@ -1,9 +1,11 @@
 ﻿using gamevault.Helper;
 using gamevault.Models;
 using gamevault.ViewModels;
+using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -43,7 +45,7 @@ namespace gamevault.UserControls
             Dictionary<int, string> foundGames = new Dictionary<int, string>();
             Game[]? games = await Task<Game[]>.Run(() =>
             {
-                string installationPath = $"{SettingsViewModel.Instance.RootPath}\\GameVault\\Installations";
+                string installationPath = Path.Combine(SettingsViewModel.Instance.RootPath, "GameVault\\Installations");
                 if (SettingsViewModel.Instance.RootPath != string.Empty && Directory.Exists(installationPath))
                 {
                     foreach (string dir in Directory.GetDirectories(installationPath))
@@ -145,6 +147,7 @@ namespace gamevault.UserControls
                 InstallViewModel.Instance.InstalledGamesFilter = CollectionViewSource.GetDefaultView(InstallViewModel.Instance.InstalledGames);
             }
             gamesRestored = true;
+            App.Instance.SetJumpListGames();
         }
         private async Task<ObservableCollection<KeyValuePair<Game, string>>> SortInstalledGamesByLastPlayed(ObservableCollection<KeyValuePair<Game, string>> collection)
         {
@@ -230,7 +233,7 @@ namespace gamevault.UserControls
                 {
                     App.Current.Dispatcher.Invoke((Action)delegate
                     {
-                        InstallViewModel.Instance.InstalledGames.Insert(0,new KeyValuePair<Game, string>(game, dir));
+                        InstallViewModel.Instance.InstalledGames.Insert(0, new KeyValuePair<Game, string>(game, dir));
                         SetLastPlayedGame(game.ID);
                     });
                 }
@@ -267,7 +270,7 @@ namespace gamevault.UserControls
                 return JsonSerializer.Deserialize<string[]>(result);
             }
             catch { return null; }
-        }      
+        }
         private void GameCard_Clicked(object sender, RoutedEventArgs e)
         {
             if (((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key == null)
@@ -293,7 +296,7 @@ namespace gamevault.UserControls
         private void Play_Click(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            PlayGame(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key.ID);           
+            PlayGame(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key.ID);
         }
 
         public static void PlayGame(int gameId)
@@ -341,13 +344,13 @@ namespace gamevault.UserControls
                         MainWindowViewModel.Instance.AppBarText = $"Can not execute '{savedExecutable}'";
                     }
                 }
-                MainWindowViewModel.Instance.Library.GetGameInstalls().SetLastPlayedGame(result.Key.ID);              
+                MainWindowViewModel.Instance.Library.GetGameInstalls().SetLastPlayedGame(result.Key.ID);
             }
             else
             {
                 MainWindowViewModel.Instance.AppBarText = $"Could not find Executable '{savedExecutable}'";
             }
-        }       
+        }
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
@@ -384,6 +387,59 @@ namespace gamevault.UserControls
         private void InstalledGames_Toggled(object sender, RoutedEventArgs e)
         {
             Preferences.Set(AppConfigKey.InstalledGamesOpen, uiInstalledGames.IsExpanded ? "1" : "0", AppFilePath.UserFile);
+        }
+
+        private void RestoreRows()
+        {
+            string result = Preferences.Get(AppConfigKey.InstalledGamesRows, AppFilePath.UserFile);
+            if (int.TryParse(result, out int rows) && rows > 0)
+            {
+                uiRowsUpDown.Value = rows;
+            }
+            else
+            {
+                uiRowsUpDown.Value = 1;
+            }
+        }
+        private void Rows_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double?> e)
+        {
+            try
+            {
+                if (InstallViewModel.Instance.InstalledGames.Count == 0)
+                    return;
+                if (uiRowsUpDown.Value == null)
+                {
+                    RestoreRows();
+                    return;
+                }
+                int calcRows = (InstallViewModel.Instance.InstalledGames.Count / 10);
+                if ((int)uiRowsUpDown.Value > calcRows)
+                {
+
+                    if (InstallViewModel.Instance.InstalledGames.Count % 10 > 0)
+                    {
+                        calcRows += 1;
+                        InstallViewModel.Instance.Colums = 10;
+                    }
+                    else
+                    {
+                        InstallViewModel.Instance.Colums = 0;
+                    }
+                    InstallViewModel.Instance.Rows = calcRows;
+                }
+                else
+                {
+                    InstallViewModel.Instance.Rows = (int)uiRowsUpDown.Value;
+                    InstallViewModel.Instance.Colums = 0;
+                }
+                Preferences.Set(AppConfigKey.InstalledGamesRows, uiRowsUpDown.Value, AppFilePath.UserFile);
+            }
+            catch { }
+        }
+
+        private void Collection_Updated(object sender, RoutedPropertyChangedEventArgs<double?> e)
+        {
+            Rows_ValueChanged(null, null);
         }
     }
 }

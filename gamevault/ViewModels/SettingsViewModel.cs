@@ -35,6 +35,8 @@ namespace gamevault.ViewModels
         private bool m_BackgroundStart { get; set; }
         private bool m_LibStartup { get; set; }
         private bool m_AutoExtract { get; set; }
+        private bool autoInstallPortable { get; set; }
+        private bool autoDeletePortableGameFiles { get; set; }
         private string m_ServerUrl { get; set; }
         private float m_ImageCacheSize { get; set; }
         private float m_OfflineCacheSize { get; set; }
@@ -50,17 +52,25 @@ namespace gamevault.ViewModels
             UserName = Preferences.Get(AppConfigKey.Username, AppFilePath.UserFile);
             RootPath = Preferences.Get(AppConfigKey.RootPath, AppFilePath.UserFile);
             ServerUrl = Preferences.Get(AppConfigKey.ServerUrl, AppFilePath.UserFile, true);
+           
             m_BackgroundStart = (Preferences.Get(AppConfigKey.BackgroundStart, AppFilePath.UserFile) == "1"); OnPropertyChanged(nameof(BackgroundStart));
             m_AutoExtract = (Preferences.Get(AppConfigKey.AutoExtract, AppFilePath.UserFile) == "1"); OnPropertyChanged(nameof(AutoExtract));
+            autoDeletePortableGameFiles = Preferences.Get(AppConfigKey.AutoDeletePortable, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(AutoDeletePortableGameFiles));
 
-            string libstartup = Preferences.Get(AppConfigKey.LibStartup, AppFilePath.UserFile);
-            if (libstartup == string.Empty)
+            string autoInstallPortableStr = Preferences.Get(AppConfigKey.AutoInstallPortable, AppFilePath.UserFile);
+            if (string.IsNullOrWhiteSpace(autoInstallPortableStr) || autoInstallPortableStr == "1")
+            {
+                autoInstallPortable = true; OnPropertyChanged(nameof(AutoInstallPortable));
+            }
+
+            string libstartupStr = Preferences.Get(AppConfigKey.LibStartup, AppFilePath.UserFile);
+            if (libstartupStr == string.Empty)
             {
                 LibStartup = true;
             }
             else
             {
-                m_LibStartup = (libstartup == "1"); OnPropertyChanged(nameof(LibStartup));
+                m_LibStartup = (libstartupStr == "1"); OnPropertyChanged(nameof(LibStartup));
             }
             if (long.TryParse(Preferences.Get(AppConfigKey.DownloadLimit, AppFilePath.UserFile), out long downloadLimitResult))
             {
@@ -127,6 +137,36 @@ namespace gamevault.ViewModels
                     stringValue = "0";
                 }
                 Preferences.Set(AppConfigKey.AutoExtract, stringValue, AppFilePath.UserFile);
+            }
+        }
+        public bool AutoInstallPortable
+        {
+            get { return autoInstallPortable; }
+            set
+            {
+                autoInstallPortable = value;
+                OnPropertyChanged();
+                string stringValue = "1";
+                if (!autoInstallPortable)
+                {
+                    stringValue = "0";
+                }
+                Preferences.Set(AppConfigKey.AutoInstallPortable, stringValue, AppFilePath.UserFile);
+            }
+        }
+        public bool AutoDeletePortableGameFiles
+        {
+            get { return autoDeletePortableGameFiles; }
+            set
+            {
+                autoDeletePortableGameFiles = value;
+                OnPropertyChanged();
+                string stringValue = "1";
+                if (!autoDeletePortableGameFiles)
+                {
+                    stringValue = "0";
+                }
+                Preferences.Set(AppConfigKey.AutoDeletePortable, stringValue, AppFilePath.UserFile);
             }
         }
         public string ServerUrl
@@ -214,6 +254,6 @@ namespace gamevault.ViewModels
     {
         public string Key { get; set; }
         public string Value { get; set; }
-        public bool IsPlus { get; set; }        
+        public bool IsPlus { get; set; }
     }
 }

@@ -173,6 +173,7 @@ namespace gamevault.UserControls
                             Directory.Delete(ViewModel.Directory, true);
 
                         InstallViewModel.Instance.InstalledGames.Remove(InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).First());
+                        DesktopHelper.RemoveShotcut(ViewModel.Game);
                         MainWindowViewModel.Instance.ClosePopup();
                     }
                     catch
@@ -227,6 +228,7 @@ namespace gamevault.UserControls
                                     }
 
                                     InstallViewModel.Instance.InstalledGames.Remove(InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).First());
+                                    DesktopHelper.RemoveShotcut(ViewModel.Game);
                                 }
                                 catch { }
                             }
@@ -383,11 +385,12 @@ namespace gamevault.UserControls
                 {
                     if (!ContainsValueFromIgnoreList(entry))
                     {
-                        if (File.Exists($"{directory}\\gamevault-exec"))
+                        if (!File.Exists($"{directory}\\gamevault-exec"))
                         {
-                            Preferences.Set(AppConfigKey.Executable, entry, $"{directory}\\gamevault-exec");
-                            return true;
+                            File.Create($"{directory}\\gamevault-exec").Close();
                         }
+                        Preferences.Set(AppConfigKey.Executable, entry, $"{directory}\\gamevault-exec");
+                        return true;
                     }
                 }
             }
@@ -409,37 +412,14 @@ namespace gamevault.UserControls
                 if (Directory.Exists(ViewModel.Directory))
                 {
                     Preferences.Set(AppConfigKey.Executable, SavedExecutable, $"{ViewModel.Directory}\\gamevault-exec");
+                    DesktopHelper.RemoveShotcut(ViewModel.Game);
+                    DesktopHelper.CreateShortcut(ViewModel.Game, SavedExecutable, false);
                 }
             }
         }
         private async void CreateDesktopShortcut_Click(object sender, RoutedEventArgs e)
         {
-            if (!File.Exists(SavedExecutable))
-            {
-                MainWindowViewModel.Instance.AppBarText = "No valid Executable set";
-                return;
-            }
-            MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Do you want to create a desktop shortcut for the current selected executable?", "",
-                MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
-            if (result == MessageDialogResult.Affirmative)
-            {
-                try
-                {
-                    string desktopDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-                    string shortcutPath = desktopDir + @"\\" + Path.GetFileNameWithoutExtension(SavedExecutable) + ".url";
-
-                    using (StreamWriter writer = new StreamWriter(shortcutPath))
-                    {
-                        writer.Write("[InternetShortcut]\r\n");
-                        writer.Write("URL=file:///" + SavedExecutable.Replace('\\', '/') + "\r\n");
-                        writer.Write("IconIndex=0\r\n");
-                        writer.Write("IconFile=" + SavedExecutable.Replace('\\', '/') + "\r\n");
-                        writer.WriteLine($"WorkingDirectory={Path.GetDirectoryName(SavedExecutable).Replace('\\', '/')}");
-                        writer.Flush();
-                    }
-                }
-                catch { }
-            }
+            await DesktopHelper.CreateShortcut(ViewModel.Game, SavedExecutable, true);
         }
 
         private void LaunchParameter_Changed(object sender, RoutedEventArgs e)

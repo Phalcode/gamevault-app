@@ -83,6 +83,12 @@ namespace gamevault.Models
         public virtual int? GameId { get; set; } = null;
 
         /// <summary>
+        /// Executes the Command of the Jumplistitem clicked
+        /// </summary>
+        [Option("jumplistcommand", Required = false, Hidden = true)]
+        public virtual int? JumpListCommand { get; set; } = null;
+
+        /// <summary>
         /// Whether or not to auto install (used by <see cref="ActionEnum.Start"/> ).
         /// </summary>
         [Option("autoinstall", Required = false, Hidden = true)]
@@ -118,6 +124,10 @@ namespace gamevault.Models
             { nameof(GameId), (
                 get: opt => opt.GameId.HasValue ? opt.GameId.ToString() : null,
                 set: (opt, val) => { if (int.TryParse(val, out var id)) opt.GameId = id; }) },
+
+            { nameof(JumpListCommand), (
+                get: opt => opt.JumpListCommand.HasValue ? opt.JumpListCommand.ToString() : null,
+                set: (opt, val) => { if (int.TryParse(val, out var id)) opt.JumpListCommand = id; }) },
 
             { nameof(AutoInstall), (
                 get: opt => opt.AutoInstall.HasValue ? opt.AutoInstall.ToString() : null,
@@ -257,6 +267,9 @@ $",
 
         [Option("gameid", Required = false, HelpText = $"The {nameof(Game.ID)} of the game to show, or null to simply open GameVault.", Default = null)]
         public override int? GameId { get => base.GameId; set => base.GameId = value; }
+
+        [Option("jumplistcommand", Required = false, HelpText = $"Executes the command of the jump list item clicked", Default = null)]
+        public override int? JumpListCommand { get => base.JumpListCommand.GetValueOrDefault(); set => base.JumpListCommand = value; }
     }
 
     [Verb("install", HelpText = "Install a game from GameVault.")]

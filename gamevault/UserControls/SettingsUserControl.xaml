@@ -33,25 +33,9 @@
                 <TabItem Header="Application">
                     <StackPanel Margin="30,0,0,0">
                         <StackPanel Margin="0,0,0,0">
-                            <TextBlock Text="Extraction" FontSize="20" FontWeight="Bold"/>
-                            <mah:ToggleSwitch Header="Auto-Extract Downloaded Games" Margin="10,10,0,0" IsOn="{Binding AutoExtract}"/>
-                            <GroupBox Header="Default extraction password" HorizontalAlignment="Left" Width="510" mah:ControlsHelper.CornerRadius="4" Margin="10,10,0,0">
-                                <StackPanel>
-                                    <TextBlock Text="Set a password that will automatically be tried when extracting games." Margin="1,0,0,0" TextWrapping="Wrap" FontSize="14"/>
-                                    <PasswordBox x:Name="uiPwExtraction" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Optional Password" mah:ControlsHelper.CornerRadius="5" Margin="0,5,0,0"/>
-                                    <local:IconButton Text="Save" FontSize="15" Icon="{StaticResource IconGameSettingsSave}" IconMargin="0,0,5,2" Width="80" Height="30" Margin="0,5,0,0" HorizontalAlignment="Left" Click="ExtractionPasswordSave_Click"/>
-                                </StackPanel>
-                            </GroupBox>
-                        </StackPanel>
-                        <StackPanel Margin="0,10,0,0">
                             <TextBlock Text="Server Settings" FontSize="20" FontWeight="Bold"/>
                             <settingsComponents:ServerUrlUserControl Margin="10,10,0,0" HorizontalAlignment="Left"/>
-                            <GroupBox Header="Download Limit" Margin="10,10,0,0" Width="510" HorizontalAlignment="Left" mah:ControlsHelper.CornerRadius="4">
-                                <StackPanel>
-                                    <TextBox Text="{Binding DownloadLimitUIValue,UpdateSourceTrigger=PropertyChanged}" Margin="0,10,0,5" MaxLength="8" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.Watermark="{Binding DownloadLimitUIValue,Converter={StaticResource downloadLimitConv}}" PreviewTextInput="DownloadLimit_InputValidation" TextChanged="DownloadLimit_InputValidation" KeyDown="DownloadLimit_Save"/>
-                                    <local:IconButton Text="Save" FontSize="15" Icon="{StaticResource IconGameSettingsSave}" IconMargin="0,0,5,2" Width="80" Height="30" HorizontalAlignment="Left" Click="DownloadLimit_Save"/>
-                                </StackPanel>
-                            </GroupBox>
+                            
                         </StackPanel>
                         <StackPanel Margin="0,10,0,0">
                             <TextBlock Text="Startup" FontSize="20" FontWeight="Bold"/>
@@ -90,6 +74,35 @@
                                 </ComboBox>
                                 <local:IconButton Text="Open Theme Folder" FontSize="15" Icon="{StaticResource IconGameSettingsFolder}" IconMargin="0,0,5,2" Width="175" Margin="10,0,0,0" Click="OpenThemeFolder_Click"/>
                             </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </TabItem>
+                <TabItem Header="Installation">
+                    <StackPanel Margin="30,0,0,0">
+                        <StackPanel Margin="0,0,0,0">
+                            <TextBlock Text="Download" FontSize="20" FontWeight="Bold"/>
+                            <GroupBox Header="Download Bandwidth Limit" Margin="10,10,0,0" Width="510" HorizontalAlignment="Left" mah:ControlsHelper.CornerRadius="4">
+                                <StackPanel>
+                                    <TextBox Text="{Binding DownloadLimitUIValue,UpdateSourceTrigger=PropertyChanged}" Margin="0,10,0,5" MaxLength="8" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.Watermark="{Binding DownloadLimitUIValue,Converter={StaticResource downloadLimitConv}}" PreviewTextInput="DownloadLimit_InputValidation" TextChanged="DownloadLimit_InputValidation" KeyDown="DownloadLimit_Save"/>
+                                    <local:IconButton Text="Save" FontSize="15" Icon="{StaticResource IconGameSettingsSave}" IconMargin="0,0,5,2" Width="80" Height="30" HorizontalAlignment="Left" Click="DownloadLimit_Save"/>
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
+                        <StackPanel Margin="0,10,0,0">
+                            <TextBlock Text="Extraction" FontSize="20" FontWeight="Bold"/>
+                            <mah:ToggleSwitch Header="Auto-Extract Downloaded Games" Margin="10,10,0,0" IsOn="{Binding AutoExtract}"/>
+                            <GroupBox Header="Default extraction password" HorizontalAlignment="Left" Width="510" mah:ControlsHelper.CornerRadius="4" Margin="10,10,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="Set a password that will automatically be tried when extracting games." Margin="1,0,0,0" TextWrapping="Wrap" FontSize="14"/>
+                                    <PasswordBox x:Name="uiPwExtraction" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Optional Password" mah:ControlsHelper.CornerRadius="5" Margin="0,5,0,0"/>
+                                    <local:IconButton Text="Save" FontSize="15" Icon="{StaticResource IconGameSettingsSave}" IconMargin="0,0,5,2" Width="80" Height="30" Margin="0,5,0,0" HorizontalAlignment="Left" Click="ExtractionPasswordSave_Click"/>
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
+                        <StackPanel Margin="0,10,0,0">
+                            <TextBlock Text="Installation" FontSize="20" FontWeight="Bold"/>
+                            <mah:ToggleSwitch Header="Auto-Install Portable Games" IsOn="{Binding AutoInstallPortable}" Margin="10,10,0,0"/>
+                            <mah:ToggleSwitch Header="Auto-Delete Install files of Portable Games on successful installation" IsOn="{Binding AutoDeletePortableGameFiles}" Margin="10,10,0,0"/>
                         </StackPanel>
                     </StackPanel>
                 </TabItem>

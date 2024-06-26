@@ -1,5 +1,23 @@
 # GameVault App Changelog
 
+## 1.11.0.0
+Recommended Gamevault Server Version: `v12.2.0`
+### Changes
+
+- You can now delete all downloads at once
+- Added setting to automatically delete files from portable games after successful installation
+- Added setting to automatically install portable games
+- Ability to change and overwrite the Installation Procedure
+- Desktop shortcuts start the game via GameVault. So changed executable or parameters are updated immediately as well.
+- Option to create a shortcut upon clicking install. Remembers the last input as default.
+- Implemented Jumplist to taskbar icon.
+- Allow user to specify rows displayed of installed games.
+- Notifications about download/extraction events now also display the game box image
+- Library filter is set when you click on game type/Genre/Tag in the gameview.
+- Added setting to the admin panel to hide/show deleted users
+- Bug fix: Crash on local download directory has wrong name format
+- Bug fix: The header of the image downloader was sometimes encoded incorrectly
+
 ## 1.10.1.0
 Recommended Gamevault Server Version: `v12.1.1`
 ### Changes

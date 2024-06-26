@@ -16,6 +16,9 @@ using System.Windows.Threading;
 using System.Text.Json;
 using System.Diagnostics;
 using System.Drawing;
+using System.Windows.Shell;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 
 namespace gamevault
 {
@@ -24,12 +27,32 @@ namespace gamevault
     /// </summary>
     public partial class App : Application
     {
+        #region Singleton
+        private static App instance = null;
+        private static readonly object padlock = new object();
+
+        public static App Instance
+        {
+            get
+            {
+                lock (padlock)
+                {
+                    if (instance == null)
+                    {
+                        instance = new App();
+                    }
+                    return instance;
+                }
+            }
+        }
+        #endregion
         public static bool ShowToastMessage = true;
         public static bool IsWindowsPackage = false;
 
         public static CommandOptions? CommandLineOptions { get; internal set; } = null;
 
         private NotifyIcon m_Icon;
+        private JumpList jumpList;
 
         private GameTimeTracker m_gameTimeTracker;
 
@@ -77,9 +100,10 @@ namespace gamevault
             {
                 MainWindow.Hide();
             }
-
+#if WINDOWS
             InitNotifyIcon();
-
+            InitJumpList();
+#endif
             // After the app is created and most things are instantiated, handle any special command line stuff
             if (PipeServiceHandler.Instance != null)
             {
@@ -127,13 +151,55 @@ namespace gamevault
             m_Icon.MouseDoubleClick += NotifyIcon_DoubleClick;
             Stream iconStream = Application.GetResourceStream(new Uri("pack://application:,,,/gamevault;component/Resources/Images/icon.ico")).Stream;
             m_Icon.Icon = new System.Drawing.Icon(iconStream);
-            m_Icon.ContextMenuStrip = new ContextMenuStrip();            
+            m_Icon.ContextMenuStrip = new ContextMenuStrip();
             m_Icon.ContextMenuStrip.Items.Add("Library", new Bitmap(Application.GetResourceStream(new Uri("pack://application:,,,/gamevault;component/Resources/Images/ContextMenuIcon_Library.png")).Stream), Navigate_Tab_Click);
             m_Icon.ContextMenuStrip.Items.Add("Downloads", new Bitmap(Application.GetResourceStream(new Uri("pack://application:,,,/gamevault;component/Resources/Images/ContextMenuIcon_Downloads.png")).Stream), Navigate_Tab_Click);
             m_Icon.ContextMenuStrip.Items.Add("Community", new Bitmap(Application.GetResourceStream(new Uri("pack://application:,,,/gamevault;component/Resources/Images/ContextMenuIcon_Community.png")).Stream), Navigate_Tab_Click);
-            m_Icon.ContextMenuStrip.Items.Add("Settings", new Bitmap(Application.GetResourceStream(new Uri("pack://application:,,,/gamevault;component/Resources/Images/ContextMenuIcon_Settings.png")).Stream), Navigate_Tab_Click);           
+            m_Icon.ContextMenuStrip.Items.Add("Settings", new Bitmap(Application.GetResourceStream(new Uri("pack://application:,,,/gamevault;component/Resources/Images/ContextMenuIcon_Settings.png")).Stream), Navigate_Tab_Click);
             m_Icon.ContextMenuStrip.Items.Add("Exit", new Bitmap(Application.GetResourceStream(new Uri("pack://application:,,,/gamevault;component/Resources/Images/ContextMenuIcon_Exit.png")).Stream), NotifyIcon_Exit_Click);
             m_Icon.Visible = true;
+        }
+        private void InitJumpList()
+        {
+            jumpList = JumpList.GetJumpList(Application.Current);
+            if (jumpList == null)
+            {
+                jumpList = new JumpList();
+                JumpList.SetJumpList(Application.Current, jumpList);
+            }
+
+            JumpTask LibraryTask = new JumpTask() { Title = "Library", Description = "Open Library", CustomCategory = "Actions", ApplicationPath = Process.GetCurrentProcess().MainModule.FileName, Arguments = "show --jumplistcommand=0" };
+            JumpTask DownloadsTask = new JumpTask() { Title = "Downloads", Description = "Open Downloads", CustomCategory = "Actions", ApplicationPath = Process.GetCurrentProcess().MainModule.FileName, Arguments = "show --jumplistcommand=1" };
+            JumpTask CommunityTask = new JumpTask() { Title = "Community", Description = "Open Community", CustomCategory = "Actions", ApplicationPath = Process.GetCurrentProcess().MainModule.FileName, Arguments = "show --jumplistcommand=2" };
+            JumpTask SettingsTask = new JumpTask() { Title = "Settings", Description = "Open Settings", CustomCategory = "Actions", ApplicationPath = Process.GetCurrentProcess().MainModule.FileName, Arguments = "show --jumplistcommand=3" };
+            JumpTask ExitTask = new JumpTask() { Title = "Exit", Description = "Exit GameVault", CustomCategory = "Actions", ApplicationPath = Process.GetCurrentProcess().MainModule.FileName, Arguments = "show --jumplistcommand=15" };
+            jumpList.JumpItems.Add(LibraryTask);
+            jumpList.JumpItems.Add(DownloadsTask);
+            jumpList.JumpItems.Add(CommunityTask);
+            jumpList.JumpItems.Add(SettingsTask);
+            jumpList.JumpItems.Add(ExitTask);
+
+        }
+        public void SetJumpListGames()
+        {
+            var lastGames = InstallViewModel.Instance.InstalledGames.Take(5).ToArray();
+            foreach (var game in lastGames)
+            {
+                if (!jumpList.JumpItems.OfType<JumpTask>().Any(jt => jt.Title == game.Key.Title))
+                {
+                    JumpTask gameTask = new JumpTask()
+                    {
+                        Title = game.Key.Title,
+                        CustomCategory = "Last Played",
+                        ApplicationPath = Process.GetCurrentProcess().MainModule.FileName,
+                        IconResourcePath = Preferences.Get(AppConfigKey.Executable, $"{game.Value}\\gamevault-exec"),
+                        Arguments = $"start --gameid={game.Key.ID}"
+                    };
+                    jumpList.JumpItems.Add(gameTask);
+                }
+            }
+
+            jumpList.Apply();
         }
         private void RestoreTheme()
         {
@@ -170,6 +236,10 @@ namespace gamevault
         }
 
         private async void NotifyIcon_Exit_Click(Object sender, EventArgs e)
+        {
+            await ExitApp();
+        }
+        public async Task ExitApp()
         {
             if ((DownloadsViewModel.Instance.DownloadedGames.Where(g => g.IsDownloading() == true)).Count() > 0)
             {
@@ -227,6 +297,13 @@ namespace gamevault
             {
                 Directory.CreateDirectory(AppFilePath.ThemesLoadDir);
             }
+        }
+        public bool IsWindowActiveAndControlInFocus(MainControl control)
+        {
+            if (Current.MainWindow == null)
+                return false;
+
+            return Current.MainWindow.IsActive && MainWindowViewModel.Instance.ActiveControlIndex == (int)control;
         }
     }
 }

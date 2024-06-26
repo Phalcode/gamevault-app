@@ -27,7 +27,7 @@ namespace gamevault
         /// <param name="args">Args passed to the application from the command line</param>
         [STAThread]
         public static void Main(string[] args)
-        {            
+        {
             //string msg = $"File:Program.cs - Method:Main - Arg Lenght: {args.Length} - Arg content: {string.Join(",", args)}";
             //System.Windows.MessageBox.Show(msg);
             CommandOptions cmdLineOptions;
@@ -163,9 +163,9 @@ namespace gamevault
         {
             App.CommandLineOptions = cmdLineOptions;
 
-            var app = new App();
-            app.InitializeComponent();
-            app.Run();
+
+            App.Instance.InitializeComponent();
+            App.Instance.Run();
         }
     }
 }

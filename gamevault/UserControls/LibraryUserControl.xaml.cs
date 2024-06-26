@@ -180,9 +180,25 @@ namespace gamevault.UserControls
             }
             ViewModel.FilterVisibility = ViewModel.FilterVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
         }
+        private void OpenFilterIfClosed()
+        {
+            if (!uiExpanderGameCards.IsExpanded)
+            {
+                uiExpanderGameCards.IsExpanded = true;
+            }
+            if(ViewModel.FilterVisibility == Visibility.Collapsed)
+            {
+                ViewModel.FilterVisibility = Visibility.Visible;
+            }      
+        }
         private async void ClearAllFilters_Click(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
+            ClearAllFilters();
+            await Search();
+        }
+        public void ClearAllFilters()
+        {
             uiFilterGameTypeSelector.ClearEntries();
             uiFilterGenreSelector.ClearEntries();
             uiFilterTagSelector.ClearEntries();
@@ -192,7 +208,6 @@ namespace gamevault.UserControls
             uiFilterEarlyAccess.IsChecked = false;
 
             RefreshFilterCounter();
-            await Search();
         }
         private async void Library_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
@@ -276,6 +291,7 @@ namespace gamevault.UserControls
         }
         private async void FilterUpdated(object sender, EventArgs e)
         {
+            OpenFilterIfClosed();
             RefreshFilterCounter();
             await Search();
         }

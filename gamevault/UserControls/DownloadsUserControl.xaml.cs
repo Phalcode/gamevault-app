@@ -36,14 +36,18 @@ namespace gamevault.UserControls
                  List<string> allIds = new List<string>();
                  foreach (string dir in Directory.GetDirectories(downloadPath))
                  {
-                     if (new DirectoryInfo(dir).GetFiles().Length == 0)
-                         continue;
+                     try
+                     {
+                         if (new DirectoryInfo(dir).GetFiles().Length == 0)
+                             continue;
 
-                     string dirName = dir.Substring(dir.LastIndexOf('\\'));
-                     string gameId = dirName.Substring(2, dirName.IndexOf(')') - 2);
+                         string dirName = dir.Substring(dir.LastIndexOf('\\'));
+                         string gameId = dirName.Substring(2, dirName.IndexOf(')') - 2);
 
-                     if (int.TryParse(gameId, out int id))
-                         allIds.Add(id.ToString());
+                         if (int.TryParse(gameId, out int id))
+                             allIds.Add(id.ToString());
+                     }
+                     catch { continue; }
                  }
                  if (allIds.Count == 0)
                      return null;
@@ -171,6 +175,23 @@ namespace gamevault.UserControls
                 }
             }
             return false;
+        }
+
+        private async void DeleteAllDownloads_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to delete all canceled and completed downloads?\n\nThis cannot be undone.", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+
+            if (result == MessageDialogResult.Affirmative)
+            {
+                try
+                {
+                    for (int count = DownloadsViewModel.Instance.DownloadedGames.Count - 1; count >= 0; count--)
+                    {
+                        await DownloadsViewModel.Instance.DownloadedGames[count].DeleteFile(false);
+                    }
+                }
+                catch { }
+            }
         }
     }
 }
