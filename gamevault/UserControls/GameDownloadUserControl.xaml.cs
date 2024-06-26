@@ -4,14 +4,11 @@ using gamevault.Models;
 using gamevault.ViewModels;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-using Microsoft.Toolkit.Uwp.Notifications;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.Http.Headers;
-using System.Runtime;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -349,18 +346,12 @@ namespace gamevault.UserControls
 
         private string CalculateTimeLeft(long? totalFileSize, long totalBytesRead, double tspanMilliseconds)
         {
-
-            //double tspanSeconds = tspanMilliseconds / 1000; // Convert milliseconds to seconds
-            //Debug.WriteLine($"{totalBytesRead / 100000}/{totalFileSize / 100000} - {tspanSeconds}");
-            //var averageSpeed = totalBytesRead / tspanSeconds;
             double timeLeftSeconds = (double)((totalFileSize - totalBytesRead) / downloadSpeedCalc.GetCurrentSpeed());
-
             TimeSpan t = TimeSpan.FromSeconds(0);
             if (timeLeftSeconds > 0 && !double.IsInfinity(timeLeftSeconds) && !double.IsNaN(timeLeftSeconds))
             {
                 t = TimeSpan.FromSeconds(timeLeftSeconds);
             }
-            //Debug.WriteLine(string.Format("{0:00}:{1:00}:{2:00}", ((int)t.TotalHours), t.Minutes, t.Seconds) + "\n");
             return string.Format("{0:00}:{1:00}:{2:00}", ((int)t.TotalHours), t.Minutes, t.Seconds);
         }
 
@@ -372,6 +363,12 @@ namespace gamevault.UserControls
 
         public async Task DeleteFile(bool confirm = true)
         {
+            if (IsDownloadActive)
+            {
+                MainWindowViewModel.Instance.AppBarText = "Can not delete during the download, extraction, installing process";
+                return;
+            }
+
             bool doDelete = true;
 
             if (confirm)
@@ -601,7 +598,6 @@ namespace gamevault.UserControls
                         if (!Directory.Exists(ViewModel.InstallPath))
                         {
                             Directory.CreateDirectory(ViewModel.InstallPath);
-                            //MainWindowViewModel.Instance.Installs.AddSystemFileWatcher(ViewModel.InstallPath);
                         }
                         else if (Directory.Exists($"{ViewModel.InstallPath}\\Files"))
                         {
