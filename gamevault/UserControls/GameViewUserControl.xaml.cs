@@ -233,5 +233,16 @@ namespace gamevault.UserControls
             }
             catch { }
         }
+
+        private void Share_Click(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                string shareLink = $"gamevault://show?gameid={ViewModel?.Game?.ID}";
+                Clipboard.SetText(shareLink);
+                MainWindowViewModel.Instance.AppBarText = "Sharelink copied to clipboard";
+            }
+            catch { }
+        }
     }
 }

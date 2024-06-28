@@ -51,11 +51,14 @@ namespace gamevault.Helper
             {
                 ResultType = BrowserResultType.UserCancel
             };
-        
+
             //signinWindow.Owner = App.Current.MainWindow;
             signinWindow.Closing += (s, e) =>
             {
-                semaphoreSlim.Release();
+                if (semaphoreSlim.CurrentCount == 0) // Ensure semaphore is not already released
+                {
+                    semaphoreSlim.Release();
+                }
                 webView.Dispose();
             };
 
@@ -72,7 +75,10 @@ namespace gamevault.Helper
                         Response = new Uri(e.Uri).AbsoluteUri
                     };
 
-                    semaphoreSlim.Release();
+                    if (semaphoreSlim.CurrentCount == 0) // Ensure semaphore is not already released
+                    {
+                        semaphoreSlim.Release();
+                    }
                     signinWindow.Close();
                 }
             };
@@ -102,6 +108,7 @@ namespace gamevault.Helper
 
             return browserResult;
         }
+
         public void ShowWindowIfHidden()
         {
             if (signinWindow.ShowInTaskbar == false)
