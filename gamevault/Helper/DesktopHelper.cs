@@ -55,5 +55,11 @@ namespace gamevault.Helper
             }
             catch { }
         }
+        public static bool ShortcutExists(Game game)
+        {
+            string desktopDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            string shortcutPath = desktopDir + @"\\" + game.Title + ".url";
+            return File.Exists(shortcutPath);
+        }
     }
 }

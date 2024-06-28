@@ -1,5 +1,14 @@
 # GameVault App Changelog
 
+## 1.11.1.0
+Recommended Gamevault Server Version: `v12.2.0`
+### Changes
+
+- Added share button to gameview
+- Bug fix: Desktop shortcut was created when opening the game settings
+- Bug fix: Crash on download/extraction notification if box image is not set
+- Bug fix: Rare crash on Phalcode sign-in window
+
 ## 1.11.0.0
 Recommended Gamevault Server Version: `v12.2.0`
 ### Changes

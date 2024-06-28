@@ -412,8 +412,11 @@ namespace gamevault.UserControls
                 if (Directory.Exists(ViewModel.Directory))
                 {
                     Preferences.Set(AppConfigKey.Executable, SavedExecutable, $"{ViewModel.Directory}\\gamevault-exec");
-                    DesktopHelper.RemoveShotcut(ViewModel.Game);
-                    DesktopHelper.CreateShortcut(ViewModel.Game, SavedExecutable, false);
+                    if (e.RemovedItems.Count > 0 && DesktopHelper.ShortcutExists(ViewModel.Game))
+                    {
+                        DesktopHelper.RemoveShotcut(ViewModel.Game);
+                        DesktopHelper.CreateShortcut(ViewModel.Game, SavedExecutable, false);
+                    }
                 }
             }
         }
