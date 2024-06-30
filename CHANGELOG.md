@@ -1,5 +1,11 @@
 # GameVault App Changelog
 
+## 1.11.2.0
+Recommended Gamevault Server Version: `v12.2.0`
+### Changes
+
+- Reversed buttons for row count for installed games section
+
 ## 1.11.1.0
 Recommended Gamevault Server Version: `v12.2.0`
 ### Changes
