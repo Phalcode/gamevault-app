@@ -19,6 +19,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using UserControl = System.Windows.Controls.UserControl;
+using Microsoft.IdentityModel.Tokens;
+using gamevault.Helper;
 
 namespace gamevault.UserControls
 {
@@ -33,8 +35,17 @@ namespace gamevault.UserControls
             this.DataContext = SettingsViewModel.Instance;
         }
 
-        private void Next_Clicked(object sender, RoutedEventArgs e)
+        private async void Next_Clicked(object sender, RoutedEventArgs e)
         {
+            if (uiTabControl.SelectedIndex == 2 && !(await LoginManager.Instance.IsServerAvailable()))
+            {
+                MessageDialogResult result = await((MetroWindow)App.Current.MainWindow).ShowMessageAsync("", $"The server URL is incorrect. Do you still want to continue?", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false, DialogMessageFontSize = 30 });
+                if (result != MessageDialogResult.Affirmative)
+                {
+                    return;
+                }
+            }
+
             uiTabControl.SelectedIndex += 1;
         }
 
@@ -43,15 +54,15 @@ namespace gamevault.UserControls
             uiTabControl.SelectedIndex -= 1;
         }
 
-        private void Login_Clicked(object sender, RoutedEventArgs e)
+        public void Login_Clicked(object sender, RoutedEventArgs e)
         {
-            uiLoginRegisterPopup.Child = new LoginUserControl();
+            uiLoginRegisterPopup.Child = new LoginUserControl(this);
             uiLoginRegisterPopup.IsOpen = true;
         }
 
         private void Register_Clicked(object sender, RoutedEventArgs e)
         {
-            uiLoginRegisterPopup.Child = new RegisterUserControl();
+            uiLoginRegisterPopup.Child = new RegisterUserControl(this);
             uiLoginRegisterPopup.IsOpen = true;
         }
 
@@ -70,12 +81,8 @@ namespace gamevault.UserControls
 
         private async void Finish_Clicked(object sender, RoutedEventArgs e)
         {
-            MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync("", $"Do you want to leave the setup wizard?", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false, DialogMessageFontSize = 50 });
-            if (result == MessageDialogResult.Affirmative)
-            {
                 MainWindowViewModel.Instance.SetActiveControl(null);
                 MainWindowViewModel.Instance.SetActiveControl(MainControl.Library);
-            }
         }
     }
 }

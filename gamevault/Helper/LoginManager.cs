@@ -77,6 +77,13 @@ namespace gamevault.Helper
         {
             LoginState state = LoginState.Success;
             if (IsLoggedIn()) return;
+
+            if (Preferences.Get(AppConfigKey.Username, AppFilePath.UserFile).IsNullOrEmpty() && !SettingsViewModel.Instance.ServerUrl.IsNullOrEmpty())
+            {
+                m_LoginState = LoginState.Unauthorized;
+                return;
+            }
+
             User? user = await Task<User>.Run(() =>
             {
                 try
@@ -285,6 +292,20 @@ namespace gamevault.Helper
                     }
             }
             return LoginState.Error;
+        }
+
+        public async Task<bool> IsServerAvailable()
+        {
+            if (SettingsViewModel.Instance.ServerUrl.IsNullOrEmpty())
+                return false;
+
+            try
+            {
+                if ((await WebHelper.GetRequestAsync(SettingsViewModel.Instance.ServerUrl)).Contains("GameVault"))
+                    return true;
+            }
+            catch { }
+            return false;
         }
     }
 }

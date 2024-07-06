@@ -7,10 +7,10 @@
              xmlns:local="clr-namespace:gamevault.UserControls.SettingsComponents"
              xmlns:controls="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
     <Border BorderBrush="{DynamicResource MahApps.Brushes.Control.Border}" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" BorderThickness="2" CornerRadius="10" Width="205" Padding="5" KeyDown="Login_KeyDown">
         <StackPanel>
-            <TextBox Text="{Binding UserName,UpdateSourceTrigger=PropertyChanged}" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="User" Margin="5"/>
+            <TextBox x:Name="uiLoginBox" Text="{Binding UserName,UpdateSourceTrigger=PropertyChanged}" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Username" Margin="5"/>
             <PasswordBox x:Name="uiPwBox" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Password" Margin="5" />
             <controls:IconButton x:Name="uiBtnLogin" Text="Login" FontSize="15" Icon="{StaticResource IconLogin}" IconMargin="0,0,5,2" Height="30" Margin="5" Click="Login_Clicked"/>
         </StackPanel>

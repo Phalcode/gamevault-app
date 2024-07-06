@@ -12,7 +12,7 @@
         <GroupBox Header="Server url" mah:ControlsHelper.CornerRadius="4">
             <StackPanel>
                 <TextBox Text="{Binding ServerUrl,UpdateSourceTrigger=PropertyChanged}" Width="500" Margin="0,10,0,0" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="URL" KeyDown="Save_KeyDown"/>
-                <controls:IconButton Text="Save" FontSize="15" Icon="{StaticResource IconGameSettingsSave}" IconMargin="0,0,5,2" Width="80" Height="30" HorizontalAlignment="Left" Margin="0,5,0,0" Click="SaveServerUrl_Click"/>
+                <controls:IconButton Text="Verify &amp; Save" FontSize="15" Icon="{StaticResource IconGameSettingsSave}" IconMargin="0,0,5,2" Width="130" Height="30" HorizontalAlignment="Left" Margin="0,5,0,0" Click="SaveServerUrl_Click"/>
             </StackPanel>
         </GroupBox>
     </Grid>

@@ -1,5 +1,6 @@
 ﻿using gamevault.Helper;
 using gamevault.ViewModels;
+using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,10 +23,18 @@ namespace gamevault.UserControls.SettingsComponents
     /// </summary>
     public partial class LoginUserControl : UserControl
     {
+        private Wizard? _wizard;
         public LoginUserControl()
         {
             InitializeComponent();
         }
+
+        public LoginUserControl(Wizard parent)
+        {
+            InitializeComponent();
+            _wizard = parent;
+        }
+
         private async void Login_Clicked(object sender, System.Windows.RoutedEventArgs e)
         {
             ((FrameworkElement)sender).IsEnabled = false;
@@ -56,6 +65,13 @@ namespace gamevault.UserControls.SettingsComponents
                     {
                         await MainWindowViewModel.Instance.Library.LoadLibrary();//Load library, because otherwise it would be empty for new users at the first login
                         MainWindowViewModel.Instance.AppBarText = $"Successfully logged in as '{SettingsViewModel.Instance.UserName}'";
+
+                        if (_wizard != null)
+                        {
+                            _wizard.uiLoginRegisterPopup.IsOpen = false;
+                            _wizard.uiTabControl.SelectedIndex += 1;
+                            _wizard.btnFinish.Visibility = Visibility.Visible;
+                        }
                     }
                     else if (LoginState.Unauthorized == state)
                     {
@@ -77,6 +93,11 @@ namespace gamevault.UserControls.SettingsComponents
                 MainWindowViewModel.Instance.AppBarText = "Username or password are not set";
             }
             uiBtnLogin.IsEnabled = true;
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            uiLoginBox.Focus();
         }
     }
 }
