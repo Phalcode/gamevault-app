@@ -17,7 +17,7 @@ namespace gamevault.ViewModels
         private string directory { get; set; }
         private ObservableCollection<KeyValuePair<string, string>> m_Executables { get; set; }
         private string launchParameter { get; set; }
-        private RawgGame[]? rawgGames { get; set; }
+        private MinimalGame[]? remapSearchResults { get; set; }
         private bool backgroundImageChanged { get; set; }
         private bool boxArtImageChanged { get; set; }
         private ImageSource backgroundImageSource { get; set; }
@@ -51,17 +51,17 @@ namespace gamevault.ViewModels
             get { return launchParameter; }
             set { launchParameter = value; OnPropertyChanged(); }
         }
-        public RawgGame[]? RawgGames
+        public MinimalGame[]? RemapSearchResults
         {
-            get { return rawgGames; }
-            set { rawgGames = value; OnPropertyChanged(); }
+            get { return remapSearchResults; }
+            set { remapSearchResults = value; OnPropertyChanged(); }
         }
         public bool BackgroundImageChanged
         {
             get { return backgroundImageChanged; }
             set { backgroundImageChanged = value; OnPropertyChanged(); }
         }
-        public bool BoxArtImageChanged
+        public bool GameCoverImageChanged
         {
             get { return boxArtImageChanged; }
             set { boxArtImageChanged = value; OnPropertyChanged(); }
@@ -71,10 +71,10 @@ namespace gamevault.ViewModels
             get { return backgroundImageSource; }
             set { backgroundImageSource = value; OnPropertyChanged(); BackgroundImageChanged = true; }
         }
-        public ImageSource BoxArtImageSource
+        public ImageSource GameCoverImageSource
         {
             get { return boxArtImageSource; }
-            set { boxArtImageSource = value; OnPropertyChanged(); BoxArtImageChanged = true; }
+            set { boxArtImageSource = value; OnPropertyChanged(); GameCoverImageChanged = true; }
         }
         public string DiskSize
         {

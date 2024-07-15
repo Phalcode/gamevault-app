@@ -268,18 +268,7 @@ namespace gamevault.UserControls
                             return;
                         }
                         filename = "x.gif";
-                    }
-                    //else
-                    //{
-                    //    if (System.Uri.IsWellFormedUriString(ViewModel.AvatarImageUrl, UriKind.Absolute))
-                    //    {
-                    //        ms = BitmapHelper.BitmapSourceToMemoryStream(await BitmapHelper.GetBitmapImageAsync(ViewModel.AvatarImageUrl));
-                    //    }
-                    //    else
-                    //    {
-                    //        ms = BitmapHelper.BitmapSourceToMemoryStream(BitmapHelper.GetBitmapImage(ViewModel.AvatarImageUrl));
-                    //    }                    
-                    //}
+                    }                    
                 }
                 else
                 {
@@ -287,9 +276,9 @@ namespace gamevault.UserControls
                     ms = BitmapHelper.BitmapSourceToMemoryStream((BitmapSource)ViewModel.BackgroundImageSource);
                 }
                 ms.Position = 0;
-                string resp = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/images", ms, filename, null);
+                string resp = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/media", ms, filename, null);
                 ms.Dispose();
-                var newImageId = JsonSerializer.Deserialize<Models.Image>(resp).ID;
+                var newImageId = JsonSerializer.Deserialize<Media>(resp).ID;
                 await Task.Run(() =>
                 {
                     try
@@ -326,7 +315,7 @@ namespace gamevault.UserControls
                     await MainWindowViewModel.Instance.Community.InitUserList();
                     if (LoginManager.Instance.GetCurrentUser().ID == ViewModel.User.ID)
                     {
-                        MainWindowViewModel.Instance.UserIcon = ViewModel.User;
+                        MainWindowViewModel.Instance.UserAvatar = ViewModel.User;
                     }
                 }
             }
@@ -388,7 +377,7 @@ namespace gamevault.UserControls
             if (LoginManager.Instance.GetCurrentUser().ID == selectedUser.ID)
             {
                 await LoginManager.Instance.ManualLogin(selectedUser.Username, string.IsNullOrEmpty(selectedUser.Password) ? WebHelper.GetCredentials()[1] : selectedUser.Password);
-                MainWindowViewModel.Instance.UserIcon = LoginManager.Instance.GetCurrentUser();
+                MainWindowViewModel.Instance.UserAvatar = LoginManager.Instance.GetCurrentUser();
             }
             await MainWindowViewModel.Instance.AdminConsole.InitUserList();
         }

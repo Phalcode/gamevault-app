@@ -24,7 +24,7 @@ namespace gamevault.Models
         DownloadLimit,
         InstalledGamesOpen,
         LaunchParameter,
-        ShowRawgTitle,
+        ShowMappedTitle,
         LastPlayed,
         Phalcode1,
         Phalcode2,

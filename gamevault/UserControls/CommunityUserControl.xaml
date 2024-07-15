@@ -44,7 +44,7 @@
             <Viewbox Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left">
                 <Grid>
                     <Grid>
-                        <local:CacheImage Height="130" Width="130" Margin="-340,5,0,0" Stretch="Fill" ImageCacheType="UserIcon" CornerRadius="10" Data="{Binding Path=CurrentShownUser}"/>
+                        <local:CacheImage Height="130" Width="130" Margin="-340,5,0,0" Stretch="Fill" ImageCacheType="UserAvatar" CornerRadius="10" Data="{Binding Path=CurrentShownUser}"/>
 
                         <Border Background="{DynamicResource MahApps.Brushes.Accent}" Width="47" Height="23" Padding="3" CornerRadius="5" Margin="145,70,0,0" HorizontalAlignment="Left">
                             <TextBlock Text="{Binding Path=CurrentShownUser.Role}" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" TextAlignment="Center"/>
@@ -96,14 +96,14 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <DockPanel LastChildFill="True" Height="18" Margin="0,0,0,0" >
-                                        <local:CacheImage ImageCacheType="BoxArt" Data="{Binding}" CornerRadius="2" Width="15" Height="15" Cursor="Hand" MouseLeftButtonUp="GameImage_MouseLeftButtonUp"/>
+                                        <local:CacheImage ImageCacheType="GameCover" Data="{Binding}" CornerRadius="2" Width="15" Height="15" Cursor="Hand" MouseLeftButtonUp="GameImage_MouseLeftButtonUp"/>
                                         <Grid>
                                             <TextBlock  FontSize="3" Margin="1,3,5,0" Width="55">
                                                 <TextBlock.Style>
                                                     <Style TargetType="{x:Type TextBlock}">
-                                                        <Setter Property="TextBlock.Text" Value="{Binding Path=Game.Title}"/>
+                                                        <Setter Property="TextBlock.Text" Value="{Binding Path=Game.Metadata.Title}"/>
                                                         <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding Path=Game.Title}" Value="{x:Null}">
+                                                            <DataTrigger Binding="{Binding Path=Game.Metadata.Title}" Value="{x:Null}">
                                                                 <Setter Property="Text" Value="Unknown game" />
                                                             </DataTrigger>
                                                         </Style.Triggers>

@@ -110,9 +110,9 @@
                         <StackPanel>
                             <Grid Visibility="{Binding FilterVisibility}">
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                    <local:TagSelector x:Name="uiFilterGameTypeSelector" SelectionType="GameType" Margin="12,0,24,0" Width="175" EntriesUpdated="FilterUpdated"/>
-                                    <local:TagSelector x:Name="uiFilterTagSelector" SelectionType="Tags" Margin="0,0,24,0" Width="175" EntriesUpdated="FilterUpdated"/>
-                                    <local:TagSelector x:Name="uiFilterGenreSelector" SelectionType="Genres" Margin="0,0,23,0" Width="175" EntriesUpdated="FilterUpdated"/>
+                                    <local:PillSelector x:Name="uiFilterGameTypeSelector" SelectionType="GameType" Margin="12,0,24,0" Width="175" EntriesUpdated="FilterUpdated"/>
+                                    <local:PillSelector x:Name="uiFilterPillSelector" SelectionType="Tags" Margin="0,0,24,0" Width="175" EntriesUpdated="FilterUpdated"/>
+                                    <local:PillSelector x:Name="uiFilterGenreSelector" SelectionType="Genres" Margin="0,0,23,0" Width="175" EntriesUpdated="FilterUpdated"/>
                                     <StackPanel Margin="0,0,97,0">
                                         <TextBlock Text="Release Year" FontSize="15"/>
                                         <local:DateRangeSelector x:Name="uiFilterReleaseDateRangeSelector" EntriesUpdated="FilterUpdated"/>
@@ -314,7 +314,7 @@
                                                                 </Style>
                                                             </Grid.Style>
                                                             <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground}" CornerRadius="8">
-                                                                <local:CacheImage Stretch="Fill" ImageCacheType="BoxArt" Data="{Binding}" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                <local:CacheImage Stretch="Fill" ImageCacheType="GameCover" Data="{Binding}" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                             </Border>
                                                             <Border VerticalAlignment="Stretch" Background="{DynamicResource GameVault.Brushes.Blur}" CornerRadius="8">
                                                                 <Border.Style>

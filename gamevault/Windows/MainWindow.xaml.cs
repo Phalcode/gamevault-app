@@ -96,7 +96,7 @@ namespace gamevault.Windows
             }
             await MainWindowViewModel.Instance.Library.GetGameInstalls().RestoreInstalledGames();
             await MainWindowViewModel.Instance.Downloads.RestoreDownloadedGames();
-            MainWindowViewModel.Instance.UserIcon = LoginManager.Instance.GetCurrentUser();
+            MainWindowViewModel.Instance.UserAvatar = LoginManager.Instance.GetCurrentUser();
         }
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -113,7 +113,7 @@ namespace gamevault.Windows
             }
         }
 
-        private void UserIcon_Clicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void UserAvatar_Clicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             MainWindowViewModel.Instance.Community.ShowUser(LoginManager.Instance.GetCurrentUser());
         }

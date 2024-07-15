@@ -20,6 +20,7 @@ using LiveChartsCore.SkiaSharpView.Extensions;
 using gamevault.Converter;
 using System.Windows.Media;
 using LiveChartsCore.SkiaSharpView.Painting;
+using gamevault.Models.Mapping;
 
 namespace gamevault.UserControls
 {
@@ -445,7 +446,7 @@ namespace gamevault.UserControls
                     string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                     if (tag == "box")
                     {
-                        ViewModel.BoxArtImageSource = BitmapHelper.GetBitmapImage(files[0]);
+                        ViewModel.GameCoverImageSource = BitmapHelper.GetBitmapImage(files[0]);
                     }
                     else
                     {
@@ -469,7 +470,7 @@ namespace gamevault.UserControls
                         BitmapImage bitmap = await BitmapHelper.GetBitmapImageAsync(imagePath);
                         if (tag == "box")
                         {
-                            ViewModel.BoxArtImageSource = bitmap;
+                            ViewModel.GameCoverImageSource = bitmap;
                         }
                         else
                         {
@@ -506,7 +507,7 @@ namespace gamevault.UserControls
                     {
                         if (tag == "box")
                         {
-                            ViewModel.BoxArtImageSource = BitmapHelper.GetBitmapImage(dialog.FileName);
+                            ViewModel.GameCoverImageSource = BitmapHelper.GetBitmapImage(dialog.FileName);
                         }
                         else
                         {
@@ -526,7 +527,7 @@ namespace gamevault.UserControls
             {
                 if (tag == "box")
                 {
-                    ViewModel.BoxArtImageSource = await BitmapHelper.GetBitmapImageAsync(url);
+                    ViewModel.GameCoverImageSource = await BitmapHelper.GetBitmapImageAsync(url);
                 }
                 else
                 {
@@ -576,7 +577,7 @@ namespace gamevault.UserControls
         }
         private async void BoxImage_Save(object sender, RoutedEventArgs e)
         {
-            ViewModel.BoxArtImageChanged = false;
+            ViewModel.GameCoverImageChanged = false;
             await SaveImage("box");
         }
         private async void BackgroundImage_Save(object sender, RoutedEventArgs e)
@@ -612,26 +613,29 @@ namespace gamevault.UserControls
 
         private async Task SaveImage(string tag)
         {
+            // TODO
+
             bool success = false;
             try
             {
-                BitmapSource bitmapSource = tag == "box" ? (BitmapSource)ViewModel.BoxArtImageSource : (BitmapSource)ViewModel.BackgroundImageSource;
-                string resp = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/images", BitmapHelper.BitmapSourceToMemoryStream(bitmapSource), "x.png", null);
-                var newImageId = JsonSerializer.Deserialize<Models.Image>(resp).ID;
+                BitmapSource bitmapSource = tag == "box" ? (BitmapSource)ViewModel.GameCoverImageSource : (BitmapSource)ViewModel.BackgroundImageSource;
+                string resp = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/media", BitmapHelper.BitmapSourceToMemoryStream(bitmapSource), "x.png", null);
+                Media newImage = JsonSerializer.Deserialize<Media>(resp);
                 await Task.Run(() =>
                 {
                     try
                     {
-                        dynamic updateObject = new System.Dynamic.ExpandoObject();
+                        UpdateGameDto updateGame = new UpdateGameDto() { UserMetadata = ViewModel.Game.UserMetadata ?? new GameMetadata() };
                         if (tag == "box")
                         {
-                            updateObject.box_image_id = newImageId;
+                            updateGame.UserMetadata.Cover = newImage;
                         }
                         else
                         {
-                            updateObject.background_image_id = newImageId;
+                            updateGame.UserMetadata.Background = newImage;
                         }
-                        string changedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}", JsonSerializer.Serialize(updateObject), true);
+
+                        string changedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}", JsonSerializer.Serialize(updateGame), true);
                         ViewModel.Game = JsonSerializer.Deserialize<Game>(changedGame);
                         success = true;
                         MainWindowViewModel.Instance.AppBarText = "Successfully updated image";
@@ -670,7 +674,7 @@ namespace gamevault.UserControls
                             var image = Clipboard.GetImage();
                             if (((FrameworkElement)sender).Tag != null && ((FrameworkElement)sender).Tag.ToString() == "box")
                             {
-                                ViewModel.BoxArtImageSource = image;
+                                ViewModel.GameCoverImageSource = image;
                             }
                             else
                             {
@@ -713,12 +717,12 @@ namespace gamevault.UserControls
         private async Task RawgGameSearch()
         {
             this.Cursor = Cursors.Wait;
-            ViewModel.RawgGames = await Task<RawgGame[]>.Run(() =>
+            ViewModel.RemapSearchResults = await Task<MinimalGame[]>.Run(() =>
             {
                 try
                 {
                     string currentShownUser = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/rawg/search?query={RawgGameSearchTimer.Data}");
-                    return JsonSerializer.Deserialize<RawgGame[]>(currentShownUser);
+                    return JsonSerializer.Deserialize<MinimalGame[]>(currentShownUser);
                 }
                 catch (Exception ex)
                 {
@@ -749,28 +753,30 @@ namespace gamevault.UserControls
         }
         private async void RawgGameRemap_Click(object sender, RoutedEventArgs e)
         {
-            this.IsEnabled = false;
-            int? rawgId = ((RawgGame)((FrameworkElement)sender).DataContext).ID;
-            int gameId = ViewModel.Game.ID;
-            await Task.Run(() =>
-            {
-                try
-                {
-                    string remappedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{gameId}", "{\n\"rawg_id\": " + rawgId + "\n}", true);
-                    ViewModel.Game = JsonSerializer.Deserialize<Game>(remappedGame);
+            // TODO
 
-                    MainWindowViewModel.Instance.AppBarText = $"Successfully re-mapped {ViewModel.Game.Title}";
-                }
-                catch (Exception ex)
-                {
-                    string errMessage = WebExceptionHelper.TryGetServerMessage(ex);
-                    MainWindowViewModel.Instance.AppBarText = errMessage;
-                }
-            });
-            InstallViewModel.Instance.RefreshGame(ViewModel.Game);
-            MainWindowViewModel.Instance.Library.RefreshGame(ViewModel.Game);
-            this.IsEnabled = true;
-            this.Focus();
+            //this.IsEnabled = false;
+            //int? rawgId = ((MinimalGame)((FrameworkElement)sender).DataContext).;
+            //int gameId = ViewModel.Game.ID;
+            //await Task.Run(() =>
+            //{
+            //    try
+            //    {
+            //        string remappedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{gameId}", "{\n\"rawg_id\": " + rawgId + "\n}", true);
+            //        ViewModel.Game = JsonSerializer.Deserialize<Game>(remappedGame);
+
+            //        MainWindowViewModel.Instance.AppBarText = $"Successfully re-mapped {ViewModel.Game.Title}";
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        string errMessage = WebExceptionHelper.TryGetServerMessage(ex);
+            //        MainWindowViewModel.Instance.AppBarText = errMessage;
+            //    }
+            //});
+            //InstallViewModel.Instance.RefreshGame(ViewModel.Game);
+            //MainWindowViewModel.Instance.Library.RefreshGame(ViewModel.Game);
+            //this.IsEnabled = true;
+            //this.Focus();
         }
 
 

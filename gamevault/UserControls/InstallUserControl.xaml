@@ -89,7 +89,7 @@
                                                 </Style>
                                             </Grid.Style>
                                             <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground}" CornerRadius="8">
-                                                <local:CacheImage Stretch="Fill" ImageCacheType="BoxArt" Data="{Binding Key}" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                <local:CacheImage Stretch="Fill" ImageCacheType="GameCover" Data="{Binding Key}" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <Border Name="banner" VerticalAlignment="Stretch" Background="{DynamicResource GameVault.Brushes.Blur}" CornerRadius="8">
                                                 <Border.Style>

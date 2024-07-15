@@ -18,7 +18,7 @@ namespace gamevault.ViewModels
         private Dictionary<string, string> gameStates { get; set; }
         private bool isInstalled { get; set; }
         private bool? isDownloaded { get; set; }
-        private bool showRawgTitle { get; set; }
+        private bool showMappedTitle { get; set; }
         #endregion
         public Game? Game
         {
@@ -55,10 +55,10 @@ namespace gamevault.ViewModels
             get { return isDownloaded; }
             set { isDownloaded = value; OnPropertyChanged(); }
         }
-        public bool ShowRawgTitle
+        public bool ShowMappedTitle
         {
-            get { return showRawgTitle; }
-            set { showRawgTitle = value; OnPropertyChanged(); }
+            get { return showMappedTitle; }
+            set { showMappedTitle = value; OnPropertyChanged(); }
         }
     }
 }

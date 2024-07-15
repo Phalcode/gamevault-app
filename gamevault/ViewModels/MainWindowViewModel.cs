@@ -76,14 +76,14 @@ namespace gamevault.ViewModels
             get { return m_AppBarText; }
             set { m_AppBarText = value; OnPropertyChanged(); IsAppBarOpen = true; }
         }
-        private User? m_UserIcon { get; set; }
-        public User? UserIcon
+        private User? m_UserAvatar { get; set; }
+        public User? UserAvatar
         {
-            get { return m_UserIcon; }
+            get { return m_UserAvatar; }
             set
             {
-                m_UserIcon = value; if (m_UserIcon == null)
-                { m_UserIcon = new User(); }
+                m_UserAvatar = value; if (m_UserAvatar == null)
+                { m_UserAvatar = new User(); }
                 OnPropertyChanged();
             }
         }

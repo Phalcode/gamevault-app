@@ -3,6 +3,7 @@ using gamevault.Models;
 using gamevault.ViewModels;
 using MahApps.Metro.Controls;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
@@ -12,6 +13,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using Windows.Gaming.Input;
 
 namespace gamevault.UserControls
 {
@@ -186,10 +188,10 @@ namespace gamevault.UserControls
             {
                 uiExpanderGameCards.IsExpanded = true;
             }
-            if(ViewModel.FilterVisibility == Visibility.Collapsed)
+            if (ViewModel.FilterVisibility == Visibility.Collapsed)
             {
                 ViewModel.FilterVisibility = Visibility.Visible;
-            }      
+            }
         }
         private async void ClearAllFilters_Click(object sender, MouseButtonEventArgs e)
         {
@@ -201,7 +203,7 @@ namespace gamevault.UserControls
         {
             uiFilterGameTypeSelector.ClearEntries();
             uiFilterGenreSelector.ClearEntries();
-            uiFilterTagSelector.ClearEntries();
+            uiFilterPillSelector.ClearEntries();
             uiFilterReleaseDateRangeSelector.ClearSelection();
 
             uiFilterBookmarks.IsChecked = false;
@@ -271,12 +273,12 @@ namespace gamevault.UserControls
             string genres = uiFilterGenreSelector.GetSelectedEntries();
             if (genres != string.Empty)
             {
-                filter += $"&filter.genres.name=$in:{genres}";
+                filter += $"&filter.metadata.genres.name=$in:{genres}";
             }
-            string tags = uiFilterTagSelector.GetSelectedEntries();
+            string tags = uiFilterPillSelector.GetSelectedEntries();
             if (tags != string.Empty)
             {
-                filter += $"&filter.tags.name=$in:{tags}";
+                filter += $"&filter.metadata.tags.name=$in:{tags}";
             }
             if (uiFilterBookmarks.IsChecked == true)
             {
@@ -320,11 +322,20 @@ namespace gamevault.UserControls
             }
             ((FrameworkElement)sender).IsEnabled = true;
         }
-        private void CardSettings_Click(object sender, RoutedEventArgs e)
+        private async void CardSettings_Click(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            //var installedGame = InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ((Game)((FrameworkElement)sender).DataContext).ID).FirstOrDefault();
-            MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl((Game)((FrameworkElement)sender).DataContext) { Width = 1200, Height = 800, Margin = new Thickness(50) });
+
+            try
+            {
+                string result = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{((Game)((FrameworkElement)sender).DataContext).ID}");
+                Game resultGame = JsonSerializer.Deserialize<Game>(result);
+                MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(resultGame) { Width = 1200, Height = 800, Margin = new Thickness(50) });
+            }
+            catch (Exception ex)
+            {
+                MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
+            }
         }
         private async void CardBookmark_Click(object sender, RoutedEventArgs e)
         {
@@ -344,12 +355,12 @@ namespace gamevault.UserControls
                     if ((bool)((ToggleButton)sender).IsChecked == false)
                     {
                         await WebHelper.DeleteAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me/bookmark/{currentGame.ID}");
-                        currentGame.BookmarkedUsers = new User[0];
+                        currentGame.BookmarkedUsers = new List<User>();
                     }
                     else
                     {
                         await WebHelper.PostAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me/bookmark/{currentGame.ID}");
-                        currentGame.BookmarkedUsers = new User[] { LoginManager.Instance.GetCurrentUser() };
+                        currentGame.BookmarkedUsers = new List<User> { LoginManager.Instance.GetCurrentUser()! };
                     }
 
                 }
@@ -372,7 +383,7 @@ namespace gamevault.UserControls
             int filterCount = 0;
             filterCount += uiFilterGameTypeSelector.HasEntries() ? 1 : 0;
             filterCount += uiFilterGenreSelector.HasEntries() ? 1 : 0;
-            filterCount += uiFilterTagSelector.HasEntries() ? 1 : 0;
+            filterCount += uiFilterPillSelector.HasEntries() ? 1 : 0;
             filterCount += (bool)uiFilterEarlyAccess.IsChecked ? 1 : 0;
             filterCount += (bool)uiFilterBookmarks.IsChecked ? 1 : 0;
 

@@ -210,7 +210,7 @@
                                         </Border.Style>
                                         <StackPanel>
                                             <Grid HorizontalAlignment="Center">
-                                                <local:CacheImage ImageCacheType="UserIcon" Data="{Binding User}" CornerRadius="5" Stretch="Fill" Height="214" Width="214" Margin="0,30,0,0">
+                                                <local:CacheImage ImageCacheType="UserAvatar" Data="{Binding User}" CornerRadius="5" Stretch="Fill" Height="214" Width="214" Margin="0,30,0,0">
                                                     <local:CacheImage.Style>
                                                         <Style TargetType="local:CacheImage">
                                                             <Style.Triggers>

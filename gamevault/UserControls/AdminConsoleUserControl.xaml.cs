@@ -201,7 +201,7 @@ namespace gamevault.UserControls
             if (LoginManager.Instance.GetCurrentUser().ID == selectedUser.ID)
             {
                 await LoginManager.Instance.ManualLogin(selectedUser.Username, string.IsNullOrEmpty(selectedUser.Password) ? WebHelper.GetCredentials()[1] : selectedUser.Password);
-                MainWindowViewModel.Instance.UserIcon = LoginManager.Instance.GetCurrentUser();
+                MainWindowViewModel.Instance.UserAvatar = LoginManager.Instance.GetCurrentUser();
             }
             await InitUserList();
         }

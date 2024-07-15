@@ -161,12 +161,12 @@ namespace gamevault.UserControls
                 }
                 switch (ImageCacheType)
                 {
-                    case ImageCache.BoxArt:
+                    case ImageCache.GameCover:
                         {
                             cachePath += "/gbox";
                             var game = ((Game)data);
                             identifier = (game == null ? -1 : game.ID);
-                            imageId = ((game == null || game.BoxImage == null) ? -1 : game.BoxImage.ID);
+                            imageId = game?.Metadata?.Cover?.ID ?? -1;
                             break;
                         }
                     case ImageCache.GameBackground:
@@ -174,15 +174,15 @@ namespace gamevault.UserControls
                             cachePath += "/gbg";
                             var game = ((Game)data);
                             identifier = (game == null ? -1 : game.ID);
-                            imageId = ((game == null || game.BackgroundImage == null) ? -1 : game.BackgroundImage.ID);
+                            imageId = game?.Metadata?.Background?.ID ?? -1;
                             break;
                         }
-                    case ImageCache.UserIcon:
+                    case ImageCache.UserAvatar:
                         {
                             cachePath += "/uico";
                             var user = ((User)data);
                             identifier = (user == null ? -1 : user.ID);
-                            imageId = ((user == null || user.ProfilePicture == null) ? -1 : user.ProfilePicture.ID);
+                            imageId = user?.Avatar?.ID ?? -1;
                             break;
                         }
                     case ImageCache.UserBackground:
@@ -190,7 +190,7 @@ namespace gamevault.UserControls
                             cachePath += "/ubg";
                             var user = ((User)data);
                             identifier = (user == null ? -1 : user.ID);
-                            imageId = ((user == null || user.BackgroundImage == null) ? -1 : user.BackgroundImage.ID);
+                            imageId = user?.Background?.ID ?? -1;
                             break;
                         }
                 }

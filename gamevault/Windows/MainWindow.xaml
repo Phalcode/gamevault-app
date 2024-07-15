@@ -27,9 +27,9 @@
     </mah:MetroWindow.RightWindowCommands>
     <Grid>
         <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="1" Width="48" Height="50">
-            <Border MouseLeftButtonUp="UserIcon_Clicked" Cursor="Hand">
+            <Border MouseLeftButtonUp="UserAvatar_Clicked" Cursor="Hand">
                 <Grid>
-                    <uc:CacheImage ImageCacheType="UserIcon" Stretch="Fill" Data="{Binding Path=UserIcon}"/>
+                    <uc:CacheImage ImageCacheType="UserAvatar" Stretch="Fill" Data="{Binding Path=UserAvatar}"/>
                     <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" CornerRadius="5,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Visibility="{Binding OnlineState}">
                         <Path Data="{DynamicResource IconNoSignal}" Fill="IndianRed"/>
                     </Border>
@@ -59,7 +59,7 @@
                             <iconPacks:PackIconMaterial Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Center" Kind="Cog" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
                         </mah:HamburgerMenuIconItem.Icon>
                     </mah:HamburgerMenuIconItem>
-                    <mah:HamburgerMenuIconItem IsVisible="{Binding Path=UserIcon, Converter={StaticResource permissionRoleConv}}">
+                    <mah:HamburgerMenuIconItem IsVisible="{Binding Path=UserAvatar, Converter={StaticResource permissionRoleConv}}">
                         <mah:HamburgerMenuIconItem.Icon>
                             <iconPacks:PackIconFontAwesome Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Center" Kind="UserShieldSolid" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
                         </mah:HamburgerMenuIconItem.Icon>

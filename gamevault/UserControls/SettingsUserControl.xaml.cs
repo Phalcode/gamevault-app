@@ -142,7 +142,7 @@ namespace gamevault.UserControls
         private void Logout_Click(object sender, RoutedEventArgs e)
         {
             LoginManager.Instance.Logout();
-            MainWindowViewModel.Instance.UserIcon = null;
+            MainWindowViewModel.Instance.UserAvatar = null;
             MainWindowViewModel.Instance.AppBarText = "Successfully logged out";
         }
 

@@ -39,7 +39,7 @@ namespace gamevault.Helper
                 }
                 if (File.Exists(cacheFile))
                 {
-                    if (cacheType == ImageCache.UserIcon)
+                    if (cacheType == ImageCache.UserAvatar)
                     {
                         if (TaskQueue.Instance.IsAlreadyInProcess(imageId))
                         {
@@ -68,8 +68,8 @@ namespace gamevault.Helper
                         {
                             File.Delete(files[0]);
                         }
-                        await TaskQueue.Instance.Enqueue(() => WebHelper.DownloadImageFromUrlAsync($"{SettingsViewModel.Instance.ServerUrl}/api/images/{imageId}", cacheFile), imageId);
-                        if (cacheType == ImageCache.UserIcon)
+                        await TaskQueue.Instance.Enqueue(() => WebHelper.DownloadImageFromUrlAsync($"{SettingsViewModel.Instance.ServerUrl}/api/media/{imageId}", cacheFile), imageId);
+                        if (cacheType == ImageCache.UserAvatar)
                         {
                             if (GifHelper.IsGif(cacheFile))
                             {
@@ -109,14 +109,14 @@ namespace gamevault.Helper
                 catch { }
                 switch (cacheType)
                 {
-                    case ImageCache.BoxArt:
+                    case ImageCache.GameCover:
                         {
-                            img.Source = BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/library_NoBoxart.png");
+                            img.Source = BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/library_NoGameCover.png");
                             break;
                         }
-                    case ImageCache.UserIcon:
+                    case ImageCache.UserAvatar:
                         {
-                            img.Source = BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/com_NoUserIcon.png");
+                            img.Source = BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/com_NoUserAvatar.png");
                             break;
                         }
                     default:

@@ -66,7 +66,7 @@ namespace gamevault.UserControls
                 }
                 ViewModel.IsInstalled = IsGameInstalled(ViewModel.Game);
                 ViewModel.IsDownloaded = IsGameDownloaded(ViewModel.Game);
-                ViewModel.ShowRawgTitle = Preferences.Get(AppConfigKey.ShowRawgTitle, AppFilePath.UserFile) == "1";
+                ViewModel.ShowMappedTitle = Preferences.Get(AppConfigKey.ShowMappedTitle, AppFilePath.UserFile) == "1";
             }
         }
         private bool IsGameInstalled(Game? game)
@@ -163,8 +163,8 @@ namespace gamevault.UserControls
         {
             try
             {
-                ViewModel.ShowRawgTitle = !ViewModel.ShowRawgTitle;
-                Preferences.Set(AppConfigKey.ShowRawgTitle, ViewModel.ShowRawgTitle ? "1" : "0", AppFilePath.UserFile);
+                ViewModel.ShowMappedTitle = !ViewModel.ShowMappedTitle;
+                Preferences.Set(AppConfigKey.ShowMappedTitle, ViewModel.ShowMappedTitle ? "1" : "0", AppFilePath.UserFile);
             }
             catch { }
         }
@@ -183,12 +183,12 @@ namespace gamevault.UserControls
                 if ((bool)((ToggleButton)sender).IsChecked == false)
                 {
                     await WebHelper.DeleteAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me/bookmark/{ViewModel.Game.ID}");
-                    ViewModel.Game.BookmarkedUsers = new User[0];
+                    ViewModel.Game.BookmarkedUsers = new List<User>();
                 }
                 else
                 {
                     await WebHelper.PostAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me/bookmark/{ViewModel.Game.ID}");
-                    ViewModel.Game.BookmarkedUsers = new User[] { LoginManager.Instance.GetCurrentUser() };
+                    ViewModel.Game.BookmarkedUsers = new List<User> { LoginManager.Instance.GetCurrentUser()! };
                 }
                 MainWindowViewModel.Instance.Library.RefreshGame(ViewModel.Game);
             }
@@ -204,9 +204,9 @@ namespace gamevault.UserControls
         {
             try
             {
-                Genre data = (Genre)((FrameworkElement)sender).DataContext;
+                GenreMetadata data = (GenreMetadata)((FrameworkElement)sender).DataContext;
                 MainWindowViewModel.Instance.Library.ClearAllFilters();
-                MainWindowViewModel.Instance.Library.uiFilterGenreSelector.SetEntries(new Genre_Tag[] { new Genre_Tag() { ID = data.ID, Name = data.Name, RawgId = data.RawgId } });
+                MainWindowViewModel.Instance.Library.uiFilterGenreSelector.SetEntries(new Pill[] { new Pill() { ID = data.ID, Name = data.Name, ProviderDataId = data.ProviderDataId } });
                 MainWindowViewModel.Instance.SetActiveControl(MainControl.Library);
             }
             catch { }
@@ -216,9 +216,9 @@ namespace gamevault.UserControls
         {
             try
             {
-                Models.Tag data = (Models.Tag)((FrameworkElement)sender).DataContext;
+                TagMetadata data = (TagMetadata)((FrameworkElement)sender).DataContext;
                 MainWindowViewModel.Instance.Library.ClearAllFilters();
-                MainWindowViewModel.Instance.Library.uiFilterTagSelector.SetEntries(new Genre_Tag[] { new Genre_Tag() { ID = data.ID, Name = data.Name, RawgId = data.RawgId } });
+                MainWindowViewModel.Instance.Library.uiFilterPillSelector.SetEntries(new Pill[] { new Pill() { ID = data.ID, Name = data.Name, ProviderDataId = data.ProviderDataId } });
                 MainWindowViewModel.Instance.SetActiveControl(MainControl.Library);
             }
             catch { }
@@ -228,7 +228,7 @@ namespace gamevault.UserControls
             try
             {
                 MainWindowViewModel.Instance.Library.ClearAllFilters();
-                MainWindowViewModel.Instance.Library.uiFilterGameTypeSelector.SetEntries(new Genre_Tag[] { new Genre_Tag() { OriginName = ViewModel.Game.Type.ToString(), Name = (string)new EnumDescriptionConverter().Convert(ViewModel.Game.Type, null, null, null) } });
+                MainWindowViewModel.Instance.Library.uiFilterGameTypeSelector.SetEntries(new Pill[] { new Pill() { OriginName = ViewModel.Game.Type.ToString(), Name = (string)new EnumDescriptionConverter().Convert(ViewModel.Game.Type, null, null, null) } });
                 MainWindowViewModel.Instance.SetActiveControl(MainControl.Library);
             }
             catch { }
