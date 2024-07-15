@@ -57,9 +57,10 @@ namespace gamevault.ViewModels
                     {"Title","title"},
                     {"Size","size" },
                     {"Recently Added","created_at" },
-                    {"Release Date","release_date" },
-                    {"Metacritic Rating","metacritic_rating" },
-                    {"Average Playtime","average_playtime" },
+                    {"Release Date","metadata.release_date" },
+                    {"Rating","metadata.rating" },
+                    {"Download Count","download_count" },
+                    {"Average Playtime","metadata.average_playtime" },                   
                 };
                 return dict;
             }

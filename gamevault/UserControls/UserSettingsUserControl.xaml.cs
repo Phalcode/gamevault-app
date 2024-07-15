@@ -1,5 +1,6 @@
 ﻿using gamevault.Helper;
 using gamevault.Models;
+using gamevault.Models.Mapping;
 using gamevault.ViewModels;
 using System;
 using System.Diagnostics;
@@ -283,22 +284,22 @@ namespace gamevault.UserControls
                 {
                     try
                     {
-                        dynamic updateObject = new System.Dynamic.ExpandoObject();
+                        UpdateUserDto updateObject = new UpdateUserDto();
                         if (tag == "avatar")
                         {
-                            updateObject.profile_picture_id = newImageId;
+                            updateObject.AvatarId = newImageId;
                         }
                         else
                         {
-                            updateObject.background_image_id = newImageId;
+                            updateObject.BackgroundId = newImageId;
                         }
                         string url = $"{SettingsViewModel.Instance.ServerUrl}/api/users/{ViewModel.User.ID}";
                         if (LoginManager.Instance.GetCurrentUser().ID == ViewModel.User.ID)
                         {
                             url = @$"{SettingsViewModel.Instance.ServerUrl}/api/users/me";
                         }
-                        string changedGame = WebHelper.Put(url, JsonSerializer.Serialize(updateObject), true);
-                        ViewModel.User = JsonSerializer.Deserialize<User>(changedGame);
+                        string updatedUser = WebHelper.Put(url, JsonSerializer.Serialize(updateObject), true);
+                        ViewModel.User = JsonSerializer.Deserialize<User>(updatedUser);
                         success = true;
                         MainWindowViewModel.Instance.AppBarText = "Successfully updated image";
                     }

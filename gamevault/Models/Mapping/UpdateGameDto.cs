@@ -21,6 +21,6 @@ namespace gamevault.Models.Mapping
         /// </summary>
         /// <value>The mapping requests. If not provided, the game will not be remapped.</value>
         [JsonPropertyName("mapping_requests")]
-        public MapGameDto? MappingRequests { get; set; }
+        public List<MapGameDto>? MappingRequests { get; set; }
     }
 }

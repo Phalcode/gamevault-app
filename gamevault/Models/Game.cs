@@ -150,5 +150,12 @@ namespace gamevault.Models
 
         [JsonPropertyName("bookmarked_users")]
         public List<User> BookmarkedUsers { get; set; }
+
+        /// <summary>
+        /// count of downloads on this server
+        /// </summary>     
+
+        [JsonPropertyName("download_count")]
+        public int DownloadCount { get; set; }
     }
 }

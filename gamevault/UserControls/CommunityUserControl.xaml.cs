@@ -48,13 +48,10 @@ namespace gamevault.UserControls
         }
         public async Task InitUserList()
         {
-            ViewModel.Users = await Task<User[]>.Run(() =>
-            {
-                string userList = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/users");
-                var users = JsonSerializer.Deserialize<User[]>(userList);
-                users = BringCurrentUserToTop(users);
-                return users;
-            });
+            string result = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users");
+            var users = JsonSerializer.Deserialize<User[]>(result);
+            users = BringCurrentUserToTop(users);
+            ViewModel.Users = users;
             if (uiSelectUser.SelectedIndex == -1 && ViewModel.CurrentShownUser == null)
             {
                 if (forceShowId != -1)
@@ -243,6 +240,6 @@ namespace gamevault.UserControls
             {
                 MainWindowViewModel.Instance.AppBarText = $"Could not delete. {WebExceptionHelper.TryGetServerMessage(ex)}";
             }
-        }     
+        }
     }
 }

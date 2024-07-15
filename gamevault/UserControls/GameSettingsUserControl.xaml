@@ -375,10 +375,10 @@
                                     <DataTemplate>
                                         <Border CornerRadius="5" Height="60"  Margin="0,5,0,0" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}">
                                             <Grid Margin="5">
-                                                <Image Source="{Binding Path=BoxImageUrl}" Stretch="UniformToFill" Width="100" HorizontalAlignment="Left"/>
+                                                <Image Source="{Binding Path=CoverUrl}" Stretch="UniformToFill" Width="100" HorizontalAlignment="Left"/>
                                                 <TextBlock Text="{Binding Path=Title}" Width="200" FontSize="13" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="105,0,0,0"/>
                                                 <TextBlock Text="{Binding Path=ReleaseDate,StringFormat='{}{0:MM/dd/yyyy}'}" Width="160" FontSize="13" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="105,0,0,0"/>
-                                                <local:IconButton Text="Remap" VerticalAlignment="Center" HorizontalAlignment="Right" Width="50" Height="20" FontSize="10" Click="RawgGameRemap_Click"/>
+                                                <local:IconButton Text="Remap" VerticalAlignment="Center" HorizontalAlignment="Right" Width="50" Height="20" FontSize="10" Click="GameRemap_Click"/>
                                             </Grid>
                                         </Border>
                                     </DataTemplate>

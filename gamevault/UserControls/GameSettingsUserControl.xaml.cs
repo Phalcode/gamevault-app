@@ -691,97 +691,92 @@ namespace gamevault.UserControls
         }
         #endregion
 
-        #region RAWG
-        private InputTimer RawgGameSearchTimer { get; set; }
+        #region Metadata
+        private InputTimer GameMetadataSearchTimer { get; set; }
         private void RawgGameSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
-            InitRawgGameSearchTimer();
-            RawgGameSearchTimer.Stop();
-            RawgGameSearchTimer.Data = ((TextBox)sender).Text;
-            RawgGameSearchTimer.Start();
+            InitGameMetadataSearchTimer();
+            GameMetadataSearchTimer.Stop();
+            GameMetadataSearchTimer.Data = ((TextBox)sender).Text;
+            GameMetadataSearchTimer.Start();
         }
-        private void InitRawgGameSearchTimer()
+        private void InitGameMetadataSearchTimer()
         {
-            if (RawgGameSearchTimer != null)
+            if (GameMetadataSearchTimer != null)
                 return;
 
-            RawgGameSearchTimer = new InputTimer();
-            RawgGameSearchTimer.Interval = TimeSpan.FromMilliseconds(400);
-            RawgGameSearchTimer.Tick += RawgGameSearchTimerElapsed;
+            GameMetadataSearchTimer = new InputTimer();
+            GameMetadataSearchTimer.Interval = TimeSpan.FromMilliseconds(400);
+            GameMetadataSearchTimer.Tick += GameMetadataSearchTimerElapsed;
         }
-        private async void RawgGameSearchTimerElapsed(object sender, EventArgs e)
+        private async void GameMetadataSearchTimerElapsed(object sender, EventArgs e)
         {
-            RawgGameSearchTimer?.Stop();
-            await RawgGameSearch();
+            GameMetadataSearchTimer?.Stop();
+            await GameMetadataSearch();
         }
-        private async Task RawgGameSearch()
+        private async Task GameMetadataSearch()
         {
             this.Cursor = Cursors.Wait;
-            ViewModel.RemapSearchResults = await Task<MinimalGame[]>.Run(() =>
+            try
             {
-                try
-                {
-                    string currentShownUser = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/rawg/search?query={RawgGameSearchTimer.Data}");
-                    return JsonSerializer.Deserialize<MinimalGame[]>(currentShownUser);
-                }
-                catch (Exception ex)
-                {
-                    MainWindowViewModel.Instance.AppBarText = $"Could not load rawg data. ({ex.Message})";
-                    return null;
-                }
-            });
+                string slug = "igdb";
+                string currentShownUser = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/metadata/providers/{slug}/search?query={GameMetadataSearchTimer.Data}");
+                ViewModel.RemapSearchResults = JsonSerializer.Deserialize<MinimalGame[]>(currentShownUser);
+            }
+            catch (Exception ex)
+            {
+                MainWindowViewModel.Instance.AppBarText = $"Could not load metadata provider data. ({ex.Message})";
+                ViewModel.RemapSearchResults = null;
+            }
             this.Cursor = null;
         }
         private async void Recache_Click(object sender, RoutedEventArgs e)
         {
-            this.IsEnabled = false;
-            await Task.Run(() =>
-            {
-                try
-                {
-                    WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/rawg/{ViewModel.Game.ID}/recache", string.Empty);
-                    MainWindowViewModel.Instance.AppBarText = $"Sucessfully re-cached {ViewModel.Game.Title}";
-                }
-                catch (Exception ex)
-                {
-                    string msg = WebExceptionHelper.TryGetServerMessage(ex);
-                    MainWindowViewModel.Instance.AppBarText = msg;
-                }
-            });
-            this.IsEnabled = true;
-            this.Focus();
-        }
-        private async void RawgGameRemap_Click(object sender, RoutedEventArgs e)
-        {
-            // TODO
+            //TODO
 
             //this.IsEnabled = false;
-            //int? rawgId = ((MinimalGame)((FrameworkElement)sender).DataContext).;
-            //int gameId = ViewModel.Game.ID;
             //await Task.Run(() =>
             //{
             //    try
             //    {
-            //        string remappedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{gameId}", "{\n\"rawg_id\": " + rawgId + "\n}", true);
-            //        ViewModel.Game = JsonSerializer.Deserialize<Game>(remappedGame);
-
-            //        MainWindowViewModel.Instance.AppBarText = $"Successfully re-mapped {ViewModel.Game.Title}";
+            //        WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/rawg/{ViewModel.Game.ID}/recache", string.Empty);
+            //        MainWindowViewModel.Instance.AppBarText = $"Sucessfully re-cached {ViewModel.Game.Title}";
             //    }
             //    catch (Exception ex)
             //    {
-            //        string errMessage = WebExceptionHelper.TryGetServerMessage(ex);
-            //        MainWindowViewModel.Instance.AppBarText = errMessage;
+            //        string msg = WebExceptionHelper.TryGetServerMessage(ex);
+            //        MainWindowViewModel.Instance.AppBarText = msg;
             //    }
             //});
-            //InstallViewModel.Instance.RefreshGame(ViewModel.Game);
-            //MainWindowViewModel.Instance.Library.RefreshGame(ViewModel.Game);
             //this.IsEnabled = true;
             //this.Focus();
         }
+        private async void GameRemap_Click(object sender, RoutedEventArgs e)
+        {            
+            this.IsEnabled = false;
+            var providerId = ((MinimalGame)((FrameworkElement)sender).DataContext).ProviderDataId;
+            int gameId = ViewModel.Game.ID;
+            await Task.Run(() =>
+            {
+                try
+                {
+                    UpdateGameDto updateGame = new UpdateGameDto() { MappingRequests = new List<MapGameDto>() { new MapGameDto() { ProviderSlug = "igdb", TargetProviderDataId = providerId } } };
+                    string remappedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{gameId}", JsonSerializer.Serialize(updateGame), true);
+                    ViewModel.Game = JsonSerializer.Deserialize<Game>(remappedGame);
 
-
-
-
+                    MainWindowViewModel.Instance.AppBarText = $"Successfully re-mapped {ViewModel.Game.Title}";
+                }
+                catch (Exception ex)
+                {
+                    string errMessage = WebExceptionHelper.TryGetServerMessage(ex);
+                    MainWindowViewModel.Instance.AppBarText = errMessage;
+                }
+            });
+            InstallViewModel.Instance.RefreshGame(ViewModel.Game);
+            MainWindowViewModel.Instance.Library.RefreshGame(ViewModel.Game);
+            this.IsEnabled = true;
+            this.Focus();
+        }
         #endregion
 
 
