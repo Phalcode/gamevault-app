@@ -21,7 +21,7 @@ namespace gamevault.Models.Mapping
         /// </summary>
         /// <value>email of the user</value>
         [JsonPropertyName("email")]
-        public string Email { get; set; }
+        public string EMail { get; set; }
 
         /// <summary>
         /// password of the user

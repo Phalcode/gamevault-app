@@ -1,4 +1,5 @@
 ﻿using gamevault.Models;
+using gamevault.Models.Mapping;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,17 +12,23 @@ namespace gamevault.ViewModels
     internal class UserSettingsViewModel : ViewModelBase
     {
         #region Privates
-        private User user { get; set; }
+        private User originUser { get; set; }
+        private UpdateUserDto updateUser { get; set; }
         private bool userDetailsChanged { get; set; }
         private bool backgroundImageChanged { get; set; }
         private bool avatarImageChanged { get; set; }
         private ImageSource backgroundImageSource { get; set; }
         private string avatarImageUrl { get; set; }
         #endregion
-        public User User
+        public User OriginUser
         {
-            get { return user; }
-            set { user = value; OnPropertyChanged(); }
+            get { return originUser; }
+            set { originUser = value; OnPropertyChanged(); }
+        }
+        public UpdateUserDto UpdateUser
+        {
+            get { return updateUser; }
+            set { updateUser = value; OnPropertyChanged(); }
         }
         public bool UserDetailsChanged
         {

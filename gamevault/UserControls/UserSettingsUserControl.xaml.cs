@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using Windows.ApplicationModel.VoiceCommands;
 
 
 namespace gamevault.UserControls
@@ -26,11 +27,20 @@ namespace gamevault.UserControls
         internal UserSettingsUserControl(User user)
         {
             ViewModel = new UserSettingsViewModel();
-            ViewModel.User = user;
+            ViewModel.OriginUser = user;
+            ConvertToUpdateUser();
             InitializeComponent();
             this.DataContext = ViewModel;
         }
-
+        private void ConvertToUpdateUser()
+        {
+            UpdateUserDto newUpdateUser = new UpdateUserDto();
+            newUpdateUser.Username = ViewModel.OriginUser.Username;
+            newUpdateUser.FirstName = ViewModel.OriginUser.FirstName;
+            newUpdateUser.LastName = ViewModel.OriginUser.LastName;
+            newUpdateUser.EMail = ViewModel.OriginUser.EMail;
+            ViewModel.UpdateUser = newUpdateUser;
+        }
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             this.Focus();
@@ -229,11 +239,11 @@ namespace gamevault.UserControls
         }
         #endregion
         private async void BackgroundImage_Save(object sender, RoutedEventArgs e)
-        {           
+        {
             await SaveImage("");
         }
         private async void AvatarImage_Save(object sender, RoutedEventArgs e)
-        {            
+        {
             await SaveImage("avatar");
         }
         private async Task SaveImage(string tag)
@@ -244,7 +254,7 @@ namespace gamevault.UserControls
                 MemoryStream ms = null;
                 string filename = "x.png";
                 if (tag == "avatar")
-                {                   
+                {
                     ViewModel.AvatarImageChanged = false;
                     string avatarImageUrl = ViewModel.AvatarImageUrl.Replace("&amp;", "&");
                     if (System.Uri.IsWellFormedUriString(avatarImageUrl, UriKind.Absolute))
@@ -269,7 +279,7 @@ namespace gamevault.UserControls
                             return;
                         }
                         filename = "x.gif";
-                    }                    
+                    }
                 }
                 else
                 {
@@ -293,13 +303,13 @@ namespace gamevault.UserControls
                         {
                             updateObject.BackgroundId = newImageId;
                         }
-                        string url = $"{SettingsViewModel.Instance.ServerUrl}/api/users/{ViewModel.User.ID}";
-                        if (LoginManager.Instance.GetCurrentUser().ID == ViewModel.User.ID)
+                        string url = $"{SettingsViewModel.Instance.ServerUrl}/api/users/{ViewModel.OriginUser.ID}";
+                        if (LoginManager.Instance.GetCurrentUser().ID == ViewModel.OriginUser.ID)
                         {
                             url = @$"{SettingsViewModel.Instance.ServerUrl}/api/users/me";
                         }
                         string updatedUser = WebHelper.Put(url, JsonSerializer.Serialize(updateObject), true);
-                        ViewModel.User = JsonSerializer.Deserialize<User>(updatedUser);
+                        ViewModel.OriginUser = JsonSerializer.Deserialize<User>(updatedUser);
                         success = true;
                         MainWindowViewModel.Instance.AppBarText = "Successfully updated image";
                     }
@@ -314,9 +324,9 @@ namespace gamevault.UserControls
                 {
                     await MainWindowViewModel.Instance.AdminConsole.InitUserList();
                     await MainWindowViewModel.Instance.Community.InitUserList();
-                    if (LoginManager.Instance.GetCurrentUser().ID == ViewModel.User.ID)
+                    if (LoginManager.Instance.GetCurrentUser().ID == ViewModel.OriginUser.ID)
                     {
-                        MainWindowViewModel.Instance.UserAvatar = ViewModel.User;
+                        MainWindowViewModel.Instance.UserAvatar = ViewModel.OriginUser;
                     }
                 }
             }
@@ -341,7 +351,7 @@ namespace gamevault.UserControls
             ViewModel.UserDetailsChanged = false;
             this.IsEnabled = false;
 
-            User selectedUser = ViewModel.User;
+            UpdateUserDto selectedUser = ViewModel.UpdateUser;
             string newPassword = uiUserPassword.Password;
 
             if (newPassword != "")
@@ -352,16 +362,18 @@ namespace gamevault.UserControls
             {
                 try
                 {
-                    string url = $"{SettingsViewModel.Instance.ServerUrl}/api/users/{ViewModel.User.ID}";
-                    if (LoginManager.Instance.GetCurrentUser().ID == ViewModel.User.ID)
+                    string url = $"{SettingsViewModel.Instance.ServerUrl}/api/users/{ViewModel.OriginUser.ID}";
+                    if (LoginManager.Instance.GetCurrentUser().ID == ViewModel.OriginUser.ID)
                     {
                         url = @$"{SettingsViewModel.Instance.ServerUrl}/api/users/me";
                     }
-                    WebHelper.Put(url, JsonSerializer.Serialize(selectedUser));
+                    string result = WebHelper.Put(url, JsonSerializer.Serialize(selectedUser), true);
+                    ViewModel.OriginUser = JsonSerializer.Deserialize<User>(result);
                     MainWindowViewModel.Instance.AppBarText = "Sucessfully saved user changes";
                 }
                 catch (Exception ex)
                 {
+                    ConvertToUpdateUser();//Reset to Origin User
                     error = true;
                     string msg = WebExceptionHelper.TryGetServerMessage(ex);
                     MainWindowViewModel.Instance.AppBarText = msg;
@@ -369,7 +381,8 @@ namespace gamevault.UserControls
             });
             if (!error)
             {
-                await HandleChangesOnCurrentUser(selectedUser);
+                ViewModel.OriginUser.Password = newPassword;
+                await HandleChangesOnCurrentUser(ViewModel.OriginUser);
             }
             this.IsEnabled = true;
         }
@@ -380,7 +393,10 @@ namespace gamevault.UserControls
                 await LoginManager.Instance.ManualLogin(selectedUser.Username, string.IsNullOrEmpty(selectedUser.Password) ? WebHelper.GetCredentials()[1] : selectedUser.Password);
                 MainWindowViewModel.Instance.UserAvatar = LoginManager.Instance.GetCurrentUser();
             }
+
             await MainWindowViewModel.Instance.AdminConsole.InitUserList();
+            await MainWindowViewModel.Instance.Community.InitUserList();
+
         }
 
         private void Help_Click(object sender, MouseButtonEventArgs e)
