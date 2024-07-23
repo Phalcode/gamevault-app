@@ -39,6 +39,7 @@ namespace gamevault.UserControls
             newUpdateUser.FirstName = ViewModel.OriginUser.FirstName;
             newUpdateUser.LastName = ViewModel.OriginUser.LastName;
             newUpdateUser.EMail = ViewModel.OriginUser.EMail;
+            newUpdateUser.BirthDate = ViewModel.OriginUser.BirthDate;
             ViewModel.UpdateUser = newUpdateUser;
         }
         private void UserControl_Loaded(object sender, RoutedEventArgs e)

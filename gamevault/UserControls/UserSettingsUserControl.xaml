@@ -7,6 +7,7 @@
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:conv="clr-namespace:gamevault.Converter"
              xmlns:local="clr-namespace:gamevault.UserControls"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Focusable="True" Loaded="UserControl_Loaded" FocusVisualStyle="{x:Null}">
     <UserControl.Resources>
@@ -128,7 +129,7 @@
                 </TextBlock>
             </StackPanel>
             <Grid Grid.Column="1" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}">
-                <mah:MetroAnimatedTabControl x:Name="uiSettingsContent" Background="Transparent">
+                <mah:MetroAnimatedTabControl x:Name="uiSettingsContent" Background="Transparent" ClipToBounds="True">
                     <mah:MetroTabItem>
                         <Grid Margin="0,20,0,0">
                             <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
@@ -275,6 +276,11 @@
                                 <StackPanel HorizontalAlignment="Right" Margin="0,80,0,0">
                                     <TextBlock FontSize="15" Text="Last Name" FontWeight="Bold" TextDecorations="Underline" Margin="0,0,0,10"/>
                                     <TextBox Text="{Binding Path=UpdateUser.LastName,UpdateSourceTrigger=PropertyChanged}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" Height="30" Width="400" TextChanged="UserDetails_TextChanged"/>
+                                </StackPanel>
+                                <StackPanel HorizontalAlignment="Right" Margin="0,160,0,0">
+                                    <TextBlock FontSize="15" Text="Birth Date" FontWeight="Bold" TextDecorations="Underline" Margin="0,0,0,10"/>
+                                    <DatePicker DisplayDateEnd="{x:Static sys:DateTime.Now}" SelectedDate="{Binding UpdateUser.BirthDate}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" Height="30" Width="400" SelectedDateChanged="UserDetails_TextChanged"/>
+                                    <!--<TextBox Text="{Binding Path=UpdateUser.LastName,UpdateSourceTrigger=PropertyChanged}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" Height="30" Width="400" TextChanged="UserDetails_TextChanged"/>-->
                                 </StackPanel>
                             </Grid>
                             <local:IconButton Text="Save" FontSize="15" Icon="{DynamicResource IconGameSettingsSave}" IconMargin="0,0,5,2" IsEnabled="{Binding UserDetailsChanged}" Width="115" Height="33" Margin="0,0,10,0" HorizontalAlignment="Right" Click="SaveUserDetails_Click"/>

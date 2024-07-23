@@ -43,5 +43,7 @@ namespace gamevault.Models
         public string DeletedAt { get; set; }
         [JsonPropertyName("created_at")]
         public DateTime? CreatedAt { get; set; }
+        [JsonPropertyName("birth_date")]
+        public DateTime? BirthDate { get; set; }
     }
 }
