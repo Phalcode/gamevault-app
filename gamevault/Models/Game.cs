@@ -59,7 +59,7 @@ namespace gamevault.Models
         /// </summary>
         /// <value>file path to the game or the game manifest (relative to root)</value>
 
-        [JsonPropertyName("path")]
+        [JsonPropertyName("file_path")]
         public string Path { get; set; }
 
         /// <summary>

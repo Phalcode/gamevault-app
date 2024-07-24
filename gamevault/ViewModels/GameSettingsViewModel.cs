@@ -1,4 +1,5 @@
 ﻿using gamevault.Models;
+using gamevault.Models.Mapping;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,7 +24,9 @@ namespace gamevault.ViewModels
         private ImageSource backgroundImageSource { get; set; }
         private ImageSource boxArtImageSource { get; set; }
         private string diskSize { get; set; }
-        #endregion      
+        private MetadataProviderDto[]? metadataProviders { get; set; }
+        private int selectedMetadataProviderIndex { get; set; }
+        #endregion
         public Game Game
         {
             get { return game; }
@@ -80,6 +83,32 @@ namespace gamevault.ViewModels
         {
             get { return diskSize; }
             set { diskSize = value; OnPropertyChanged(); }
+        }
+        public MetadataProviderDto[]? MetadataProviders
+        {
+            get { return metadataProviders; }
+            set { metadataProviders = value; OnPropertyChanged(); }
+        }
+        public int SelectedMetadataProviderIndex
+        {
+            get { return selectedMetadataProviderIndex; }
+            set { selectedMetadataProviderIndex = value; OnPropertyChanged(); OnPropertyChanged(nameof(CurrentShownMappedGame)); }
+        }
+        public GameMetadata? CurrentShownMappedGame
+        {
+            get
+            {
+                try
+                {
+                    if (MetadataProviders?.Length > 0)
+                    {
+                        MetadataProviderDto currentSelectedProvider = MetadataProviders?[SelectedMetadataProviderIndex];
+                        return Game.ProviderMetadata.Where(m => m.ProviderSlug == currentSelectedProvider.Slug).First();
+                    }
+                }
+                catch { }
+                return null;
+            }
         }
     }
 }

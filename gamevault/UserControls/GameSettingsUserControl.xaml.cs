@@ -21,6 +21,7 @@ using gamevault.Converter;
 using System.Windows.Media;
 using LiveChartsCore.SkiaSharpView.Painting;
 using gamevault.Models.Mapping;
+using Windows.Gaming.Input;
 
 namespace gamevault.UserControls
 {
@@ -52,12 +53,13 @@ namespace gamevault.UserControls
             }
             this.DataContext = ViewModel;
         }
-        private void GameSettings_Loaded(object sender, RoutedEventArgs e)
+        private async void GameSettings_Loaded(object sender, RoutedEventArgs e)
         {
             if (!loaded)
             {
                 loaded = true;
                 this.Focus();
+                await LoadGameMedatataProviders();
             }
         }
         private void KeyBindingEscape_OnExecuted(object sender, object e)
@@ -719,8 +721,7 @@ namespace gamevault.UserControls
             this.Cursor = Cursors.Wait;
             try
             {
-                string slug = "igdb";
-                string currentShownUser = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/metadata/providers/{slug}/search?query={GameMetadataSearchTimer.Data}");
+                string currentShownUser = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/metadata/providers/{ViewModel.MetadataProviders?[ViewModel.SelectedMetadataProviderIndex]?.Slug}/search?query={GameMetadataSearchTimer.Data}");
                 ViewModel.RemapSearchResults = JsonSerializer.Deserialize<MinimalGame[]>(currentShownUser);
             }
             catch (Exception ex)
@@ -732,35 +733,32 @@ namespace gamevault.UserControls
         }
         private async void Recache_Click(object sender, RoutedEventArgs e)
         {
-            //TODO
-
-            //this.IsEnabled = false;
-            //await Task.Run(() =>
-            //{
-            //    try
-            //    {
-            //        WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/rawg/{ViewModel.Game.ID}/recache", string.Empty);
-            //        MainWindowViewModel.Instance.AppBarText = $"Sucessfully re-cached {ViewModel.Game.Title}";
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        string msg = WebExceptionHelper.TryGetServerMessage(ex);
-            //        MainWindowViewModel.Instance.AppBarText = msg;
-            //    }
-            //});
-            //this.IsEnabled = true;
-            //this.Focus();
+            try
+            {
+                MetadataProviderDto currentSelectedProvider = ViewModel.MetadataProviders?[ViewModel.SelectedMetadataProviderIndex];
+                string currentProviderSlug = currentSelectedProvider?.Slug;
+                string providerId = ViewModel.CurrentShownMappedGame.ProviderDataId;
+                int gameId = ViewModel.Game.ID;
+                await RemapGame(providerId, currentProviderSlug, gameId);
+            }
+            catch { }
         }
         private async void GameRemap_Click(object sender, RoutedEventArgs e)
-        {            
-            this.IsEnabled = false;
+        {
             var providerId = ((MinimalGame)((FrameworkElement)sender).DataContext).ProviderDataId;
+            MetadataProviderDto currentSelectedProvider = ViewModel.MetadataProviders?[ViewModel.SelectedMetadataProviderIndex];
+            string currentProviderSlug = currentSelectedProvider?.Slug;
             int gameId = ViewModel.Game.ID;
+            await RemapGame(providerId, currentProviderSlug, gameId);
+        }
+        private async Task RemapGame(string providerId, string providerSlug, int gameId)
+        {
+            this.IsEnabled = false;
             await Task.Run(() =>
             {
                 try
                 {
-                    UpdateGameDto updateGame = new UpdateGameDto() { MappingRequests = new List<MapGameDto>() { new MapGameDto() { ProviderSlug = "igdb", TargetProviderDataId = providerId } } };
+                    UpdateGameDto updateGame = new UpdateGameDto() { MappingRequests = new List<MapGameDto>() { new MapGameDto() { ProviderSlug = providerSlug, TargetProviderDataId = providerId } } };
                     string remappedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{gameId}", JsonSerializer.Serialize(updateGame), true);
                     ViewModel.Game = JsonSerializer.Deserialize<Game>(remappedGame);
 
@@ -776,6 +774,26 @@ namespace gamevault.UserControls
             MainWindowViewModel.Instance.Library.RefreshGame(ViewModel.Game);
             this.IsEnabled = true;
             this.Focus();
+        }
+        private async Task LoadGameMedatataProviders()
+        {
+            try
+            {
+                string result = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/metadata/providers");
+                ViewModel.MetadataProviders = JsonSerializer.Deserialize<MetadataProviderDto[]?>(result);
+                ViewModel.SelectedMetadataProviderIndex = 0;
+                //ViewModel.MetadataProviders = new MetadataProviderDto[] {
+                //    new MetadataProviderDto() { Enabled = true ,Name="IGDB",Slug="igdb",Priority=100},
+                //    new MetadataProviderDto() { Enabled = true ,Name="RAWG",Slug="rawg",Priority=90},
+                //    new MetadataProviderDto() { Enabled = true ,Name="Retro Box",Slug="retrobox",Priority=80}
+                //};
+
+            }
+            catch (Exception ex)
+            {
+                string message = WebExceptionHelper.TryGetServerMessage(ex);
+                MainWindowViewModel.Instance.AppBarText = message;
+            }
         }
         #endregion
 

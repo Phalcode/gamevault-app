@@ -55,7 +55,7 @@ namespace gamevault.Models
         /// </summary>
         /// <value>the original source URL of the media</value>
 
-        [JsonPropertyName("source")]
+        [JsonPropertyName("source_url")]
         public string Source { get; set; }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace gamevault.Models
         /// </summary>
         /// <value>the path of the media on the filesystem</value>
 
-        [JsonPropertyName("path")]
+        [JsonPropertyName("file_path")]
         public string Path { get; set; }
 
         /// <summary>
