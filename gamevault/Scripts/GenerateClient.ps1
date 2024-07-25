@@ -1,5 +1,5 @@
 param (
-    [string]$openApiUrl = "https://baustelle.alfagun74.de/api/docs-json",
+    [string]$openApiUrl = "https://learn-csharp.alkanit.de/api/docs-json",
     [string]$outputFolder = "../Generated"
 )
 
