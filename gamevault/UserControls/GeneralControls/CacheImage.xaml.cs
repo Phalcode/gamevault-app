@@ -53,6 +53,13 @@ namespace gamevault.UserControls
             get { return (bool)GetValue(UseUriSourceProperty); }
             set { SetValue(UseUriSourceProperty, value); }
         }
+        public static readonly DependencyProperty DoNotCacheProperty = DependencyProperty.Register("DoNotCache", typeof(bool), typeof(CacheImage));
+
+        public bool DoNotCache
+        {
+            get { return (bool)GetValue(DoNotCacheProperty); }
+            set { SetValue(DoNotCacheProperty, value); }
+        }
 
         public static readonly DependencyProperty StretchProperty = DependencyProperty.Register("Stretch", typeof(Stretch), typeof(CacheImage), new PropertyMetadata(OnStretchChangedCallBack));
 
@@ -88,6 +95,19 @@ namespace gamevault.UserControls
 
         private async Task DataChanged(object newData)
         {
+            if (DoNotCache)
+            {
+                try
+                {
+                    int metadataImageId = (int)(((GameMetadata)newData)?.Cover?.ID);
+                    uiImg.Source = await WebHelper.DownloadImageFromUrlAsync($"{SettingsViewModel.Instance.ServerUrl}/api/media/{metadataImageId}");
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    return;
+                }
+            }
             if (UseUriSource)
             {
                 string uri = newData.ToString();
@@ -138,9 +158,9 @@ namespace gamevault.UserControls
                             uiImg.BeginAnimation(System.Windows.Controls.Image.SourceProperty, null);
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
-                        MainWindowViewModel.Instance.AppBarText=ex.Message;
+                        MainWindowViewModel.Instance.AppBarText = ex.Message;
                     }
                 }
                 return;

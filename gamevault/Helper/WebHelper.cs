@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 namespace gamevault.Helper
 {
@@ -185,6 +186,27 @@ namespace gamevault.Helper
                 client.Headers.Add(HttpRequestHeader.Authorization, "Basic " + Convert.ToBase64String(System.Text.UTF8Encoding.UTF8.GetBytes($"{m_UserName}:{m_Password}")));
                 client.Headers.Add($"User-Agent: GameVault/{SettingsViewModel.Instance.Version}");
                 await client.DownloadFileTaskAsync(new Uri(imageUrl), cacheFile);
+            }
+        }
+        public static async Task<BitmapImage> DownloadImageFromUrlAsync(string imageUrl)
+        {
+            using (WebClient client = new WebClient())
+            {
+                client.Headers.Add(HttpRequestHeader.Authorization, "Basic " + Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"{m_UserName}:{m_Password}")));
+                client.Headers.Add($"User-Agent: GameVault/{SettingsViewModel.Instance.Version}");
+
+                byte[] imageData = await client.DownloadDataTaskAsync(new Uri(imageUrl));
+
+                using (MemoryStream memoryStream = new MemoryStream(imageData))
+                {
+                    BitmapImage bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.StreamSource = memoryStream;
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.EndInit();
+                    bitmap.Freeze(); // Freeze to make it cross-thread accessible
+                    return bitmap;
+                }
             }
         }
         public static async Task<string> UploadFileAsync(string apiUrl, Stream imageStream, string fileName, KeyValuePair<string, string>? additionalHeader)
