@@ -107,24 +107,26 @@ namespace gamevault.Helper
                     }
                 }
                 catch { }
-                switch (cacheType)
-                {
-                    case ImageCache.GameCover:
-                        {
-                            img.Source = BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/library_NoGameCover.png");
-                            break;
-                        }
-                    case ImageCache.UserAvatar:
-                        {
-                            img.Source = BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/com_NoUserAvatar.png");
-                            break;
-                        }
-                    default:
-                        {
-                            img.Source = BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/gameView_NoBackground.jpg");
-                            break;
-                        }
-                }
+                img.Source = GetReplacementImage(cacheType);
+            }
+        }
+        internal static BitmapImage GetReplacementImage(ImageCache cacheType)
+        {
+            switch (cacheType)
+            {
+                case ImageCache.GameCover:
+                    {
+                        return BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/library_NoGameCover.png");
+                    }
+                case ImageCache.UserAvatar:
+                    {
+                        return BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/com_NoUserAvatar.png");
+
+                    }
+                default:
+                    {
+                        return BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/gameView_NoBackground.jpg");
+                    }
             }
         }
 

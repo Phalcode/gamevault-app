@@ -370,8 +370,8 @@
                                     <StackPanel Margin="60,0,0,0">
                                         <TextBlock Text="Mapped Game" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,0,0,0"/>
                                         <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                                            <local:CacheImage DoNotCache="True" Data="{Binding CurrentShownMappedGame}" Height="120"/>
-                                            <StackPanel>
+                                            <local:CacheImage DoNotCache="True" ImageCacheType="GameCover" Data="{Binding CurrentShownMappedGame}" Height="120"/>
+                                            <StackPanel Margin="5,0,0,0">
                                                 <TextBlock Text="Title" FontSize="15" FontWeight="Bold"/>
                                                 <TextBlock Text="{Binding Path=CurrentShownMappedGame.Title}" FontSize="15"/>
                                                 <TextBlock Text="Release Date" FontSize="15" FontWeight="Bold"/>

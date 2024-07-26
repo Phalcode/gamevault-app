@@ -14,6 +14,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -22,9 +23,6 @@ using Windows.ApplicationModel;
 
 namespace gamevault.UserControls
 {
-    /// <summary>
-    /// Interaction logic for CacheImage.xaml
-    /// </summary>
     public partial class CacheImage : UserControl
     {
         #region Dependency Property
@@ -88,26 +86,52 @@ namespace gamevault.UserControls
         }
         #endregion
 
+        #region Convertion Object
+        public struct CacheImageMedia
+        {
+            public int Identifier;
+            public int CoverID;
+            public int BackgroundID;
+            public void Convert(object dataToConvert)
+            {
+                if (typeof(Game) == dataToConvert.GetType())
+                {
+                    Identifier = ((Game)dataToConvert) == null ? -1 : ((Game)dataToConvert).ID;
+                    CoverID = ((Game)dataToConvert)?.Metadata?.Cover?.ID ?? -1;
+                    BackgroundID = ((Game)dataToConvert)?.Metadata?.Background?.ID ?? -1;
+                }
+                else if (typeof(Progress) == dataToConvert.GetType())
+                {
+                    Identifier = ((Progress)dataToConvert).Game == null ? -1 : ((Progress)dataToConvert).Game!.ID;
+                    CoverID = ((Progress)dataToConvert).Game?.Metadata?.Cover?.ID ?? -1;
+                    BackgroundID = ((Progress)dataToConvert).Game?.Metadata?.Background?.ID ?? -1;
+                }
+                else if (typeof(GameMetadata) == dataToConvert.GetType())
+                {
+                    Identifier = -1;
+                    CoverID = ((GameMetadata)dataToConvert)?.Cover?.ID ?? -1;
+                    BackgroundID = ((GameMetadata)dataToConvert)?.Background?.ID ?? -1;
+                }
+                else if (typeof(User) == dataToConvert.GetType())
+                {
+                    Identifier = ((User)dataToConvert) == null ? -1 : ((User)dataToConvert).ID;
+                    CoverID = ((User)dataToConvert)?.Avatar?.ID ?? -1;
+                    BackgroundID = ((User)dataToConvert)?.Background?.ID ?? -1;
+                }
+            }
+        }
+        #endregion
+
         public CacheImage()
         {
             InitializeComponent();
         }
 
         private async Task DataChanged(object newData)
-        {
-            if (DoNotCache)
-            {
-                try
-                {
-                    int metadataImageId = (int)(((GameMetadata)newData)?.Cover?.ID);
-                    uiImg.Source = await WebHelper.DownloadImageFromUrlAsync($"{SettingsViewModel.Instance.ServerUrl}/api/media/{metadataImageId}");
-                    return;
-                }
-                catch (Exception ex)
-                {
-                    return;
-                }
-            }
+        {          
+            if (newData == null)
+                return;
+
             if (UseUriSource)
             {
                 string uri = newData.ToString();
@@ -166,57 +190,57 @@ namespace gamevault.UserControls
                 return;
             }
 
-            int identifier = -1;
             int imageId = -1;
             string cachePath = AppFilePath.ImageCache;
-            object data = newData;
-            if (data == null)
-                return;
 
+            CacheImageMedia media = new CacheImageMedia();
             try
             {
-                if (typeof(Progress) == data.GetType())
-                {
-                    data = ((Progress)data).Game;
-                }
+                media.Convert(newData);
                 switch (ImageCacheType)
                 {
                     case ImageCache.GameCover:
                         {
                             cachePath += "/gbox";
-                            var game = ((Game)data);
-                            identifier = (game == null ? -1 : game.ID);
-                            imageId = game?.Metadata?.Cover?.ID ?? -1;
+                            imageId = media.CoverID;
                             break;
                         }
                     case ImageCache.GameBackground:
                         {
                             cachePath += "/gbg";
-                            var game = ((Game)data);
-                            identifier = (game == null ? -1 : game.ID);
-                            imageId = game?.Metadata?.Background?.ID ?? -1;
+                            imageId = media.BackgroundID;
                             break;
                         }
                     case ImageCache.UserAvatar:
                         {
                             cachePath += "/uico";
-                            var user = ((User)data);
-                            identifier = (user == null ? -1 : user.ID);
-                            imageId = user?.Avatar?.ID ?? -1;
+                            imageId = media.CoverID;
                             break;
                         }
                     case ImageCache.UserBackground:
                         {
                             cachePath += "/ubg";
-                            var user = ((User)data);
-                            identifier = (user == null ? -1 : user.ID);
-                            imageId = user?.Background?.ID ?? -1;
+                            imageId = media.BackgroundID;
                             break;
                         }
                 }
             }
             catch (Exception ex) { }
-            await CacheHelper.HandleImageCacheAsync(identifier, imageId, cachePath, ImageCacheType, uiImg);
+            if (DoNotCache)
+            {
+                try
+                {
+                    uiImg.Source = await WebHelper.DownloadImageFromUrlAsync($"{SettingsViewModel.Instance.ServerUrl}/api/media/{imageId}");
+                }
+                catch (Exception ex)
+                {
+                    uiImg.Source = CacheHelper.GetReplacementImage(ImageCacheType);
+                }
+            }
+            else
+            {
+                await CacheHelper.HandleImageCacheAsync(media.Identifier, imageId, cachePath, ImageCacheType, uiImg);
+            }
         }
     }
 }

@@ -351,10 +351,20 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.AppBarText = $"Could not find Executable '{savedExecutable}'";
             }
         }
-        private void Settings_Click(object sender, RoutedEventArgs e)
+        private async void Settings_Click(object sender, RoutedEventArgs e)
         {
-            e.Handled = true;
-            MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key) { Width = 1200, Height = 800, Margin = new Thickness(50) });
+            e.Handled = true;            
+            try
+            {
+                int ID = ((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key.ID;
+                string result = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{ID}");
+                Game resultGame = JsonSerializer.Deserialize<Game>(result);
+                MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(resultGame) { Width = 1200, Height = 800, Margin = new Thickness(50) });
+            }
+            catch (Exception ex)
+            {
+                MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
+            }
         }
         private void InitTimer()
         {
