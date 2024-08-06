@@ -65,6 +65,7 @@ namespace gamevault.UserControls
                 ViewModel.IsInstalled = IsGameInstalled(ViewModel.Game);
                 ViewModel.IsDownloaded = IsGameDownloaded(ViewModel.Game);
                 ViewModel.ShowMappedTitle = Preferences.Get(AppConfigKey.ShowMappedTitle, AppFilePath.UserFile) == "1";
+                uiMediaSlider.Init(ViewModel?.Game?.Metadata);
             }
         }
         private bool IsGameInstalled(Game? game)
@@ -85,6 +86,12 @@ namespace gamevault.UserControls
         }
         private void Back_Click(object sender, MouseButtonEventArgs e)
         {
+            uiMediaSlider.Unload();
+            MainWindowViewModel.Instance.UndoActiveControl();
+        }
+        private void KeyBindingEscape_OnExecuted(object sender, object e)
+        {
+            uiMediaSlider.Unload();
             MainWindowViewModel.Instance.UndoActiveControl();
         }
         private void GamePlay_Click(object sender, MouseButtonEventArgs e)
@@ -104,11 +111,6 @@ namespace gamevault.UserControls
                 return;
             await MainWindowViewModel.Instance.Downloads.TryStartDownload(ViewModel.Game);
         }
-        private void KeyBindingEscape_OnExecuted(object sender, object e)
-        {
-            MainWindowViewModel.Instance.UndoActiveControl();
-        }
-
         private void Website_Navigate(object sender, RequestNavigateEventArgs e)
         {
             try

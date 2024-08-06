@@ -412,6 +412,8 @@
                             </TextBlock>
                         </Grid>
                     </StackPanel>
+                    <!--MEDIA-->
+                    <local:MediaSlider x:Name="uiMediaSlider" HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="400" Width="800"/>
                     <!--PROGRESS-->
                     <StackPanel HorizontalAlignment="Right" Margin="0,0,0,0">
                         <StackPanel Orientation="Horizontal" Margin="0,-5,0,0">

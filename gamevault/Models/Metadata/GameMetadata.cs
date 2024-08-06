@@ -146,16 +146,21 @@ namespace gamevault.Models
         /// </summary>
         /// <value>screenshots of the game</value>
 
-        [JsonPropertyName("screenshots")]
-        public List<Media>? Screenshots { get; set; }
+        [JsonPropertyName("url_screenshots")]
+        public string[]? Screenshots { get; set; }
+
+        [JsonPropertyName("url_trailers")]
+        public string[]? Trailers { get; set; }
+        [JsonPropertyName("url_gameplays")]
+        public string[]? Gameplays { get; set; }
 
         /// <summary>
         /// website url of the game
         /// </summary>
         /// <value>website url of the game</value>
 
-        [JsonPropertyName("url_website")]
-        public string? UrlWebsite { get; set; }
+        [JsonPropertyName("url_websites")]
+        public string[]? UrlWebsites { get; set; }
 
 
         private decimal? rating { get; set; }
