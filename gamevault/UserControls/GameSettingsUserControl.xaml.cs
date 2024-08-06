@@ -751,7 +751,14 @@ namespace gamevault.UserControls
             int gameId = ViewModel.Game.ID;
             await RemapGame(providerId, currentProviderSlug, gameId);
         }
-        private async Task RemapGame(string providerId, string providerSlug, int gameId)
+        private async void Unmap_Click(object sender, RoutedEventArgs e)
+        {
+            MetadataProviderDto currentSelectedProvider = ViewModel.MetadataProviders?[ViewModel.SelectedMetadataProviderIndex];
+            string currentProviderSlug = currentSelectedProvider?.Slug;
+            int gameId = ViewModel.Game.ID;
+            await RemapGame(null, currentProviderSlug, gameId);
+        }
+        private async Task RemapGame(string? providerId, string providerSlug, int gameId)
         {
             this.IsEnabled = false;
             await Task.Run(() =>
@@ -795,8 +802,8 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.AppBarText = message;
             }
         }
-        #endregion
 
+        #endregion
 
     }
 }

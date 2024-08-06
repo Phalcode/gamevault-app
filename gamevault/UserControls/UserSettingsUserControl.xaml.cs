@@ -358,6 +358,11 @@ namespace gamevault.UserControls
             if (newPassword != "")
                 selectedUser.Password = newPassword;
 
+            if(selectedUser.BirthDate == ViewModel.OriginUser.BirthDate)//Set birthday to null, so a underage user can edit the rest of its data
+            {
+                selectedUser.BirthDate = null;
+            }
+
             bool error = false;
             await Task.Run(() =>
             {

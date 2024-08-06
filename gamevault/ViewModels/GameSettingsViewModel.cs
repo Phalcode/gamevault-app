@@ -107,7 +107,7 @@ namespace gamevault.ViewModels
                     }
                 }
                 catch { }
-                return null;
+                return new GameMetadata();
             }
         }
     }

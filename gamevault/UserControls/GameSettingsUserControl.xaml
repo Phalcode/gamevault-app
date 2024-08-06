@@ -128,6 +128,14 @@
                                     </StackPanel>
                                 </TabItem.Header>
                             </TabItem>
+                            <TabItem>
+                                <TabItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Style="{StaticResource TabItemHeaderPathStroke}" Data="{DynamicResource IconGameSettingsEditDetails}" VerticalAlignment="Center"/>
+                                        <TextBlock Style="{StaticResource TabItemHeaderTextBlock}" Text="Edit Game"/>
+                                    </StackPanel>
+                                </TabItem.Header>
+                            </TabItem>
                         </TabControl>
                     </StackPanel>
                 </StackPanel>
@@ -370,21 +378,54 @@
                                     <StackPanel Margin="60,0,0,0">
                                         <TextBlock Text="Mapped Game" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,0,0,0"/>
                                         <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                                            <local:CacheImage DoNotCache="True" ImageCacheType="GameCover" Data="{Binding CurrentShownMappedGame}" Height="120"/>
+                                            <local:CacheImage DoNotCache="True" ImageCacheType="GameCover" Data="{Binding CurrentShownMappedGame}" Height="120" CornerRadius="5"/>
                                             <StackPanel Margin="5,0,0,0">
                                                 <TextBlock Text="Title" FontSize="15" FontWeight="Bold"/>
-                                                <TextBlock Text="{Binding Path=CurrentShownMappedGame.Title}" FontSize="15"/>
+                                                <TextBlock FontSize="15">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Text" Value="{Binding Path=CurrentShownMappedGame.Title}"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Path=CurrentShownMappedGame.Title}" Value="{x:Null}">
+                                                                    <Setter Property="Text" Value="N/A"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
                                                 <TextBlock Text="Release Date" FontSize="15" FontWeight="Bold"/>
-                                                <TextBlock Text="{Binding Path=CurrentShownMappedGame.ReleaseDate,StringFormat='{}{0:dd/MM/yyyy}'}" FontSize="15"/>
+                                                <TextBlock FontSize="15">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Text" Value="{Binding Path=CurrentShownMappedGame.ReleaseDate,StringFormat='{}{0:dd/MM/yyyy}'}"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Path=CurrentShownMappedGame.ReleaseDate}" Value="{x:Null}">
+                                                                    <Setter Property="Text" Value="N/A"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
                                                 <TextBlock Text="Last Cached" FontSize="15" FontWeight="Bold"/>
-                                                <TextBlock Text="{Binding Path=CurrentShownMappedGame.UpdatedAt,StringFormat='{}{0:dd/MM/yyyy}'}" FontSize="15"/>
+                                                <TextBlock FontSize="15">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Text" Value="{Binding Path=CurrentShownMappedGame.UpdatedAt,StringFormat='{}{0:dd/MM/yyyy}'}"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Path=CurrentShownMappedGame.UpdatedAt}" Value="{x:Null}">
+                                                                    <Setter Property="Text" Value="N/A"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
                                             </StackPanel>
                                         </StackPanel>
                                     </StackPanel>
                                 </StackPanel>
                                 <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center">
-                                    <local:IconButton Text="Change Priority" FontSize="15" Icon="{DynamicResource IconReload}" IconMargin="0,0,5,2" Width="140" Height="33"/>
-                                    <local:IconButton Text="Unmap Metadata" FontSize="15" Icon="{DynamicResource IconReload}" IconMargin="0,0,5,2" Width="140" Height="33" Margin="0,20,0,20"/>
+                                    <mah:NumericUpDown Value="1" ButtonsAlignment="Opposite" TextAlignment="Center"/>
+                                    <local:IconButton Text="Unmap" FontSize="15" Icon="{DynamicResource IconGameSettingsUnlinked}" IconMargin="0,0,5,2" Width="140" Height="33" Margin="0,20,0,20" Click="Unmap_Click"/>
                                     <local:IconButton Text="Recache Game" FontSize="15" Icon="{DynamicResource IconReload}" IconMargin="0,0,5,2" Width="140" Height="33" Click="Recache_Click"/>
                                 </StackPanel>
                             </Grid>
@@ -421,6 +462,14 @@
                             </StackPanel>
 
 
+                        </StackPanel>
+                    </mah:MetroTabItem>
+                    <mah:MetroTabItem>
+                        <StackPanel Margin="20,20,0,0">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{DynamicResource IconGameSettingsEditDetails}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" VerticalAlignment="Center"/>
+                                <TextBlock Text="Edit Game" FontSize="20" FontWeight="Bold" Margin="5,0,0,0"/>
+                            </StackPanel>
                         </StackPanel>
                     </mah:MetroTabItem>
                 </mah:MetroAnimatedTabControl>
