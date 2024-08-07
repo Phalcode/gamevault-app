@@ -32,10 +32,12 @@ namespace gamevault.UserControls
         private static LibVLC LibVlc { get; set; }
         private static LibVLCSharp.Shared.MediaPlayer MediaPlayer { get; set; }
 
+        private YoutubeClient YoutubeClient {  get; set; }
         private MediaSliderViewModel ViewModel { get; set; }
         private bool timeSliderDragged = false;
         private bool loaded = false;
         private List<string> MediaUrls = new List<string>();
+        int mediaIndex = -1;
         public MediaSlider()
         {
             InitializeComponent();
@@ -44,6 +46,7 @@ namespace gamevault.UserControls
         }
         public void Unload()
         {
+            ViewModel.ControlVisibility = Visibility.Collapsed;
             if (ViewModel.MediaPlayer.Media != null)
             {
                 ViewModel.MediaPlayer.Stop();
@@ -89,7 +92,8 @@ namespace gamevault.UserControls
                 }
                 catch { }
             };
-            ViewModel.MediaPlayer.Volume = 15;           
+            ViewModel.MediaPlayer.Volume = 15;
+            YoutubeClient = new YoutubeClient();
         }
         private void PrepareMetadata(GameMetadata data)
         {
@@ -105,6 +109,7 @@ namespace gamevault.UserControls
             {
                 MediaUrls.Add(data?.Screenshots[i]);
             }
+            uiTxtMediaIndex.Text = $"{mediaIndex + 1}/{MediaUrls.Count}";
         }
         private void AdaptUIToMediaType()
         {
@@ -116,15 +121,13 @@ namespace gamevault.UserControls
             {
                 ViewModel.VideoControlBarVisibility = Visibility.Visible;
             }
-        }
-        int mediaIndex = -1;
+        }        
         private async Task PrepareAndPlayMedia(string uri)
         {
             if (uri.Contains("youtube", StringComparison.OrdinalIgnoreCase))
-            {
-                var youtube = new YoutubeClient();
+            {               
                 var videoUrl = uri;
-                var streamManifest = await youtube.Videos.Streams.GetManifestAsync(videoUrl);
+                var streamManifest = await YoutubeClient.Videos.Streams.GetManifestAsync(videoUrl);
                 var streamInfo = streamManifest.GetMuxedStreams().First();
                 var streamUrl = streamInfo.Url;
                 ViewModel.MediaPlayer.Play(new LibVLCSharp.Shared.Media(MediaSlider.LibVlc, streamUrl, FromType.FromLocation));
@@ -147,9 +150,9 @@ namespace gamevault.UserControls
             else
             {
                 mediaIndex = 0;
-            }
-            //TO DO
-            //ViewModel.MediaPlayer.SetMarqueeString(VideoMarqueeOption.Text, $"{mediaIndex + 1}/{MediaUrls.Count}"); //to set subtitle or any other text
+                await PrepareAndPlayMedia(MediaUrls[mediaIndex]);
+            }           
+            uiTxtMediaIndex.Text = $"{mediaIndex + 1}/{MediaUrls.Count}";
         }
 
         private async void PrevMedia_Click(object sender, RoutedEventArgs e)
@@ -162,9 +165,9 @@ namespace gamevault.UserControls
             else
             {
                 mediaIndex = MediaUrls.Count - 1;
+                await PrepareAndPlayMedia(MediaUrls[mediaIndex]);
             }
-            //TO DO
-            //ViewModel.MediaPlayer.SetMarqueeString(VideoMarqueeOption.Text, $"{mediaIndex + 1}/{MediaUrls.Count}"); //to set subtitle or any other text
+            uiTxtMediaIndex.Text = $"{mediaIndex + 1}/{MediaUrls.Count}";
         }
 
         private void PlayPause_Click(object sender, EventArgs e)
@@ -185,6 +188,34 @@ namespace gamevault.UserControls
         {
             ViewModel.MediaPlayer.Mute = !ViewModel.MediaPlayer.Mute;
         }
+        bool isFullscreen = false;
+        Grid rememberParent;
+        private async void Fullscreen_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (!isFullscreen)
+                {
+                    isFullscreen = true;
+                    rememberParent = (Grid)this.Parent;
+                    rememberParent.Children.Remove(this);
+
+                    //uiPlayer.Width = 700;
+                    uiPlayer.Height = 400;
+                    MainWindowViewModel.Instance.OpenPopup(this);
+                }
+                else
+                {
+                    isFullscreen = false;
+
+                    MainWindowViewModel.Instance.ClosePopup();
+                    await Task.Delay(1000);
+                    rememberParent.Children.Add(this);
+                    uiPlayer.Height = double.NaN;
+                }
+            }
+            catch { }
+        }
         private void TimeSlider_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
         {
             timeSliderDragged = true;
@@ -194,6 +225,6 @@ namespace gamevault.UserControls
         {
             ViewModel.MediaPlayer.Time = (long)((Slider)sender).Value;
             timeSliderDragged = false;
-        }
+        }        
     }
 }

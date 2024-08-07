@@ -17,6 +17,7 @@ namespace gamevault.ViewModels
         private long currentLenghtInMilliseconds { get; set; }        
         private TimeSpan currentLenght { get; set; }
         private Visibility videoControlBarVisibility { get; set; }
+        private Visibility controlVisibility { get; set; }
         public bool IsPlaying
         {
             get { return isPlaying; }
@@ -51,6 +52,11 @@ namespace gamevault.ViewModels
         {
             get { return videoControlBarVisibility; }
             set { videoControlBarVisibility = value; OnPropertyChanged(); }
+        }
+        public Visibility ControlVisibility
+        {
+            get { return controlVisibility; }
+            set { controlVisibility = value; OnPropertyChanged(); }
         }
     }
 }

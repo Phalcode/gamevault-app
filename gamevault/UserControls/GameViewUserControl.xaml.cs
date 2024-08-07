@@ -103,6 +103,8 @@ namespace gamevault.UserControls
         {
             if (ViewModel.Game == null)
                 return;
+
+            uiMediaSlider.Unload();
             MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(ViewModel.Game) { Width = 1200, Height = 800, Margin = new Thickness(50) });
         }
         private async void GameDownload_Click(object sender, MouseButtonEventArgs e)

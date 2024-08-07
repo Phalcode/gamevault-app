@@ -591,7 +591,7 @@ namespace gamevault.UserControls
             {
                 bool error = false;
                 uiProgressRingInstall.IsActive = true;
-                await Task.Run(async () =>
+                await Task.Run(() =>
                 {
                     try
                     {
