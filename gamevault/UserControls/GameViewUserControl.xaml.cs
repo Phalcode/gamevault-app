@@ -2,31 +2,101 @@
 using gamevault.Helper;
 using gamevault.Models;
 using gamevault.ViewModels;
-using HarfBuzzSharp;
+using LiveChartsCore.Measure;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Forms;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Navigation;
+using YoutubeExplode;
 
 namespace gamevault.UserControls
 {
     /// <summary>
     /// Interaction logic for NewGameViewUserControl.xaml
     /// </summary>
-    public partial class GameViewUserControl : UserControl
+    public partial class GameViewUserControl : System.Windows.Controls.UserControl
     {
         private GameViewViewModel ViewModel { get; set; }
         private int gameID { get; set; }
         private bool loaded = false;
+
+
+        #region MediaSlider
+        private List<string> MediaUrls = new List<string>();
+        int mediaIndex = -1;
+        private YoutubeClient YoutubeClient { get; set; }
+        private async Task PrepareMetadataMedia(GameMetadata data)
+        {
+            YoutubeClient = new YoutubeClient();
+            for (int i = 0; i < data?.Trailers?.Count(); i++)
+            {
+                MediaUrls.Add(await ConvertYoutubeLinkToEmbedded(data?.Trailers[i]));
+            }
+            for (int i = 0; i < data?.Gameplays?.Count(); i++)
+            {
+                MediaUrls.Add(await ConvertYoutubeLinkToEmbedded(data?.Gameplays[i]));
+            }
+            for (int i = 0; i < data?.Screenshots?.Count(); i++)
+            {
+                MediaUrls.Add(data?.Screenshots[i]);
+            }
+            uiTxtMediaIndex.Text = $"{mediaIndex + 1}/{MediaUrls.Count}";
+        }
+        private async Task<string> ConvertYoutubeLinkToEmbedded(string input)
+        {
+            if (input.Contains("youtube", StringComparison.OrdinalIgnoreCase))
+            {
+                //string pattern = @"(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})";
+                //string embedFormat = "https://www.youtube.com/embed/{0}";
+                //string embeddedLink = Regex.Replace(input, pattern, m => string.Format(embedFormat, m.Groups[1].Value));
+                //return embeddedLink;
+                var streamManifest = await YoutubeClient.Videos.Streams.GetManifestAsync(input);
+                var streamInfo = streamManifest.GetMuxedStreams().First();
+                var streamUrl = streamInfo.Url;
+                return streamUrl;
+            }
+            else
+            {
+                return input;
+            }
+        }
+        private async void NextMedia_Click(object sender, RoutedEventArgs e)
+        {
+            if (mediaIndex < MediaUrls.Count - 1)
+            {
+                mediaIndex++;
+                uiWebView.CoreWebView2.Navigate(MediaUrls[mediaIndex]);
+            }
+            else
+            {
+                mediaIndex = 0;
+                uiWebView.CoreWebView2.Navigate(MediaUrls[mediaIndex]);
+            }
+            uiTxtMediaIndex.Text = $"{mediaIndex + 1}/{MediaUrls.Count}";
+        }
+        private async void PrevMedia_Click(object sender, RoutedEventArgs e)
+        {
+            if (mediaIndex > 0)
+            {
+                mediaIndex--;
+                uiWebView.CoreWebView2.Navigate(MediaUrls[mediaIndex]);
+            }
+            else
+            {
+                mediaIndex = MediaUrls.Count - 1;
+                uiWebView.CoreWebView2.Navigate(MediaUrls[mediaIndex]);
+            }
+            uiTxtMediaIndex.Text = $"{mediaIndex + 1}/{MediaUrls.Count}";
+        }
+        #endregion
         public GameViewUserControl(Game game, bool reloadGameObject = true)
         {
             InitializeComponent();
@@ -44,7 +114,6 @@ namespace gamevault.UserControls
             gameID = game.ID;
             this.DataContext = ViewModel;
         }
-
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             this.Focus();
@@ -65,7 +134,47 @@ namespace gamevault.UserControls
                 ViewModel.IsInstalled = IsGameInstalled(ViewModel.Game);
                 ViewModel.IsDownloaded = IsGameDownloaded(ViewModel.Game);
                 ViewModel.ShowMappedTitle = Preferences.Get(AppConfigKey.ShowMappedTitle, AppFilePath.UserFile) == "1";
-                uiMediaSlider.Init(ViewModel?.Game?.Metadata);
+                //MediaSlider
+                await PrepareMetadataMedia(ViewModel.Game.Metadata);
+                await uiWebView.EnsureCoreWebView2Async(null);
+                uiWebView.NavigationCompleted += async (s, e) =>
+                {
+                    try
+                    {
+                        string script = @"
+var video = document.querySelector('video[name=""media""]');
+if(video)
+{
+video.volume = 0.0;
+}
+if (video.requestFullscreen) {
+                    video.requestFullscreen();
+                } else if (video.msRequestFullscreen) { // IE/Edge
+                    video.msRequestFullscreen();
+                }
+   ";
+                        string cssscript = @"
+        var style = document.createElement('style');
+        style.type = 'text/css';
+        var cssRules = `video::-webkit-media-controls-fullscreen-button {
+            display: none !important;
+        }
+        video::-moz-media-controls-fullscreen-button {
+            display: none !important;
+        }
+        video::-ms-media-controls-fullscreen-button {
+            display: none !important;
+        }`;
+        style.appendChild(document.createTextNode(cssRules));
+        document.head.appendChild(style);
+    ";
+                        await uiWebView.CoreWebView2.ExecuteScriptAsync(script);
+                        await uiWebView.CoreWebView2.ExecuteScriptAsync(cssscript);
+                    }
+                    catch { }
+                };
+
+                //###########
             }
         }
         private bool IsGameInstalled(Game? game)
@@ -75,7 +184,6 @@ namespace gamevault.UserControls
             KeyValuePair<Game, string> result = InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == game.ID).FirstOrDefault();
             if (result.Equals(default(KeyValuePair<Game, string>)))
                 return false;
-
             return true;
         }
         private bool IsGameDownloaded(Game? game)
@@ -86,25 +194,20 @@ namespace gamevault.UserControls
         }
         private void Back_Click(object sender, MouseButtonEventArgs e)
         {
-            uiMediaSlider.Unload();
             MainWindowViewModel.Instance.UndoActiveControl();
         }
         private void KeyBindingEscape_OnExecuted(object sender, object e)
         {
-            uiMediaSlider.Unload();
             MainWindowViewModel.Instance.UndoActiveControl();
         }
         private void GamePlay_Click(object sender, MouseButtonEventArgs e)
         {
             InstallUserControl.PlayGame(ViewModel.Game.ID);
         }
-
         private void GameSettings_Click(object sender, MouseButtonEventArgs e)
         {
             if (ViewModel.Game == null)
                 return;
-
-            uiMediaSlider.Unload();
             MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(ViewModel.Game) { Width = 1200, Height = 800, Margin = new Thickness(50) });
         }
         private async void GameDownload_Click(object sender, MouseButtonEventArgs e)
@@ -124,12 +227,10 @@ namespace gamevault.UserControls
             }
             catch { }
         }
-
         private async void GameState_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.RemovedItems.Count == 0 || !LoginManager.Instance.IsLoggedIn())
                 return;
-
             if (e.AddedItems.Count > 0)
             {
                 await Task.Run(() =>
@@ -146,7 +247,6 @@ namespace gamevault.UserControls
                 });
             }
         }
-
         private void ShowProgressUser_Click(object sender, MouseButtonEventArgs e)
         {
             Progress selectedProgress = ((FrameworkElement)sender).DataContext as Progress;
@@ -155,12 +255,10 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.Community.ShowUser(selectedProgress.User);
             }
         }
-
         public void RefreshGame(Game game)
         {
             ViewModel.Game = game;
         }
-
         private void GameTitle_Click(object sender, MouseButtonEventArgs e)
         {
             try
@@ -241,7 +339,7 @@ namespace gamevault.UserControls
             try
             {
                 string shareLink = $"gamevault://show?gameid={ViewModel?.Game?.ID}";
-                Clipboard.SetText(shareLink);
+                System.Windows.Clipboard.SetText(shareLink);
                 MainWindowViewModel.Instance.AppBarText = "Sharelink copied to clipboard";
             }
             catch { }

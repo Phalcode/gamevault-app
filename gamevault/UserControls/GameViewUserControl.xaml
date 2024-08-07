@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:conv="clr-namespace:gamevault.Converter"
              xmlns:helper="clr-namespace:gamevault.Helper"
+             xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded" Focusable="True" FocusVisualStyle="{x:Null}">
@@ -412,8 +413,40 @@
                             </TextBlock>
                         </Grid>
                     </StackPanel>
-                    <!--MEDIA-->
-                    <local:MediaSlider x:Name="uiMediaSlider" HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="400" Width="800"/>
+                    <!--MEDIA SLIDER-->
+                    <Grid Panel.ZIndex="1" Background="Transparent" Height="500" Width="980" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                        <TextBlock x:Name="uiTxtMediaIndex" FontSize="20" Foreground="White" HorizontalAlignment="Right"/>
+                        <wv2:WebView2 x:Name="uiWebView" Height="500" Width="888"/>
+                        <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Left" Cursor="Hand" Width="35" Height="35" Margin="3,0,0,0" Click="PrevMedia_Click">
+                            <Grid Style="{DynamicResource HoverEffect}"  RenderTransformOrigin="0.5,0.5" Background="#02000000">
+                                <Path Data="{StaticResource IconArrowBordered}" Fill="#7AFFFFFF" Margin="35,35,-35,-35">
+                                    <Path.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+                                            <SkewTransform/>
+                                            <RotateTransform Angle="180"/>
+                                            <TranslateTransform/>
+                                        </TransformGroup>
+                                    </Path.RenderTransform>
+                                </Path>
+                                <Grid.RenderTransform>
+                                    <ScaleTransform/>
+                                </Grid.RenderTransform>
+                            </Grid>
+                        </Button>
+                        <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" VerticalAlignment="Center" HorizontalAlignment="Right" Width="35" Height="35" Margin="0,0,3,0" Click="NextMedia_Click">
+                            <Grid Style="{DynamicResource HoverEffect}" RenderTransformOrigin="0.5,0.5" Background="#02000000">
+                                <Path Data="{StaticResource IconArrowBordered}" Fill="#7AFFFFFF">
+                                    <Path.RenderTransform>
+                                        <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+                                    </Path.RenderTransform>
+                                </Path>
+                                <Grid.RenderTransform>
+                                    <ScaleTransform/>
+                                </Grid.RenderTransform>
+                            </Grid>
+                        </Button>
+                    </Grid>
                     <!--PROGRESS-->
                     <StackPanel HorizontalAlignment="Right" Margin="0,0,0,0">
                         <StackPanel Orientation="Horizontal" Margin="0,-5,0,0">
