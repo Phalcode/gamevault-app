@@ -33,6 +33,20 @@ namespace gamevault.UserControls
         private List<string> MediaUrls = new List<string>();
         int mediaIndex = -1;
         private YoutubeClient YoutubeClient { get; set; }
+        private void UnloadMediaSlider()
+        {
+            uiWebView.Visibility = Visibility.Hidden;
+            uiWebView.CoreWebView2?.NavigateToString("<html><body></body></html>");
+        }
+        private void ReloadMediaSlider()
+        {
+            uiWebView.Visibility = Visibility.Visible;
+            uiWebView.CoreWebView2.Navigate(MediaUrls[mediaIndex]);
+        }
+        private void ReloadMediaSlider_Click(object sender, RoutedEventArgs e)
+        {
+            ReloadMediaSlider();
+        }
         private async Task PrepareMetadataMedia(GameMetadata data)
         {
             YoutubeClient = new YoutubeClient();
@@ -49,15 +63,12 @@ namespace gamevault.UserControls
                 MediaUrls.Add(data?.Screenshots[i]);
             }
             uiTxtMediaIndex.Text = $"{mediaIndex + 1}/{MediaUrls.Count}";
+            NextMedia_Click(null, null); //Show first element
         }
         private async Task<string> ConvertYoutubeLinkToEmbedded(string input)
         {
             if (input.Contains("youtube", StringComparison.OrdinalIgnoreCase))
             {
-                //string pattern = @"(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})";
-                //string embedFormat = "https://www.youtube.com/embed/{0}";
-                //string embeddedLink = Regex.Replace(input, pattern, m => string.Format(embedFormat, m.Groups[1].Value));
-                //return embeddedLink;
                 var streamManifest = await YoutubeClient.Videos.Streams.GetManifestAsync(input);
                 var streamInfo = streamManifest.GetMuxedStreams().First();
                 var streamUrl = streamInfo.Url;
@@ -68,8 +79,55 @@ namespace gamevault.UserControls
                 return input;
             }
         }
+        private void InitVideoPlayer()
+        {
+            uiWebView.NavigationCompleted += async (s, e) =>
+            {
+                try
+                {
+                    string script = @"
+            var video = document.querySelector('video[name=""media""]');
+            if(video)
+            {
+                video.volume = 0.0;
+            }
+            var width = window.innerWidth;
+            var height = window.innerHeight;
+
+            // Set video element to these dimensions
+            video.style.width = width + 'px';
+            video.style.height = height + 'px';
+            video.style.position = 'fixed'; // Ensure it is positioned to cover the viewport
+            video.style.top = '0';
+            video.style.left = '0';
+            video.style.zIndex = '1000'; // Ensure it is on top of other elements
+   ";
+                    string cssscript = @"
+        var style = document.createElement('style');
+        style.type = 'text/css';
+        var cssRules = `video::-webkit-media-controls-fullscreen-button {
+            display: none !important;
+        }
+        video::-moz-media-controls-fullscreen-button {
+            display: none !important;
+        }
+        video::-ms-media-controls-fullscreen-button {
+            display: none !important;
+        }`;
+        style.appendChild(document.createTextNode(cssRules));
+        document.head.appendChild(style);
+    ";
+                    await uiWebView.CoreWebView2.ExecuteScriptAsync(script);
+                    await uiWebView.CoreWebView2.ExecuteScriptAsync(cssscript);
+                }
+                catch { }
+            };
+        }
         private async void NextMedia_Click(object sender, RoutedEventArgs e)
         {
+            if (MediaUrls.Count < 1)
+                return;
+
             if (mediaIndex < MediaUrls.Count - 1)
             {
                 mediaIndex++;
@@ -84,6 +142,9 @@ namespace gamevault.UserControls
         }
         private async void PrevMedia_Click(object sender, RoutedEventArgs e)
         {
+            if (MediaUrls.Count < 1)
+                return;
+
             if (mediaIndex > 0)
             {
                 mediaIndex--;
@@ -104,12 +165,6 @@ namespace gamevault.UserControls
             if (false == reloadGameObject)
             {
                 ViewModel.Game = game;
-                //try
-                //{
-                //    ViewModel.UserProgresses = ViewModel.Game.Progresses.Where(p => p.User.ID != LoginManager.Instance.GetCurrentUser().ID).ToArray();
-                //    ViewModel.CurrentUserProgress = ViewModel.Game.Progresses.Where(progress => progress.User.ID == LoginManager.Instance.GetCurrentUser().ID).FirstOrDefault();
-                //}
-                //catch { }
             }
             gameID = game.ID;
             this.DataContext = ViewModel;
@@ -135,44 +190,11 @@ namespace gamevault.UserControls
                 ViewModel.IsDownloaded = IsGameDownloaded(ViewModel.Game);
                 ViewModel.ShowMappedTitle = Preferences.Get(AppConfigKey.ShowMappedTitle, AppFilePath.UserFile) == "1";
                 //MediaSlider
-                await PrepareMetadataMedia(ViewModel.Game.Metadata);
+
                 await uiWebView.EnsureCoreWebView2Async(null);
-                uiWebView.NavigationCompleted += async (s, e) =>
-                {
-                    try
-                    {
-                        string script = @"
-var video = document.querySelector('video[name=""media""]');
-if(video)
-{
-video.volume = 0.0;
-}
-if (video.requestFullscreen) {
-                    video.requestFullscreen();
-                } else if (video.msRequestFullscreen) { // IE/Edge
-                    video.msRequestFullscreen();
-                }
-   ";
-                        string cssscript = @"
-        var style = document.createElement('style');
-        style.type = 'text/css';
-        var cssRules = `video::-webkit-media-controls-fullscreen-button {
-            display: none !important;
-        }
-        video::-moz-media-controls-fullscreen-button {
-            display: none !important;
-        }
-        video::-ms-media-controls-fullscreen-button {
-            display: none !important;
-        }`;
-        style.appendChild(document.createTextNode(cssRules));
-        document.head.appendChild(style);
-    ";
-                        await uiWebView.CoreWebView2.ExecuteScriptAsync(script);
-                        await uiWebView.CoreWebView2.ExecuteScriptAsync(cssscript);
-                    }
-                    catch { }
-                };
+                InitVideoPlayer();
+                await PrepareMetadataMedia(ViewModel.Game.Metadata);
+
 
                 //###########
             }
@@ -208,6 +230,8 @@ if (video.requestFullscreen) {
         {
             if (ViewModel.Game == null)
                 return;
+
+            UnloadMediaSlider();
             MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(ViewModel.Game) { Width = 1200, Height = 800, Margin = new Thickness(50) });
         }
         private async void GameDownload_Click(object sender, MouseButtonEventArgs e)

@@ -63,7 +63,6 @@
 		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2365.46" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.3.1" />
 		<PackageReference Include="System.Management" Version="8.0.0" />
-		<PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.20" />
 		<PackageReference Include="VirtualizingWrapPanel" Version="1.5.8" />
 		<PackageReference Include="YoutubeExplode" Version="6.4.0" />
 	</ItemGroup>
@@ -90,13 +89,7 @@
 	<ItemGroup>
 		<Reference Include="Preferences">
 			<HintPath>Lib\Preferences.dll</HintPath>
-		</Reference>
-		<Reference Include="LibVLCSharp.Wpf">
-			<HintPath>Lib\vlc\LibVLCSharp.Wpf.dll</HintPath>
-		</Reference>
-		<Reference Include="LibVLCSharp">
-			<HintPath>Lib\vlc\LibVLCSharp.dll</HintPath>
-		</Reference>
+		</Reference>		
 	</ItemGroup>
 
 	<ItemGroup>

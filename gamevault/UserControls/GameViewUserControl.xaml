@@ -415,8 +415,22 @@
                     </StackPanel>
                     <!--MEDIA SLIDER-->
                     <Grid Panel.ZIndex="1" Background="Transparent" Height="500" Width="980" HorizontalAlignment="Center" VerticalAlignment="Bottom">
-                        <TextBlock x:Name="uiTxtMediaIndex" FontSize="20" Foreground="White" HorizontalAlignment="Right"/>
-                        <wv2:WebView2 x:Name="uiWebView" Height="500" Width="888"/>
+                        <TextBlock x:Name="uiTxtMediaIndex" FontSize="20" Foreground="White" HorizontalAlignment="Right" Margin="0,0,-10,0"/>
+                        <Grid Background="Black" Height="500" Width="888">
+                            <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" VerticalAlignment="Center" HorizontalAlignment="Center" Width="35" Height="35" Margin="0,0,3,0" Click="ReloadMediaSlider_Click">
+                                <Grid Style="{DynamicResource HoverEffect}" RenderTransformOrigin="0.5,0.5" Background="#02000000">
+                                    <Path Data="{StaticResource IconReload}" Fill="#7AFFFFFF">
+                                        <Path.RenderTransform>
+                                            <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+                                        </Path.RenderTransform>
+                                    </Path>
+                                    <Grid.RenderTransform>
+                                        <ScaleTransform/>
+                                    </Grid.RenderTransform>
+                                </Grid>
+                            </Button>
+                            <wv2:WebView2 x:Name="uiWebView"/>
+                        </Grid>
                         <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Left" Cursor="Hand" Width="35" Height="35" Margin="3,0,0,0" Click="PrevMedia_Click">
                             <Grid Style="{DynamicResource HoverEffect}"  RenderTransformOrigin="0.5,0.5" Background="#02000000">
                                 <Path Data="{StaticResource IconArrowBordered}" Fill="#7AFFFFFF" Margin="35,35,-35,-35">
