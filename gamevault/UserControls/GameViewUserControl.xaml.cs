@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
@@ -79,18 +80,13 @@ namespace gamevault.UserControls
                 return input;
             }
         }
-        private void InitVideoPlayer()
+
+        private async Task ResizeMediaSlider()
         {
-            uiWebView.NavigationCompleted += async (s, e) =>
-            {
-                try
-                {
-                    string script = @"
-            var video = document.querySelector('video[name=""media""]');
-            if(video)
-            {
-                video.volume = 0.0;
-            }
+            string resizescript = @"
+ var video = document.querySelector('video[name=""media""]');
+if(video)
+{
             var width = window.innerWidth;
             var height = window.innerHeight;
 
@@ -101,7 +97,23 @@ namespace gamevault.UserControls
             video.style.top = '0';
             video.style.left = '0';
             video.style.zIndex = '1000'; // Ensure it is on top of other elements
+}
    ";
+            await uiWebView.CoreWebView2.ExecuteScriptAsync(resizescript);
+        }
+        private void InitVideoPlayer()
+        {
+            uiWebView.NavigationCompleted += async (s, e) =>
+            {
+                try
+                {
+                    string mutescript = @"
+            var video = document.querySelector('video[name=""media""]');
+            if(video)
+            {
+                video.volume = 0.0;
+            }";
+
                     string cssscript = @"
         var style = document.createElement('style');
         style.type = 'text/css';
@@ -117,11 +129,35 @@ namespace gamevault.UserControls
         style.appendChild(document.createTextNode(cssRules));
         document.head.appendChild(style);
     ";
-                    await uiWebView.CoreWebView2.ExecuteScriptAsync(script);
+                    await uiWebView.CoreWebView2.ExecuteScriptAsync(mutescript);
+                    await ResizeMediaSlider();
                     await uiWebView.CoreWebView2.ExecuteScriptAsync(cssscript);
                 }
                 catch { }
             };
+        }
+        private bool isMediaSliderFullscreen = false;
+        private Grid webViewAnchor;
+        private async void MediaSliderFullscreen_Click(object sender, RoutedEventArgs e)
+        {
+            if (!isMediaSliderFullscreen)
+            {
+                isMediaSliderFullscreen = true;
+                webViewAnchor = (Grid)uiWebViewControlHost.Parent;                
+                webViewAnchor.Children.Remove(uiWebViewControlHost);
+                MainWindowViewModel.Instance.OpenPopup(uiWebViewControlHost);
+                await Task.Delay(400);
+                uiWebViewControlHost.Margin = new Thickness(15);
+                await ResizeMediaSlider();
+            }
+            else
+            {
+                isMediaSliderFullscreen = false;
+                MainWindowViewModel.Instance.ClosePopup();
+                await Task.Delay(1000);
+                uiWebViewControlHost.Margin = new Thickness(0);
+                webViewAnchor.Children.Add(uiWebViewControlHost);
+            }
         }
         private async void NextMedia_Click(object sender, RoutedEventArgs e)
         {
@@ -368,5 +404,6 @@ namespace gamevault.UserControls
             }
             catch { }
         }
+
     }
 }

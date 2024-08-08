@@ -93,7 +93,7 @@ namespace gamevault.ViewModels
         private int m_ActiveControlIndex = -1;
         private Visibility onlineState = Visibility.Collapsed;
         private UserControl m_ActiveControl { get; set; }
-        private UserControl m_Popup { get; set; }
+        private FrameworkElement m_Popup { get; set; }
         private SettingsUserControl m_Settings { get; set; }
         private DownloadsUserControl m_Downloads { get; set; }
         private LibraryUserControl m_Library { get; set; }
@@ -130,7 +130,7 @@ namespace gamevault.ViewModels
                 OnPropertyChanged();
             }
         }
-        public UserControl Popup
+        public FrameworkElement Popup
         {
             get { return m_Popup; }
             set
@@ -139,7 +139,7 @@ namespace gamevault.ViewModels
                 OnPropertyChanged();
             }
         }
-        public void OpenPopup(UserControl userControl)
+        public void OpenPopup(FrameworkElement userControl)
         {
             Popup = userControl;
         }
