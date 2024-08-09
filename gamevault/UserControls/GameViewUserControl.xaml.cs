@@ -17,6 +17,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using YoutubeExplode;
+using YoutubeExplode.Videos.Streams;
 
 namespace gamevault.UserControls
 {
@@ -71,7 +72,7 @@ namespace gamevault.UserControls
             if (input.Contains("youtube", StringComparison.OrdinalIgnoreCase))
             {
                 var streamManifest = await YoutubeClient.Videos.Streams.GetManifestAsync(input);
-                var streamInfo = streamManifest.GetMuxedStreams().First();
+                var streamInfo = streamManifest.GetMuxedStreams().GetWithHighestVideoQuality();
                 var streamUrl = streamInfo.Url;
                 return streamUrl;
             }

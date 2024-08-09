@@ -132,7 +132,7 @@
                                 <TabItem.Header>
                                     <StackPanel Orientation="Horizontal">
                                         <Path Style="{StaticResource TabItemHeaderPathStroke}" Data="{DynamicResource IconGameSettingsEditDetails}" VerticalAlignment="Center"/>
-                                        <TextBlock Style="{StaticResource TabItemHeaderTextBlock}" Text="Edit Game"/>
+                                        <TextBlock Style="{StaticResource TabItemHeaderTextBlock}" Text="Edit Details"/>
                                     </StackPanel>
                                 </TabItem.Header>
                             </TabItem>
@@ -465,11 +465,24 @@
                         </StackPanel>
                     </mah:MetroTabItem>
                     <mah:MetroTabItem>
-                        <StackPanel Margin="20,20,0,0">
+                        <StackPanel Margin="20,20,20,0">
                             <StackPanel Orientation="Horizontal">
                                 <Path Data="{DynamicResource IconGameSettingsEditDetails}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" VerticalAlignment="Center"/>
-                                <TextBlock Text="Edit Game" FontSize="20" FontWeight="Bold" Margin="5,0,0,0"/>
+                                <TextBlock Text="Edit Details" FontSize="20" FontWeight="Bold" Margin="5,0,0,0"/>
                             </StackPanel>
+                            <TextBlock Text="Here, you can edit the game details" TextWrapping="Wrap" FontSize="15" Margin="0,5,0,0"/>
+                            <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Title}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Title}"/>
+                            <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Description}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Description}"/>
+                            <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Notes}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Notes}"/>
+                            <!--<TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.U}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.UrlWebsites[0]}"/>-->
+                            <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.AveragePlaytime}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.AveragePlaytime}"/>
+                            <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.AgeRating}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.AgeRating}"/>
+                            <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.ReleaseDate}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.ReleaseDate}"/>
+                            <CheckBox Content="Early Access" IsChecked="{Binding UpdateGame.UserMetadata.EarlyAccess}"/>
+                            <!--<TextBox mah:TextBoxHelper.Watermark="Developers" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Developers[0].Name}"/>
+                            <TextBox mah:TextBoxHelper.Watermark="Publishers" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Publishers[0].Name}"/>-->
+                            <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Rating}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Rating}"/>
+                            <local:IconButton Text="Save" FontSize="15" Icon="{DynamicResource IconGameSettingsSave}" IconMargin="0,0,5,2" IsEnabled="true" Width="115" Height="33" Margin="0,10,0,0" HorizontalAlignment="Right" Click="SaveGameDetails_Click"/>
                         </StackPanel>
                     </mah:MetroTabItem>
                 </mah:MetroAnimatedTabControl>

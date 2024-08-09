@@ -319,24 +319,24 @@
                                 </Path.RenderTransform>
                             </Path>
                             <TextBlock Text="Website" FontWeight="Bold" FontSize="20" Margin="55,0,0,0"/>
-                            <TextBlock FontSize="20" Margin="55,24,0,0" ToolTip="{Binding Path=Game.Metadata.UrlWebsite}">
+                            <TextBlock FontSize="20" Margin="55,24,0,0" ToolTip="{Binding Path=Game.Metadata.UrlWebsites[0]}">
                                 <TextBlock.Style>
                                     <Style TargetType="{x:Type TextBlock}">
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Path=Game.Metadata.UrlWebsite}" Value="{x:Null}">
+                                            <DataTrigger Binding="{Binding Path=Game.Metadata.UrlWebsites[0]}" Value="{x:Null}">
                                                 <Setter Property="IsEnabled" Value="False"/>
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
                                 </TextBlock.Style>
-                                <Hyperlink TextDecorations="None" NavigateUri="{Binding Path=Game.Metadata.UrlWebsite}" RequestNavigate="Website_Navigate">
+                                <Hyperlink TextDecorations="None" NavigateUri="{Binding Path=Game.Metadata.UrlWebsites[0]}" RequestNavigate="Website_Navigate">
                                     <Hyperlink.Inlines>
                                         <Run>
                                             <Run.Style>
                                                 <Style TargetType="{x:Type Run}">
                                                     <Setter Property="Text" Value="Open in Browser"/>
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Path=Game.Metadata.UrlWebsite}" Value="{x:Null}">
+                                                        <DataTrigger Binding="{Binding Path=Game.Metadata.UrlWebsites[0]}" Value="{x:Null}">
                                                             <Setter Property="Text" Value="N/A"/>
                                                             <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
                                                         </DataTrigger>

@@ -15,6 +15,7 @@ namespace gamevault.ViewModels
         #region Privates
 
         private Game game { get; set; }
+        private UpdateGameDto updateGame {  get; set; }
         private string directory { get; set; }
         private ObservableCollection<KeyValuePair<string, string>> m_Executables { get; set; }
         private string launchParameter { get; set; }
@@ -31,6 +32,11 @@ namespace gamevault.ViewModels
         {
             get { return game; }
             set { game = value; OnPropertyChanged(); }
+        }
+        public UpdateGameDto UpdateGame
+        {
+            get { return updateGame; }
+            set { updateGame = value; OnPropertyChanged(); }
         }
         public string Directory
         {

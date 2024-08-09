@@ -215,5 +215,13 @@ namespace gamevault.Models
 
         [JsonPropertyName("genres")]
         public List<GenreMetadata>? Genres { get; set; }
+
+        /// <summary>
+        /// public notes from the admin for the game. markdown supported.
+        /// </summary>
+        /// <value>public notes from the admin for the game. markdown supported.</value>
+
+        [JsonPropertyName("notes")]
+        public string? Notes { get; set; }
     }
 }
