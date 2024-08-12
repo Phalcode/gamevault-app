@@ -55,6 +55,7 @@
         </Style>
         <conv:GameSettingsTabVisibilityConverter x:Key="tabVisConv"/>
         <conv:InverseNullConverter x:Key="invNullConv"/>
+        <conv:StringToArrayConverter x:Key="stringToArrayConv"/>
     </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Key="Esc">
@@ -471,17 +472,35 @@
                                 <TextBlock Text="Edit Details" FontSize="20" FontWeight="Bold" Margin="5,0,0,0"/>
                             </StackPanel>
                             <TextBlock Text="Here, you can edit the game details" TextWrapping="Wrap" FontSize="15" Margin="0,5,0,0"/>
-                            <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Title}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Title}"/>
-                            <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Description}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Description}"/>
-                            <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Notes}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Notes}"/>
-                            <!--<TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.U}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.UrlWebsites[0]}"/>-->
-                            <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.AveragePlaytime}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.AveragePlaytime}"/>
-                            <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.AgeRating}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.AgeRating}"/>
-                            <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.ReleaseDate}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.ReleaseDate}"/>
-                            <CheckBox Content="Early Access" IsChecked="{Binding UpdateGame.UserMetadata.EarlyAccess}"/>
-                            <!--<TextBox mah:TextBoxHelper.Watermark="Developers" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Developers[0].Name}"/>
-                            <TextBox mah:TextBoxHelper.Watermark="Publishers" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Publishers[0].Name}"/>-->
-                            <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Rating}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Rating}"/>
+                            <ScrollViewer Background="Transparent" Height="650">
+                                <StackPanel>
+                                    <TextBlock Text="Title" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Title}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Title}" mah:ControlsHelper.CornerRadius="5"/>
+                                    <TextBlock Text="Description" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Description}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Description}" mah:ControlsHelper.CornerRadius="5"/>
+                                    <TextBlock Text="Notes" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Notes}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Notes}" mah:ControlsHelper.CornerRadius="5"/>
+                                    <TextBlock Text="Average Playtime in Minutes" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.AveragePlaytime}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.AveragePlaytime,TargetNullValue='',FallbackValue={x:Null}}" mah:ControlsHelper.CornerRadius="5"/>
+                                    <TextBlock Text="Age Rating" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.AgeRating}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.AgeRating,TargetNullValue='',FallbackValue={x:Null}}" mah:ControlsHelper.CornerRadius="5"/>
+                                    <TextBlock Text="Release Date" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <DatePicker SelectedDate="{Binding UpdateGame.UserMetadata.ReleaseDate}" mah:TextBoxHelper.Watermark="{Binding Path=Game.Metadata.ReleaseDate,StringFormat='{}{0:dd/MM/yyyy}'}" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.UseFloatingWatermark="True"/>
+                                    <CheckBox Content="Early Access" IsChecked="{Binding UpdateGame.UserMetadata.EarlyAccess}" Margin="0,10,0,0"/>
+                                    <TextBlock Text="Rating" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Rating}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Rating}" mah:ControlsHelper.CornerRadius="5"/>
+                                    <TextBlock Text="Websites" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <TextBox Text="{Binding UpdateGame.UserMetadata.UrlWebsites,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.WebsiteNames}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                    <TextBlock Text="Genres" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <TextBox Text="{Binding UpdateGame.UserMetadata.Genres,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.GenreNames}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                    <TextBlock Text="Tags" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <TextBox Text="{Binding UpdateGame.UserMetadata.Tags,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.TagNames}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                    <TextBlock Text="Publishers" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <TextBox Text="{Binding UpdateGame.UserMetadata.Publishers,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.PublisherNames}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                    <TextBlock Text="Developers" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <TextBox Text="{Binding UpdateGame.UserMetadata.Developers,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.DeveloperNames}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                </StackPanel>
+                            </ScrollViewer>
                             <local:IconButton Text="Save" FontSize="15" Icon="{DynamicResource IconGameSettingsSave}" IconMargin="0,0,5,2" IsEnabled="true" Width="115" Height="33" Margin="0,10,0,0" HorizontalAlignment="Right" Click="SaveGameDetails_Click"/>
                         </StackPanel>
                     </mah:MetroTabItem>

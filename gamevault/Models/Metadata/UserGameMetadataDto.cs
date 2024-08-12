@@ -32,7 +32,7 @@ namespace IO.Swagger.Model
         /// <value>release date of the game as ISO8601 string</value>
         
         [JsonPropertyName("release_date")]
-        public string? ReleaseDate { get; set; }
+        public DateTime? ReleaseDate { get; set; }
 
         /// <summary>
         /// description of the game. markdown supported.
@@ -157,7 +157,7 @@ namespace IO.Swagger.Model
         /// <value>publishers of the game</value>
         
         [JsonPropertyName("publishers")]
-        public List<PublisherMetadata>? Publishers { get; set; }
+        public string[]? Publishers { get; set; }
 
         /// <summary>
         /// developers of the game
@@ -165,7 +165,7 @@ namespace IO.Swagger.Model
         /// <value>developers of the game</value>
         
         [JsonPropertyName("developers")]
-        public List<DeveloperMetadata>? Developers { get; set; }
+        public string[]? Developers { get; set; }
 
         /// <summary>
         /// tags of the game
@@ -173,7 +173,7 @@ namespace IO.Swagger.Model
         /// <value>tags of the game</value>
         
         [JsonPropertyName("tags")]
-        public List<TagMetadata>? Tags { get; set; }
+        public string[]? Tags { get; set; }
 
         /// <summary>
         /// genres of the game
@@ -181,9 +181,7 @@ namespace IO.Swagger.Model
         /// <value>genres of the game</value>
         
         [JsonPropertyName("genres")]
-        public List<GenreMetadata>? Genres { get; set; }
-
-
+        public string[]? Genres { get; set; }
 
 
     }

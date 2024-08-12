@@ -161,7 +161,13 @@ namespace gamevault.Models
 
         [JsonPropertyName("url_websites")]
         public string[]? UrlWebsites { get; set; }
-
+        public string WebsiteNames
+        {
+            get
+            {
+                return string.Join(",", UrlWebsites);
+            }
+        }
 
         private decimal? rating { get; set; }
         /// <summary>
@@ -191,7 +197,13 @@ namespace gamevault.Models
 
         [JsonPropertyName("publishers")]
         public List<PublisherMetadata>? Publishers { get; set; }
-
+        public string PublisherNames
+        {
+            get
+            {
+                return string.Join(",", Publishers.Select(publisher => publisher.Name));
+            }
+        }
         /// <summary>
         /// developers of the game
         /// </summary>
@@ -199,6 +211,13 @@ namespace gamevault.Models
 
         [JsonPropertyName("developers")]
         public List<DeveloperMetadata>? Developers { get; set; }
+        public string DeveloperNames
+        {
+            get
+            {
+                return string.Join(",", Developers.Select(developer => developer.Name));
+            }
+        }
 
         /// <summary>
         /// tags of the game
@@ -207,6 +226,13 @@ namespace gamevault.Models
 
         [JsonPropertyName("tags")]
         public List<TagMetadata>? Tags { get; set; }
+        public string TagNames
+        {
+            get
+            {
+                return string.Join(",",Tags.Select(tag=>tag.Name));
+            }
+        }
 
         /// <summary>
         /// genres of the game
@@ -215,6 +241,13 @@ namespace gamevault.Models
 
         [JsonPropertyName("genres")]
         public List<GenreMetadata>? Genres { get; set; }
+        public string GenreNames
+        {
+            get
+            {
+                return string.Join(",", Genres.Select(genre => genre.Name));
+            }
+        }
 
         /// <summary>
         /// public notes from the admin for the game. markdown supported.

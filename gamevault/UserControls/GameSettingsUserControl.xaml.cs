@@ -810,7 +810,6 @@ namespace gamevault.UserControls
             {
                 try
                 {
-
                     string remappedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}", JsonSerializer.Serialize(ViewModel.UpdateGame), true);
                     ViewModel.Game = JsonSerializer.Deserialize<Game>(remappedGame);
                     success = true;
