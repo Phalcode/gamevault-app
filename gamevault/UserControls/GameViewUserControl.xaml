@@ -414,7 +414,7 @@
                         </Grid>
                     </StackPanel>
                     <!--MEDIA SLIDER-->
-                    <Grid x:Name="uiWebViewControlHost" Panel.ZIndex="1" Background="Transparent" Height="500" Width="980" HorizontalAlignment="Center" VerticalAlignment="Bottom" Tag="NoPopupTransition">
+                    <Grid x:Name="uiWebViewControlHost" Panel.ZIndex="1" Background="Transparent" Height="500" Width="980" HorizontalAlignment="Center" VerticalAlignment="Bottom" Tag="NoPopupTransition" KeyDown="MediaSliderFullscreen_Escape_KeyDown">
                         <TextBlock x:Name="uiTxtMediaIndex" FontSize="20" Foreground="White" HorizontalAlignment="Right" Margin="0,0,-10,0"/>
                         <Grid Background="Black" Margin="46,0,46,0">
                             <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" VerticalAlignment="Center" HorizontalAlignment="Center" Width="35" Height="35" Margin="0,0,3,0" Click="ReloadMediaSlider_Click">

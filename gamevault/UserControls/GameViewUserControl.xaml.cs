@@ -117,11 +117,15 @@ if(video)
         }
         private async Task SaveMediaVolume()
         {
-            string result = await GetCurrentMediaVolume();
-            if (!string.IsNullOrWhiteSpace(result) && result != "null")
+            try
             {
-                Preferences.Set(AppConfigKey.MediaSliderVolume, result, AppFilePath.UserFile);
+                string result = await GetCurrentMediaVolume();
+                if (!string.IsNullOrWhiteSpace(result) && result != "null")
+                {
+                    Preferences.Set(AppConfigKey.MediaSliderVolume, result, AppFilePath.UserFile);
+                }
             }
+            catch { }
         }
         private void InitVideoPlayer()
         {
@@ -157,22 +161,39 @@ if(video)
         }
         private bool isMediaSliderFullscreen = false;
         private Grid webViewAnchor;
-        private async void MediaSliderFullscreen_Click(object sender, RoutedEventArgs e)
+        private void ToggleFullscreen()
         {
-            if (!isMediaSliderFullscreen)
+            try
             {
-                isMediaSliderFullscreen = true;
-                uiWebViewControlHost.Margin = new Thickness(15);
-                webViewAnchor = (Grid)uiWebViewControlHost.Parent;
-                webViewAnchor.Children.Remove(uiWebViewControlHost);
-                MainWindowViewModel.Instance.OpenPopup(uiWebViewControlHost);
+                if (!isMediaSliderFullscreen)
+                {
+                    isMediaSliderFullscreen = true;
+                    webViewAnchor = (Grid)uiWebViewControlHost.Parent;
+                    webViewAnchor.Children.Remove(uiWebViewControlHost);
+                    uiWebViewControlHost.Margin = new Thickness(15);
+                    MainWindowViewModel.Instance.OpenPopup(uiWebViewControlHost);
+                }
+                else
+                {
+                    isMediaSliderFullscreen = false;
+                    MainWindowViewModel.Instance.ClosePopup();
+                    uiWebViewControlHost.Margin = new Thickness(0);
+                    webViewAnchor.Children.Add(uiWebViewControlHost);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                isMediaSliderFullscreen = false;
-                MainWindowViewModel.Instance.ClosePopup();
-                uiWebViewControlHost.Margin = new Thickness(0);
-                webViewAnchor.Children.Add(uiWebViewControlHost);
+            }//Probably is the Visual not disconnected from its Parent
+        }
+        private void MediaSliderFullscreen_Click(object sender, RoutedEventArgs e)
+        {
+            ToggleFullscreen();
+        }
+        private void MediaSliderFullscreen_Escape_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (isMediaSliderFullscreen && e.Key == Key.Escape)
+            {
+                ToggleFullscreen();
             }
         }
         private async Task MediaSliderNavigate(string url)
@@ -247,10 +268,13 @@ if(video)
                 ViewModel.IsDownloaded = IsGameDownloaded(ViewModel.Game);
                 ViewModel.ShowMappedTitle = Preferences.Get(AppConfigKey.ShowMappedTitle, AppFilePath.UserFile) == "1";
                 //MediaSlider
-
-                await uiWebView.EnsureCoreWebView2Async(null);
-                InitVideoPlayer();
-                await PrepareMetadataMedia(ViewModel.Game.Metadata);
+                try
+                {
+                    await uiWebView.EnsureCoreWebView2Async(null);
+                    InitVideoPlayer();
+                    await PrepareMetadataMedia(ViewModel.Game.Metadata);
+                }
+                catch { }
                 //###########
             }
         }
@@ -429,6 +453,5 @@ if(video)
             }
             catch { }
         }
-
     }
 }

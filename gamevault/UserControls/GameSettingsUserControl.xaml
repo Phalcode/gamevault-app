@@ -471,7 +471,10 @@
                                 <Path Data="{DynamicResource IconGameSettingsEditDetails}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" VerticalAlignment="Center"/>
                                 <TextBlock Text="Edit Details" FontSize="20" FontWeight="Bold" Margin="5,0,0,0"/>
                             </StackPanel>
-                            <TextBlock Text="Here, you can edit the game details" TextWrapping="Wrap" FontSize="15" Margin="0,5,0,0"/>
+                            <Grid>
+                                <TextBlock Text="Here, you can edit the game details" TextWrapping="Wrap" FontSize="15" Margin="0,5,0,0"/>
+                                <local:IconButton Text="Clear User Data" FontSize="15" Icon="{StaticResource IconCleanup}" IconScale="0.08" IconMargin="-110,-100,-105,-100" Width="175" Height="30" HorizontalAlignment="Right" Click="ClearUserData_Click"/>
+                            </Grid>
                             <ScrollViewer Background="Transparent" Height="650">
                                 <StackPanel>
                                     <TextBlock Text="Title" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>

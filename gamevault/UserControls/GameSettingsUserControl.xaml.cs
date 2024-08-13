@@ -24,6 +24,7 @@ using gamevault.Models.Mapping;
 using Windows.Gaming.Input;
 using System.Runtime.Serialization.Formatters.Binary;
 using IO.Swagger.Model;
+using gamevault.Windows;
 
 namespace gamevault.UserControls
 {
@@ -80,7 +81,6 @@ namespace gamevault.UserControls
                 if (uiSettingsHeadersRemote.SelectedIndex == -1)
                     currentIndex = uiSettingsHeadersLocal.SelectedIndex;
 
-                Debug.WriteLine(currentIndex);
                 switch (currentIndex)
                 {
                     case 0:
@@ -763,6 +763,7 @@ namespace gamevault.UserControls
         }
         private async Task RemapGame(string? providerId, string? providerSlug, int gameId)
         {
+            bool success = false;
             this.IsEnabled = false;
             await Task.Run(() =>
             {
@@ -771,7 +772,7 @@ namespace gamevault.UserControls
                     UpdateGameDto updateGame = new UpdateGameDto() { MappingRequests = new List<MapGameDto>() { new MapGameDto() { ProviderSlug = providerSlug, TargetProviderDataId = providerId } } };
                     string remappedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{gameId}", JsonSerializer.Serialize(updateGame), true);
                     ViewModel.Game = JsonSerializer.Deserialize<Game>(remappedGame);
-
+                    success = true;
                     MainWindowViewModel.Instance.AppBarText = $"Successfully re-mapped {ViewModel.Game.Title}";
                 }
                 catch (Exception ex)
@@ -782,6 +783,13 @@ namespace gamevault.UserControls
             });
             InstallViewModel.Instance.RefreshGame(ViewModel.Game);
             MainWindowViewModel.Instance.Library.RefreshGame(ViewModel.Game);
+            if (success)
+            {
+                if (MainWindowViewModel.Instance.ActiveControl.GetType() == typeof(GameViewUserControl))
+                {
+                    ((GameViewUserControl)MainWindowViewModel.Instance.ActiveControl).RefreshGame(ViewModel.Game);
+                }
+            }
             this.IsEnabled = true;
             this.Focus();
         }
@@ -802,6 +810,15 @@ namespace gamevault.UserControls
 
         #endregion
         #region Edit Game Details
+        private async void ClearUserData_Click(object sender, RoutedEventArgs e)
+        {
+            MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure to delete all User Data?\nThis can't be undone.", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+            if (result == MessageDialogResult.Affirmative)
+            {
+                int gameId = ViewModel.Game.ID;
+                await RemapGame(null, "user", gameId);
+            }
+        }
         private async void SaveGameDetails_Click(object sender, RoutedEventArgs e)
         {
             this.IsEnabled = false;
