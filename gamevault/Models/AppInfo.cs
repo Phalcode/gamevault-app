@@ -32,7 +32,8 @@ namespace gamevault.Models
         ExtractionPassword,
         DownloadProgress,
         InstalledGamesRows,
-        CreateDesktopShortcut
+        CreateDesktopShortcut,
+        MediaSliderVolume
     }
     public static class AppFilePath
     {

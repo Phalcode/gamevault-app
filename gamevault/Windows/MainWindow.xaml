@@ -91,7 +91,7 @@
         </Border>
         <Grid Panel.ZIndex="1">
             <Viewbox>
-                <mah:TransitioningContentControl RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding Popup}" FocusVisualStyle="{x:Null}"/>
+                <uc:TransitioningContentControlEx RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding Popup}" FocusVisualStyle="{x:Null}"/>
             </Viewbox>
             <Grid.Style>
                 <Style TargetType="Grid">

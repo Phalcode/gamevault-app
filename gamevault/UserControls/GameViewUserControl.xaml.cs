@@ -88,12 +88,14 @@ namespace gamevault.UserControls
  var video = document.querySelector('video[name=""media""]');
 if(video)
 {
-            var width = window.innerWidth;
-            var height = window.innerHeight;
+           ";
 
-            // Set video element to these dimensions
-            video.style.width = width + 'px';
-            video.style.height = height + 'px';
+
+            resizescript += @" video.style.width = 1688 + 'px';
+            video.style.height = 980 + 'px';";
+
+
+            resizescript += @"
             video.style.position = 'fixed'; // Ensure it is positioned to cover the viewport
             video.style.top = '0';
             video.style.left = '0';
@@ -102,18 +104,34 @@ if(video)
    ";
             await uiWebView.CoreWebView2.ExecuteScriptAsync(resizescript);
         }
+        private async Task<string> GetCurrentMediaVolume()
+        {
+            string resizescript = @"document.querySelector('video[name=""media""]').volume;";
+            string result = await uiWebView.CoreWebView2.ExecuteScriptAsync(resizescript);
+            return result;
+        }
+        private string GetLastMediaVolume()
+        {
+            string result = Preferences.Get(AppConfigKey.MediaSliderVolume, AppFilePath.UserFile);
+            return string.IsNullOrWhiteSpace(result) ? "0.0" : result;
+        }
+        private async Task SaveMediaVolume()
+        {
+            string result = await GetCurrentMediaVolume();
+            if (!string.IsNullOrWhiteSpace(result) && result != "null")
+            {
+                Preferences.Set(AppConfigKey.MediaSliderVolume, result, AppFilePath.UserFile);
+            }
+        }
         private void InitVideoPlayer()
         {
             uiWebView.NavigationCompleted += async (s, e) =>
             {
                 try
                 {
-                    string mutescript = @"
-            var video = document.querySelector('video[name=""media""]');
-            if(video)
-            {
-                video.volume = 0.0;
-            }";
+                    string mutescript = @"var video = document.querySelector('video[name=""media""]');if(video){video.volume=" +
+                    GetLastMediaVolume() +
+                    ";}";
 
                     string cssscript = @"
         var style = document.createElement('style');
@@ -144,21 +162,23 @@ if(video)
             if (!isMediaSliderFullscreen)
             {
                 isMediaSliderFullscreen = true;
-                webViewAnchor = (Grid)uiWebViewControlHost.Parent;                
+                uiWebViewControlHost.Margin = new Thickness(15);
+                webViewAnchor = (Grid)uiWebViewControlHost.Parent;
                 webViewAnchor.Children.Remove(uiWebViewControlHost);
                 MainWindowViewModel.Instance.OpenPopup(uiWebViewControlHost);
-                await Task.Delay(400);
-                uiWebViewControlHost.Margin = new Thickness(15);
-                await ResizeMediaSlider();
             }
             else
             {
                 isMediaSliderFullscreen = false;
                 MainWindowViewModel.Instance.ClosePopup();
-                await Task.Delay(1000);
                 uiWebViewControlHost.Margin = new Thickness(0);
                 webViewAnchor.Children.Add(uiWebViewControlHost);
             }
+        }
+        private async Task MediaSliderNavigate(string url)
+        {
+            await SaveMediaVolume();
+            uiWebView.CoreWebView2.Navigate(url);
         }
         private async void NextMedia_Click(object sender, RoutedEventArgs e)
         {
@@ -168,12 +188,12 @@ if(video)
             if (mediaIndex < MediaUrls.Count - 1)
             {
                 mediaIndex++;
-                uiWebView.CoreWebView2.Navigate(MediaUrls[mediaIndex]);
+                await MediaSliderNavigate(MediaUrls[mediaIndex]);
             }
             else
             {
                 mediaIndex = 0;
-                uiWebView.CoreWebView2.Navigate(MediaUrls[mediaIndex]);
+                await MediaSliderNavigate(MediaUrls[mediaIndex]);
             }
             uiTxtMediaIndex.Text = $"{mediaIndex + 1}/{MediaUrls.Count}";
         }
@@ -185,12 +205,12 @@ if(video)
             if (mediaIndex > 0)
             {
                 mediaIndex--;
-                uiWebView.CoreWebView2.Navigate(MediaUrls[mediaIndex]);
+                await MediaSliderNavigate(MediaUrls[mediaIndex]);
             }
             else
             {
                 mediaIndex = MediaUrls.Count - 1;
-                uiWebView.CoreWebView2.Navigate(MediaUrls[mediaIndex]);
+                await MediaSliderNavigate(MediaUrls[mediaIndex]);
             }
             uiTxtMediaIndex.Text = $"{mediaIndex + 1}/{MediaUrls.Count}";
         }
@@ -231,8 +251,6 @@ if(video)
                 await uiWebView.EnsureCoreWebView2Async(null);
                 InitVideoPlayer();
                 await PrepareMetadataMedia(ViewModel.Game.Metadata);
-
-
                 //###########
             }
         }
@@ -251,12 +269,18 @@ if(video)
                 return false;
             return DownloadsViewModel.Instance.DownloadedGames.Where(gameUC => gameUC.GetGameId() == game.ID).Count() > 0;
         }
-        private void Back_Click(object sender, MouseButtonEventArgs e)
+        private async void Back_Click(object sender, MouseButtonEventArgs e)
         {
-            MainWindowViewModel.Instance.UndoActiveControl();
+            await Back();
         }
-        private void KeyBindingEscape_OnExecuted(object sender, object e)
+        private async void KeyBindingEscape_OnExecuted(object sender, object e)
         {
+            await Back();
+        }
+        private async Task Back()
+        {
+            await SaveMediaVolume();
+            uiWebView.Dispose();
             MainWindowViewModel.Instance.UndoActiveControl();
         }
         private void GamePlay_Click(object sender, MouseButtonEventArgs e)
