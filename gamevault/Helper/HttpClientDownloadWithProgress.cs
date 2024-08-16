@@ -103,13 +103,13 @@ namespace gamevault.Helper
             var responseContentLength = response.Content.Headers.ContentLength;
             if (responseContentLength == null || responseContentLength == 0)
             {
-                if (response.Headers.TryGetValues("X-Download-Size", out var headerValues) && long.TryParse(headerValues.First(), out long lenght))
+                if (response.Headers.TryGetValues("X-Download-Size", out var headerValues) && long.TryParse(headerValues.First(), out long length))
                 {
-                    responseContentLength = lenght;
+                    responseContentLength = length;
                 }
                 else
                 {
-                    throw new Exception("Missing response header (Content-Length)");
+                    throw new Exception("Missing response header (Content-Length/X-Download-Size)");
                 }
             }
 
