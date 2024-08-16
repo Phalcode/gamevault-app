@@ -3,6 +3,7 @@ using gamevault.Helper;
 using gamevault.Models;
 using gamevault.ViewModels;
 using LiveChartsCore.Measure;
+using Microsoft.Web.WebView2.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -270,7 +271,12 @@ if(video)
                 //MediaSlider
                 try
                 {
-                    await uiWebView.EnsureCoreWebView2Async(null);
+                    var options = new CoreWebView2EnvironmentOptions
+                    {
+                        AdditionalBrowserArguments = "--disk-cache-size=1000000"
+                    };                  
+                    var env = await CoreWebView2Environment.CreateAsync(null, AppFilePath.WebConfigDir, options);
+                    await uiWebView.EnsureCoreWebView2Async(env);
                     InitVideoPlayer();
                     await PrepareMetadataMedia(ViewModel.Game.Metadata);
                 }

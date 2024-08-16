@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:conv="clr-namespace:gamevault.Converter"
              xmlns:helper="clr-namespace:gamevault.Helper"
+             xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
@@ -281,7 +282,14 @@
                         </Border.Triggers>
                     </Border>
                     <ScrollViewer Background="Transparent" Margin="400,224,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="395" Width="1160" VerticalScrollBarVisibility="Auto">
-                        <TextBlock Text="{Binding Path=Game.Metadata.Description}" TextWrapping="Wrap" FontSize="20" />
+                        <mah:MetroAnimatedTabControl Background="Transparent">
+                            <mah:MetroTabItem Header="Description">
+                                <TextBlock Text="{Binding Path=Game.Metadata.Description}" TextWrapping="Wrap" FontSize="20" />
+                            </mah:MetroTabItem>
+                            <mah:MetroTabItem Header="Notes">
+                                <TextBlock Text="{Binding Path=Game.Metadata.Notes}" TextWrapping="Wrap" FontSize="20" />
+                            </mah:MetroTabItem>
+                        </mah:MetroAnimatedTabControl>
                     </ScrollViewer>
                     <!--DETAILS-->
                     <StackPanel Background="Transparent" Margin="0,650,0,0" HorizontalAlignment="Left">
