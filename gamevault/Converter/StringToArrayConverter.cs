@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ImageMagick;
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Data;
@@ -11,9 +12,17 @@ namespace gamevault.Converter
         {
             try
             {
-                return value.ToString().Split(new[] { parameter.ToString() }, StringSplitOptions.RemoveEmptyEntries)
-                          .Select(s => s.Trim())
-                          .ToArray();
+                if (value.GetType().IsArray)//If its array, then the viewmodel was set insted of the UI 
+                {
+                    var joined =  string.Join(",", (string[])value);
+                    return joined;
+                }
+                else
+                {
+                    return value.ToString().Split(new[] { parameter.ToString() }, StringSplitOptions.RemoveEmptyEntries)
+                              .Select(s => s.Trim())
+                              .ToArray();
+                }
             }
             catch { return new string[] { }; }
         }

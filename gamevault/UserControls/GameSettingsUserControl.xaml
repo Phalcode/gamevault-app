@@ -56,6 +56,7 @@
         <conv:GameSettingsTabVisibilityConverter x:Key="tabVisConv"/>
         <conv:InverseNullConverter x:Key="invNullConv"/>
         <conv:StringToArrayConverter x:Key="stringToArrayConv"/>
+        <conv:IsGameMappedConverter x:Key="isGameMappedConv"/>
     </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Key="Esc">
@@ -328,11 +329,6 @@
                             <ListBox ItemsSource="{Binding MetadataProviders}" SelectedIndex="{Binding SelectedMetadataProviderIndex}" HorizontalAlignment="Left"  Margin="0,10,0,0" Background="Transparent">
                                 <ListBox.ItemContainerStyle>
                                     <Style TargetType="ListBoxItem" BasedOn="{StaticResource MahApps.Styles.ListBoxItem}">
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Enabled}" Value="False">
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
                                         <Setter Property="Cursor" Value="Hand"/>
                                         <Setter Property="Margin" Value="2,0,2,0"/>
                                         <Style.Resources>
@@ -350,6 +346,21 @@
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock Margin="5,5,7,5" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" FontSize="17">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Value="False">
+                                                            <DataTrigger.Binding>
+                                                                <MultiBinding Converter="{StaticResource isGameMappedConv}">
+                                                                    <Binding Path="DataContext.Game.ProviderMetadata" RelativeSource="{RelativeSource AncestorType=ListBox}"/>
+                                                                    <Binding Path="." />
+                                                                </MultiBinding>
+                                                            </DataTrigger.Binding>
+                                                            <Setter Property="Opacity" Value="0.3"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
                                             <TextBlock.Text>
                                                 <MultiBinding StringFormat="{}{0}({1})">
                                                     <Binding Path="Name" />
@@ -424,9 +435,12 @@
                                         </StackPanel>
                                     </StackPanel>
                                 </StackPanel>
-                                <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center">
-                                    <mah:NumericUpDown Value="1" ButtonsAlignment="Opposite" TextAlignment="Center"/>
-                                    <local:IconButton Text="Unmap" FontSize="15" Icon="{DynamicResource IconGameSettingsUnlinked}" IconMargin="0,0,5,2" Width="140" Height="33" Margin="0,20,0,20" Click="Unmap_Click"/>
+                                <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center" Background="Transparent">
+                                    <StackPanel>
+                                        <mah:NumericUpDown x:Name="uiProviderPriority" Value="1" ButtonsAlignment="Opposite" TextAlignment="Center" BorderThickness="0"/>
+                                        <local:IconButton Text="Save Priority" FontSize="12" Icon="{DynamicResource IconGameSettingsSave}" IconScale="0.7" IconMargin="0,0,1,0" Height="23" Margin="0,0,0,0" Click="SavePriority_Click"/>
+                                    </StackPanel>
+                                    <local:IconButton Text="Unmap" FontSize="15" Icon="{DynamicResource IconGameSettingsUnlinked}" IconMargin="0,0,5,2" Width="140" Height="33" Margin="0,15,0,15" Click="Unmap_Click"/>
                                     <local:IconButton Text="Recache Game" FontSize="15" Icon="{DynamicResource IconReload}" IconMargin="0,0,5,2" Width="140" Height="33" Click="Recache_Click"/>
                                 </StackPanel>
                             </Grid>
@@ -480,28 +494,103 @@
                                     <TextBlock Text="Title" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
                                     <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Title}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Title}" mah:ControlsHelper.CornerRadius="5"/>
                                     <TextBlock Text="Description" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
-                                    <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Description}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Description}" mah:ControlsHelper.CornerRadius="5"/>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <TextBox TextWrapping="Wrap" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Description}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Description}" mah:ControlsHelper.CornerRadius="5"/>
+                                        <GridSplitter Grid.Row="1" Height="2" Margin="5,0,5,0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="Transparent"/>
+                                    </Grid>
                                     <TextBlock Text="Notes" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
-                                    <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Notes}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Notes}" mah:ControlsHelper.CornerRadius="5"/>
-                                    <TextBlock Text="Average Playtime in Minutes" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
-                                    <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.AveragePlaytime}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.AveragePlaytime,TargetNullValue='',FallbackValue={x:Null}}" mah:ControlsHelper.CornerRadius="5"/>
-                                    <TextBlock Text="Age Rating" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
-                                    <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.AgeRating}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.AgeRating,TargetNullValue='',FallbackValue={x:Null}}" mah:ControlsHelper.CornerRadius="5"/>
-                                    <TextBlock Text="Release Date" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
-                                    <DatePicker SelectedDate="{Binding UpdateGame.UserMetadata.ReleaseDate}" mah:TextBoxHelper.Watermark="{Binding Path=Game.Metadata.ReleaseDate,StringFormat='{}{0:dd/MM/yyyy}'}" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.UseFloatingWatermark="True"/>
-                                    <CheckBox Content="Early Access" IsChecked="{Binding UpdateGame.UserMetadata.EarlyAccess}" Margin="0,10,0,0"/>
-                                    <TextBlock Text="Rating" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
-                                    <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Rating}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Rating}" mah:ControlsHelper.CornerRadius="5"/>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Notes}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Notes}" mah:ControlsHelper.CornerRadius="5"/>
+                                        <GridSplitter Grid.Row="1" Height="2" Margin="5,0,5,0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="Transparent"/>
+                                    </Grid>
+                                    <UniformGrid Rows="1">
+                                        <TextBlock Text="Average Playtime (Min)" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                        <TextBlock Text="Age Rating" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="50,5,0,5"/>
+                                        <TextBlock Text="Release Date" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="50,5,0,5"/>
+                                        <TextBlock Text="Rating" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="50,5,0,5"/>
+                                        <TextBlock Text="Early Access" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="50,5,0,5"/>
+                                    </UniformGrid>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                        <TextBox Width="100" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.AveragePlaytime}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.AveragePlaytime,TargetNullValue='',FallbackValue={x:Null}}" mah:ControlsHelper.CornerRadius="5"/>
+                                        <TextBox Width="100" Margin="115,0,0,0" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.AgeRating}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.AgeRating,TargetNullValue='',FallbackValue={x:Null}}" mah:ControlsHelper.CornerRadius="5"/>
+                                        <DatePicker Width="100" Margin="69,0,0,0" SelectedDate="{Binding UpdateGame.UserMetadata.ReleaseDate}" mah:TextBoxHelper.Watermark="{Binding Path=Game.Metadata.ReleaseDate,StringFormat='{}{0:dd/MM/yyyy}'}" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.UseFloatingWatermark="True"/>
+                                        <TextBox Width="100" Margin="67,0,0,0" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Rating}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Rating}" mah:ControlsHelper.CornerRadius="5"/>
+                                        <CheckBox Content="Yes" IsChecked="{Binding UpdateGame.UserMetadata.EarlyAccess}" Margin="68,0,0,0"/>
+                                    </StackPanel>
                                     <TextBlock Text="Websites" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
                                     <TextBox Text="{Binding UpdateGame.UserMetadata.UrlWebsites,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.WebsiteNames}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
                                     <TextBlock Text="Genres" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
-                                    <TextBox Text="{Binding UpdateGame.UserMetadata.Genres,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.GenreNames}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                    <Grid>
+                                        <TextBox Text="{Binding UpdateGame.UserMetadata.Genres,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.GenreNames}" Margin="0,0,40,0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                        <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Keep current Genres" Click="KeepData_Click" Tag="genre">
+                                            <Grid Style="{DynamicResource HoverEffect}"  MouseLeftButtonUp="KeepData_Click" Background="Transparent">
+                                                <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
+                                                    <Path.RenderTransform>
+                                                        <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                                    </Path.RenderTransform>
+                                                </Path>
+                                                <Grid.RenderTransform>
+                                                    <ScaleTransform/>
+                                                </Grid.RenderTransform>
+                                            </Grid>
+                                        </Button>
+                                    </Grid>
                                     <TextBlock Text="Tags" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
-                                    <TextBox Text="{Binding UpdateGame.UserMetadata.Tags,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.TagNames}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                    <Grid>
+                                        <TextBox Text="{Binding UpdateGame.UserMetadata.Tags,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.TagNames}" Margin="0,0,40,0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                        <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Keep current Tags" Click="KeepData_Click" Tag="tag">
+                                            <Grid Style="{DynamicResource HoverEffect}"  MouseLeftButtonUp="KeepData_Click" Background="Transparent">
+                                                <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
+                                                    <Path.RenderTransform>
+                                                        <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                                    </Path.RenderTransform>
+                                                </Path>
+                                                <Grid.RenderTransform>
+                                                    <ScaleTransform/>
+                                                </Grid.RenderTransform>
+                                            </Grid>
+                                        </Button>
+                                    </Grid>
                                     <TextBlock Text="Publishers" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
-                                    <TextBox Text="{Binding UpdateGame.UserMetadata.Publishers,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.PublisherNames}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                    <Grid>
+                                        <TextBox Text="{Binding UpdateGame.UserMetadata.Publishers,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.PublisherNames}" Margin="0,0,40,0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                        <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Keep current Publishers" Click="KeepData_Click" Tag="publisher">
+                                            <Grid Style="{DynamicResource HoverEffect}"  MouseLeftButtonUp="KeepData_Click" Background="Transparent">
+                                                <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
+                                                    <Path.RenderTransform>
+                                                        <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                                    </Path.RenderTransform>
+                                                </Path>
+                                                <Grid.RenderTransform>
+                                                    <ScaleTransform/>
+                                                </Grid.RenderTransform>
+                                            </Grid>
+                                        </Button>
+                                    </Grid>
                                     <TextBlock Text="Developers" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
-                                    <TextBox Text="{Binding UpdateGame.UserMetadata.Developers,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.DeveloperNames}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                    <Grid>
+                                        <TextBox Text="{Binding UpdateGame.UserMetadata.Developers,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.DeveloperNames}" Margin="0,0,40,0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                        <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Keep current Developers" Click="KeepData_Click" Tag="developer">
+                                            <Grid Style="{DynamicResource HoverEffect}"  MouseLeftButtonUp="KeepData_Click" Background="Transparent">
+                                                <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
+                                                    <Path.RenderTransform>
+                                                        <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                                    </Path.RenderTransform>
+                                                </Path>
+                                                <Grid.RenderTransform>
+                                                    <ScaleTransform/>
+                                                </Grid.RenderTransform>
+                                            </Grid>
+                                        </Button>
+                                    </Grid>
                                 </StackPanel>
                             </ScrollViewer>
                             <local:IconButton Text="Save" FontSize="15" Icon="{DynamicResource IconGameSettingsSave}" IconMargin="0,0,5,2" IsEnabled="true" Width="115" Height="33" Margin="0,10,0,0" HorizontalAlignment="Right" Click="SaveGameDetails_Click"/>

@@ -695,7 +695,6 @@ namespace gamevault.UserControls
             }
         }
         #endregion
-
         #region Metadata
         private InputTimer GameMetadataSearchTimer { get; set; }
         private void RawgGameSearch_TextChanged(object sender, TextChangedEventArgs e)
@@ -761,7 +760,19 @@ namespace gamevault.UserControls
             int gameId = ViewModel.Game.ID;
             await RemapGame(null, currentProviderSlug, gameId);
         }
-        private async Task RemapGame(string? providerId, string? providerSlug, int gameId)
+        private async void SavePriority_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                MetadataProviderDto currentSelectedProvider = ViewModel.MetadataProviders?[ViewModel.SelectedMetadataProviderIndex];
+                string? currentProviderSlug = currentSelectedProvider?.Slug;
+                string? providerId = ViewModel.CurrentShownMappedGame?.ProviderDataId;
+                int gameId = ViewModel.Game.ID;
+                await RemapGame(providerId, currentProviderSlug, gameId, (int?)uiProviderPriority.Value);
+            }
+            catch { }
+        }
+        private async Task RemapGame(string? providerId, string? providerSlug, int gameId, int? priority = null)
         {
             bool success = false;
             this.IsEnabled = false;
@@ -769,7 +780,7 @@ namespace gamevault.UserControls
             {
                 try
                 {
-                    UpdateGameDto updateGame = new UpdateGameDto() { MappingRequests = new List<MapGameDto>() { new MapGameDto() { ProviderSlug = providerSlug, TargetProviderDataId = providerId } } };
+                    UpdateGameDto updateGame = new UpdateGameDto() { MappingRequests = new List<MapGameDto>() { new MapGameDto() { ProviderSlug = providerSlug, ProviderDataId = providerId, ProviderPriority = priority } } };
                     string remappedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{gameId}", JsonSerializer.Serialize(updateGame), true);
                     ViewModel.Game = JsonSerializer.Deserialize<Game>(remappedGame);
                     success = true;
@@ -849,6 +860,35 @@ namespace gamevault.UserControls
             this.IsEnabled = true;
             this.Focus();
         }
+        private void KeepData_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string tag = ((FrameworkElement)sender).Tag.ToString();
+                if (tag == "genre")
+                {
+                    ViewModel.UpdateGame.UserMetadata.Genres = ViewModel.Game.Metadata.Genres.Select(genre => genre.Name).ToArray();
+                }
+                else if (tag == "tag")
+                {
+                    ViewModel.UpdateGame.UserMetadata.Tags = ViewModel.Game.Metadata.Tags.Select(genre => genre.Name).ToArray();
+                }
+                else if (tag == "publisher")
+                {
+                    ViewModel.UpdateGame.UserMetadata.Publishers = ViewModel.Game.Metadata.Publishers.Select(genre => genre.Name).ToArray();
+                }
+                else if (tag == "developer")
+                {
+                    ViewModel.UpdateGame.UserMetadata.Developers = ViewModel.Game.Metadata.Developers.Select(genre => genre.Name).ToArray();
+                }
+                //Cheap update the UI without adding Notify property changed to the Model
+                var temp = ViewModel.UpdateGame;
+                ViewModel.UpdateGame = null;
+                ViewModel.UpdateGame = temp;
+            }
+            catch { }
+        }
         #endregion
+
     }
 }

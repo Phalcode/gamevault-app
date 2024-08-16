@@ -91,8 +91,8 @@ if(video)
            ";
 
 
-            resizescript += @" video.style.width = 1688 + 'px';
-            video.style.height = 980 + 'px';";
+            resizescript += @" video.style.width = 16000 + 'px';
+            video.style.height = 9000 + 'px';";
 
 
             resizescript += @"
@@ -277,6 +277,11 @@ if(video)
                 catch { }
                 //###########
             }
+            if (!this.IsVisible && loaded)
+            {
+                await SaveMediaVolume();//Set this to unload event, so it will dispose even if the main control changes
+                uiWebView.Dispose();
+            }
         }
         private bool IsGameInstalled(Game? game)
         {
@@ -293,18 +298,16 @@ if(video)
                 return false;
             return DownloadsViewModel.Instance.DownloadedGames.Where(gameUC => gameUC.GetGameId() == game.ID).Count() > 0;
         }
-        private async void Back_Click(object sender, MouseButtonEventArgs e)
+        private void Back_Click(object sender, MouseButtonEventArgs e)
         {
-            await Back();
+            Back();
         }
-        private async void KeyBindingEscape_OnExecuted(object sender, object e)
+        private void KeyBindingEscape_OnExecuted(object sender, object e)
         {
-            await Back();
+            Back();
         }
-        private async Task Back()
+        private void Back()
         {
-            await SaveMediaVolume();
-            uiWebView.Dispose();
             MainWindowViewModel.Instance.UndoActiveControl();
         }
         private void GamePlay_Click(object sender, MouseButtonEventArgs e)
