@@ -52,7 +52,10 @@ namespace gamevault.UserControls
         }
         private async Task PrepareMetadataMedia(GameMetadata data)
         {
-            YoutubeClient = new YoutubeClient();
+            if (YoutubeClient == null)
+            {
+                YoutubeClient = new YoutubeClient();
+            }
             for (int i = 0; i < data?.Trailers?.Count(); i++)
             {
                 MediaUrls.Add(await ConvertYoutubeLinkToEmbedded(data?.Trailers[i]));
@@ -248,6 +251,29 @@ if(video)
             gameID = game.ID;
             this.DataContext = ViewModel;
         }
+        private async void ReloadGameView_Click(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key != Key.F5)
+                return;
+
+            await ReloadGameView();
+        }
+        private async Task ReloadGameView()
+        {
+            this.IsEnabled = false;
+            try
+            {
+                string result = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{gameID}");
+                ViewModel.Game = JsonSerializer.Deserialize<Game>(result);
+                ViewModel.UserProgresses = ViewModel.Game.Progresses.Where(p => p.User.ID != LoginManager.Instance.GetCurrentUser().ID).ToArray();
+                ViewModel.CurrentUserProgress = ViewModel.Game.Progresses.FirstOrDefault(progress => progress.User.ID == LoginManager.Instance.GetCurrentUser()?.ID) ?? new Progress { MinutesPlayed = 0, State = State.UNPLAYED.ToString() };
+            }
+            catch (Exception ex) { }
+            ViewModel.IsInstalled = IsGameInstalled(ViewModel.Game);
+            ViewModel.IsDownloaded = IsGameDownloaded(ViewModel.Game);
+            ViewModel.ShowMappedTitle = Preferences.Get(AppConfigKey.ShowMappedTitle, AppFilePath.UserFile) == "1";
+            this.IsEnabled = true;
+        }
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             this.Focus();
@@ -274,7 +300,7 @@ if(video)
                     var options = new CoreWebView2EnvironmentOptions
                     {
                         AdditionalBrowserArguments = "--disk-cache-size=1000000"
-                    };                  
+                    };
                     var env = await CoreWebView2Environment.CreateAsync(null, AppFilePath.WebConfigDir, options);
                     await uiWebView.EnsureCoreWebView2Async(env);
                     InitVideoPlayer();
