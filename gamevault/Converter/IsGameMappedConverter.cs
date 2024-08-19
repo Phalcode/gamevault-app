@@ -16,7 +16,18 @@ namespace gamevault.Converter
         {
             try
             {
-                return ((List<GameMetadata>)values[0]).Any(entry => entry.ProviderSlug == ((MetadataProviderDto)values[1]).Slug);
+                if (values[1].GetType() == typeof(GameMetadata))
+                {
+                    return ((List<GameMetadata>)values[0]).Any(entry => entry.ProviderSlug == ((GameMetadata)values[1]).ProviderSlug);
+                }
+                else if(values[1].GetType() == typeof(MetadataProviderDto))
+                {
+                    return ((List<GameMetadata>)values[0]).Any(entry => entry.ProviderSlug == ((MetadataProviderDto)values[1]).Slug);
+                }
+                else
+                {
+                    return false;
+                }
             }
             catch { return false; }
         }

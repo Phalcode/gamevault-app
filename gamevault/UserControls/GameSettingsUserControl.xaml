@@ -436,6 +436,21 @@
                                     </StackPanel>
                                 </StackPanel>
                                 <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center" Background="Transparent">
+                                    <StackPanel.Style>
+                                        <Style TargetType="StackPanel">
+                                            <Style.Triggers>
+                                                <DataTrigger Value="False">
+                                                    <DataTrigger.Binding>
+                                                        <MultiBinding Converter="{StaticResource isGameMappedConv}">
+                                                            <Binding Path="Game.ProviderMetadata"/>
+                                                            <Binding Path="CurrentShownMappedGame" />
+                                                        </MultiBinding>
+                                                    </DataTrigger.Binding>
+                                                    <Setter Property="IsEnabled" Value="False"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackPanel.Style>
                                     <StackPanel>
                                         <mah:NumericUpDown x:Name="uiProviderPriority" Value="1" ButtonsAlignment="Opposite" TextAlignment="Center" BorderThickness="0"/>
                                         <local:IconButton Text="Save Priority" FontSize="12" Icon="{DynamicResource IconGameSettingsSave}" IconScale="0.7" IconMargin="0,0,1,0" Height="23" Margin="0,0,0,0" Click="SavePriority_Click"/>
@@ -492,14 +507,14 @@
                             <ScrollViewer Background="Transparent" Height="650">
                                 <StackPanel>
                                     <TextBlock Text="Title" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
-                                    <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Title}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Title}" mah:ControlsHelper.CornerRadius="5"/>
+                                    <TextBox TextWrapping="Wrap" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Title}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Title,TargetNullValue='',FallbackValue={x:Null}}" mah:ControlsHelper.CornerRadius="5"/>
                                     <TextBlock Text="Description" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="*" />
                                         </Grid.RowDefinitions>
-                                        <TextBox TextWrapping="Wrap" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Description}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Description}" mah:ControlsHelper.CornerRadius="5"/>
+                                        <TextBox TextWrapping="Wrap" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Description}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Description,TargetNullValue='',FallbackValue={x:Null}}" mah:ControlsHelper.CornerRadius="5"/>
                                         <GridSplitter Grid.Row="1" Height="2" Margin="5,0,5,0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="Transparent"/>
                                     </Grid>
                                     <TextBlock Text="Notes" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
@@ -508,7 +523,7 @@
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="*" />
                                         </Grid.RowDefinitions>
-                                        <TextBox mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Notes}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Notes}" mah:ControlsHelper.CornerRadius="5"/>
+                                        <TextBox TextWrapping="Wrap" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Notes}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Notes,TargetNullValue='',FallbackValue={x:Null}}" mah:ControlsHelper.CornerRadius="5"/>
                                         <GridSplitter Grid.Row="1" Height="2" Margin="5,0,5,0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="Transparent"/>
                                     </Grid>
                                     <UniformGrid Rows="1">

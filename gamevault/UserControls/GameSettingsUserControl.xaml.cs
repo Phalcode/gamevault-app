@@ -769,6 +769,7 @@ namespace gamevault.UserControls
                 string? providerId = ViewModel.CurrentShownMappedGame?.ProviderDataId;
                 int gameId = ViewModel.Game.ID;
                 await RemapGame(providerId, currentProviderSlug, gameId, (int?)uiProviderPriority.Value);
+                await LoadGameMedatataProviders();
             }
             catch { }
         }
@@ -806,10 +807,24 @@ namespace gamevault.UserControls
         }
         private async Task LoadGameMedatataProviders()
         {
+            this.IsEnabled = false;
             try
             {
                 string result = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/metadata/providers");
-                ViewModel.MetadataProviders = JsonSerializer.Deserialize<MetadataProviderDto[]?>(result);
+                var providers = JsonSerializer.Deserialize<MetadataProviderDto[]?>(result);
+                foreach (GameMetadata gmd in ViewModel.Game.ProviderMetadata)
+                {
+                    if (gmd.ProviderPriority != null)
+                    {
+                        var provider = providers?.FirstOrDefault(p => p.Slug == gmd.ProviderSlug);
+                        if (provider != null)
+                        {
+                            provider.Priority = gmd.ProviderPriority;
+                        }
+                    }
+                }
+                providers = providers?.OrderByDescending(p => p.Priority).ToArray();
+                ViewModel.MetadataProviders = providers;
                 ViewModel.SelectedMetadataProviderIndex = 0;
             }
             catch (Exception ex)
@@ -817,6 +832,7 @@ namespace gamevault.UserControls
                 string message = WebExceptionHelper.TryGetServerMessage(ex);
                 MainWindowViewModel.Instance.AppBarText = message;
             }
+            this.IsEnabled = true;
         }
 
         #endregion

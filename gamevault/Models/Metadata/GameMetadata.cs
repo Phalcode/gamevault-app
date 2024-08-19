@@ -61,6 +61,10 @@ namespace gamevault.Models
         [JsonPropertyName("provider_slug")]
         public string? ProviderSlug { get; set; }
 
+
+        [JsonPropertyName("provider_priority")]
+        public int? ProviderPriority { get; set; }
+
         /// <summary>
         /// id of the game from the provider
         /// </summary>
