@@ -123,6 +123,9 @@ if(video)
         {
             try
             {
+                if (uiWebView == null || uiWebView.CoreWebView2 == null)
+                    return;
+
                 string result = await GetCurrentMediaVolume();
                 if (!string.IsNullOrWhiteSpace(result) && result != "null")
                 {
@@ -202,8 +205,12 @@ if(video)
         }
         private async Task MediaSliderNavigate(string url)
         {
+            if (uiWebView == null || uiWebView.CoreWebView2 == null)
+                return;
+
             await SaveMediaVolume();
             uiWebView.CoreWebView2.Navigate(url);
+
         }
         private async void NextMedia_Click(object sender, RoutedEventArgs e)
         {
@@ -309,10 +316,11 @@ if(video)
                 catch { }
                 //###########
             }
-            if (!this.IsVisible && loaded)
+            if (!this.IsVisible && loaded && uiWebView != null)
             {
                 await SaveMediaVolume();//Set this to unload event, so it will dispose even if the main control changes
                 uiWebView.Dispose();
+                uiWebView = null;
             }
         }
         private bool IsGameInstalled(Game? game)

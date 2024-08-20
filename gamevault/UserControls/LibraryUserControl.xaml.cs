@@ -325,17 +325,26 @@ namespace gamevault.UserControls
         private async void CardSettings_Click(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-
             try
             {
-                string result = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{((Game)((FrameworkElement)sender).DataContext).ID}");
-                Game resultGame = JsonSerializer.Deserialize<Game>(result);
-                MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(resultGame) { Width = 1200, Height = 800, Margin = new Thickness(50) });
+                ContentControl parent = ((Grid)((FrameworkElement)sender).Parent).TemplatedParent as ContentControl;
+                if (parent.Tag == "busy")
+                    return;
+                
+                parent.Tag = "busy";
+                try
+                {
+                    string result = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{((Game)((FrameworkElement)sender).DataContext).ID}");
+                    Game resultGame = JsonSerializer.Deserialize<Game>(result);
+                    MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(resultGame) { Width = 1200, Height = 800, Margin = new Thickness(50) });
+                }
+                catch (Exception ex)
+                {
+                    MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
+                }
+                parent.Tag = "";
             }
-            catch (Exception ex)
-            {
-                MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
-            }
+            catch { }
         }
         private async void CardBookmark_Click(object sender, RoutedEventArgs e)
         {

@@ -98,7 +98,7 @@ namespace gamevault.ViewModels
         public int SelectedMetadataProviderIndex
         {
             get { return selectedMetadataProviderIndex; }
-            set { selectedMetadataProviderIndex = value; OnPropertyChanged(); OnPropertyChanged(nameof(CurrentShownMappedGame)); }
+            set { selectedMetadataProviderIndex = value; OnPropertyChanged(); OnPropertyChanged(nameof(CurrentShownMappedGame)); RemapSearchResults = null; }
         }
         public GameMetadata? CurrentShownMappedGame
         {
