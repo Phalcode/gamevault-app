@@ -461,8 +461,8 @@
                             </Grid>
                             <StackPanel>
                                 <TextBlock Text="Remap Game" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,10,0,0"/>
-                                <TextBlock Text="Is the currently mapped Game incorrect or missing? Manually search the RAWG API and re-map your Game here." TextWrapping="Wrap" FontSize="15" Margin="0,5,0,0"/>
-                                <TextBox Style="{DynamicResource SearchTextBox}" Height="27" Margin="0,10,20,0" TextChanged="RawgGameSearch_TextChanged"/>
+                                <TextBlock Text="Is the mapped game incorrect or missing? Manually search the provider and remap it here." TextWrapping="Wrap" FontSize="15" Margin="0,5,0,0"/>
+                                <TextBox Style="{DynamicResource SearchTextBox}" Height="27" Margin="0,10,20,0" TextChanged="ProviderGameSearch_TextChanged"/>
                                 <ItemsControl ItemsSource="{Binding RemapSearchResults}" Height="370" Margin="0,10,20,0" HorizontalAlignment="Stretch">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>

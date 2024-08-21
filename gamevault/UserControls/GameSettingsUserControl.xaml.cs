@@ -100,7 +100,7 @@ namespace gamevault.UserControls
                         }
                     case 3:
                         {
-                            url = "https://gamevau.lt/docs/client-docs/gui#rawg-integration";
+                            url = "https://gamevau.lt/docs/client-docs/gui#metadata-provider";
                             break;
                         }
                 }
@@ -697,7 +697,7 @@ namespace gamevault.UserControls
         #endregion
         #region Metadata
         private InputTimer GameMetadataSearchTimer { get; set; }
-        private void RawgGameSearch_TextChanged(object sender, TextChangedEventArgs e)
+        private void ProviderGameSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
             InitGameMetadataSearchTimer();
             GameMetadataSearchTimer.Stop();

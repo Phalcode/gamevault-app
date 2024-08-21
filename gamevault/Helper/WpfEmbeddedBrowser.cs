@@ -95,6 +95,7 @@ namespace gamevault.Helper
             signinWindow.Show();
 
             // Initialization
+            //Alternative options: "--disk-cache-size=1000000 --disable-cache --disable-gpu-shader-disk-cache --disable-features=SubresourceFilter --disable-graphite-dawn-cache --disable-shader-cache"
             var startupOptions = new CoreWebView2EnvironmentOptions
             {
                 AdditionalBrowserArguments = "--disk-cache-size=1000000"

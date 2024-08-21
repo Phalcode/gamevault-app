@@ -110,7 +110,7 @@ namespace gamevault.UserControls
 
         private async void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (((TabControl)sender).SelectedIndex == 2)
+            if (((TabControl)sender).SelectedIndex == 3)
             {
                 ViewModel.ImageCacheSize = await CalculateDirectorySize(new DirectoryInfo(AppFilePath.ImageCache));
                 ViewModel.OfflineCacheSize = (File.Exists(AppFilePath.OfflineCache) ? new FileInfo(AppFilePath.OfflineCache).Length : 0);
@@ -247,7 +247,7 @@ namespace gamevault.UserControls
                 try
                 {
                     MainWindowViewModel.Instance.SetActiveControl(MainControl.Settings);
-                    MainWindowViewModel.Instance.Settings.SetTabIndex(3);
+                    MainWindowViewModel.Instance.Settings.SetTabIndex(4);
                     MainWindowViewModel.Instance.AppBarText = "Oops! You just reached a premium feature of GameVault - Upgrade now and support the devs!";
                 }
                 catch { }
