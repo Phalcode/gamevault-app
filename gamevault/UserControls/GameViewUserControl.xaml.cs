@@ -32,26 +32,11 @@ namespace gamevault.UserControls
         private bool loaded = false;
 
 
-        #region MediaSlider
-        private List<string> MediaUrls = new List<string>();
-        int mediaIndex = -1;
-        private YoutubeClient YoutubeClient { get; set; }
-        private void UnloadMediaSlider()
-        {
-            uiWebView.Visibility = Visibility.Hidden;
-            uiWebView.CoreWebView2?.NavigateToString("<html><body></body></html>");
-        }
-        private void ReloadMediaSlider()
-        {
-            uiWebView.Visibility = Visibility.Visible;
-            uiWebView.CoreWebView2.Navigate(MediaUrls[mediaIndex]);
-        }
-        private void ReloadMediaSlider_Click(object sender, RoutedEventArgs e)
-        {
-            ReloadMediaSlider();
-        }
+        #region MediaSlider     
+        private YoutubeClient YoutubeClient { get; set; }       
         private async Task PrepareMetadataMedia(GameMetadata data)
         {
+            List<string> MediaUrls = new List<string>();
             if (YoutubeClient == null)
             {
                 YoutubeClient = new YoutubeClient();
@@ -68,8 +53,9 @@ namespace gamevault.UserControls
             {
                 MediaUrls.Add(data?.Screenshots[i]);
             }
-            uiTxtMediaIndex.Text = $"{mediaIndex + 1}/{MediaUrls.Count}";
-            NextMedia_Click(null, null); //Show first element
+
+            uiMediaSlider.SetMediaList(MediaUrls);
+            uiMediaSlider.LoadFirstElement();
         }
         private async Task<string> ConvertYoutubeLinkToEmbedded(string input)
         {
@@ -85,168 +71,8 @@ namespace gamevault.UserControls
                 return input;
             }
         }
-
-        private async Task ResizeMediaSlider()
-        {
-            string resizescript = @"
- var video = document.querySelector('video[name=""media""]');
-if(video)
-{
-           ";
-
-
-            resizescript += @" video.style.width = 16000 + 'px';
-            video.style.height = 9000 + 'px';";
-
-
-            resizescript += @"
-            video.style.position = 'fixed'; // Ensure it is positioned to cover the viewport
-            video.style.top = '0';
-            video.style.left = '0';
-            video.style.zIndex = '1000'; // Ensure it is on top of other elements
-}
-   ";
-            await uiWebView.CoreWebView2.ExecuteScriptAsync(resizescript);
-        }
-        private async Task<string> GetCurrentMediaVolume()
-        {
-            string resizescript = @"document.querySelector('video[name=""media""]').volume;";
-            string result = await uiWebView.CoreWebView2.ExecuteScriptAsync(resizescript);
-            return result;
-        }
-        private string GetLastMediaVolume()
-        {
-            string result = Preferences.Get(AppConfigKey.MediaSliderVolume, AppFilePath.UserFile);
-            return string.IsNullOrWhiteSpace(result) ? "0.0" : result;
-        }
-        private async Task SaveMediaVolume()
-        {
-            try
-            {
-                if (uiWebView == null || uiWebView.CoreWebView2 == null)
-                    return;
-
-                string result = await GetCurrentMediaVolume();
-                if (!string.IsNullOrWhiteSpace(result) && result != "null")
-                {
-                    Preferences.Set(AppConfigKey.MediaSliderVolume, result, AppFilePath.UserFile);
-                }
-            }
-            catch { }
-        }
-        private void InitVideoPlayer()
-        {
-            uiWebView.NavigationCompleted += async (s, e) =>
-            {
-                try
-                {
-                    string mutescript = @"var video = document.querySelector('video[name=""media""]');if(video){video.volume=" +
-                    GetLastMediaVolume() +
-                    ";}";
-
-                    string cssscript = @"
-        var style = document.createElement('style');
-        style.type = 'text/css';
-        var cssRules = `video::-webkit-media-controls-fullscreen-button {
-            display: none !important;
-        }
-        video::-moz-media-controls-fullscreen-button {
-            display: none !important;
-        }
-        video::-ms-media-controls-fullscreen-button {
-            display: none !important;
-        }`;
-        style.appendChild(document.createTextNode(cssRules));
-        document.head.appendChild(style);
-    ";
-                    await uiWebView.CoreWebView2.ExecuteScriptAsync(mutescript);
-                    await ResizeMediaSlider();
-                    await uiWebView.CoreWebView2.ExecuteScriptAsync(cssscript);
-                }
-                catch { }
-            };
-        }
-        private bool isMediaSliderFullscreen = false;
-        private Grid webViewAnchor;
-        private void ToggleFullscreen()
-        {
-            try
-            {
-                if (!isMediaSliderFullscreen)
-                {
-                    isMediaSliderFullscreen = true;
-                    webViewAnchor = (Grid)uiWebViewControlHost.Parent;
-                    webViewAnchor.Children.Remove(uiWebViewControlHost);
-                    uiWebViewControlHost.Margin = new Thickness(15);
-                    MainWindowViewModel.Instance.OpenPopup(uiWebViewControlHost);
-                }
-                else
-                {
-                    isMediaSliderFullscreen = false;
-                    MainWindowViewModel.Instance.ClosePopup();
-                    uiWebViewControlHost.Margin = new Thickness(0);
-                    webViewAnchor.Children.Add(uiWebViewControlHost);
-                }
-            }
-            catch (Exception ex)
-            {
-            }//Probably is the Visual not disconnected from its Parent
-        }
-        private void MediaSliderFullscreen_Click(object sender, RoutedEventArgs e)
-        {
-            ToggleFullscreen();
-        }
-        private void MediaSliderFullscreen_Escape_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-            if (isMediaSliderFullscreen && e.Key == Key.Escape)
-            {
-                ToggleFullscreen();
-            }
-        }
-        private async Task MediaSliderNavigate(string url)
-        {
-            if (uiWebView == null || uiWebView.CoreWebView2 == null)
-                return;
-
-            await SaveMediaVolume();
-            uiWebView.CoreWebView2.Navigate(url);
-
-        }
-        private async void NextMedia_Click(object sender, RoutedEventArgs e)
-        {
-            if (MediaUrls.Count < 1)
-                return;
-
-            if (mediaIndex < MediaUrls.Count - 1)
-            {
-                mediaIndex++;
-                await MediaSliderNavigate(MediaUrls[mediaIndex]);
-            }
-            else
-            {
-                mediaIndex = 0;
-                await MediaSliderNavigate(MediaUrls[mediaIndex]);
-            }
-            uiTxtMediaIndex.Text = $"{mediaIndex + 1}/{MediaUrls.Count}";
-        }
-        private async void PrevMedia_Click(object sender, RoutedEventArgs e)
-        {
-            if (MediaUrls.Count < 1)
-                return;
-
-            if (mediaIndex > 0)
-            {
-                mediaIndex--;
-                await MediaSliderNavigate(MediaUrls[mediaIndex]);
-            }
-            else
-            {
-                mediaIndex = MediaUrls.Count - 1;
-                await MediaSliderNavigate(MediaUrls[mediaIndex]);
-            }
-            uiTxtMediaIndex.Text = $"{mediaIndex + 1}/{MediaUrls.Count}";
-        }
         #endregion
+
         public GameViewUserControl(Game game, bool reloadGameObject = true)
         {
             InitializeComponent();
@@ -304,23 +130,17 @@ if(video)
                 //MediaSlider
                 try
                 {
-                    var options = new CoreWebView2EnvironmentOptions
-                    {
-                        AdditionalBrowserArguments = "--disk-cache-size=1000000"
-                    };
-                    var env = await CoreWebView2Environment.CreateAsync(null, AppFilePath.WebConfigDir, options);
-                    await uiWebView.EnsureCoreWebView2Async(env);
-                    InitVideoPlayer();
+
+                    await uiMediaSlider.InitVideoPlayer();
                     await PrepareMetadataMedia(ViewModel.Game.Metadata);
                 }
                 catch { }
                 //###########
             }
-            if (!this.IsVisible && loaded && uiWebView != null)
+            if (!this.IsVisible && loaded && !uiMediaSlider.IsWebViewNull())
             {
-                await SaveMediaVolume();//Set this to unload event, so it will dispose even if the main control changes
-                uiWebView.Dispose();
-                uiWebView = null;
+                await uiMediaSlider.SaveMediaVolume();//Set this to unload event, so it will dispose even if the main control changes
+                uiMediaSlider.Dispose();
             }
         }
         private bool IsGameInstalled(Game? game)
@@ -359,7 +179,7 @@ if(video)
             if (ViewModel.Game == null)
                 return;
 
-            UnloadMediaSlider();
+            uiMediaSlider.UnloadMediaSlider();
             MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(ViewModel.Game) { Width = 1200, Height = 800, Margin = new Thickness(50) });
         }
         private async void GameDownload_Click(object sender, MouseButtonEventArgs e)
@@ -420,8 +240,6 @@ if(video)
             }
             catch { }
         }
-
-
         private async void Bookmark_Click(object sender, RoutedEventArgs e)
         {
             if (((FrameworkElement)sender).Tag == "busy")
@@ -451,7 +269,6 @@ if(video)
             }
             ((FrameworkElement)sender).Tag = "";
         }
-
         private void Genre_Clicked(object sender, RoutedEventArgs e)
         {
             try
@@ -463,7 +280,6 @@ if(video)
             }
             catch { }
         }
-
         private void Tag_Clicked(object sender, RoutedEventArgs e)
         {
             try
@@ -485,7 +301,6 @@ if(video)
             }
             catch { }
         }
-
         private void Share_Click(object sender, MouseButtonEventArgs e)
         {
             try
