@@ -33,7 +33,7 @@ namespace gamevault.UserControls
 
 
         #region MediaSlider     
-        private YoutubeClient YoutubeClient { get; set; }       
+        private YoutubeClient YoutubeClient { get; set; }
         private async Task PrepareMetadataMedia(GameMetadata data)
         {
             List<string> MediaUrls = new List<string>();
@@ -113,6 +113,7 @@ namespace gamevault.UserControls
             if (!loaded)
             {
                 loaded = true;
+
                 if (ViewModel.Game == null)
                 {
                     try
@@ -142,6 +143,13 @@ namespace gamevault.UserControls
                 await uiMediaSlider.SaveMediaVolume();//Set this to unload event, so it will dispose even if the main control changes
                 uiMediaSlider.Dispose();
             }
+            //Remove Later
+            ViewModel.Game.Metadata.AveragePlaytime = 120;
+            if (ViewModel.CurrentUserProgress == null)
+            {
+                ViewModel.CurrentUserProgress = new Progress() { MinutesPlayed = 120, LastPlayedAt = DateTime.Now };
+            }
+            //#####
         }
         private bool IsGameInstalled(Game? game)
         {

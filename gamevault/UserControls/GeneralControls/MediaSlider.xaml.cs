@@ -172,7 +172,10 @@ namespace gamevault.UserControls
         private void ReloadMediaSlider()
         {
             uiWebView.Visibility = Visibility.Visible;
-            uiWebView.CoreWebView2.Navigate(MediaUrls[mediaIndex]);
+            if (mediaIndex > -1 && MediaUrls.Count > 0)
+            {
+                uiWebView.CoreWebView2.Navigate(MediaUrls[mediaIndex]);
+            }
         }
         private async Task ResizeMediaSlider()
         {
@@ -214,14 +217,12 @@ if(video)
                     isMediaSliderFullscreen = true;
                     webViewAnchor = (Grid)this.Parent;
                     webViewAnchor.Children.Remove(this);
-                    this.Margin = new Thickness(15);
                     MainWindowViewModel.Instance.OpenPopup(this);
                 }
                 else
                 {
                     isMediaSliderFullscreen = false;
-                    MainWindowViewModel.Instance.ClosePopup();
-                    this.Margin = new Thickness(0);
+                    MainWindowViewModel.Instance.ClosePopup();                   
                     webViewAnchor.Children.Add(this);
                 }
             }

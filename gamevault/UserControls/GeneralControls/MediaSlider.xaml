@@ -8,30 +8,35 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Focusable="True">
     <Grid KeyDown="MediaSliderFullscreen_Escape_KeyDown">
-        <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,-15,0" Width="60">
-            <TextBlock x:Name="uiTxtMediaIndex" FontSize="16" Foreground="White" HorizontalAlignment="Left"/>
+
+        <Border Background="Black" Margin="0,0,30,0" CornerRadius="5,0,0,5">
+            <Grid>
+                <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" VerticalAlignment="Center" HorizontalAlignment="Center" Width="35" Height="35" Margin="0,0,3,0" Click="ReloadMediaSlider_Click">
+                    <Grid Style="{DynamicResource HoverEffect}" RenderTransformOrigin="0.5,0.5" Background="#02000000">
+                        <Path Data="{StaticResource IconReload}" Fill="#7AFFFFFF">
+                            <Path.RenderTransform>
+                                <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+                            </Path.RenderTransform>
+                        </Path>
+                        <Grid.RenderTransform>
+                            <ScaleTransform/>
+                        </Grid.RenderTransform>
+                    </Grid>
+                </Button>
+                <wv2:WebView2 x:Name="uiWebView" />
+            </Grid>
         </Border>
-        <Grid Background="Black" Margin="46,0,46,0">
-            <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" VerticalAlignment="Center" HorizontalAlignment="Center" Width="35" Height="35" Margin="0,0,3,0" Click="ReloadMediaSlider_Click">
-                <Grid Style="{DynamicResource HoverEffect}" RenderTransformOrigin="0.5,0.5" Background="#02000000">
-                    <Path Data="{StaticResource IconReload}" Fill="#7AFFFFFF">
-                        <Path.RenderTransform>
-                            <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
-                        </Path.RenderTransform>
-                    </Path>
-                    <Grid.RenderTransform>
-                        <ScaleTransform/>
-                    </Grid.RenderTransform>
-                </Grid>
-            </Button>
-            <wv2:WebView2 x:Name="uiWebView" />
-        </Grid>
-        <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="35" Height="35" Margin="0,0,3,40" Click="PrevMedia_Click">
-            <Grid Style="{DynamicResource HoverEffect}" Background="#02000000">
-                <Path Data="{StaticResource IconArrowBordered}" Fill="White" RenderTransformOrigin="0.45,0.32">
+        <Border HorizontalAlignment="Right" Width="30" Background="DarkGray" CornerRadius="0,5,5,0"/>
+        <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,0,0" Width="30">
+            <TextBlock x:Name="uiTxtMediaIndex" FontSize="12" Foreground="White" HorizontalAlignment="Left"/>
+        </Border>
+        <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,3,30" Click="PrevMedia_Click">
+            <Grid Style="{DynamicResource HoverEffect}" Background="Blue">
+                <!--#02000000-->
+                <Path Data="{StaticResource IconArrowBordered}" Fill="White" RenderTransformOrigin="0.5,0.5">
                     <Path.RenderTransform>
                         <TransformGroup>
-                            <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+                            <ScaleTransform ScaleX="1" ScaleY="1"/>
                             <SkewTransform/>
                             <RotateTransform Angle="-90"/>
                             <TranslateTransform/>
@@ -43,12 +48,12 @@
                 </Grid.RenderTransform>
             </Grid>
         </Button>
-        <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" VerticalAlignment="Center" HorizontalAlignment="Right" Width="35" Height="35" Margin="0,40,3,0" Click="NextMedia_Click">
-            <Grid Style="{DynamicResource HoverEffect}" Background="#02000000">
-                <Path Data="{StaticResource IconArrowBordered}" Fill="White" RenderTransformOrigin="0.32,0.45">
+        <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" VerticalAlignment="Center" HorizontalAlignment="Right" Width="25" Height="25" Margin="0,30,3,0" Click="NextMedia_Click">
+            <Grid Style="{DynamicResource HoverEffect}" Background="Blue">
+                <Path Data="{StaticResource IconArrowBordered}" Fill="White" RenderTransformOrigin="0.5,0.5">
                     <Path.RenderTransform>
                         <TransformGroup>
-                            <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+                            <ScaleTransform ScaleX="1" ScaleY="1"/>
                             <SkewTransform/>
                             <RotateTransform Angle="90"/>
                             <TranslateTransform/>
@@ -60,11 +65,11 @@
                 </Grid.RenderTransform>
             </Grid>
         </Button>
-        <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="35" Height="35" Margin="0,0,3,0" Click="MediaSliderFullscreen_Click">
-            <Grid Style="{DynamicResource HoverEffect}" RenderTransformOrigin="0.5,0.5" Background="#02000000">
+        <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="25" Height="25" Margin="0,0,3,0" Click="MediaSliderFullscreen_Click">
+            <Grid Style="{DynamicResource HoverEffect}"  Background="Blue">
                 <Path Data="{StaticResource IconGameViewMaximize}" Fill="White" RenderTransformOrigin="-0.05,-0.05">
                     <Path.RenderTransform>
-                        <ScaleTransform ScaleX="2" ScaleY="2"/>
+                        <ScaleTransform ScaleX="1.4" ScaleY="1.4"/>
                     </Path.RenderTransform>
                 </Path>
                 <Grid.RenderTransform>
@@ -72,5 +77,6 @@
                 </Grid.RenderTransform>
             </Grid>
         </Button>
+
     </Grid>
 </UserControl>

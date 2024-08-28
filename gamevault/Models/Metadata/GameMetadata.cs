@@ -169,6 +169,10 @@ namespace gamevault.Models
         {
             get
             {
+                if (UrlWebsites == null)
+                {
+                    return string.Empty;
+                }
                 return string.Join(",", UrlWebsites);
             }
         }
@@ -234,7 +238,7 @@ namespace gamevault.Models
         {
             get
             {
-                return string.Join(",",Tags.Select(tag=>tag.Name));
+                return string.Join(",", Tags.Select(tag => tag.Name));
             }
         }
 
