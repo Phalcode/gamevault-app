@@ -391,6 +391,9 @@
                                                                                                     <TextBlock Text="{Binding Path=Title}" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}" TextAlignment="Center" TextWrapping="Wrap"/>
                                                                                                     <Button Style="{StaticResource DownloadKey}">
                                                                                                         <Grid Style="{StaticResource HoverEffect}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,30" Background="Transparent" Height="61" Width="65">
+                                                                                                            <Grid.ToolTip>
+                                                                                                                <TextBlock Text="{Binding Path=DownloadCount,StringFormat='{}Downloaded {0} times'}"/>
+                                                                                                            </Grid.ToolTip>
                                                                                                             <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.03,0.08">
                                                                                                                 <Path.RenderTransform>
                                                                                                                     <ScaleTransform ScaleX="3" ScaleY="3"/>
