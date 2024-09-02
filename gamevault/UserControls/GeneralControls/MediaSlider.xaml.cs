@@ -153,8 +153,12 @@ namespace gamevault.UserControls
             this.MediaUrls = mediaUrls;
             uiTxtMediaIndex.Text = $"{mediaIndex + 1}/{MediaUrls.Count}";
         }
-        public void LoadFirstElement()
+        public void LoadFirstElement(string? first = null)
         {
+            if (first != null)
+            {
+                MediaUrls.Add(first);
+            }
             NextMedia_Click(null, null);
         }
         public bool IsWebViewNull()
@@ -222,7 +226,7 @@ if(video)
                 else
                 {
                     isMediaSliderFullscreen = false;
-                    MainWindowViewModel.Instance.ClosePopup();                   
+                    MainWindowViewModel.Instance.ClosePopup();
                     webViewAnchor.Children.Add(this);
                 }
             }

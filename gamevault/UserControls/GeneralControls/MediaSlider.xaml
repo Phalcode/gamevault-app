@@ -23,7 +23,7 @@
                         </Grid.RenderTransform>
                     </Grid>
                 </Button>
-                <wv2:WebView2 x:Name="uiWebView" />
+                <wv2:WebView2 x:Name="uiWebView" DefaultBackgroundColor="Black"/>
             </Grid>
         </Border>
         <Border HorizontalAlignment="Right" Width="30" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" CornerRadius="0,5,5,0"/>

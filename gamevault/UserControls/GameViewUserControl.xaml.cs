@@ -47,12 +47,38 @@ namespace gamevault.UserControls
             {
                 YoutubeClient = new YoutubeClient();
             }
+            //Load first video separately, as it might take a while until the first playback
+            bool trailerPreloaded = false;
+            bool gameplayPreloaded = false;
+            if (data?.Trailers?.Count() > 0)
+            {
+                trailerPreloaded = true;
+                string preloaded = await ConvertYoutubeLinkToEmbedded(data?.Trailers[0]);
+                MediaUrls.Add(preloaded);
+                uiMediaSlider.LoadFirstElement(preloaded);
+            }
+            else if (data?.Gameplays?.Count() > 0)
+            {
+                gameplayPreloaded = true;
+                string preloaded = await ConvertYoutubeLinkToEmbedded(data?.Gameplays[0]);
+                MediaUrls.Add(preloaded);
+                uiMediaSlider.LoadFirstElement(preloaded);
+            }
+
             for (int i = 0; i < data?.Trailers?.Count(); i++)
             {
+                if (i == 0 && trailerPreloaded)
+                {
+                    i = 1;//Prevent the first element from being reloaded
+                }
                 MediaUrls.Add(await ConvertYoutubeLinkToEmbedded(data?.Trailers[i]));
             }
             for (int i = 0; i < data?.Gameplays?.Count(); i++)
             {
+                if (i == 0 && gameplayPreloaded)
+                {
+                    i = 1;//Prevent the first element from being reloaded
+                }
                 MediaUrls.Add(await ConvertYoutubeLinkToEmbedded(data?.Gameplays[i]));
             }
             for (int i = 0; i < data?.Screenshots?.Count(); i++)
@@ -61,7 +87,10 @@ namespace gamevault.UserControls
             }
 
             uiMediaSlider.SetMediaList(MediaUrls);
-            uiMediaSlider.LoadFirstElement();
+            if (trailerPreloaded == false && gameplayPreloaded == false)
+            {
+                uiMediaSlider.LoadFirstElement();
+            }
         }
         private async Task<string> ConvertYoutubeLinkToEmbedded(string input)
         {

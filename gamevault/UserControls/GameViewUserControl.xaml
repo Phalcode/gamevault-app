@@ -58,11 +58,11 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
-                    <ColumnDefinition Width="10*"/>
+                    <ColumnDefinition Width="4*" />
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
-                <Viewbox Grid.Column="1" VerticalAlignment="Top">
+                <Viewbox Grid.Column="1" VerticalAlignment="Top" MaxWidth="1200">
                     <Grid Background="Transparent" Margin="0,70,0,0" Height="881">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
