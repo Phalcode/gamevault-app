@@ -69,7 +69,7 @@ namespace gamevault.UserControls
             {
                 if (i == 0 && trailerPreloaded)
                 {
-                    i = 1;//Prevent the first element from being reloaded
+                    continue;//Prevent the first element from being reloaded
                 }
                 MediaUrls.Add(await ConvertYoutubeLinkToEmbedded(data?.Trailers[i]));
             }
@@ -77,7 +77,7 @@ namespace gamevault.UserControls
             {
                 if (i == 0 && gameplayPreloaded)
                 {
-                    i = 1;//Prevent the first element from being reloaded
+                    continue;//Prevent the first element from being reloaded
                 }
                 MediaUrls.Add(await ConvertYoutubeLinkToEmbedded(data?.Gameplays[i]));
             }
