@@ -3,19 +3,25 @@ using gamevault.Helper;
 using gamevault.Models;
 using gamevault.ViewModels;
 using LiveChartsCore.Measure;
+using Markdig;
+using Markdig.Wpf;
 using Microsoft.Web.WebView2.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Navigation;
 using YoutubeExplode;
 using YoutubeExplode.Videos.Streams;
@@ -131,12 +137,12 @@ namespace gamevault.UserControls
                 //MediaSlider
                 try
                 {
-
                     await uiMediaSlider.InitVideoPlayer();
                     await PrepareMetadataMedia(ViewModel.Game.Metadata);
                 }
                 catch { }
                 //###########
+                PrepareMarkdownElements();
             }
             if (!this.IsVisible && loaded && !uiMediaSlider.IsWebViewNull())
             {
@@ -312,5 +318,52 @@ namespace gamevault.UserControls
             }
             catch { }
         }
+        #region Markdown
+        private static MarkdownPipeline BuildPipeline()
+        {
+            return new MarkdownPipelineBuilder()
+                .UseSupportedExtensions()
+                .Build();
+        }
+        private void OpenHyperlink(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+        {
+            if (Uri.IsWellFormedUriString(e.Parameter.ToString(), UriKind.Absolute))
+            {
+                Process.Start(new ProcessStartInfo(e.Parameter.ToString()) { UseShellExecute = true });
+            }
+        }
+        private FlowDocument LoadMarkdown(string content)
+        {
+            var xaml = Markdig.Wpf.Markdown.ToXaml(content, BuildPipeline());
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(xaml)))
+            {
+                // Directly load the XAML without custom schema context
+                if (XamlReader.Load(stream) is FlowDocument document)
+                {
+                    return document;
+                }
+                return null;
+            }
+        }
+        private void PrepareMarkdownElements()
+        {
+            if (!string.IsNullOrWhiteSpace(ViewModel?.Game?.Metadata?.Description))
+            {
+                try
+                {
+                    ViewModel.DescriptionMarkdown = LoadMarkdown(ViewModel.Game.Metadata.Description);
+                }
+                catch { }
+            }
+            if (!string.IsNullOrWhiteSpace(ViewModel?.Game?.Metadata?.Notes))
+            {
+                try
+                {
+                    ViewModel.NotesMarkdown = LoadMarkdown(ViewModel.Game.Metadata.Notes);
+                }
+                catch { }
+            }
+        }
+        #endregion
     }
 }

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 
 namespace gamevault.ViewModels
 {
@@ -19,6 +20,8 @@ namespace gamevault.ViewModels
         private bool isInstalled { get; set; }
         private bool? isDownloaded { get; set; }
         private bool showMappedTitle { get; set; }
+        private FlowDocument descriptionMarkdown { get; set; }
+        private FlowDocument notesMarkdown { get; set; }
         #endregion
         public Game? Game
         {
@@ -59,6 +62,16 @@ namespace gamevault.ViewModels
         {
             get { return showMappedTitle; }
             set { showMappedTitle = value; OnPropertyChanged(); }
+        }
+        public FlowDocument DescriptionMarkdown
+        {
+            get { return descriptionMarkdown; }
+            set { descriptionMarkdown = value; OnPropertyChanged(); }
+        }
+        public FlowDocument NotesMarkdown
+        {
+            get { return notesMarkdown; }
+            set { notesMarkdown = value; OnPropertyChanged(); }
         }
     }
 }
