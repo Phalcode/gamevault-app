@@ -42,6 +42,18 @@
             </local:CacheImage>
         </Viewbox>
         <Grid Background="{DynamicResource GameVault.Brushes.Blur}"/>
+        <Viewbox HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="1">
+            <Border  Style="{DynamicResource HoverEffect}" Background="#02000000" CornerRadius="5" Cursor="Hand" Width="30" Height="30" Margin="5,5,0,650" Padding="0,0,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="Back_Click">
+                <Path Data="{StaticResource IconGameViewBack}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.0,-0.1">
+                    <Path.RenderTransform>
+                        <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                    </Path.RenderTransform>
+                </Path>
+                <Border.RenderTransform>
+                    <ScaleTransform/>
+                </Border.RenderTransform>
+            </Border>
+        </Viewbox>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -49,24 +61,13 @@
                     <ColumnDefinition Width="10*"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-               
+
                 <Viewbox Grid.Column="1" VerticalAlignment="Top">
                     <Grid Background="Transparent" Margin="0,70,0,0" Height="881">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition Width="300"/>
                         </Grid.ColumnDefinitions>
-                        <!--Dont want to stretch the viewbox to the whole screen for scale reasons, nor want to create a new one. Thats why i used this solution with negative margin-->
-                            <Border  Style="{DynamicResource HoverEffect}" Background="#02000000" CornerRadius="5" Cursor="Hand" Width="30" Height="30" Margin="-650,-950,0,0" Padding="0,0,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="Back_Click">
-                            <Path Data="{StaticResource IconGameViewBack}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.0,-0.1">
-                                <Path.RenderTransform>
-                                    <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
-                                </Path.RenderTransform>
-                            </Path>
-                            <Border.RenderTransform>
-                                <ScaleTransform/>
-                            </Border.RenderTransform>
-                        </Border>
                         <StackPanel Grid.Column="0" Width="546">
                             <Grid Background="Transparent" Height="100">
                                 <local:CacheImage Data="{Binding Game}" ImageCacheType="GameCover" Stretch="Uniform" CornerRadius="5" HorizontalAlignment="Left" Height="100" Width="75" Margin="0,0,0,0"/>
