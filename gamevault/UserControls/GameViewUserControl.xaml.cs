@@ -94,7 +94,7 @@ namespace gamevault.UserControls
         }
         private async Task<string> ConvertYoutubeLinkToEmbedded(string input)
         {
-            if (input.Contains("youtube", StringComparison.OrdinalIgnoreCase))
+            if (input.Contains("youtu", StringComparison.OrdinalIgnoreCase))
             {
                 var streamManifest = await YoutubeClient.Videos.Streams.GetManifestAsync(input);
                 var streamInfo = streamManifest.GetMuxedStreams().GetWithHighestVideoQuality();
@@ -163,6 +163,7 @@ namespace gamevault.UserControls
                 ViewModel.IsInstalled = IsGameInstalled(ViewModel.Game);
                 ViewModel.IsDownloaded = IsGameDownloaded(ViewModel.Game);
                 ViewModel.ShowMappedTitle = Preferences.Get(AppConfigKey.ShowMappedTitle, AppFilePath.UserFile) == "1";
+                PrepareMarkdownElements();
                 //MediaSlider
                 try
                 {
@@ -170,8 +171,7 @@ namespace gamevault.UserControls
                     await PrepareMetadataMedia(ViewModel.Game.Metadata);
                 }
                 catch { }
-                //###########
-                PrepareMarkdownElements();
+                //###########              
             }
             if (!this.IsVisible && loaded && !uiMediaSlider.IsWebViewNull())
             {

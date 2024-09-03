@@ -65,7 +65,7 @@
                 </Grid.RenderTransform>
             </Grid>
         </Button>
-        <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="25" Height="25" Margin="0,0,3,0" Click="MediaSliderFullscreen_Click">
+        <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="25" Height="25" Margin="0,0,3,2" Click="MediaSliderFullscreen_Click">
             <Grid Style="{DynamicResource HoverEffect}"  Background="#02000000">
                 <Path Data="{StaticResource IconGameViewMaximize}" Fill="White" RenderTransformOrigin="-0.05,-0.05">
                     <Path.RenderTransform>

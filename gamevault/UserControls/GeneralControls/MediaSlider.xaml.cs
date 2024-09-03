@@ -3,20 +3,10 @@ using gamevault.ViewModels;
 using Microsoft.Web.WebView2.Core;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Windows.Media.Core;
-using YoutubeExplode;
 
 namespace gamevault.UserControls
 {
@@ -26,7 +16,7 @@ namespace gamevault.UserControls
     public partial class MediaSlider : UserControl
     {
         private List<string> MediaUrls = new List<string>();
-        private int mediaIndex = -1;
+        private int mediaIndex = 0;
         private bool isMediaSliderFullscreen = false;
         private Grid webViewAnchor;
         public MediaSlider()
@@ -159,7 +149,10 @@ namespace gamevault.UserControls
             {
                 MediaUrls.Add(first);
             }
-            NextMedia_Click(null, null);
+            if (uiWebView.Visibility == Visibility.Visible)//Prevent only in this case from navigating because the Media Slider could be rendered on top of the game settings
+            {
+                NextMedia_Click(null, null);
+            }
         }
         public bool IsWebViewNull()
         {
@@ -176,7 +169,7 @@ namespace gamevault.UserControls
         private void ReloadMediaSlider()
         {
             uiWebView.Visibility = Visibility.Visible;
-            if (mediaIndex > -1 && MediaUrls.Count > 0)
+            if (MediaUrls.Count > 0)
             {
                 uiWebView.CoreWebView2.Navigate(MediaUrls[mediaIndex]);
             }
@@ -208,6 +201,10 @@ if(video)
             if (uiWebView == null || uiWebView.CoreWebView2 == null)
                 return;
 
+            if (uiWebView.Visibility == Visibility.Hidden)
+            {
+                uiWebView.Visibility = Visibility.Visible;
+            }
             await SaveMediaVolume();
             uiWebView.CoreWebView2.Navigate(url);
 

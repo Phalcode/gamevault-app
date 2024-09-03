@@ -152,12 +152,44 @@ namespace gamevault.Models
 
         [JsonPropertyName("url_screenshots")]
         public string[]? Screenshots { get; set; }
+        public string ScreenshotNames
+        {
+            get
+            {
+                if (Screenshots == null)
+                {
+                    return string.Empty;
+                }
+                return string.Join(",", Screenshots);
+            }
+        }
 
         [JsonPropertyName("url_trailers")]
         public string[]? Trailers { get; set; }
+        public string TrailerNames
+        {
+            get
+            {
+                if (Trailers == null)
+                {
+                    return string.Empty;
+                }
+                return string.Join(",", Trailers);
+            }
+        }
         [JsonPropertyName("url_gameplays")]
         public string[]? Gameplays { get; set; }
-
+        public string GameplayNames
+        {
+            get
+            {
+                if (Gameplays == null)
+                {
+                    return string.Empty;
+                }
+                return string.Join(",", Gameplays);
+            }
+        }
         /// <summary>
         /// website url of the game
         /// </summary>

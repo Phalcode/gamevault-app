@@ -31,7 +31,7 @@ namespace gamevault.Converter
         {
             try
             {
-                return value.ToString().Split(new[] { parameter.ToString() }, StringSplitOptions.RemoveEmptyEntries)
+                return value.ToString().Split(new[] { parameter.ToString() }, StringSplitOptions.None)
                           .Select(s => s.Trim())
                           .ToArray();
             }

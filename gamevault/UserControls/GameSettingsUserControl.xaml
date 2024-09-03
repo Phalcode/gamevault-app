@@ -606,6 +606,54 @@
                                             </Grid>
                                         </Button>
                                     </Grid>
+                                    <TextBlock Text="Trailer" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <Grid>
+                                        <TextBox Text="{Binding UpdateGame.UserMetadata.UrlTrailers,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.TrailerNames}" Margin="0,0,40,0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                        <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Keep current Trailers" Click="KeepData_Click" Tag="trailer">
+                                            <Grid Style="{DynamicResource HoverEffect}"  MouseLeftButtonUp="KeepData_Click" Background="Transparent">
+                                                <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
+                                                    <Path.RenderTransform>
+                                                        <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                                    </Path.RenderTransform>
+                                                </Path>
+                                                <Grid.RenderTransform>
+                                                    <ScaleTransform/>
+                                                </Grid.RenderTransform>
+                                            </Grid>
+                                        </Button>
+                                    </Grid>
+                                    <TextBlock Text="Gameplays" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <Grid>
+                                        <TextBox Text="{Binding UpdateGame.UserMetadata.UrlGameplays,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.GameplayNames}" Margin="0,0,40,0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                        <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Keep current Gameplays" Click="KeepData_Click" Tag="gameplays">
+                                            <Grid Style="{DynamicResource HoverEffect}"  MouseLeftButtonUp="KeepData_Click" Background="Transparent">
+                                                <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
+                                                    <Path.RenderTransform>
+                                                        <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                                    </Path.RenderTransform>
+                                                </Path>
+                                                <Grid.RenderTransform>
+                                                    <ScaleTransform/>
+                                                </Grid.RenderTransform>
+                                            </Grid>
+                                        </Button>
+                                    </Grid>
+                                    <TextBlock Text="Screenshots" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <Grid>
+                                        <TextBox Text="{Binding UpdateGame.UserMetadata.UrlScreenshots,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.ScreenshotNames}" Margin="0,0,40,0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                        <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Keep current Screenshots" Click="KeepData_Click" Tag="screenshots">
+                                            <Grid Style="{DynamicResource HoverEffect}"  MouseLeftButtonUp="KeepData_Click" Background="Transparent">
+                                                <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
+                                                    <Path.RenderTransform>
+                                                        <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                                    </Path.RenderTransform>
+                                                </Path>
+                                                <Grid.RenderTransform>
+                                                    <ScaleTransform/>
+                                                </Grid.RenderTransform>
+                                            </Grid>
+                                        </Button>
+                                    </Grid>
                                 </StackPanel>
                             </ScrollViewer>
                             <local:IconButton Text="Save" FontSize="15" Icon="{DynamicResource IconGameSettingsSave}" IconMargin="0,0,5,2" IsEnabled="true" Width="115" Height="33" Margin="0,10,0,0" HorizontalAlignment="Right" Click="SaveGameDetails_Click"/>

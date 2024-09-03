@@ -897,6 +897,18 @@ namespace gamevault.UserControls
                 {
                     ViewModel.UpdateGame.UserMetadata.Developers = ViewModel.Game.Metadata.Developers.Select(genre => genre.Name).ToArray();
                 }
+                else if (tag == "trailer")
+                {
+                    ViewModel.UpdateGame.UserMetadata.UrlTrailers = ViewModel.Game.Metadata.Trailers;
+                }
+                else if (tag == "gameplays")
+                {
+                    ViewModel.UpdateGame.UserMetadata.UrlGameplays = ViewModel.Game.Metadata.Gameplays;
+                }
+                else if (tag == "screenshots")
+                {
+                    ViewModel.UpdateGame.UserMetadata.UrlScreenshots = ViewModel.Game.Metadata.Screenshots;
+                }
                 //Cheap update the UI without adding Notify property changed to the Model
                 var temp = ViewModel.UpdateGame;
                 ViewModel.UpdateGame = null;
