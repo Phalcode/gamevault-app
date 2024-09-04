@@ -42,8 +42,8 @@
             </local:CacheImage>
         </Viewbox>
         <Grid Background="{DynamicResource GameVault.Brushes.Blur}"/>
-        <Viewbox HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="1">
-            <Border  Style="{DynamicResource HoverEffect}" Background="#02000000" CornerRadius="5" Cursor="Hand" Width="30" Height="30" Margin="5,5,0,650" Padding="0,0,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="Back_Click">
+        <Viewbox HorizontalAlignment="Right" VerticalAlignment="Top" Panel.ZIndex="1">
+            <Border  Style="{DynamicResource HoverEffect}" Background="#02000000" CornerRadius="5" Cursor="Hand" Width="30" Height="30" Margin="10,10,1600,0" Padding="0,0,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="Back_Click">
                 <Path Data="{StaticResource IconGameViewBack}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.0,-0.1">
                     <Path.RenderTransform>
                         <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
@@ -80,6 +80,12 @@
                                                         <Setter Property="Text" Value="{Binding Path=Game.Metadata.Title}" />
                                                         <Setter Property="ToolTip" Value="Click to Show File Title" />
                                                     </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Path=Game.Metadata.Title}" Value="{x:Null}">
+                                                        <Setter Property="Text" Value="{Binding Path=Game.Title}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Path=Game.DeletedAt,Converter={StaticResource inverseNullConv}}" Value="False">
+                                                        <Setter Property="TextDecorations" Value="Strikethrough" />
+                                                    </DataTrigger>
                                                     <DataTrigger Binding="{Binding ShowMappedTitle}" Value="False">
                                                         <Setter Property="Text" Value="{Binding Path=Game.Title}" />
                                                         <Setter Property="ToolTip" Value="Click to Show Mapped Title" />
@@ -104,6 +110,15 @@
                                     </TextBlock>
                                 </StackPanel>
                                 <StackPanel Margin="90,0,0,0" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Bottom" Orientation="Horizontal">
+                                    <StackPanel.Style>
+                                        <Style TargetType="StackPanel">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=Game.DeletedAt,Converter={StaticResource inverseNullConv}}" Value="False">
+                                                    <Setter Property="Visibility" Value="Hidden" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackPanel.Style>
                                     <Grid VerticalAlignment="Top" HorizontalAlignment="Left" Background="#02000000" Cursor="Hand" Width="35" Height="35" Margin="0,0,15,0" MouseLeftButtonUp="GamePlay_Click">
                                         <Path Data="{StaticResource IconPlay}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.22,0.18">
                                             <Path.RenderTransform>
@@ -162,6 +177,15 @@
                                     </Grid>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                                    <StackPanel.Style>
+                                        <Style TargetType="StackPanel">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=Game.DeletedAt,Converter={StaticResource inverseNullConv}}" Value="False">
+                                                    <Setter Property="Visibility" Value="Hidden" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackPanel.Style>
                                     <ToggleButton Width="35" Height="35" Cursor="Hand" Margin="0,0,0,0" Validation.ErrorTemplate="{x:Null}" IsChecked="{Binding Path=Game.BookmarkedUsers,Converter={StaticResource containsCurrentUserConv}}" Click="Bookmark_Click">
                                         <ToggleButton.Style>
                                             <Style TargetType="ToggleButton">
@@ -253,7 +277,8 @@
                             <Grid Margin="0,5,0,0">
                                 <local:MediaSlider Height="290" Width="546" x:Name="uiMediaSlider" Background="Transparent" Tag="NoPopupTransition"/>
                             </Grid>
-                            <Border CornerRadius="5" Margin="0,10,0,0" Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
+                            <Grid Margin="0,10,0,0">
+                                <Border CornerRadius="5" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" Opacity="0.7"/>
                                 <Grid Background="Transparent">
                                     <mah:MetroAnimatedTabControl Background="Transparent">
                                         <mah:MetroTabItem Header="Description">
@@ -262,25 +287,18 @@
                                         <mah:MetroTabItem Header="Notes">
                                             <FlowDocumentScrollViewer Document="{Binding NotesMarkdown}" Height="390" VerticalScrollBarVisibility="Auto"/>
                                         </mah:MetroTabItem>
-                                    </mah:MetroAnimatedTabControl>
-                                    <Border BorderThickness="2" CornerRadius="5" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" Margin="0,7,7,0" Height="30" Width="80" HorizontalAlignment="Right" VerticalAlignment="Top" Cursor="Hand">
-                                        <Grid>
-                                            <Popup Name="TagPopup" StaysOpen="False" AllowsTransparency="True">
-                                                <Grid>
-                                                    <Border BorderBrush="{DynamicResource MahApps.Brushes.Button.Border}" BorderThickness="2" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" CornerRadius="5" Margin="5">
-                                                        <Border.Effect>
-                                                            <DropShadowEffect BlurRadius="7" Direction="0" ShadowDepth="0"/>
-                                                        </Border.Effect>
-                                                    </Border>
-                                                    <ItemsControl ItemsSource="{Binding Path=Game.Metadata.Tags}" Margin="5">
+                                        <mah:MetroTabItem Header="Tags">
+                                            <Grid Height="390">
+                                                <ScrollViewer Margin="0,0,0,5" VerticalScrollBarVisibility="Auto">
+                                                    <ItemsControl ItemsSource="{Binding Path=Game.Metadata.Tags}" HorizontalAlignment="Stretch" VerticalAlignment="Top">
                                                         <ItemsControl.ItemsPanel>
                                                             <ItemsPanelTemplate>
-                                                                <UniformGrid/>
+                                                                <UniformGrid Columns="4"/>
                                                             </ItemsPanelTemplate>
                                                         </ItemsControl.ItemsPanel>
                                                         <ItemsControl.ItemTemplate>
                                                             <DataTemplate>
-                                                                <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand"  Margin="10" Click="Tag_Clicked">
+                                                                <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" Height="30" Margin="5,5,5,5" ToolTip="{Binding Name}" Click="Tag_Clicked">
                                                                     <Border CornerRadius="5" Background="{Binding Name,Converter={StaticResource colorConv}}" Padding="0">
                                                                         <TextBlock Text="{Binding Name}" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" VerticalAlignment="Center" Margin="15,8,15,8" FontSize="10" FontWeight="Bold"/>
                                                                     </Border>
@@ -288,39 +306,15 @@
                                                             </DataTemplate>
                                                         </ItemsControl.ItemTemplate>
                                                     </ItemsControl>
-                                                </Grid>
-                                            </Popup>
-                                            <TextBlock Text="View Tags" FontSize="10" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                        </Grid>
-                                        <Border.Style>
-                                            <Style TargetType="Border">
-                                                <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Button.Border}"/>
-                                                <Style.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Button.Border.MouseOver}"/>
-                                                    </Trigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Border.Style>
-                                        <Border.Triggers>
-                                            <EventTrigger RoutedEvent="Border.MouseLeftButtonUp">
-                                                <EventTrigger.Actions>
-                                                    <BeginStoryboard>
-                                                        <Storyboard>
-                                                            <BooleanAnimationUsingKeyFrames Storyboard.TargetName="TagPopup" Storyboard.TargetProperty="IsOpen">
-                                                                <DiscreteBooleanKeyFrame KeyTime="0:0:0" Value="True" />
-                                                            </BooleanAnimationUsingKeyFrames>
-                                                        </Storyboard>
-                                                    </BeginStoryboard>
-                                                </EventTrigger.Actions>
-                                            </EventTrigger>
-                                        </Border.Triggers>
-                                    </Border>
+                                                </ScrollViewer>
+                                            </Grid>
+                                        </mah:MetroTabItem>
+                                    </mah:MetroAnimatedTabControl>
                                 </Grid>
-                            </Border>
+                            </Grid>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                            <StackPanel  Margin="0,64,0,0" Background="Transparent">
+                            <StackPanel  Margin="0,64,0,0" Background="Transparent" Height="68">
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,0">
                                     <StackPanel>
                                         <TextBlock Text="PLAYTIME" FontWeight="Bold" FontSize="13" />
@@ -368,7 +362,10 @@
                                         <TextBlock Text="{Binding Path=Game.Metadata.AveragePlaytime,Converter={StaticResource timeConv}}" FontSize="13" HorizontalAlignment="Center"/>
                                     </StackPanel>
                                 </StackPanel>
-                                <ComboBox ItemsSource="{Binding GameStates}" DisplayMemberPath="Key" SelectedValue="{Binding Path=CurrentUserProgress.State}" SelectedValuePath="Value" Margin="0,2,0,0" Height="37" FontSize="20" FontWeight="Bold" SelectionChanged="GameState_SelectionChanged">
+                                <ComboBox ItemsSource="{Binding GameStates}" DisplayMemberPath="Key" SelectedValue="{Binding Path=CurrentUserProgress.State}" SelectedValuePath="Value" Margin="0,5,-73,0" FontSize="20" Width="362" FontWeight="Bold" SelectionChanged="GameState_SelectionChanged">
+                                    <ComboBox.RenderTransform>
+                                        <ScaleTransform ScaleX="0.8" ScaleY="0.8"/>
+                                    </ComboBox.RenderTransform>
                                     <ComboBox.ItemContainerStyle>
                                         <Style TargetType="{x:Type ComboBoxItem}" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
                                             <Setter Property="FontSize" Value="20"/>
@@ -376,51 +373,53 @@
                                     </ComboBox.ItemContainerStyle>
                                 </ComboBox>
                             </StackPanel>
-                            <StackPanel Background="Transparent" Margin="0,10,0,0" HorizontalAlignment="Left">
-                                <Grid Height="30" >
-                                    <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Data="{DynamicResource IconGameViewCalendar}" RenderTransformOrigin="0,0">
-                                        <Path.RenderTransform>
-                                            <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                        </Path.RenderTransform>
-                                    </Path>
-                                    <TextBlock Text="Release Year" FontWeight="Bold" FontSize="10" Margin="30,0,0,0"/>
-                                    <TextBlock Text="{Binding Path=Game.Metadata.ReleaseDate.Year,TargetNullValue='N/A'}" FontSize="10" Margin="30,11,0,0"/>
-                                </Grid>
-                                <Grid Height="30" Margin="0,10,0,0" >
-                                    <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Data="{DynamicResource IconGameViewRating}" RenderTransformOrigin="0,0">
-                                        <Path.RenderTransform>
-                                            <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
-                                        </Path.RenderTransform>
-                                    </Path>
-                                    <TextBlock Text="Rating" FontWeight="Bold" FontSize="10" Margin="30,0,0,0"/>
-                                    <TextBlock Text="{Binding Path=Game.Metadata.Rating,StringFormat={}{0}%,TargetNullValue='N/A'}" FontSize="10" Margin="30,11,0,0"/>
-                                </Grid>
-                                <Grid Height="30" Margin="0,10,0,0" >
-                                    <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Data="{DynamicResource IconGameViewVersion}" RenderTransformOrigin="0,0.2">
-                                        <Path.RenderTransform>
-                                            <ScaleTransform ScaleX="1.1" ScaleY="1.3"/>
-                                        </Path.RenderTransform>
-                                    </Path>
-                                    <TextBlock Text="Version" FontWeight="Bold" FontSize="10" Margin="30,0,0,0"/>
-                                    <TextBlock Text="{Binding Path=Game.Version,TargetNullValue='N/A'}" FontSize="10" Margin="30,11,0,0"/>
-                                </Grid>
-                                <Grid Height="30" Margin="0,10,0,0" >
-                                    <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Data="{DynamicResource IconGameViewWebsite}" RenderTransformOrigin="0,0">
-                                        <Path.RenderTransform>
-                                            <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
-                                        </Path.RenderTransform>
-                                    </Path>
-                                    <TextBlock Text="Website" FontWeight="Bold" FontSize="10" Margin="30,0,0,0"/>
-                                    <TextBlock FontSize="10" Margin="30,11,0,0" ToolTip="{Binding Path=Game.Metadata.UrlWebsites[0]}">
-                                        <TextBlock.Style>
-                                            <Style TargetType="{x:Type TextBlock}">
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Path=Game.Metadata.UrlWebsites[0]}" Value="{x:Null}">
-                                                        <Setter Property="IsEnabled" Value="False"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
+                            <Grid Height="289.5" Margin="0,3.5,0,0">
+                                <Border CornerRadius="5" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" Opacity="0.7"/>
+                                <StackPanel Margin="5,10,0,0" HorizontalAlignment="Left">
+                                    <Grid Height="30" >
+                                        <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Data="{DynamicResource IconGameViewCalendar}" RenderTransformOrigin="0,0">
+                                            <Path.RenderTransform>
+                                                <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                            </Path.RenderTransform>
+                                        </Path>
+                                        <TextBlock Text="Release Year" FontWeight="Bold" FontSize="10" Margin="30,0,0,0"/>
+                                        <TextBlock Text="{Binding Path=Game.Metadata.ReleaseDate.Year,TargetNullValue='N/A'}" FontSize="10" Margin="30,11,0,0"/>
+                                    </Grid>
+                                    <Grid Height="30" Margin="0,10,0,0" >
+                                        <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Data="{DynamicResource IconGameViewRating}" RenderTransformOrigin="0,0">
+                                            <Path.RenderTransform>
+                                                <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
+                                            </Path.RenderTransform>
+                                        </Path>
+                                        <TextBlock Text="Rating" FontWeight="Bold" FontSize="10" Margin="30,0,0,0"/>
+                                        <TextBlock Text="{Binding Path=Game.Metadata.Rating,StringFormat={}{0}%,TargetNullValue='N/A'}" FontSize="10" Margin="30,11,0,0"/>
+                                    </Grid>
+                                    <Grid Height="30" Margin="0,10,0,0" >
+                                        <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Data="{DynamicResource IconGameViewVersion}" RenderTransformOrigin="0,0.2">
+                                            <Path.RenderTransform>
+                                                <ScaleTransform ScaleX="1.1" ScaleY="1.3"/>
+                                            </Path.RenderTransform>
+                                        </Path>
+                                        <TextBlock Text="Version" FontWeight="Bold" FontSize="10" Margin="30,0,0,0"/>
+                                        <TextBlock Text="{Binding Path=Game.Version,TargetNullValue='N/A'}" FontSize="10" Margin="30,11,0,0"/>
+                                    </Grid>
+                                    <Grid Height="30" Margin="0,10,0,0" >
+                                        <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Data="{DynamicResource IconGameViewWebsite}" RenderTransformOrigin="0,0">
+                                            <Path.RenderTransform>
+                                                <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
+                                            </Path.RenderTransform>
+                                        </Path>
+                                        <TextBlock Text="Website" FontWeight="Bold" FontSize="10" Margin="30,0,0,0"/>
+                                        <TextBlock FontSize="10" Margin="30,11,0,0" ToolTip="{Binding Path=Game.Metadata.UrlWebsites[0]}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="{x:Type TextBlock}">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Path=Game.Metadata.UrlWebsites[0]}" Value="{x:Null}">
+                                                            <Setter Property="IsEnabled" Value="False"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
         <Hyperlink TextDecorations="None" NavigateUri="{Binding Path=Game.Metadata.UrlWebsites[0]}" RequestNavigate="Website_Navigate">
             <Hyperlink.Inlines>
                 <Run>
@@ -438,84 +437,86 @@
                 </Run>
             </Hyperlink.Inlines>
         </Hyperlink>
-                                    </TextBlock>
-                                </Grid>
-                                <Grid Height="30" Margin="0,10,0,0" >
-                                    <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Data="{DynamicResource IconGameViewDeveloper}" RenderTransformOrigin="0,0">
-                                        <Path.RenderTransform>
-                                            <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
-                                        </Path.RenderTransform>
-                                    </Path>
-                                    <TextBlock Text="Developer" FontWeight="Bold" FontSize="10" Margin="30,0,0,0"/>
-                                    <ItemsControl ItemsSource="{Binding Path=Game.Metadata.Developers}" Margin="30,7,0,0">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <StackPanel Orientation="Horizontal"/>
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontSize="10"/>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                    <TextBlock Text="N/A" FontSize="10" Margin="30,11,0,0">
-                                        <TextBlock.Style>
-                                            <Style TargetType="{x:Type TextBlock}">
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Path=Game.Metadata.Developers.Count}" Value="0">
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </Grid>
-                                <Grid Height="30" Margin="0,10,0,0" >
-                                    <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Data="{DynamicResource IconGameViewPublisher}" RenderTransformOrigin="0,0">
-                                        <Path.RenderTransform>
-                                            <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                        </Path.RenderTransform>
-                                    </Path>
-                                    <TextBlock Text="Publisher" FontWeight="Bold" FontSize="10" Margin="30,0,0,0"/>
-                                    <ItemsControl ItemsSource="{Binding Path=Game.Metadata.Publishers}" Margin="30,7,0,0">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <StackPanel Orientation="Horizontal"/>
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontSize="10"/>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                    <TextBlock Text="N/A" FontSize="10" Margin="30,11,0,0">
-                                        <TextBlock.Style>
-                                            <Style TargetType="{x:Type TextBlock}">
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Path=Game.Metadata.Publishers.Count}" Value="0">
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </Grid>
-                                <Grid Height="30" Margin="0,10,0,0" >
-                                    <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Data="{DynamicResource IconUser}" RenderTransformOrigin="0,0">
-                                        <Path.RenderTransform>
-                                            <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
-                                        </Path.RenderTransform>
-                                    </Path>
-                                    <TextBlock Text="Age Rating" FontWeight="Bold" FontSize="10" Margin="30,0,0,0"/>
-                                    <TextBlock Text="{Binding Path=Game.Metadata.AgeRating,TargetNullValue='N/A'}" FontSize="10" Margin="30,11,0,0"/>
-                                </Grid>
-                            </StackPanel>
-                            <Border Margin="0,17,0,0" CornerRadius="5" Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
-                                <StackPanel Height="430">
+                                        </TextBlock>
+                                    </Grid>
+                                    <Grid Height="30" Margin="0,10,0,0" >
+                                        <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Data="{DynamicResource IconGameViewDeveloper}" RenderTransformOrigin="0,0">
+                                            <Path.RenderTransform>
+                                                <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
+                                            </Path.RenderTransform>
+                                        </Path>
+                                        <TextBlock Text="Developer" FontWeight="Bold" FontSize="10" Margin="30,0,0,0"/>
+                                        <ItemsControl ItemsSource="{Binding Path=Game.Metadata.Developers}" Margin="30,7,0,0">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Orientation="Horizontal"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontSize="10"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <TextBlock Text="N/A" FontSize="10" Margin="30,11,0,0">
+                                            <TextBlock.Style>
+                                                <Style TargetType="{x:Type TextBlock}">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Path=Game.Metadata.Developers.Count}" Value="0">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Grid>
+                                    <Grid Height="30" Margin="0,10,0,0" >
+                                        <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Data="{DynamicResource IconGameViewPublisher}" RenderTransformOrigin="0,0">
+                                            <Path.RenderTransform>
+                                                <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                            </Path.RenderTransform>
+                                        </Path>
+                                        <TextBlock Text="Publisher" FontWeight="Bold" FontSize="10" Margin="30,0,0,0"/>
+                                        <ItemsControl ItemsSource="{Binding Path=Game.Metadata.Publishers}" Margin="30,7,0,0">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Orientation="Horizontal"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontSize="10"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <TextBlock Text="N/A" FontSize="10" Margin="30,11,0,0">
+                                            <TextBlock.Style>
+                                                <Style TargetType="{x:Type TextBlock}">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Path=Game.Metadata.Publishers.Count}" Value="0">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Grid>
+                                    <Grid Height="30" Margin="0,10,0,0" >
+                                        <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Data="{DynamicResource IconUser}" RenderTransformOrigin="0,0">
+                                            <Path.RenderTransform>
+                                                <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
+                                            </Path.RenderTransform>
+                                        </Path>
+                                        <TextBlock Text="Age Rating" FontWeight="Bold" FontSize="10" Margin="30,0,0,0"/>
+                                        <TextBlock Text="{Binding Path=Game.Metadata.AgeRating,TargetNullValue='N/A'}" FontSize="10" Margin="30,11,0,0"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Grid>
+                            <Grid Margin="0,10,0,0">
+                                <Border  CornerRadius="5" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" Opacity="0.7"/>
+                                <StackPanel Height="429">
                                     <TextBlock Margin="10,0,0,0" Text="Activities" FontSize="25"/>
                                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                                         <ItemsControl ItemsSource="{Binding UserProgresses}">
@@ -566,7 +567,7 @@
                                         </ItemsControl>
                                     </ScrollViewer>
                                 </StackPanel>
-                            </Border>
+                            </Grid>
                         </StackPanel>
                     </Grid>
                 </Viewbox>

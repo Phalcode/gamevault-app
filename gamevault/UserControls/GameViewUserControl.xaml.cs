@@ -168,7 +168,7 @@ namespace gamevault.UserControls
                 try
                 {
                     await uiMediaSlider.InitVideoPlayer();
-                    await PrepareMetadataMedia(ViewModel.Game.Metadata);
+                    await PrepareMetadataMedia(ViewModel?.Game?.Metadata);
                 }
                 catch { }
                 //###########              
@@ -222,6 +222,11 @@ namespace gamevault.UserControls
         {
             if (ViewModel.Game == null)
                 return;
+
+            if (IsGameDownloaded(ViewModel.Game))
+            {
+                uiMediaSlider.UnloadMediaSlider();
+            }
             await MainWindowViewModel.Instance.Downloads.TryStartDownload(ViewModel.Game);
         }
         private void Website_Navigate(object sender, RequestNavigateEventArgs e)

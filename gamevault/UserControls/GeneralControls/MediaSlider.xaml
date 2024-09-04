@@ -26,14 +26,14 @@
                 <wv2:WebView2 x:Name="uiWebView" DefaultBackgroundColor="Black"/>
             </Grid>
         </Border>
-        <Border HorizontalAlignment="Right" Width="30" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" CornerRadius="0,5,5,0"/>
+        <Border HorizontalAlignment="Right" Width="30" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" Opacity="0.7" CornerRadius="0,5,5,0"/>
         <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,0,0" Width="30">
-            <TextBlock x:Name="uiTxtMediaIndex" FontSize="12" Foreground="White" HorizontalAlignment="Left"/>
+            <TextBlock x:Name="uiTxtMediaIndex" FontSize="12" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}" HorizontalAlignment="Left"/>
         </Border>
         <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,3,30" Click="PrevMedia_Click">
             <Grid Style="{DynamicResource HoverEffect}" Background="#02000000">
                 <!--#02000000-->
-                <Path Data="{StaticResource IconArrowBordered}" Fill="White" RenderTransformOrigin="0.52,0.5">
+                <Path Data="{StaticResource IconArrowBordered}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.52,0.5">
                     <Path.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -50,7 +50,7 @@
         </Button>
         <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" VerticalAlignment="Center" HorizontalAlignment="Right" Width="25" Height="25" Margin="0,30,3,0" Click="NextMedia_Click">
             <Grid Style="{DynamicResource HoverEffect}" Background="#02000000">
-                <Path Data="{StaticResource IconArrowBordered}" Fill="White" RenderTransformOrigin="0.5,0.5">
+                <Path Data="{StaticResource IconArrowBordered}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
                     <Path.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -67,7 +67,7 @@
         </Button>
         <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="25" Height="25" Margin="0,0,3,2" Click="MediaSliderFullscreen_Click">
             <Grid Style="{DynamicResource HoverEffect}"  Background="#02000000">
-                <Path Data="{StaticResource IconGameViewMaximize}" Fill="White" RenderTransformOrigin="-0.05,-0.05">
+                <Path Data="{StaticResource IconGameViewMaximize}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="-0.05,-0.05">
                     <Path.RenderTransform>
                         <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
                     </Path.RenderTransform>

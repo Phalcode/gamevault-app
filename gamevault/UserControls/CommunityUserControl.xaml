@@ -15,6 +15,7 @@
         <conv:GameStateDescriptionConverter x:Key="gameStateDescConv"/>
         <conv:GameTimeConverter x:Key="gameTimeConv"/>
         <conv:UTCtoLocalTimeConverter x:Key="UtcTimeConv"/>
+        <conv:InverseNullConverter x:Key="inverseNullConv"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -77,7 +78,7 @@
                         </Grid>
                     </Grid>
                     <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="320,0,10,0">
-                       
+
                         <ComboBox x:Name="uiSortBy" ItemsSource="{Binding SortBy}" SelectionChanged="SortBy_SelectionChanged"/>
                     </StackPanel>
 
@@ -104,7 +105,10 @@
                                                         <Setter Property="TextBlock.Text" Value="{Binding Path=Game.Metadata.Title}"/>
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding Path=Game.Metadata.Title}" Value="{x:Null}">
-                                                                <Setter Property="Text" Value="Unknown game" />
+                                                                <Setter Property="Text" Value="{Binding Path=Game.Title}" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Path=Game.DeletedAt,Converter={StaticResource inverseNullConv}}" Value="False">
+                                                                <Setter Property="TextDecorations" Value="Strikethrough" />
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>

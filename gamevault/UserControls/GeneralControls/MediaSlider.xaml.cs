@@ -14,7 +14,7 @@ namespace gamevault.UserControls
     /// Interaction logic for MediaSlider.xaml
     /// </summary>
     public partial class MediaSlider : UserControl
-    {       
+    {
         private List<string> MediaUrls = new List<string>();
         private int mediaIndex = 0;
         private bool isMediaSliderFullscreen = false;
@@ -133,7 +133,7 @@ namespace gamevault.UserControls
             {
                 MediaUrls.Add(first);
             }
-            if (uiWebView.Visibility == Visibility.Visible)//Prevent only in this case from navigating because the Media Slider could be rendered on top of the game settings
+            if (uiWebView != null && uiWebView.Visibility == Visibility.Visible)//Prevent only in this case from navigating because the Media Slider could be rendered on top of the game settings
             {
                 NextMedia_Click(null, null);
             }
@@ -157,7 +157,7 @@ namespace gamevault.UserControls
             }
             else
             {
-                return volume.ToString().Replace(",",".");//The media player needs a dot as seperator
+                return volume.ToString().Replace(",", ".");//The media player needs a dot as seperator
             }
         }
 

@@ -274,7 +274,10 @@ namespace gamevault.UserControls
         private void GameCard_Clicked(object sender, RoutedEventArgs e)
         {
             if (((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key == null)
+            {
+                MainWindowViewModel.Instance.AppBarText = "Cannot open game";
                 return;
+            }
             MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key, LoginManager.Instance.IsLoggedIn()));
         }
         private void Search_TextChanged(object sender, TextChangedEventArgs e)

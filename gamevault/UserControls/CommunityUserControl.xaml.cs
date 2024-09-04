@@ -179,10 +179,10 @@ namespace gamevault.UserControls
         }
 
         private void GameImage_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
+        {            
             if (((Progress)((FrameworkElement)sender).DataContext).Game == null)
             {
-                MainWindowViewModel.Instance.AppBarText = "Cannot open unknown game";
+                MainWindowViewModel.Instance.AppBarText = "Cannot open game";
                 return;
             }
             MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(((Progress)((FrameworkElement)sender).DataContext).Game));
