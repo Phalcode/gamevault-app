@@ -296,5 +296,14 @@ namespace gamevault.Models
 
         [JsonPropertyName("notes")]
         public string? Notes { get; set; }
+
+        [JsonPropertyName("launch_executable")]
+        public string? LaunchExecutable { get; set; }
+
+        [JsonPropertyName("launch_parameters")]
+        public string? LaunchParameters { get; set; }
+
+        [JsonPropertyName("installer_executable")]
+        public string? InstallerExecutable { get; set; }
     }
 }

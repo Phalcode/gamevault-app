@@ -12,9 +12,12 @@ namespace gamevault.Converter
         {
             try
             {
+                if (value == null)
+                    return new string[] { };
+
                 if (value.GetType().IsArray)//If its array, then the viewmodel was set insted of the UI 
                 {
-                    var joined =  string.Join(",", (string[])value);
+                    var joined = string.Join(",", (string[])value);
                     return joined;
                 }
                 else

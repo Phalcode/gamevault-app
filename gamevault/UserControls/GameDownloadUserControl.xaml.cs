@@ -559,7 +559,13 @@ namespace gamevault.UserControls
                     }
                 }
                 uiCbSetupExecutable.ItemsSource = allExecutables;
-                if (allExecutables.Count == 1)
+                if (!string.IsNullOrWhiteSpace(ViewModel.Game?.Metadata?.InstallerExecutable))
+                {
+                    var entry = allExecutables.Select((kv, index) => new { kv.Key, kv.Value, Index = index }).FirstOrDefault(kv => string.Equals(kv.Key, ViewModel.Game?.Metadata?.InstallerExecutable, StringComparison.OrdinalIgnoreCase));
+                    if (entry != null)
+                        uiCbSetupExecutable.SelectedIndex = entry.Index;
+                }
+                else if (allExecutables.Count == 1)
                 {
                     uiCbSetupExecutable.SelectedIndex = 0;
                 }
@@ -678,6 +684,39 @@ namespace gamevault.UserControls
             uiInstallOptions.Visibility = System.Windows.Visibility.Collapsed;
             uiProgressRingInstall.IsActive = false;
             uiBtnExtract.IsEnabled = true;
+            //Set default launch parameter if available
+            if (!string.IsNullOrWhiteSpace(ViewModel.Game?.Metadata?.LaunchParameters) && Directory.Exists(ViewModel.InstallPath))
+            {
+                try
+                {
+                    if (!File.Exists($"{ViewModel.InstallPath}\\gamevault-exec"))
+                    {
+                        File.Create($"{ViewModel.InstallPath}\\gamevault-exec").Close();
+                    }
+                    Preferences.Set(AppConfigKey.LaunchParameter, ViewModel.Game?.Metadata?.LaunchParameters, $"{ViewModel.InstallPath}\\gamevault-exec");
+                }
+                catch { }
+            }
+            //Set default launch executable if available
+            if (!string.IsNullOrWhiteSpace(ViewModel.Game?.Metadata?.LaunchExecutable) && Directory.Exists(ViewModel.InstallPath))
+            {
+                try
+                {
+                    string extension = Path.GetExtension(ViewModel.Game?.Metadata?.LaunchExecutable);
+                    var files = Directory.GetFiles(ViewModel.InstallPath, $"*{extension}", SearchOption.AllDirectories);
+                    var targetFile = files.FirstOrDefault(file => string.Equals(Path.GetFileName(file), ViewModel.Game?.Metadata?.LaunchExecutable, StringComparison.OrdinalIgnoreCase));
+                    if (targetFile != null)
+                    {
+                        if (!File.Exists($"{ViewModel.InstallPath}\\gamevault-exec"))
+                        {
+                            File.Create($"{ViewModel.InstallPath}\\gamevault-exec").Close();
+                        }
+                        Preferences.Set(AppConfigKey.Executable, targetFile, $"{ViewModel.InstallPath}\\gamevault-exec");
+                    }
+                }
+                catch { }
+            }
+
             if (ViewModel.CreateShortcut == true)
             {
                 await Task.Delay(1000);
@@ -685,10 +724,13 @@ namespace gamevault.UserControls
                 if (game.Key == null)
                     return;
 
-                if (!GameSettingsUserControl.TryPrepareLaunchExecutable(game.Value))
+                if (!File.Exists(Preferences.Get(AppConfigKey.Executable, $"{game.Value}\\gamevault-exec")))
                 {
-                    MainWindowViewModel.Instance.AppBarText = $"Can not create shortcut. No valid Executable found";
-                    return;
+                    if (!GameSettingsUserControl.TryPrepareLaunchExecutable(game.Value))
+                    {
+                        MainWindowViewModel.Instance.AppBarText = $"Can not create shortcut. No valid Executable found";
+                        return;
+                    }
                 }
                 await DesktopHelper.CreateShortcut(game.Key, Preferences.Get(AppConfigKey.Executable, $"{game.Value}\\gamevault-exec"), false);
             }
