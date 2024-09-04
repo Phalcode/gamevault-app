@@ -14,7 +14,7 @@ namespace gamevault.UserControls
     /// Interaction logic for MediaSlider.xaml
     /// </summary>
     public partial class MediaSlider : UserControl
-    {
+    {       
         private List<string> MediaUrls = new List<string>();
         private int mediaIndex = 0;
         private bool isMediaSliderFullscreen = false;
@@ -115,22 +115,6 @@ namespace gamevault.UserControls
                     string mutescript = @"var video = document.querySelector('video[name=""media""]');if(video){video.volume=" +
                     GetLastMediaVolume() +
                     ";}";
-
-                    string cssscript = @"
-        var style = document.createElement('style');
-        style.type = 'text/css';
-        var cssRules = `video::-webkit-media-controls-fullscreen-button {
-            display: none !important;
-        }
-        video::-moz-media-controls-fullscreen-button {
-            display: none !important;
-        }
-        video::-ms-media-controls-fullscreen-button {
-            display: none !important;
-        }`;
-        style.appendChild(document.createTextNode(cssRules));
-        document.head.appendChild(style);
-    ";
                     await uiWebView.CoreWebView2.ExecuteScriptAsync(mutescript);
                     await ResizeMediaSlider();
                     await uiWebView.CoreWebView2.ExecuteScriptAsync(cssscript);
@@ -160,10 +144,23 @@ namespace gamevault.UserControls
         }
         public async Task<string> GetCurrentMediaVolume()
         {
-            string resizescript = @"document.querySelector('video[name=""media""]').volume;";
-            string result = await uiWebView.CoreWebView2.ExecuteScriptAsync(resizescript);
-            return result;
+
+
+            string result = await uiWebView.CoreWebView2.ExecuteScriptAsync(getVolumeScript);
+            result = System.Text.RegularExpressions.Regex.Unescape(result.Trim('"'));
+            var mediaStatus = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>(result);
+            double volume = mediaStatus.GetProperty("volume").GetDouble();
+            bool isMuted = mediaStatus.GetProperty("muted").GetBoolean();
+            if (isMuted)
+            {
+                return "0.0";
+            }
+            else
+            {
+                return volume.ToString().Replace(",",".");//The media player needs a dot as seperator
+            }
         }
+
         #endregion
         #region Private
         private void ReloadMediaSlider()
@@ -176,24 +173,6 @@ namespace gamevault.UserControls
         }
         private async Task ResizeMediaSlider()
         {
-            string resizescript = @"
- var video = document.querySelector('video[name=""media""]');
-if(video)
-{
-           ";
-
-
-            resizescript += @" video.style.width = 16000 + 'px';
-            video.style.height = 9000 + 'px';";
-
-
-            resizescript += @"
-            video.style.position = 'fixed'; // Ensure it is positioned to cover the viewport
-            video.style.top = '0';
-            video.style.left = '0';
-            video.style.zIndex = '1000'; // Ensure it is on top of other elements
-}
-   ";
             await uiWebView.CoreWebView2.ExecuteScriptAsync(resizescript);
         }
         private async Task MediaSliderNavigate(string url)
@@ -238,5 +217,44 @@ if(video)
             uiWebView.Dispose();
             uiWebView = null;
         }
+        #region JS_SCRIPTS
+        private string cssscript = @"
+        var style = document.createElement('style');
+        style.type = 'text/css';
+        var cssRules = `video::-webkit-media-controls-fullscreen-button {
+            display: none !important;
+        }
+        video::-moz-media-controls-fullscreen-button {
+            display: none !important;
+        }
+        video::-ms-media-controls-fullscreen-button {
+            display: none !important;
+        }`;
+        style.appendChild(document.createTextNode(cssRules));
+        document.head.appendChild(style);
+    ";
+        private string getVolumeScript = @"
+    (function() {
+        var video = document.querySelector('video[name=""media""]');
+        return JSON.stringify({
+            volume: video.volume,
+            muted: video.muted
+        });
+    })();";
+        string resizescript = @"
+ var video = document.querySelector('video[name=""media""]');
+if(video)
+{
+           "
+             + @" video.style.width = 16000 + 'px';
+            video.style.height = 9000 + 'px';"
+             + @"
+            video.style.position = 'fixed'; // Ensure it is positioned to cover the viewport
+            video.style.top = '0';
+            video.style.left = '0';
+            video.style.zIndex = '1000'; // Ensure it is on top of other elements
+}
+   ";
+        #endregion
     }
 }
