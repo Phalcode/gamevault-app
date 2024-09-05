@@ -33,7 +33,9 @@ namespace gamevault.Models
         DownloadProgress,
         InstalledGamesRows,
         CreateDesktopShortcut,
-        MediaSliderVolume
+        MediaSliderVolume,
+        UnreadNews,
+        NewsHash
     }
     public static class AppFilePath
     {

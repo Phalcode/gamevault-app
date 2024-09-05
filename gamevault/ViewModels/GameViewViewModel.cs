@@ -20,8 +20,8 @@ namespace gamevault.ViewModels
         private bool isInstalled { get; set; }
         private bool? isDownloaded { get; set; }
         private bool showMappedTitle { get; set; }
-        private FlowDocument descriptionMarkdown { get; set; }
-        private FlowDocument notesMarkdown { get; set; }
+        private string? descriptionMarkdown { get; set; }
+        private string? notesMarkdown { get; set; }
         #endregion
         public Game? Game
         {
@@ -63,12 +63,12 @@ namespace gamevault.ViewModels
             get { return showMappedTitle; }
             set { showMappedTitle = value; OnPropertyChanged(); }
         }
-        public FlowDocument DescriptionMarkdown
+        public string? DescriptionMarkdown
         {
             get { return descriptionMarkdown; }
             set { descriptionMarkdown = value; OnPropertyChanged(); }
         }
-        public FlowDocument NotesMarkdown
+        public string? NotesMarkdown
         {
             get { return notesMarkdown; }
             set { notesMarkdown = value; OnPropertyChanged(); }

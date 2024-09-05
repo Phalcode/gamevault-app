@@ -319,7 +319,7 @@
                         </Grid>
                     </mah:MetroTabItem>
                     <mah:MetroTabItem>
-                        <StackPanel Margin="20,20,0,0">
+                        <StackPanel Margin="20,20,0,0" IsEnabled="{Binding MetadataProvidersLoaded}">
                             <StackPanel Orientation="Horizontal">
                                 <Path Data="{DynamicResource IconDatabase}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" VerticalAlignment="Center"/>
                                 <TextBlock Text="Metadata" FontSize="20" FontWeight="Bold" Margin="5,0,0,0"/>

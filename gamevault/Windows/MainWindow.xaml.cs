@@ -11,6 +11,10 @@ using System;
 using Microsoft.Toolkit.Uwp.Notifications;
 using System.Windows.Forms;
 using gamevault.Models;
+using ControlzEx.Standard;
+using System.Text;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 namespace gamevault.Windows
 {
@@ -97,6 +101,10 @@ namespace gamevault.Windows
             await MainWindowViewModel.Instance.Library.GetGameInstalls().RestoreInstalledGames();
             await MainWindowViewModel.Instance.Downloads.RestoreDownloadedGames();
             MainWindowViewModel.Instance.UserAvatar = LoginManager.Instance.GetCurrentUser();
+
+            //For whatever reason, binding to the badge did not work
+            bool newsAvailable = await CheckForNews();
+            uiNewsBadge.Badge = newsAvailable ? "1" : "";
         }
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -135,6 +143,52 @@ namespace gamevault.Windows
         {
             MainWindowViewModel.Instance.SetActiveControl(MainControl.Settings);
             MainWindowViewModel.Instance.Settings.SetTabIndex(4);
+        }
+
+        private async Task<bool> CheckForNews()
+        {
+            try
+            {
+                if (Preferences.Get(AppConfigKey.UnreadNews, AppFilePath.UserFile) == "1")
+                {
+                    return true;
+                }
+                string gameVaultNews = await WebHelper.DownloadFileContentAsync("https://gamevau.lt/news.md");
+                using (SHA256 sha256 = SHA256.Create())
+                using (MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(gameVaultNews)))
+                {
+                    byte[] bytes = await sha256.ComputeHashAsync(stream);
+                    StringBuilder builder = new StringBuilder();
+                    foreach (byte b in bytes)
+                    {
+                        builder.Append(b.ToString("x2"));
+                    }
+                    string hash = builder.ToString();
+                    if (Preferences.Get(AppConfigKey.NewsHash, AppFilePath.UserFile) != hash)
+                    {
+                        Preferences.Set(AppConfigKey.UnreadNews, "1", AppFilePath.UserFile);
+                        Preferences.Set(AppConfigKey.NewsHash, hash, AppFilePath.UserFile);
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private void News_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            MainWindowViewModel.Instance.OpenPopup(new NewsPopup());
+            try
+            {
+                uiNewsBadge.Badge = "";
+                Preferences.Set(AppConfigKey.UnreadNews, "0", AppFilePath.UserFile);
+            }
+            catch
+            { }
         }
     }
 }

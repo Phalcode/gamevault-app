@@ -16,8 +16,7 @@ namespace gamevault.ViewModels
     public enum MainControl
     {
         Library = 0,
-        Downloads = 1,
-        //NewLibrary = 2,
+        Downloads = 1,        
         Community = 2,
         Settings = 3,
         AdminConsole = 4

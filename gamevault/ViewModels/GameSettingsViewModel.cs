@@ -26,6 +26,7 @@ namespace gamevault.ViewModels
         private ImageSource boxArtImageSource { get; set; }
         private string diskSize { get; set; }
         private MetadataProviderDto[]? metadataProviders { get; set; }
+        private bool metadataProvidersLoaded { get; set; }
         private int selectedMetadataProviderIndex { get; set; }
         #endregion
         public Game Game
@@ -94,6 +95,11 @@ namespace gamevault.ViewModels
         {
             get { return metadataProviders; }
             set { metadataProviders = value; OnPropertyChanged(); }
+        }
+        public bool MetadataProvidersLoaded
+        {
+            get { return metadataProvidersLoaded; }
+            set { metadataProvidersLoaded = value; OnPropertyChanged(); }
         }
         public int SelectedMetadataProviderIndex
         {

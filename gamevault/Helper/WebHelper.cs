@@ -182,7 +182,7 @@ namespace gamevault.Helper
         public static async Task DownloadImageFromUrlAsync(string imageUrl, string cacheFile)
         {
             using (WebClient client = new WebClient())
-            {              
+            {
                 client.Headers.Add(HttpRequestHeader.Authorization, "Basic " + Convert.ToBase64String(System.Text.UTF8Encoding.UTF8.GetBytes($"{m_UserName}:{m_Password}")));
                 client.Headers.Add($"User-Agent: GameVault/{SettingsViewModel.Instance.Version}");
                 await client.DownloadFileTaskAsync(new Uri(imageUrl), cacheFile);
@@ -238,6 +238,23 @@ namespace gamevault.Helper
                         dynamic obj = JsonNode.Parse(responseContent);
                         throw new HttpRequestException($"{response.StatusCode}: {obj["message"]}");
                     }
+                }
+            }
+        }
+        public static async Task<string> DownloadFileContentAsync(string url)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
+                    string content = await response.Content.ReadAsStringAsync();
+                    return content;
+                }
+                catch (Exception ex)
+                {
+                    return null;
                 }
             }
         }

@@ -352,31 +352,12 @@ namespace gamevault.UserControls
             }
             catch { }
         }
-        #region Markdown
-        private static MarkdownPipeline BuildPipeline()
-        {
-            return new MarkdownPipelineBuilder()
-                .UseSupportedExtensions()
-                .Build();
-        }
+        #region Markdown        
         private void OpenHyperlink(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
         {
             if (Uri.IsWellFormedUriString(e.Parameter.ToString(), UriKind.Absolute))
             {
                 Process.Start(new ProcessStartInfo(e.Parameter.ToString()) { UseShellExecute = true });
-            }
-        }
-        private FlowDocument LoadMarkdown(string content)
-        {
-            var xaml = Markdig.Wpf.Markdown.ToXaml(content, BuildPipeline());
-            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(xaml)))
-            {
-                // Directly load the XAML without custom schema context
-                if (XamlReader.Load(stream) is FlowDocument document)
-                {
-                    return document;
-                }
-                return null;
             }
         }
         private void PrepareMarkdownElements()
@@ -385,7 +366,7 @@ namespace gamevault.UserControls
             {
                 try
                 {
-                    ViewModel.DescriptionMarkdown = LoadMarkdown(ViewModel.Game.Metadata.Description);
+                    ViewModel.DescriptionMarkdown = ViewModel.Game.Metadata.Description;
                 }
                 catch { }
             }
@@ -393,7 +374,7 @@ namespace gamevault.UserControls
             {
                 try
                 {
-                    ViewModel.NotesMarkdown = LoadMarkdown(ViewModel.Game.Metadata.Notes);
+                    ViewModel.NotesMarkdown = ViewModel.Game.Metadata.Notes;
                 }
                 catch { }
             }

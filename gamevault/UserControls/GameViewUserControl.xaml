@@ -282,10 +282,10 @@
                                 <Grid Background="Transparent">
                                     <mah:MetroAnimatedTabControl Background="Transparent">
                                         <mah:MetroTabItem Header="Description">
-                                            <FlowDocumentScrollViewer Document="{Binding DescriptionMarkdown}" Height="390" VerticalScrollBarVisibility="Auto"/>
+                                            <markdig:MarkdownViewer Markdown="{Binding DescriptionMarkdown}" Height="390"/>
                                         </mah:MetroTabItem>
                                         <mah:MetroTabItem Header="Notes">
-                                            <FlowDocumentScrollViewer Document="{Binding NotesMarkdown}" Height="390" VerticalScrollBarVisibility="Auto"/>
+                                            <markdig:MarkdownViewer Markdown="{Binding NotesMarkdown}" Height="390"/>
                                         </mah:MetroTabItem>
                                         <mah:MetroTabItem Header="Tags">
                                             <Grid Height="390">

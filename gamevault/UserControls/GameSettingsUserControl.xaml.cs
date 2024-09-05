@@ -806,10 +806,10 @@ namespace gamevault.UserControls
             this.Focus();
         }
         private async Task LoadGameMedatataProviders()
-        {
-            this.IsEnabled = false;
+        {           
             try
             {
+                ViewModel.MetadataProvidersLoaded = false;
                 string result = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/metadata/providers");
                 var providers = JsonSerializer.Deserialize<MetadataProviderDto[]?>(result);
                 foreach (GameMetadata gmd in ViewModel.Game.ProviderMetadata)
@@ -826,13 +826,13 @@ namespace gamevault.UserControls
                 providers = providers?.OrderByDescending(p => p.Priority).ToArray();
                 ViewModel.MetadataProviders = providers;
                 ViewModel.SelectedMetadataProviderIndex = 0;
+                ViewModel.MetadataProvidersLoaded = true;
             }
             catch (Exception ex)
             {
                 string message = WebExceptionHelper.TryGetServerMessage(ex);
                 MainWindowViewModel.Instance.AppBarText = message;
-            }
-            this.IsEnabled = true;
+            }            
         }
 
         #endregion
