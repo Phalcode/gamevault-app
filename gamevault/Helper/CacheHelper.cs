@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -164,6 +165,21 @@ namespace gamevault.Helper
                     catch { }
                 }
             });
+        }
+        internal static async Task<string> CreateHashAsync(string input)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            using (MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(input)))
+            {
+                byte[] bytes = await sha256.ComputeHashAsync(stream);
+                StringBuilder builder = new StringBuilder();
+                foreach (byte b in bytes)
+                {
+                    builder.Append(b.ToString("x2"));
+                }
+                string hash = builder.ToString();
+                return hash;
+            }
         }
         private static void ResizeImage(string path, int maxHeight)
         {

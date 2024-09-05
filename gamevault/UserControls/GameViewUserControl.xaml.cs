@@ -355,10 +355,14 @@ namespace gamevault.UserControls
         #region Markdown        
         private void OpenHyperlink(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
         {
-            if (Uri.IsWellFormedUriString(e.Parameter.ToString(), UriKind.Absolute))
+            try
             {
-                Process.Start(new ProcessStartInfo(e.Parameter.ToString()) { UseShellExecute = true });
+                if (Uri.IsWellFormedUriString(e.Parameter.ToString(), UriKind.Absolute))
+                {
+                    Process.Start(new ProcessStartInfo(e.Parameter.ToString()) { UseShellExecute = true });
+                }
             }
+            catch { }
         }
         private void PrepareMarkdownElements()
         {

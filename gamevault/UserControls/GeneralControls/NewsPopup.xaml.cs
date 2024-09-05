@@ -38,17 +38,21 @@ namespace gamevault.UserControls
             try
             {
                 string gameVaultNews = await WebHelper.DownloadFileContentAsync("https://gamevau.lt/news.md");
-                uiGameVaultNews.Markdown = gameVaultNews;                         
+                uiGameVaultNews.Markdown = gameVaultNews;
             }
             catch { }
         }
         #region Markdown        
         private void OpenHyperlink(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
         {
-            if (Uri.IsWellFormedUriString(e.Parameter.ToString(), UriKind.Absolute))
+            try
             {
-                Process.Start(new ProcessStartInfo(e.Parameter.ToString()) { UseShellExecute = true });
+                if (Uri.IsWellFormedUriString(e.Parameter.ToString(), UriKind.Absolute))
+                {
+                    Process.Start(new ProcessStartInfo(e.Parameter.ToString()) { UseShellExecute = true });
+                }
             }
+            catch { }
         }
         #endregion
 

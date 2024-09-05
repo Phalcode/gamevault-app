@@ -154,24 +154,14 @@ namespace gamevault.Windows
                     return true;
                 }
                 string gameVaultNews = await WebHelper.DownloadFileContentAsync("https://gamevau.lt/news.md");
-                using (SHA256 sha256 = SHA256.Create())
-                using (MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(gameVaultNews)))
+                string hash = await CacheHelper.CreateHashAsync(gameVaultNews);
+                if (Preferences.Get(AppConfigKey.NewsHash, AppFilePath.UserFile) != hash)
                 {
-                    byte[] bytes = await sha256.ComputeHashAsync(stream);
-                    StringBuilder builder = new StringBuilder();
-                    foreach (byte b in bytes)
-                    {
-                        builder.Append(b.ToString("x2"));
-                    }
-                    string hash = builder.ToString();
-                    if (Preferences.Get(AppConfigKey.NewsHash, AppFilePath.UserFile) != hash)
-                    {
-                        Preferences.Set(AppConfigKey.UnreadNews, "1", AppFilePath.UserFile);
-                        Preferences.Set(AppConfigKey.NewsHash, hash, AppFilePath.UserFile);
-                        return true;
-                    }
-                    return false;
+                    Preferences.Set(AppConfigKey.UnreadNews, "1", AppFilePath.UserFile);
+                    Preferences.Set(AppConfigKey.NewsHash, hash, AppFilePath.UserFile);
+                    return true;
                 }
+                return false;
             }
             catch
             {
