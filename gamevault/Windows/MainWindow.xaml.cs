@@ -15,6 +15,7 @@ using ControlzEx.Standard;
 using System.Text;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace gamevault.Windows
 {
@@ -102,9 +103,8 @@ namespace gamevault.Windows
             await MainWindowViewModel.Instance.Downloads.RestoreDownloadedGames();
             MainWindowViewModel.Instance.UserAvatar = LoginManager.Instance.GetCurrentUser();
 
-            //For whatever reason, binding to the badge did not work
-            bool newsAvailable = await CheckForNews();
-            uiNewsBadge.Badge = newsAvailable ? "1" : "";
+            uiNewsBadge.Badge = await CheckForNews() ? "!" : "";
+            InitNewsTimer();
         }
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -154,7 +154,9 @@ namespace gamevault.Windows
                     return true;
                 }
                 string gameVaultNews = await WebHelper.DownloadFileContentAsync("https://gamevau.lt/news.md");
-                string hash = await CacheHelper.CreateHashAsync(gameVaultNews);
+                string serverNews = await WebHelper.GetRequestAsync($"{SettingsViewModel.Instance.ServerUrl}/api/config/news");
+
+                string hash = await CacheHelper.CreateHashAsync(gameVaultNews + serverNews);
                 if (Preferences.Get(AppConfigKey.NewsHash, AppFilePath.UserFile) != hash)
                 {
                     Preferences.Set(AppConfigKey.UnreadNews, "1", AppFilePath.UserFile);
@@ -168,9 +170,22 @@ namespace gamevault.Windows
                 return false;
             }
         }
+        private void InitNewsTimer()
+        {
+            DispatcherTimer newsTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromHours(1)
+            };
+            newsTimer.Tick += async (s, e) => { uiNewsBadge.Badge = await CheckForNews() ? "!" : ""; };
+            newsTimer.Start();
+        }
 
         private void News_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if (MainWindowViewModel.Instance.ActiveControl.GetType() == typeof(GameViewUserControl))//Else the news popup would be rendered below the media slider because of the airspace problem
+            {
+                ((GameViewUserControl)MainWindowViewModel.Instance.ActiveControl).uiMediaSlider.UnloadMediaSlider();
+            }
             MainWindowViewModel.Instance.OpenPopup(new NewsPopup());
             try
             {

@@ -39,6 +39,8 @@ namespace gamevault.UserControls
             {
                 string gameVaultNews = await WebHelper.DownloadFileContentAsync("https://gamevau.lt/news.md");
                 uiGameVaultNews.Markdown = gameVaultNews;
+                string serverNews = await WebHelper.GetRequestAsync($"{SettingsViewModel.Instance.ServerUrl}/api/config/news");
+                uiServerNews.Markdown = serverNews;
             }
             catch { }
         }

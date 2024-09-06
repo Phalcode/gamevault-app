@@ -282,10 +282,18 @@
                                 <Grid Background="Transparent">
                                     <mah:MetroAnimatedTabControl Background="Transparent">
                                         <mah:MetroTabItem Header="Description">
-                                            <markdig:MarkdownViewer Markdown="{Binding DescriptionMarkdown}" Height="390"/>
+                                            <markdig:MarkdownViewer Markdown="{Binding DescriptionMarkdown}" Height="390">
+                                                <markdig:MarkdownViewer.Resources>
+                                                    <ResourceDictionary Source="/Resources/Assets/MarkdownStyles.xaml"/>
+                                                </markdig:MarkdownViewer.Resources>
+                                            </markdig:MarkdownViewer>
                                         </mah:MetroTabItem>
                                         <mah:MetroTabItem Header="Notes">
-                                            <markdig:MarkdownViewer Markdown="{Binding NotesMarkdown}" Height="390"/>
+                                            <markdig:MarkdownViewer Markdown="{Binding NotesMarkdown}" Height="390">
+                                                <markdig:MarkdownViewer.Resources>
+                                                    <ResourceDictionary Source="/Resources/Assets/MarkdownStyles.xaml"/>
+                                                </markdig:MarkdownViewer.Resources>
+                                            </markdig:MarkdownViewer>
                                         </mah:MetroTabItem>
                                         <mah:MetroTabItem Header="Tags">
                                             <Grid Height="390">

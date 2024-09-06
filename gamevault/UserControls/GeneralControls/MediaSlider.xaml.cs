@@ -77,8 +77,11 @@ namespace gamevault.UserControls
         #region Public 
         public void UnloadMediaSlider()
         {
-            uiWebView.Visibility = Visibility.Hidden;
-            uiWebView.CoreWebView2?.NavigateToString("<html><body></body></html>");
+            if (uiWebView != null && uiWebView.CoreWebView2 != null)
+            {
+                uiWebView.Visibility = Visibility.Hidden;
+                uiWebView.CoreWebView2?.NavigateToString("<html><body></body></html>");
+            }
         }
         public string GetLastMediaVolume()
         {
@@ -127,15 +130,17 @@ namespace gamevault.UserControls
             this.MediaUrls = mediaUrls;
             uiTxtMediaIndex.Text = $"{mediaIndex + 1}/{MediaUrls.Count}";
         }
-        public void LoadFirstElement(string? first = null)
+        public async Task LoadFirstElement(string? first = null)
         {
             if (first != null)
             {
                 MediaUrls.Add(first);
             }
-            if (uiWebView != null && uiWebView.Visibility == Visibility.Visible)//Prevent only in this case from navigating because the Media Slider could be rendered on top of the game settings
+            if (uiWebView != null && uiWebView.Visibility == Visibility.Visible && MediaUrls.Count > 0)//Prevent only in this case from navigating because the Media Slider could be rendered on top of the game settings
             {
-                NextMedia_Click(null, null);
+                mediaIndex = 0;
+                await MediaSliderNavigate(MediaUrls[mediaIndex]);
+                uiTxtMediaIndex.Text = $"{mediaIndex + 1}/{MediaUrls.Count}";
             }
         }
         public bool IsWebViewNull()

@@ -55,14 +55,14 @@ namespace gamevault.UserControls
                 trailerPreloaded = true;
                 string preloaded = await ConvertYoutubeLinkToEmbedded(data?.Trailers[0]);
                 MediaUrls.Add(preloaded);
-                uiMediaSlider.LoadFirstElement(preloaded);
+                await uiMediaSlider.LoadFirstElement(preloaded);
             }
             else if (data?.Gameplays?.Count() > 0)
             {
                 gameplayPreloaded = true;
                 string preloaded = await ConvertYoutubeLinkToEmbedded(data?.Gameplays[0]);
                 MediaUrls.Add(preloaded);
-                uiMediaSlider.LoadFirstElement(preloaded);
+                await uiMediaSlider.LoadFirstElement(preloaded);
             }
 
             for (int i = 0; i < data?.Trailers?.Count(); i++)
@@ -89,7 +89,7 @@ namespace gamevault.UserControls
             uiMediaSlider.SetMediaList(MediaUrls);
             if (trailerPreloaded == false && gameplayPreloaded == false)
             {
-                uiMediaSlider.LoadFirstElement();
+                await uiMediaSlider.LoadFirstElement();
             }
         }
         private async Task<string> ConvertYoutubeLinkToEmbedded(string input)

@@ -70,7 +70,7 @@
                 <mah:TransitioningContentControl RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding ActiveControl}" FocusVisualStyle="{x:Null}"/>
             </mah:HamburgerMenu.Content>
         </mah:HamburgerMenu>
-        <Border CornerRadius="5" Padding="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="40" Width="40" Margin="4.1,0,0,54" MouseLeftButtonUp="News_Click" ToolTip="Open Notifications" Cursor="Hand">
+        <Border CornerRadius="5" Padding="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="40" Width="40" Margin="4.1,0,0,54" MouseLeftButtonUp="News_Click" ToolTip="Open News" Cursor="Hand">
             <Border.Style>
                 <Style TargetType="Border">
                     <Style.Triggers>
@@ -81,7 +81,7 @@
                 </Style>
             </Border.Style>
             <mah:Badged x:Name="uiNewsBadge" BadgeBackground="Red">
-                <iconPacks:PackIconMaterial Kind="Message" Margin="4,4,0,0" Width="28" Height="28" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+                <iconPacks:PackIconMaterial Kind="NewspaperVariantMultiple" Margin="4,4,0,0" Width="28" Height="28" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
             </mah:Badged>
         </Border>
         <Border CornerRadius="5" Padding="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="40" Width="40" Margin="4.1,0,0,4.1" MouseLeftButtonUp="Premium_Click" ToolTip="Open GameVault Plus Website" Cursor="Hand">

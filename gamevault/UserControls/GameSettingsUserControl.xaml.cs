@@ -881,7 +881,15 @@ namespace gamevault.UserControls
             try
             {
                 string tag = ((FrameworkElement)sender).Tag.ToString();
-                if (tag == "genre")
+                if(tag == "description")
+                {
+                    ViewModel.UpdateGame.UserMetadata.Description = ViewModel.Game.Metadata.Description;
+                }
+                else if (tag == "notes")
+                {
+                    ViewModel.UpdateGame.UserMetadata.Notes = ViewModel.Game.Metadata.Notes;
+                }
+                else if (tag == "genre")
                 {
                     ViewModel.UpdateGame.UserMetadata.Genres = ViewModel.Game.Metadata.Genres.Select(genre => genre.Name).ToArray();
                 }
