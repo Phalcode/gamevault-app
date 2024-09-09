@@ -1,5 +1,23 @@
 # GameVault App Changelog
 
+# 1.12.0.0
+Recommended Gamevault Server Version: `v13.0.0`
+## Changes
+- Switched to new server api
+- News button added to show you the latest news from gamevault and your own server. When news are available a red badged appears next to the button. Als supports Markdown
+### Game Page
+- Overhauled the layout
+- Added Media Slider to display trailer/gameplay/screenshots
+- Added Age Rating
+- Added Notes
+- Description and notes support Markdown
+### Overhauled Game Settings
+- Display available metadata providers
+- Change priority of selected provider
+- Unmap selected metadata provider
+- Recache selected metadata provider
+- Added new tab 'Edit Details' that gives you full control over every detail of the game. You can undo manual changes at any time with the 'Clear User Data' Button
+
 ## 1.11.2.0
 Recommended Gamevault Server Version: `v12.2.0`
 ### Changes
