@@ -25,9 +25,9 @@
         <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Grid.Row="0">
             <Grid>
                 <TextBlock Text="Settings" FontSize="35" Margin="20,0,0,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
-                <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Version,StringFormat='{}V {0} EA'}" Margin="0,0,5,0"/>
             </Grid>
         </Border>
+        <TextBlock Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Text="{Binding Version,StringFormat='{}V {0} EA'}" Margin="20,0,0,5"/>
         <ScrollViewer Grid.Row="1" Margin="10" VerticalScrollBarVisibility="Auto">
             <TabControl x:Name="uiTabControl" TabStripPlacement="Left" SelectionChanged="TabControl_SelectionChanged" FocusVisualStyle="{x:Null}">
                 <TabItem Header="Application">

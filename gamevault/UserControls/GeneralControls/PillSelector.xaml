@@ -32,7 +32,7 @@
             </StackPanel>
         </StackPanel>
         <Popup x:Name="uiSelectionpopup" StaysOpen="False" AllowsTransparency="True">
-            <Border CornerRadius="5" Width="205" Padding="5">
+            <Border CornerRadius="5" Width="210" Padding="5">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="7" Direction="0" ShadowDepth="0"/>
                 </Border.Effect>

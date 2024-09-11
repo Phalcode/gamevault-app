@@ -140,6 +140,7 @@ namespace gamevault.UserControls
             ViewModel.IsInstalled = IsGameInstalled(ViewModel.Game);
             ViewModel.IsDownloaded = IsGameDownloaded(ViewModel.Game);
             ViewModel.ShowMappedTitle = Preferences.Get(AppConfigKey.ShowMappedTitle, AppFilePath.UserFile) == "1";
+            PrepareMarkdownElements();
             this.IsEnabled = true;
         }
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -177,7 +178,7 @@ namespace gamevault.UserControls
             {
                 await uiMediaSlider.SaveMediaVolume();//Set this to unload event, so it will dispose even if the main control changes
                 uiMediaSlider.Dispose();
-            }
+            }            
         }
         private bool IsGameInstalled(Game? game)
         {

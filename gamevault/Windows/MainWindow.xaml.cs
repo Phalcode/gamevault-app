@@ -127,19 +127,7 @@ namespace gamevault.Windows
         {
             MainWindowViewModel.Instance.Community.ShowUser(LoginManager.Instance.GetCurrentUser());
         }
-        private void WindowCommand_Clicked(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                string? url = (string)((FrameworkElement)sender).Tag;
-                if (Uri.IsWellFormedUriString(url, UriKind.Absolute))
-                {
-                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-                }
-                e.Handled = true;
-            }
-            catch { }
-        }
+
 
         private void Premium_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -208,6 +196,20 @@ namespace gamevault.Windows
                 System.Windows.Controls.Panel.SetZIndex(thumb, 7);
                 var btnCommands = (FrameworkElement)this.Template.FindName("PART_WindowButtonCommands", this);
                 System.Windows.Controls.Panel.SetZIndex(btnCommands, 8);
+            }
+            catch { }
+        }
+
+        private void Shortlink_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            try
+            {
+                string? url = (string)((FrameworkElement)sender).Tag;
+                if (Uri.IsWellFormedUriString(url, UriKind.Absolute))
+                {
+                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                }
+                e.Handled = true;
             }
             catch { }
         }
