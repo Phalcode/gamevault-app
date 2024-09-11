@@ -376,27 +376,6 @@ namespace gamevault.UserControls
             inputTimer.Tick += InputTimerElapsed;
         }
 
-        private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            if (((ScrollViewer)sender).ComputedHorizontalScrollBarVisibility == Visibility.Visible)
-            {
-                e.Handled = true;
-                if (e.Delta > 0)
-                    ((ScrollViewer)sender).LineLeft();
-                else
-                    ((ScrollViewer)sender).LineRight();
-            }
-            else
-            {
-                e.Handled = true;
-                ScrollViewer parent = VisualHelper.FindNextParentByType<ScrollViewer>((ScrollViewer)sender);
-                var eventArg = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
-                eventArg.RoutedEvent = UIElement.MouseWheelEvent;
-                eventArg.Source = sender;
-                parent.RaiseEvent(eventArg);
-            }
-        }
-
         private void InstalledGames_Toggled(object sender, RoutedEventArgs e)
         {
             Preferences.Set(AppConfigKey.InstalledGamesOpen, uiInstalledGames.IsExpanded ? "1" : "0", AppFilePath.UserFile);

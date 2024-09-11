@@ -219,6 +219,9 @@ namespace gamevault.UserControls
 
         public void Dispose()
         {
+            if (uiWebView == null)
+                return;
+
             uiWebView.Dispose();
             uiWebView = null;
         }

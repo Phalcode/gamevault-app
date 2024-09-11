@@ -228,52 +228,54 @@
                                     </Grid>
                                 </StackPanel>
                             </Grid>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,5,0,0">
-                                <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" Height="25" Margin="0,0,0,0" Click="GameType_Clicked">
-                                    <Border CornerRadius="5" Background="Gainsboro" >
+                            <ScrollViewer helper:ScrollViewerHelper.ScrollBarHeight="0" helper:ScrollViewerHelper.EnableHorizontalScroll="True" HorizontalAlignment="Left" Margin="0,5,0,0" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" Height="25" Margin="0,0,0,0" Click="GameType_Clicked">
+                                        <Border CornerRadius="5" Background="Gainsboro" >
+                                            <Border.Style>
+                                                <Style TargetType="{x:Type Border}">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Path=Game.Type}" Value="UNDETECTABLE">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <TextBlock Text="{Binding Path=Game.Type,Converter={StaticResource enumDescConv}}" VerticalAlignment="Center" Margin="8,0,8,0" FontSize="10" FontWeight="Bold" Foreground="#FF424242"/>
+                                        </Border>
+                                    </Button>
+                                    <Border CornerRadius="5" Background="Gainsboro" Height="25" Margin="0,0,0,0">
                                         <Border.Style>
                                             <Style TargetType="{x:Type Border}">
-                                                <Setter Property="Visibility" Value="Visible"/>
+                                                <Setter Property="Visibility" Value="Collapsed"/>
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Path=Game.Type}" Value="UNDETECTABLE">
-                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <DataTrigger Binding="{Binding Path=Game.EarlyAccess}" Value="True">
+                                                        <Setter Property="Visibility" Value="Visible"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </Border.Style>
-                                        <TextBlock Text="{Binding Path=Game.Type,Converter={StaticResource enumDescConv}}" VerticalAlignment="Center" Margin="8,0,8,0" FontSize="10" FontWeight="Bold" Foreground="#FF424242"/>
+                                        <TextBlock Text="Early Access" VerticalAlignment="Center" Margin="8,0,8,0" FontSize="10" FontWeight="Bold" Foreground="#FF424242"/>
                                     </Border>
-                                </Button>
-                                <Border CornerRadius="5" Background="Gainsboro" Height="25" Margin="0,0,0,0">
-                                    <Border.Style>
-                                        <Style TargetType="{x:Type Border}">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Path=Game.EarlyAccess}" Value="True">
-                                                    <Setter Property="Visibility" Value="Visible"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Border.Style>
-                                    <TextBlock Text="Early Access" VerticalAlignment="Center" Margin="8,0,8,0" FontSize="10" FontWeight="Bold" Foreground="#FF424242"/>
-                                </Border>
-                                <ItemsControl ItemsSource="{Binding Path=Game.Metadata.Genres}">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <StackPanel Orientation="Horizontal"/>
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" Height="25" Margin="5,0,0,0" Click="Genre_Clicked">
-                                                <Border CornerRadius="5" Background="{Binding Name,Converter={StaticResource nameColorConv}}" Padding="0" >
-                                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="8,0,8,0" FontSize="10" FontWeight="Bold"/>
-                                                </Border>
-                                            </Button>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </StackPanel>
+                                    <ItemsControl ItemsSource="{Binding Path=Game.Metadata.Genres}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Orientation="Horizontal"/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" Height="25" Margin="5,0,0,0" Click="Genre_Clicked">
+                                                    <Border CornerRadius="5" Background="{Binding Name,Converter={StaticResource nameColorConv}}" Padding="0" >
+                                                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="8,0,8,0" FontSize="10" FontWeight="Bold"/>
+                                                    </Border>
+                                                </Button>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </ScrollViewer>
                             <Grid Margin="0,5,0,0">
                                 <local:MediaSlider Height="290" Width="546" x:Name="uiMediaSlider" Background="Transparent" Tag="NoPopupTransition"/>
                             </Grid>

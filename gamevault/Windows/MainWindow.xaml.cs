@@ -16,6 +16,7 @@ using System.Text;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using System.Windows.Controls;
 
 namespace gamevault.Windows
 {
@@ -74,6 +75,7 @@ namespace gamevault.Windows
 
         private async void MetroWindow_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
+            AdjustWindowChrome();
             if (SettingsViewModel.Instance.SetupCompleted())
             {
                 MainWindowViewModel.Instance.SetActiveControl(MainControl.Library);
@@ -194,6 +196,20 @@ namespace gamevault.Windows
             }
             catch
             { }
+        }
+        private void AdjustWindowChrome()
+        {
+            try
+            {
+                var root = this.Template.FindName("PART_Content", this);
+                System.Windows.Controls.Panel.SetZIndex((MetroContentControl)root, 6);
+                var thumb = (FrameworkElement)this.Template.FindName("PART_WindowTitleThumb", this);
+                thumb.Margin = new Thickness(50, 0, 0, 0);
+                System.Windows.Controls.Panel.SetZIndex(thumb, 7);
+                var btnCommands = (FrameworkElement)this.Template.FindName("PART_WindowButtonCommands", this);
+                System.Windows.Controls.Panel.SetZIndex(btnCommands, 8);
+            }
+            catch { }
         }
     }
 }
