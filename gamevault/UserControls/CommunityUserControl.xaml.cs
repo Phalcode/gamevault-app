@@ -48,13 +48,10 @@ namespace gamevault.UserControls
         }
         public async Task InitUserList()
         {
-            ViewModel.Users = await Task<User[]>.Run(() =>
-            {
-                string userList = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/users");
-                var users = JsonSerializer.Deserialize<User[]>(userList);
-                users = BringCurrentUserToTop(users);
-                return users;
-            });
+            string result = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users");
+            var users = JsonSerializer.Deserialize<User[]>(result);
+            users = BringCurrentUserToTop(users);
+            ViewModel.Users = users;
             if (uiSelectUser.SelectedIndex == -1 && ViewModel.CurrentShownUser == null)
             {
                 if (forceShowId != -1)
@@ -182,10 +179,10 @@ namespace gamevault.UserControls
         }
 
         private void GameImage_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
+        {            
             if (((Progress)((FrameworkElement)sender).DataContext).Game == null)
             {
-                MainWindowViewModel.Instance.AppBarText = "Cannot open unknown game";
+                MainWindowViewModel.Instance.AppBarText = "Cannot open game";
                 return;
             }
             MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(((Progress)((FrameworkElement)sender).DataContext).Game));
@@ -218,7 +215,8 @@ namespace gamevault.UserControls
         }
         private void UserEdit_Clicked(object sender, RoutedEventArgs e)
         {
-            MainWindowViewModel.Instance.OpenPopup(new UserSettingsUserControl(ViewModel.CurrentShownUser) { Width = 1200, Height = 800, Margin = new Thickness(50) });
+            User user = JsonSerializer.Deserialize<User>(JsonSerializer.Serialize(ViewModel.CurrentShownUser)); //Dereference
+            MainWindowViewModel.Instance.OpenPopup(new UserSettingsUserControl(user) { Width = 1200, Height = 800, Margin = new Thickness(50) });
         }
         private async void DeleteProgress_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -243,6 +241,6 @@ namespace gamevault.UserControls
             {
                 MainWindowViewModel.Instance.AppBarText = $"Could not delete. {WebExceptionHelper.TryGetServerMessage(ex)}";
             }
-        }     
+        }
     }
 }

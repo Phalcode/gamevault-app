@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:helper="clr-namespace:gamevault.Helper"
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
@@ -51,7 +52,7 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.Template>
                             <ControlTemplate TargetType="ItemsControl">
-                                <ScrollViewer Style="{DynamicResource SecondaryScrollView}" CanContentScroll="False" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto" Padding="{TemplateBinding Padding}" Focusable="False" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
+                                <ScrollViewer Style="{DynamicResource SecondaryScrollView}" CanContentScroll="False" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto" Padding="{TemplateBinding Padding}" Focusable="False" helper:ScrollViewerHelper.EnableHorizontalScroll="True">
                                     <ItemsPresenter/>
                                 </ScrollViewer>
                             </ControlTemplate>
@@ -89,7 +90,7 @@
                                                 </Style>
                                             </Grid.Style>
                                             <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground}" CornerRadius="8">
-                                                <local:CacheImage Stretch="Fill" ImageCacheType="BoxArt" Data="{Binding Key}" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                <local:CacheImage Stretch="Fill" ImageCacheType="GameCover" Data="{Binding Key}" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <Border Name="banner" VerticalAlignment="Stretch" Background="{DynamicResource GameVault.Brushes.Blur}" CornerRadius="8">
                                                 <Border.Style>

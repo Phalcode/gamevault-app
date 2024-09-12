@@ -20,7 +20,6 @@ using System.Collections;
 using gamevault.ViewModels;
 using gamevault.Models;
 using System.Text.Json;
-using Image = gamevault.Models.Image;
 using System.Drawing;
 using System.Drawing.Imaging;
 
@@ -101,16 +100,16 @@ namespace gamevault.UserControls
                                     bitmap.Save(pasteStream, ImageFormat.Png);
                                 }
                                 pasteStream.Seek(0, SeekOrigin.Begin);
-                                string resp = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/images", pasteStream, "x.png", null);
-                                ImageId = JsonSerializer.Deserialize<Image>(resp).ID;
+                                string resp = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/media", pasteStream, "x.png", null);
+                                ImageId = JsonSerializer.Deserialize<Media>(resp).ID;
                                 MainWindowViewModel.Instance.AppBarText = "Sucessfully uploaded image";
                             }
                         }
                         else
                         {
                             ArrayList filesArray = (ArrayList)Clipboard.GetFileDropList().SyncRoot;
-                            string response = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/images", File.OpenRead(filesArray[0].ToString()), System.IO.Path.GetFileName(filesArray[0].ToString()), null);
-                            ImageId = JsonSerializer.Deserialize<Image>(response).ID;
+                            string response = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/media", File.OpenRead(filesArray[0].ToString()), System.IO.Path.GetFileName(filesArray[0].ToString()), null);
+                            ImageId = JsonSerializer.Deserialize<Media>(response).ID;
                             MainWindowViewModel.Instance.AppBarText = "Sucessfully uploaded image";
                         }
                     }
@@ -133,8 +132,8 @@ namespace gamevault.UserControls
                     if (result == System.Windows.Forms.DialogResult.OK && File.Exists(dialog.FileName))
                     {
                         IsUploading = true;
-                        string response = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/images", File.OpenRead(dialog.FileName), System.IO.Path.GetFileName(dialog.FileName), null);
-                        ImageId = JsonSerializer.Deserialize<Image>(response).ID;
+                        string response = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/media", File.OpenRead(dialog.FileName), System.IO.Path.GetFileName(dialog.FileName), null);
+                        ImageId = JsonSerializer.Deserialize<Media>(response).ID;
                         MainWindowViewModel.Instance.AppBarText = "Sucessfully uploaded image";
                     }
                 }
@@ -155,8 +154,8 @@ namespace gamevault.UserControls
                     string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                     var file = files[0];
                     IsUploading = true;
-                    string response = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/images", File.OpenRead(file), System.IO.Path.GetFileName(file), null);
-                    ImageId = JsonSerializer.Deserialize<Image>(response).ID;
+                    string response = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/media", File.OpenRead(file), System.IO.Path.GetFileName(file), null);
+                    ImageId = JsonSerializer.Deserialize<Media>(response).ID;
                     MainWindowViewModel.Instance.AppBarText = "Sucessfully uploaded image";
                 }
                 catch (Exception ex)

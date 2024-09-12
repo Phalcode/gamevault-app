@@ -1,6 +1,7 @@
 ﻿using gamevault.Models;
 using gamevault.UserControls;
 using gamevault.ViewModels;
+using LiveChartsCore.Kernel;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -102,7 +103,14 @@ namespace gamevault.Helper
             var responseContentLength = response.Content.Headers.ContentLength;
             if (responseContentLength == null || responseContentLength == 0)
             {
-                throw new Exception("Missing response header (Content-Length)");
+                if (response.Headers.TryGetValues("X-Download-Size", out var headerValues) && long.TryParse(headerValues.First(), out long length))
+                {
+                    responseContentLength = length;
+                }
+                else
+                {
+                    throw new Exception("Missing response header (Content-Length/X-Download-Size)");
+                }
             }
 
             using (var contentStream = await response.Content.ReadAsStreamAsync())

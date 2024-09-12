@@ -69,7 +69,7 @@ namespace gamevault.UserControls.SettingsComponents
                     {
                         MainWindowViewModel.Instance.AppBarText = LoginManager.Instance.GetLoginMessage();
                     }
-                    MainWindowViewModel.Instance.UserIcon = LoginManager.Instance.GetCurrentUser();
+                    MainWindowViewModel.Instance.UserAvatar = LoginManager.Instance.GetCurrentUser();
                 }
             }
             else

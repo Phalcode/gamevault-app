@@ -20,6 +20,11 @@ using LiveChartsCore.SkiaSharpView.Extensions;
 using gamevault.Converter;
 using System.Windows.Media;
 using LiveChartsCore.SkiaSharpView.Painting;
+using gamevault.Models.Mapping;
+using Windows.Gaming.Input;
+using System.Runtime.Serialization.Formatters.Binary;
+using IO.Swagger.Model;
+using gamevault.Windows;
 
 namespace gamevault.UserControls
 {
@@ -39,6 +44,7 @@ namespace gamevault.UserControls
             InitializeComponent();
             ViewModel = new GameSettingsViewModel();
             ViewModel.Game = game;
+            ViewModel.UpdateGame = new UpdateGameDto() { UserMetadata = new UserGameMetadataDto() };
             gameSizeConverter = new GameSizeConverter();
             if (IsGameInstalled(game))
             {
@@ -51,12 +57,13 @@ namespace gamevault.UserControls
             }
             this.DataContext = ViewModel;
         }
-        private void GameSettings_Loaded(object sender, RoutedEventArgs e)
+        private async void GameSettings_Loaded(object sender, RoutedEventArgs e)
         {
             if (!loaded)
             {
                 loaded = true;
                 this.Focus();
+                await LoadGameMedatataProviders();
             }
         }
         private void KeyBindingEscape_OnExecuted(object sender, object e)
@@ -74,7 +81,6 @@ namespace gamevault.UserControls
                 if (uiSettingsHeadersRemote.SelectedIndex == -1)
                     currentIndex = uiSettingsHeadersLocal.SelectedIndex;
 
-                Debug.WriteLine(currentIndex);
                 switch (currentIndex)
                 {
                     case 0:
@@ -94,7 +100,12 @@ namespace gamevault.UserControls
                         }
                     case 3:
                         {
-                            url = "https://gamevau.lt/docs/client-docs/gui#rawg-integration";
+                            url = "https://gamevau.lt/docs/client-docs/gui#metadata";
+                            break;
+                        }
+                    case 4:
+                        {
+                            url = "https://gamevau.lt/docs/client-docs/gui#edit-game-details";
                             break;
                         }
                 }
@@ -445,7 +456,7 @@ namespace gamevault.UserControls
                     string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                     if (tag == "box")
                     {
-                        ViewModel.BoxArtImageSource = BitmapHelper.GetBitmapImage(files[0]);
+                        ViewModel.GameCoverImageSource = BitmapHelper.GetBitmapImage(files[0]);
                     }
                     else
                     {
@@ -469,7 +480,7 @@ namespace gamevault.UserControls
                         BitmapImage bitmap = await BitmapHelper.GetBitmapImageAsync(imagePath);
                         if (tag == "box")
                         {
-                            ViewModel.BoxArtImageSource = bitmap;
+                            ViewModel.GameCoverImageSource = bitmap;
                         }
                         else
                         {
@@ -506,7 +517,7 @@ namespace gamevault.UserControls
                     {
                         if (tag == "box")
                         {
-                            ViewModel.BoxArtImageSource = BitmapHelper.GetBitmapImage(dialog.FileName);
+                            ViewModel.GameCoverImageSource = BitmapHelper.GetBitmapImage(dialog.FileName);
                         }
                         else
                         {
@@ -526,7 +537,7 @@ namespace gamevault.UserControls
             {
                 if (tag == "box")
                 {
-                    ViewModel.BoxArtImageSource = await BitmapHelper.GetBitmapImageAsync(url);
+                    ViewModel.GameCoverImageSource = await BitmapHelper.GetBitmapImageAsync(url);
                 }
                 else
                 {
@@ -576,7 +587,7 @@ namespace gamevault.UserControls
         }
         private async void BoxImage_Save(object sender, RoutedEventArgs e)
         {
-            ViewModel.BoxArtImageChanged = false;
+            ViewModel.GameCoverImageChanged = false;
             await SaveImage("box");
         }
         private async void BackgroundImage_Save(object sender, RoutedEventArgs e)
@@ -612,26 +623,29 @@ namespace gamevault.UserControls
 
         private async Task SaveImage(string tag)
         {
+            // TODO
+
             bool success = false;
             try
             {
-                BitmapSource bitmapSource = tag == "box" ? (BitmapSource)ViewModel.BoxArtImageSource : (BitmapSource)ViewModel.BackgroundImageSource;
-                string resp = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/images", BitmapHelper.BitmapSourceToMemoryStream(bitmapSource), "x.png", null);
-                var newImageId = JsonSerializer.Deserialize<Models.Image>(resp).ID;
+                BitmapSource bitmapSource = tag == "box" ? (BitmapSource)ViewModel.GameCoverImageSource : (BitmapSource)ViewModel.BackgroundImageSource;
+                string resp = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/media", BitmapHelper.BitmapSourceToMemoryStream(bitmapSource), "x.png", null);
+                Media? newImage = JsonSerializer.Deserialize<Media>(resp);
                 await Task.Run(() =>
                 {
                     try
                     {
-                        dynamic updateObject = new System.Dynamic.ExpandoObject();
+                        UpdateGameDto updateGame = new UpdateGameDto() { UserMetadata = new UserGameMetadataDto() };
                         if (tag == "box")
                         {
-                            updateObject.box_image_id = newImageId;
+                            updateGame.UserMetadata.Cover = newImage;
                         }
                         else
                         {
-                            updateObject.background_image_id = newImageId;
+                            updateGame.UserMetadata.Background = newImage;
                         }
-                        string changedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}", JsonSerializer.Serialize(updateObject), true);
+
+                        string changedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}", JsonSerializer.Serialize(updateGame), true);
                         ViewModel.Game = JsonSerializer.Deserialize<Game>(changedGame);
                         success = true;
                         MainWindowViewModel.Instance.AppBarText = "Successfully updated image";
@@ -670,7 +684,7 @@ namespace gamevault.UserControls
                             var image = Clipboard.GetImage();
                             if (((FrameworkElement)sender).Tag != null && ((FrameworkElement)sender).Tag.ToString() == "box")
                             {
-                                ViewModel.BoxArtImageSource = image;
+                                ViewModel.GameCoverImageSource = image;
                             }
                             else
                             {
@@ -686,79 +700,96 @@ namespace gamevault.UserControls
             }
         }
         #endregion
-
-        #region RAWG
-        private InputTimer RawgGameSearchTimer { get; set; }
-        private void RawgGameSearch_TextChanged(object sender, TextChangedEventArgs e)
+        #region Metadata
+        private InputTimer GameMetadataSearchTimer { get; set; }
+        private void ProviderGameSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
-            InitRawgGameSearchTimer();
-            RawgGameSearchTimer.Stop();
-            RawgGameSearchTimer.Data = ((TextBox)sender).Text;
-            RawgGameSearchTimer.Start();
+            InitGameMetadataSearchTimer();
+            GameMetadataSearchTimer.Stop();
+            GameMetadataSearchTimer.Data = ((TextBox)sender).Text;
+            GameMetadataSearchTimer.Start();
         }
-        private void InitRawgGameSearchTimer()
+        private void InitGameMetadataSearchTimer()
         {
-            if (RawgGameSearchTimer != null)
+            if (GameMetadataSearchTimer != null)
                 return;
 
-            RawgGameSearchTimer = new InputTimer();
-            RawgGameSearchTimer.Interval = TimeSpan.FromMilliseconds(400);
-            RawgGameSearchTimer.Tick += RawgGameSearchTimerElapsed;
+            GameMetadataSearchTimer = new InputTimer();
+            GameMetadataSearchTimer.Interval = TimeSpan.FromMilliseconds(400);
+            GameMetadataSearchTimer.Tick += GameMetadataSearchTimerElapsed!;
         }
-        private async void RawgGameSearchTimerElapsed(object sender, EventArgs e)
+        private async void GameMetadataSearchTimerElapsed(object sender, EventArgs e)
         {
-            RawgGameSearchTimer?.Stop();
-            await RawgGameSearch();
+            GameMetadataSearchTimer?.Stop();
+            await GameMetadataSearch();
         }
-        private async Task RawgGameSearch()
+        private async Task GameMetadataSearch()
         {
             this.Cursor = Cursors.Wait;
-            ViewModel.RawgGames = await Task<RawgGame[]>.Run(() =>
+            try
             {
-                try
-                {
-                    string currentShownUser = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/rawg/search?query={RawgGameSearchTimer.Data}");
-                    return JsonSerializer.Deserialize<RawgGame[]>(currentShownUser);
-                }
-                catch (Exception ex)
-                {
-                    MainWindowViewModel.Instance.AppBarText = $"Could not load rawg data. ({ex.Message})";
-                    return null;
-                }
-            });
+                string currentShownUser = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/metadata/providers/{ViewModel.MetadataProviders?[ViewModel.SelectedMetadataProviderIndex]?.Slug}/search?query={GameMetadataSearchTimer.Data}");
+                ViewModel.RemapSearchResults = JsonSerializer.Deserialize<MinimalGame[]>(currentShownUser);
+            }
+            catch (Exception ex)
+            {
+                MainWindowViewModel.Instance.AppBarText = $"Could not load metadata provider data. ({ex.Message})";
+                ViewModel.RemapSearchResults = null;
+            }
             this.Cursor = null;
         }
         private async void Recache_Click(object sender, RoutedEventArgs e)
         {
-            this.IsEnabled = false;
-            await Task.Run(() =>
+            try
             {
-                try
-                {
-                    WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/rawg/{ViewModel.Game.ID}/recache", string.Empty);
-                    MainWindowViewModel.Instance.AppBarText = $"Sucessfully re-cached {ViewModel.Game.Title}";
-                }
-                catch (Exception ex)
-                {
-                    string msg = WebExceptionHelper.TryGetServerMessage(ex);
-                    MainWindowViewModel.Instance.AppBarText = msg;
-                }
-            });
-            this.IsEnabled = true;
-            this.Focus();
+                MetadataProviderDto currentSelectedProvider = ViewModel.MetadataProviders?[ViewModel.SelectedMetadataProviderIndex];
+                string? currentProviderSlug = currentSelectedProvider?.Slug;
+                string? providerId = ViewModel.CurrentShownMappedGame?.ProviderDataId;
+                int gameId = ViewModel.Game.ID;
+                await RemapGame(providerId, currentProviderSlug, gameId);
+            }
+            catch { }
         }
-        private async void RawgGameRemap_Click(object sender, RoutedEventArgs e)
+        private async void GameRemap_Click(object sender, RoutedEventArgs e)
         {
-            this.IsEnabled = false;
-            int? rawgId = ((RawgGame)((FrameworkElement)sender).DataContext).ID;
+            var providerId = ((MinimalGame)((FrameworkElement)sender).DataContext).ProviderDataId;
+            MetadataProviderDto? currentSelectedProvider = ViewModel.MetadataProviders?[ViewModel.SelectedMetadataProviderIndex];
+            string? currentProviderSlug = currentSelectedProvider?.Slug;
             int gameId = ViewModel.Game.ID;
+            await RemapGame(providerId, currentProviderSlug, gameId);
+        }
+        private async void Unmap_Click(object sender, RoutedEventArgs e)
+        {
+            MetadataProviderDto? currentSelectedProvider = ViewModel.MetadataProviders?[ViewModel.SelectedMetadataProviderIndex];
+            string? currentProviderSlug = currentSelectedProvider?.Slug;
+            int gameId = ViewModel.Game.ID;
+            await RemapGame(null, currentProviderSlug, gameId);
+        }
+        private async void SavePriority_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                MetadataProviderDto currentSelectedProvider = ViewModel.MetadataProviders?[ViewModel.SelectedMetadataProviderIndex];
+                string? currentProviderSlug = currentSelectedProvider?.Slug;
+                string? providerId = ViewModel.CurrentShownMappedGame?.ProviderDataId;
+                int gameId = ViewModel.Game.ID;
+                await RemapGame(providerId, currentProviderSlug, gameId, (int?)uiProviderPriority.Value);
+                await LoadGameMedatataProviders();
+            }
+            catch { }
+        }
+        private async Task RemapGame(string? providerId, string? providerSlug, int gameId, int? priority = null)
+        {
+            bool success = false;
+            this.IsEnabled = false;
             await Task.Run(() =>
             {
                 try
                 {
-                    string remappedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{gameId}", "{\n\"rawg_id\": " + rawgId + "\n}", true);
+                    UpdateGameDto updateGame = new UpdateGameDto() { MappingRequests = new List<MapGameDto>() { new MapGameDto() { ProviderSlug = providerSlug, ProviderDataId = providerId, ProviderPriority = priority } } };
+                    string remappedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{gameId}", JsonSerializer.Serialize(updateGame), true);
                     ViewModel.Game = JsonSerializer.Deserialize<Game>(remappedGame);
-
+                    success = true;
                     MainWindowViewModel.Instance.AppBarText = $"Successfully re-mapped {ViewModel.Game.Title}";
                 }
                 catch (Exception ex)
@@ -769,15 +800,136 @@ namespace gamevault.UserControls
             });
             InstallViewModel.Instance.RefreshGame(ViewModel.Game);
             MainWindowViewModel.Instance.Library.RefreshGame(ViewModel.Game);
+            if (success)
+            {
+                if (MainWindowViewModel.Instance.ActiveControl.GetType() == typeof(GameViewUserControl))
+                {
+                    ((GameViewUserControl)MainWindowViewModel.Instance.ActiveControl).RefreshGame(ViewModel.Game);
+                }
+            }
             this.IsEnabled = true;
             this.Focus();
         }
-
-
-
+        private async Task LoadGameMedatataProviders()
+        {           
+            try
+            {
+                ViewModel.MetadataProvidersLoaded = false;
+                string result = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/metadata/providers");
+                var providers = JsonSerializer.Deserialize<MetadataProviderDto[]?>(result);
+                foreach (GameMetadata gmd in ViewModel.Game.ProviderMetadata)
+                {
+                    if (gmd.ProviderPriority != null)
+                    {
+                        var provider = providers?.FirstOrDefault(p => p.Slug == gmd.ProviderSlug);
+                        if (provider != null)
+                        {
+                            provider.Priority = gmd.ProviderPriority;
+                        }
+                    }
+                }
+                providers = providers?.OrderByDescending(p => p.Priority).ToArray();
+                ViewModel.MetadataProviders = providers;
+                ViewModel.SelectedMetadataProviderIndex = 0;
+                ViewModel.MetadataProvidersLoaded = true;
+            }
+            catch (Exception ex)
+            {
+                string message = WebExceptionHelper.TryGetServerMessage(ex);
+                MainWindowViewModel.Instance.AppBarText = message;
+            }            
+        }
 
         #endregion
-
+        #region Edit Game Details
+        private async void ClearUserData_Click(object sender, RoutedEventArgs e)
+        {
+            MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure to delete all User Data?\nThis can't be undone.", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+            if (result == MessageDialogResult.Affirmative)
+            {
+                int gameId = ViewModel.Game.ID;
+                await RemapGame(null, "user", gameId);
+            }
+        }
+        private async void SaveGameDetails_Click(object sender, RoutedEventArgs e)
+        {
+            this.IsEnabled = false;
+            bool success = false;
+            await Task.Run(() =>
+            {
+                try
+                {
+                    string remappedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}", JsonSerializer.Serialize(ViewModel.UpdateGame), true);
+                    ViewModel.Game = JsonSerializer.Deserialize<Game>(remappedGame);
+                    success = true;
+                    ViewModel.UpdateGame = new UpdateGameDto() { UserMetadata = new UserGameMetadataDto() };
+                    MainWindowViewModel.Instance.AppBarText = $"Successfully edited {ViewModel.Game.Title}";
+                }
+                catch (Exception ex)
+                {
+                    string errMessage = WebExceptionHelper.TryGetServerMessage(ex);
+                    MainWindowViewModel.Instance.AppBarText = errMessage;
+                }
+            });
+            if (success)
+            {
+                if (MainWindowViewModel.Instance.ActiveControl.GetType() == typeof(GameViewUserControl))
+                {
+                    ((GameViewUserControl)MainWindowViewModel.Instance.ActiveControl).RefreshGame(ViewModel.Game);
+                }
+            }
+            this.IsEnabled = true;
+            this.Focus();
+        }
+        private void KeepData_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string tag = ((FrameworkElement)sender).Tag.ToString();
+                if(tag == "description")
+                {
+                    ViewModel.UpdateGame.UserMetadata.Description = ViewModel.Game.Metadata.Description;
+                }
+                else if (tag == "notes")
+                {
+                    ViewModel.UpdateGame.UserMetadata.Notes = ViewModel.Game.Metadata.Notes;
+                }
+                else if (tag == "genre")
+                {
+                    ViewModel.UpdateGame.UserMetadata.Genres = ViewModel.Game.Metadata.Genres.Select(genre => genre.Name).ToArray();
+                }
+                else if (tag == "tag")
+                {
+                    ViewModel.UpdateGame.UserMetadata.Tags = ViewModel.Game.Metadata.Tags.Select(genre => genre.Name).ToArray();
+                }
+                else if (tag == "publisher")
+                {
+                    ViewModel.UpdateGame.UserMetadata.Publishers = ViewModel.Game.Metadata.Publishers.Select(genre => genre.Name).ToArray();
+                }
+                else if (tag == "developer")
+                {
+                    ViewModel.UpdateGame.UserMetadata.Developers = ViewModel.Game.Metadata.Developers.Select(genre => genre.Name).ToArray();
+                }
+                else if (tag == "trailer")
+                {
+                    ViewModel.UpdateGame.UserMetadata.UrlTrailers = ViewModel.Game.Metadata.Trailers;
+                }
+                else if (tag == "gameplays")
+                {
+                    ViewModel.UpdateGame.UserMetadata.UrlGameplays = ViewModel.Game.Metadata.Gameplays;
+                }
+                else if (tag == "screenshots")
+                {
+                    ViewModel.UpdateGame.UserMetadata.UrlScreenshots = ViewModel.Game.Metadata.Screenshots;
+                }
+                //Cheap update the UI without adding Notify property changed to the Model
+                var temp = ViewModel.UpdateGame;
+                ViewModel.UpdateGame = null;
+                ViewModel.UpdateGame = temp;
+            }
+            catch { }
+        }
+        #endregion
 
     }
 }

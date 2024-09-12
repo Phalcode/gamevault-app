@@ -24,7 +24,7 @@ namespace gamevault.Models
         DownloadLimit,
         InstalledGamesOpen,
         LaunchParameter,
-        ShowRawgTitle,
+        ShowMappedTitle,
         LastPlayed,
         Phalcode1,
         Phalcode2,
@@ -32,7 +32,10 @@ namespace gamevault.Models
         ExtractionPassword,
         DownloadProgress,
         InstalledGamesRows,
-        CreateDesktopShortcut
+        CreateDesktopShortcut,
+        MediaSliderVolume,
+        UnreadNews,
+        NewsHash
     }
     public static class AppFilePath
     {

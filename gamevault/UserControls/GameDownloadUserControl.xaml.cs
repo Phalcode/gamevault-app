@@ -131,9 +131,9 @@ namespace gamevault.UserControls
         {
             return ViewModel.Game.ID;
         }
-        public int GetBoxImageID()
+        public int GetCoverID()
         {
-            return ViewModel.Game.BoxImage.ID;
+            return ViewModel.Game.Metadata.Cover.ID;
         }
         public int GetDownloadProgress()
         {
@@ -146,7 +146,7 @@ namespace gamevault.UserControls
                 try
                 {
                     File.Delete($"{m_DownloadPath}\\gamevault-metadata");
-                    File.Delete($"{m_DownloadPath}\\{Path.GetFileName(ViewModel.Game.FilePath)}");
+                    File.Delete($"{m_DownloadPath}\\{Path.GetFileName(ViewModel.Game.Path)}");
                 }
                 catch { }
             }
@@ -176,7 +176,7 @@ namespace gamevault.UserControls
             {
                 header = new KeyValuePair<string, string>("X-Download-Speed-Limit", SettingsViewModel.Instance.DownloadLimit.ToString());
             }
-            client = new HttpClientDownloadWithProgress($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}/download", m_DownloadPath, Path.GetFileName(ViewModel.Game.FilePath), header);
+            client = new HttpClientDownloadWithProgress($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}/download", m_DownloadPath, Path.GetFileName(ViewModel.Game.Path), header);
             client.ProgressChanged += DownloadProgress;
             startTime = DateTime.Now;
             downloadSpeedCalc = new DownloadSpeedCalculator();
@@ -196,7 +196,7 @@ namespace gamevault.UserControls
                 if (downloadRetryTimer.Data != "error")
                 {
                     if (!App.Instance.IsWindowActiveAndControlInFocus(MainControl.Downloads))
-                        ToastMessageHelper.CreateToastMessage("Download Failed", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.BoxImage?.ID}");
+                        ToastMessageHelper.CreateToastMessage("Download Failed", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.Metadata.Cover?.ID}");
                 }
                 downloadRetryTimer.Start();
 
@@ -308,7 +308,7 @@ namespace gamevault.UserControls
             MainWindowViewModel.Instance.Library.GetGameInstalls().AddSystemFileWatcher(ViewModel.InstallPath);
 
             if (!App.Instance.IsWindowActiveAndControlInFocus(MainControl.Downloads))
-                ToastMessageHelper.CreateToastMessage("Download Complete", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.BoxImage?.ID}");
+                ToastMessageHelper.CreateToastMessage("Download Complete", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.Metadata?.Cover?.ID}");
 
             if (SettingsViewModel.Instance.AutoExtract)
             {
@@ -487,7 +487,7 @@ namespace gamevault.UserControls
                 ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
 
                 if (!App.Instance.IsWindowActiveAndControlInFocus(MainControl.Downloads))
-                    ToastMessageHelper.CreateToastMessage("Extraction Complete", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.BoxImage?.ID}");
+                    ToastMessageHelper.CreateToastMessage("Extraction Complete", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.Metadata.Cover?.ID}");
 
                 if (SettingsViewModel.Instance.AutoInstallPortable && (ViewModel.Game.Type == GameType.WINDOWS_PORTABLE || ViewModel.Game.Type == GameType.LINUX_PORTABLE))
                 {
@@ -524,7 +524,7 @@ namespace gamevault.UserControls
                 {
                     ViewModel.State = "Something went wrong during extraction";
                     if (!App.Instance.IsWindowActiveAndControlInFocus(MainControl.Downloads))
-                        ToastMessageHelper.CreateToastMessage("Extraction Failed", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.BoxImage?.ID}");
+                        ToastMessageHelper.CreateToastMessage("Extraction Failed", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.Metadata?.Cover?.ID}");
                 }
                 ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
             }
@@ -559,7 +559,13 @@ namespace gamevault.UserControls
                     }
                 }
                 uiCbSetupExecutable.ItemsSource = allExecutables;
-                if (allExecutables.Count == 1)
+                if (!string.IsNullOrWhiteSpace(ViewModel.Game?.Metadata?.InstallerExecutable))
+                {
+                    var entry = allExecutables.Select((kv, index) => new { kv.Key, kv.Value, Index = index }).FirstOrDefault(kv => string.Equals(kv.Key, ViewModel.Game?.Metadata?.InstallerExecutable, StringComparison.OrdinalIgnoreCase));
+                    if (entry != null)
+                        uiCbSetupExecutable.SelectedIndex = entry.Index;
+                }
+                else if (allExecutables.Count == 1)
                 {
                     uiCbSetupExecutable.SelectedIndex = 0;
                 }
@@ -591,7 +597,7 @@ namespace gamevault.UserControls
             {
                 bool error = false;
                 uiProgressRingInstall.IsActive = true;
-                await Task.Run(async () =>
+                await Task.Run(() =>
                 {
                     try
                     {
@@ -678,6 +684,39 @@ namespace gamevault.UserControls
             uiInstallOptions.Visibility = System.Windows.Visibility.Collapsed;
             uiProgressRingInstall.IsActive = false;
             uiBtnExtract.IsEnabled = true;
+            //Set default launch parameter if available
+            if (!string.IsNullOrWhiteSpace(ViewModel.Game?.Metadata?.LaunchParameters) && Directory.Exists(ViewModel.InstallPath))
+            {
+                try
+                {
+                    if (!File.Exists($"{ViewModel.InstallPath}\\gamevault-exec"))
+                    {
+                        File.Create($"{ViewModel.InstallPath}\\gamevault-exec").Close();
+                    }
+                    Preferences.Set(AppConfigKey.LaunchParameter, ViewModel.Game?.Metadata?.LaunchParameters, $"{ViewModel.InstallPath}\\gamevault-exec");
+                }
+                catch { }
+            }
+            //Set default launch executable if available
+            if (!string.IsNullOrWhiteSpace(ViewModel.Game?.Metadata?.LaunchExecutable) && Directory.Exists(ViewModel.InstallPath))
+            {
+                try
+                {
+                    string extension = Path.GetExtension(ViewModel.Game?.Metadata?.LaunchExecutable);
+                    var files = Directory.GetFiles(ViewModel.InstallPath, $"*{extension}", SearchOption.AllDirectories);
+                    var targetFile = files.FirstOrDefault(file => string.Equals(Path.GetFileName(file), ViewModel.Game?.Metadata?.LaunchExecutable, StringComparison.OrdinalIgnoreCase));
+                    if (targetFile != null)
+                    {
+                        if (!File.Exists($"{ViewModel.InstallPath}\\gamevault-exec"))
+                        {
+                            File.Create($"{ViewModel.InstallPath}\\gamevault-exec").Close();
+                        }
+                        Preferences.Set(AppConfigKey.Executable, targetFile, $"{ViewModel.InstallPath}\\gamevault-exec");
+                    }
+                }
+                catch { }
+            }
+
             if (ViewModel.CreateShortcut == true)
             {
                 await Task.Delay(1000);
@@ -685,10 +724,13 @@ namespace gamevault.UserControls
                 if (game.Key == null)
                     return;
 
-                if (!GameSettingsUserControl.TryPrepareLaunchExecutable(game.Value))
+                if (!File.Exists(Preferences.Get(AppConfigKey.Executable, $"{game.Value}\\gamevault-exec")))
                 {
-                    MainWindowViewModel.Instance.AppBarText = $"Can not create shortcut. No valid Executable found";
-                    return;
+                    if (!GameSettingsUserControl.TryPrepareLaunchExecutable(game.Value))
+                    {
+                        MainWindowViewModel.Instance.AppBarText = $"Can not create shortcut. No valid Executable found";
+                        return;
+                    }
                 }
                 await DesktopHelper.CreateShortcut(game.Key, Preferences.Get(AppConfigKey.Executable, $"{game.Value}\\gamevault-exec"), false);
             }

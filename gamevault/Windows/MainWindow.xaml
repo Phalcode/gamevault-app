@@ -8,28 +8,20 @@
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:uc="clr-namespace:gamevault.UserControls"
 		xmlns:conv="clr-namespace:gamevault.Converter"
-        mc:Ignorable="d" Icon="/Resources/Images/icon.ico"
-        Title="GameVault" TitleCharacterCasing="Normal" Height="450" Width="800" WindowStartupLocation="CenterScreen" WindowState="Maximized" MinWidth="600" MinHeight="345" Loaded="MetroWindow_Loaded" Closing="MetroWindow_Closing">
+        mc:Ignorable="d"
+                WindowTitleBrush="Transparent" NonActiveWindowTitleBrush="Transparent"
+       Height="450" Width="800" WindowStartupLocation="CenterScreen" WindowState="Maximized" MinWidth="600" MinHeight="345" Loaded="MetroWindow_Loaded" Closing="MetroWindow_Closing">
     <mah:MetroWindow.TaskbarItemInfo>
         <TaskbarItemInfo ProgressValue="{Binding TaskbarProgress}" ProgressState="Normal"/>
     </mah:MetroWindow.TaskbarItemInfo>
     <mah:MetroWindow.Resources>
         <conv:PermissionRoleConverter x:Key="permissionRoleConv"/>
     </mah:MetroWindow.Resources>
-    <mah:MetroWindow.RightWindowCommands>
-        <mah:WindowCommands>
-            <Button Click="WindowCommand_Clicked" Content="💸 Support Us" FontSize="18" Cursor="Hand" Tag="https://phalco.de/support-us"/>
-            <Button Click="WindowCommand_Clicked" Content="💬 Discord" FontSize="18" Cursor="Hand" Tag="https://discord.com/invite/NEdNen2dSu"/>
-            <Button Click="WindowCommand_Clicked" Content="📜 Documentation" FontSize="18" Cursor="Hand" Tag="https://gamevau.lt/docs/intro"/>
-            <Button Click="WindowCommand_Clicked" Content="💻 GitHub" FontSize="18" Cursor="Hand" Tag="https://github.com/orgs/Phalcode/repositories"/>
-            <Button Click="WindowCommand_Clicked" Content="⚠️ Bug Report" FontSize="18" Cursor="Hand" Tag="https://github.com/Phalcode/gamevault-app/issues/new/choose"/>
-        </mah:WindowCommands>
-    </mah:MetroWindow.RightWindowCommands>
-    <Grid>
+    <Grid Margin="0,-30,0,0">
         <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="1" Width="48" Height="50">
-            <Border MouseLeftButtonUp="UserIcon_Clicked" Cursor="Hand">
+            <Border MouseLeftButtonUp="UserAvatar_Clicked" Cursor="Hand">
                 <Grid>
-                    <uc:CacheImage ImageCacheType="UserIcon" Stretch="Fill" Data="{Binding Path=UserIcon}"/>
+                    <uc:CacheImage ImageCacheType="UserAvatar" Stretch="Fill" Data="{Binding Path=UserAvatar}"/>
                     <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" CornerRadius="5,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Visibility="{Binding OnlineState}">
                         <Path Data="{DynamicResource IconNoSignal}" Fill="IndianRed"/>
                     </Border>
@@ -59,43 +51,115 @@
                             <iconPacks:PackIconMaterial Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Center" Kind="Cog" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
                         </mah:HamburgerMenuIconItem.Icon>
                     </mah:HamburgerMenuIconItem>
-                    <mah:HamburgerMenuIconItem IsVisible="{Binding Path=UserIcon, Converter={StaticResource permissionRoleConv}}">
+                    <mah:HamburgerMenuIconItem IsVisible="{Binding Path=UserAvatar, Converter={StaticResource permissionRoleConv}}">
                         <mah:HamburgerMenuIconItem.Icon>
                             <iconPacks:PackIconFontAwesome Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Center" Kind="UserShieldSolid" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
                         </mah:HamburgerMenuIconItem.Icon>
                     </mah:HamburgerMenuIconItem>
                 </mah:HamburgerMenuItemCollection>
             </mah:HamburgerMenu.ItemsSource>
-
-            <!--<mah:HamburgerMenu.OptionsItemsSource>
-                <mah:HamburgerMenuItemCollection>
-                    <mah:HamburgerMenuGlyphItem Glyph="pack://application:,,,/gamevault;component/Resources/Images/glyph_community.png" Tag="Community"/>
-                </mah:HamburgerMenuItemCollection>
-            </mah:HamburgerMenu.OptionsItemsSource>-->
             <mah:HamburgerMenu.Content>
                 <mah:TransitioningContentControl RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding ActiveControl}" FocusVisualStyle="{x:Null}"/>
             </mah:HamburgerMenu.Content>
         </mah:HamburgerMenu>
-        <Border CornerRadius="5" Padding="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="40" Width="40" Margin="4.1,0,0,4.1" MouseLeftButtonUp="Premium_Click" ToolTip="Open GameVault Plus Website" Cursor="Hand">
-            <Border.Style>
-                <Style TargetType="Border">
-                    <Setter Property="Background" Value="{DynamicResource GameVault.Brushes.Button}"/>
-                    <Style.Triggers>
-                        <Trigger Property="UIElement.IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource GameVault.Brushes.Button.MouseOver}"/>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </Border.Style>
-            <Image Source="/Resources/Images/glyph_premium.png" RenderOptions.BitmapScalingMode="HighQuality"/>
-        </Border>
+        <StackPanel  HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,300,0,0">
+            <Border CornerRadius="5" Padding="2" Height="40" Width="40" Margin="4.1,0,0,10" Tag="https://phalco.de/support-us" MouseLeftButtonUp="Shortlink_Click" ToolTip="Open Donations" Cursor="Hand">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Style.Triggers>
+                            <Trigger Property="UIElement.IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource GameVault.Brushes.Button.MouseOver}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <iconPacks:PackIconMaterial Kind="HandCoin" Margin="4,4,0,0" Width="28" Height="28" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+            </Border>
+            <Border CornerRadius="5" Padding="2" Height="40" Width="40" Margin="4.1,0,0,10" Tag="https://discord.com/invite/NEdNen2dSu" MouseLeftButtonUp="Shortlink_Click" ToolTip="Open Discord" Cursor="Hand">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Style.Triggers>
+                            <Trigger Property="UIElement.IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource GameVault.Brushes.Button.MouseOver}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <iconPacks:PackIconMaterial Kind="Discord" Margin="4,4,0,0" Width="28" Height="28" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+            </Border>
+            <Border CornerRadius="5" Padding="2" Height="40" Width="40" Margin="4.1,0,0,10" Tag="https://gamevau.lt/docs/intro" MouseLeftButtonUp="Shortlink_Click" ToolTip="Open Documentation" Cursor="Hand">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Style.Triggers>
+                            <Trigger Property="UIElement.IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource GameVault.Brushes.Button.MouseOver}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <iconPacks:PackIconMaterial Kind="BookOpenPageVariant" Margin="4,4,0,0" Width="28" Height="28" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+            </Border>
+            <Border CornerRadius="5" Padding="2" Height="40" Width="40" Margin="4.1,0,0,10" Tag="https://github.com/orgs/Phalcode/repositories" MouseLeftButtonUp="Shortlink_Click" ToolTip="Open GitHub" Cursor="Hand">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Style.Triggers>
+                            <Trigger Property="UIElement.IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource GameVault.Brushes.Button.MouseOver}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <iconPacks:PackIconMaterial Kind="Github" Margin="4,4,0,0" Width="28" Height="28" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+            </Border>
+            <Border CornerRadius="5" Padding="2" Height="40" Width="40" Margin="4.1,0,0,10" Tag="https://github.com/Phalcode/gamevault-app/issues/new/choose" MouseLeftButtonUp="Shortlink_Click" ToolTip="Bug Report" Cursor="Hand">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Style.Triggers>
+                            <Trigger Property="UIElement.IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource GameVault.Brushes.Button.MouseOver}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <iconPacks:PackIconMaterial Kind="Bug" Margin="4,4,0,0" Width="28" Height="28" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+            </Border>
+            <Border CornerRadius="5" Padding="2" Height="40" Width="40" Margin="4.1,0,0,10" MouseLeftButtonUp="News_Click" ToolTip="Open News" Cursor="Hand">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Style.Triggers>
+                            <Trigger Property="UIElement.IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource GameVault.Brushes.Button.MouseOver}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <mah:Badged x:Name="uiNewsBadge" BadgeBackground="Red">
+                    <iconPacks:PackIconMaterial Kind="NewspaperVariantMultiple" Margin="4,4,0,0" Width="28" Height="28" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+                </mah:Badged>
+            </Border>
+            <Border CornerRadius="5" Padding="2" Height="40" Width="40" Margin="4.1,0,0,4.1" MouseLeftButtonUp="Premium_Click" ToolTip="Open GameVault Plus Website" Cursor="Hand">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="{DynamicResource GameVault.Brushes.Button}"/>
+                        <Style.Triggers>
+                            <Trigger Property="UIElement.IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource GameVault.Brushes.Button.MouseOver}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <Image Source="/Resources/Images/glyph_premium.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+            </Border>
+        </StackPanel>
+        
+        
         <Grid Panel.ZIndex="1">
             <Viewbox>
-                <mah:TransitioningContentControl RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding Popup}" FocusVisualStyle="{x:Null}"/>
+                <uc:TransitioningContentControlEx RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding Popup}" FocusVisualStyle="{x:Null}"/>
             </Viewbox>
             <Grid.Style>
                 <Style TargetType="Grid">
-                    <Setter Property="Background" Value="#4CFFFFFF"/>
+                    <Setter Property="Background" Value="#7F000000"/>
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding Popup}" Value="{x:Null}">
                             <Setter Property="Background" Value="{x:Null}"/>

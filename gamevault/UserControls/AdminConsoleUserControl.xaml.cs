@@ -16,6 +16,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Navigation;
+using gamevault.Models.Mapping;
 
 namespace gamevault.UserControls
 {
@@ -86,7 +87,7 @@ namespace gamevault.UserControls
                         return;
                     }
                 }
-                WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/{selectedUser.ID}", JsonSerializer.Serialize(new User() { Role = selectedUser.Role }));
+                WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/{selectedUser.ID}", JsonSerializer.Serialize(new UpdateUserDto() { Role = selectedUser.Role }));
                 MainWindowViewModel.Instance.AppBarText = $"Successfully updated permission role of user '{selectedUser.Username}' to '{selectedUser.Role}'";
             }
             catch (Exception ex)
@@ -155,7 +156,7 @@ namespace gamevault.UserControls
 
         private void EditUser_Clicked(object sender, MouseButtonEventArgs e)
         {
-            User user = JsonSerializer.Deserialize<User>(JsonSerializer.Serialize((User)((FrameworkElement)sender).DataContext));
+            User user = JsonSerializer.Deserialize<User>(JsonSerializer.Serialize((User)((FrameworkElement)sender).DataContext));//Dereference
             MainWindowViewModel.Instance.OpenPopup(new UserSettingsUserControl(user) { Width = 1200, Height = 800, Margin = new Thickness(50) });
         }
         private void BackupRestore_Click(object sender, RoutedEventArgs e)
@@ -201,7 +202,7 @@ namespace gamevault.UserControls
             if (LoginManager.Instance.GetCurrentUser().ID == selectedUser.ID)
             {
                 await LoginManager.Instance.ManualLogin(selectedUser.Username, string.IsNullOrEmpty(selectedUser.Password) ? WebHelper.GetCredentials()[1] : selectedUser.Password);
-                MainWindowViewModel.Instance.UserIcon = LoginManager.Instance.GetCurrentUser();
+                MainWindowViewModel.Instance.UserAvatar = LoginManager.Instance.GetCurrentUser();
             }
             await InitUserList();
         }

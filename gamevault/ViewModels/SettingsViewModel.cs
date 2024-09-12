@@ -42,7 +42,7 @@ namespace gamevault.ViewModels
         private float m_OfflineCacheSize { get; set; }
         private long m_DownloadLimit { get; set; }
         private long m_DownloadLimitUIValue { get; set; }
-        private User m_RegistrationUser = new User() { ProfilePicture = new Image(), BackgroundImage = new Image() };
+        private User m_RegistrationUser = new User() { Avatar = new Media(), Background = new Media() };
         private PhalcodeProduct license { get; set; }
         private List<ThemeItem> themes { get; set; }
         #endregion
