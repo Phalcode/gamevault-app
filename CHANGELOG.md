@@ -6,6 +6,8 @@ Recommended Gamevault Server Version: `v13.0.0`
 - Switched to new server api
 - Added news button to show you the latest news from gamevault and your own server. When news are available a red badged appears next to the button. Als supports Markdown
 - Layout changes to the title bar
+- Layout changes to the settings page
+- Moved title bar action buttons
 ### Game Page
 - Overhauled the layout
 - Added Media Slider to display trailer/gameplay/screenshots

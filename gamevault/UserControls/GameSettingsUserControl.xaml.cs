@@ -100,7 +100,12 @@ namespace gamevault.UserControls
                         }
                     case 3:
                         {
-                            url = "https://gamevau.lt/docs/client-docs/gui#metadata-provider";
+                            url = "https://gamevau.lt/docs/client-docs/gui#metadata";
+                            break;
+                        }
+                    case 4:
+                        {
+                            url = "https://gamevau.lt/docs/client-docs/gui#edit-game-details";
                             break;
                         }
                 }
