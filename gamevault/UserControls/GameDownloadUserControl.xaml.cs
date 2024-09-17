@@ -487,9 +487,9 @@ namespace gamevault.UserControls
                 ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
 
                 if (!App.Instance.IsWindowActiveAndControlInFocus(MainControl.Downloads))
-                    ToastMessageHelper.CreateToastMessage("Extraction Complete", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.Metadata.Cover?.ID}");
+                    ToastMessageHelper.CreateToastMessage("Extraction Complete", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game?.ID}.{ViewModel.Game?.Metadata?.Cover?.ID}");
 
-                if (SettingsViewModel.Instance.AutoInstallPortable && (ViewModel.Game.Type == GameType.WINDOWS_PORTABLE || ViewModel.Game.Type == GameType.LINUX_PORTABLE))
+                if (SettingsViewModel.Instance.AutoInstallPortable && (ViewModel.Game?.Type == GameType.WINDOWS_PORTABLE || ViewModel.Game?.Type == GameType.LINUX_PORTABLE))
                 {
                     await Task.Delay(1000);//Just to be sure the extraction stream is closed and the files are ready to copy
                     await Install();
@@ -524,7 +524,7 @@ namespace gamevault.UserControls
                 {
                     ViewModel.State = "Something went wrong during extraction";
                     if (!App.Instance.IsWindowActiveAndControlInFocus(MainControl.Downloads))
-                        ToastMessageHelper.CreateToastMessage("Extraction Failed", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.Metadata?.Cover?.ID}");
+                        ToastMessageHelper.CreateToastMessage("Extraction Failed", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game?.ID}.{ViewModel.Game?.Metadata?.Cover?.ID}");
                 }
                 ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
             }

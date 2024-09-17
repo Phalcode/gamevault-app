@@ -154,7 +154,7 @@ namespace gamevault.UserControls
         private void SortBy_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             User currentUser = ViewModel.CurrentShownUser;
-            if (currentUser != null)
+            if (currentUser != null && e.AddedItems != null)
             {
                 switch (e.AddedItems[0])
                 {

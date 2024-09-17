@@ -931,5 +931,9 @@ namespace gamevault.UserControls
         }
         #endregion
 
+        private void KeepData_Click(object sender, MouseButtonEventArgs e)
+        {
+
+        }
     }
 }

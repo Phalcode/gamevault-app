@@ -511,7 +511,7 @@
                                     <Grid>
                                         <TextBlock Text="Description" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
                                         <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Keep current Description" Click="KeepData_Click" Tag="description">
-                                            <Grid Style="{DynamicResource HoverEffect}"  MouseLeftButtonUp="KeepData_Click" Background="Transparent">
+                                            <Grid Style="{DynamicResource HoverEffect}"   Background="Transparent">
                                                 <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
                                                     <Path.RenderTransform>
                                                         <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
@@ -534,7 +534,7 @@
                                     <Grid>
                                         <TextBlock Text="Notes" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
                                         <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Keep current Notes" Click="KeepData_Click" Tag="notes">
-                                            <Grid Style="{DynamicResource HoverEffect}"  MouseLeftButtonUp="KeepData_Click" Background="Transparent">
+                                            <Grid Style="{DynamicResource HoverEffect}"   Background="Transparent">
                                                 <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
                                                     <Path.RenderTransform>
                                                         <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
@@ -582,7 +582,7 @@
                                     <Grid>
                                         <TextBox Text="{Binding UpdateGame.UserMetadata.Genres,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.GenreNames}" Margin="0,0,40,0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
                                         <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Keep current Genres" Click="KeepData_Click" Tag="genre">
-                                            <Grid Style="{DynamicResource HoverEffect}"  MouseLeftButtonUp="KeepData_Click" Background="Transparent">
+                                            <Grid Style="{DynamicResource HoverEffect}"   Background="Transparent">
                                                 <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
                                                     <Path.RenderTransform>
                                                         <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
@@ -598,7 +598,7 @@
                                     <Grid>
                                         <TextBox Text="{Binding UpdateGame.UserMetadata.Tags,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.TagNames}" Margin="0,0,40,0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
                                         <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Keep current Tags" Click="KeepData_Click" Tag="tag">
-                                            <Grid Style="{DynamicResource HoverEffect}"  MouseLeftButtonUp="KeepData_Click" Background="Transparent">
+                                            <Grid Style="{DynamicResource HoverEffect}"   Background="Transparent">
                                                 <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
                                                     <Path.RenderTransform>
                                                         <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
@@ -614,7 +614,7 @@
                                     <Grid>
                                         <TextBox Text="{Binding UpdateGame.UserMetadata.Publishers,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.PublisherNames}" Margin="0,0,40,0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
                                         <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Keep current Publishers" Click="KeepData_Click" Tag="publisher">
-                                            <Grid Style="{DynamicResource HoverEffect}"  MouseLeftButtonUp="KeepData_Click" Background="Transparent">
+                                            <Grid Style="{DynamicResource HoverEffect}"   Background="Transparent">
                                                 <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
                                                     <Path.RenderTransform>
                                                         <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
@@ -630,7 +630,7 @@
                                     <Grid>
                                         <TextBox Text="{Binding UpdateGame.UserMetadata.Developers,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.DeveloperNames}" Margin="0,0,40,0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
                                         <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Keep current Developers" Click="KeepData_Click" Tag="developer">
-                                            <Grid Style="{DynamicResource HoverEffect}"  MouseLeftButtonUp="KeepData_Click" Background="Transparent">
+                                            <Grid Style="{DynamicResource HoverEffect}"   Background="Transparent">
                                                 <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
                                                     <Path.RenderTransform>
                                                         <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
@@ -646,7 +646,7 @@
                                     <Grid>
                                         <TextBox Text="{Binding UpdateGame.UserMetadata.UrlTrailers,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.TrailerNames}" Margin="0,0,40,0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
                                         <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Keep current Trailers" Click="KeepData_Click" Tag="trailer">
-                                            <Grid Style="{DynamicResource HoverEffect}"  MouseLeftButtonUp="KeepData_Click" Background="Transparent">
+                                            <Grid Style="{DynamicResource HoverEffect}"   Background="Transparent">
                                                 <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
                                                     <Path.RenderTransform>
                                                         <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
@@ -662,7 +662,7 @@
                                     <Grid>
                                         <TextBox Text="{Binding UpdateGame.UserMetadata.UrlGameplays,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.GameplayNames}" Margin="0,0,40,0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
                                         <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Keep current Gameplays" Click="KeepData_Click" Tag="gameplays">
-                                            <Grid Style="{DynamicResource HoverEffect}"  MouseLeftButtonUp="KeepData_Click" Background="Transparent">
+                                            <Grid Style="{DynamicResource HoverEffect}"   Background="Transparent">
                                                 <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
                                                     <Path.RenderTransform>
                                                         <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
@@ -678,7 +678,7 @@
                                     <Grid>
                                         <TextBox Text="{Binding UpdateGame.UserMetadata.UrlScreenshots,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.ScreenshotNames}" Margin="0,0,40,0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
                                         <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Keep current Screenshots" Click="KeepData_Click" Tag="screenshots">
-                                            <Grid Style="{DynamicResource HoverEffect}"  MouseLeftButtonUp="KeepData_Click" Background="Transparent">
+                                            <Grid Style="{DynamicResource HoverEffect}"   Background="Transparent">
                                                 <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
                                                     <Path.RenderTransform>
                                                         <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
