@@ -13,6 +13,7 @@ using MahApps.Metro.Controls.Dialogs;
 using MahApps.Metro.Controls;
 using System.Text.Json;
 using System.Security.Policy;
+using AngleSharp.Io;
 
 namespace gamevault.UserControls
 {
@@ -325,6 +326,25 @@ namespace gamevault.UserControls
         {
             Preferences.Set(AppConfigKey.ExtractionPassword, uiPwExtraction.Password, AppFilePath.UserFile, true);
             MainWindowViewModel.Instance.AppBarText = "Successfully saved extraction password";
+        }
+        private async void IgnoredExecutablesReset_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (File.Exists(AppFilePath.IgnoreList))
+                    File.Delete(AppFilePath.IgnoreList);
+
+                await SettingsViewModel.Instance.InitIgnoreList();
+            }
+            catch { }
+        }
+        private void IgnoredExecutablesSave_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Preferences.Set("IL", SettingsViewModel.Instance.IgnoreList, AppFilePath.IgnoreList);
+            }
+            catch { }
         }
     }
 }

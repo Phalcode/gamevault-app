@@ -16,6 +16,7 @@
         <conv:LicenseConverter x:Key="licenseConv"/>
         <conv:InverseNullConverter x:Key="nullConv"/>
         <conv:UTCtoLocalTimeConverter x:Key="utcToLocalTimeConv"/>
+        <conv:StringToArrayConverter x:Key="stringToArrayConv"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -133,6 +134,15 @@
                                 <local:IconButton Text="Clear offline cache" FontSize="15" Icon="{StaticResource IconCleanup}" IconScale="0.08" IconMargin="-110,-100,-105,-100" Width="175" Height="30" HorizontalAlignment="Left" Click="ClearOfflineCache_Clicked" ToolTip="Clears the entire offline cache"/>
                                 <TextBlock Text="{Binding OfflineCacheSize,Converter={StaticResource sizeConv},StringFormat={}({0})}" FontSize="20" Margin="10,0,0,0"/>
                             </StackPanel>
+                            <GroupBox Header="ignored Executables" Margin="0,15,20,0" mah:ControlsHelper.CornerRadius="5">
+                                <Grid>
+                                    <TextBox mah:ControlsHelper.CornerRadius="5" Text="{Binding IgnoreList,Converter={StaticResource stringToArrayConv},ConverterParameter=','}" mah:TextBoxHelper.Watermark="Edit ignorelist (seperate entries by comma)" Margin="0,0,120,0" TextWrapping="Wrap"/>
+                                    <StackPanel>
+                                        <local:IconButton Text="Reset" FontSize="15" Icon="{DynamicResource IconReload}" IconMargin="0,0,5,2" IsEnabled="{Binding BackgroundImageChanged}" Width="115" Height="33" HorizontalAlignment="Right" Click="IgnoredExecutablesReset_Click"/>
+                                        <local:IconButton Text="Save" FontSize="15" Icon="{DynamicResource IconGameSettingsSave}" IconMargin="0,0,5,2" IsEnabled="{Binding BackgroundImageChanged}" Margin="0,5,0,0" Width="115" Height="33" HorizontalAlignment="Right" Click="IgnoredExecutablesSave_Click"/>
+                                    </StackPanel>
+                                </Grid>
+                            </GroupBox>
                         </StackPanel>
                     </StackPanel>
                 </TabItem>

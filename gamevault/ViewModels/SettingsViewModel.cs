@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace gamevault.ViewModels
 {
@@ -42,9 +44,11 @@ namespace gamevault.ViewModels
         private float m_OfflineCacheSize { get; set; }
         private long m_DownloadLimit { get; set; }
         private long m_DownloadLimitUIValue { get; set; }
+        private string[] ignoreList { get; set; }
         private User m_RegistrationUser = new User() { Avatar = new Media(), Background = new Media() };
         private PhalcodeProduct license { get; set; }
         private List<ThemeItem> themes { get; set; }
+
         #endregion
 
         public SettingsViewModel()
@@ -52,7 +56,7 @@ namespace gamevault.ViewModels
             UserName = Preferences.Get(AppConfigKey.Username, AppFilePath.UserFile);
             RootPath = Preferences.Get(AppConfigKey.RootPath, AppFilePath.UserFile);
             ServerUrl = Preferences.Get(AppConfigKey.ServerUrl, AppFilePath.UserFile, true);
-           
+
             m_BackgroundStart = (Preferences.Get(AppConfigKey.BackgroundStart, AppFilePath.UserFile) == "1"); OnPropertyChanged(nameof(BackgroundStart));
             m_AutoExtract = (Preferences.Get(AppConfigKey.AutoExtract, AppFilePath.UserFile) == "1"); OnPropertyChanged(nameof(AutoExtract));
             autoDeletePortableGameFiles = Preferences.Get(AppConfigKey.AutoDeletePortable, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(AutoDeletePortableGameFiles));
@@ -82,6 +86,35 @@ namespace gamevault.ViewModels
                 DownloadLimit = 0;
                 DownloadLimitUIValue = 0;
             }
+        }
+        public async Task InitIgnoreList()
+        {
+            await Task.Run(() =>
+            {
+                try
+                {
+                    if (!File.Exists(AppFilePath.IgnoreList))
+                    {
+                        string response = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/ignorefile");
+                        IgnoreList = JsonSerializer.Deserialize<string[]>(response);
+                        Preferences.Set("IL", response.Replace("\n", ""), AppFilePath.IgnoreList);
+                    }
+                    else
+                    {
+                        string result = Preferences.Get("IL", AppFilePath.IgnoreList);
+                        IgnoreList = JsonSerializer.Deserialize<string[]>(result);
+                    }
+                }
+                catch
+                {
+                    try
+                    {
+                        string result = Preferences.Get("IL", AppFilePath.IgnoreList);
+                        IgnoreList = JsonSerializer.Deserialize<string[]>(result);
+                    }
+                    catch { }
+                }
+            });
         }
 
         public string UserName
@@ -193,6 +226,18 @@ namespace gamevault.ViewModels
         {
             get { return m_DownloadLimitUIValue; }
             set { m_DownloadLimitUIValue = value; OnPropertyChanged(); }
+        }
+        public string[] IgnoreList
+        {
+            get
+            {
+                if(ignoreList==null)
+                {
+                    ignoreList = new string[0];
+                }
+                return ignoreList;
+            }
+            set { ignoreList = value; OnPropertyChanged(); }
         }
         public User RegistrationUser
         {
