@@ -54,7 +54,6 @@ namespace gamevault.ViewModels
             get { return installedGamesFilter; }
             set { installedGamesFilter = value; OnPropertyChanged(); }
         }
-        public string[]? IgnoreList { get; set; }
         public void RefreshGame(Game gameToRefreshParam)
         {
             KeyValuePair<Game, string> gameToRefresh = InstalledGames.Where(g => g.Key.ID == gameToRefreshParam.ID).FirstOrDefault();

@@ -409,7 +409,7 @@ namespace gamevault.UserControls
         }
         private static bool ContainsValueFromIgnoreList(string value)
         {
-            return (InstallViewModel.Instance.IgnoreList != null && InstallViewModel.Instance.IgnoreList.Any(s => Path.GetFileNameWithoutExtension(value).Contains(s, StringComparison.OrdinalIgnoreCase)));
+            return (SettingsViewModel.Instance.IgnoreList != null && SettingsViewModel.Instance.IgnoreList.Any(s => Path.GetFileNameWithoutExtension(value).Contains(s, StringComparison.OrdinalIgnoreCase)));
         }
         private void ExecutableSelection_Opened(object sender, EventArgs e)
         {
