@@ -8,7 +8,7 @@ using gamevault.Models;
 
 namespace IO.Swagger.Model
 {
-    public class UserGameMetadataDto
+    public class UpdateGameUserMetadataDto
     {
         /// <summary>
         /// the minimum age required to play the game

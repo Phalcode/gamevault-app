@@ -106,15 +106,6 @@ namespace gamevault.Models
         public string? Title { get; set; }
 
         /// <summary>
-        /// Title of the game used to sort collection eg Halo 1, Borderlands 1.5, etc.
-        /// </summary>
-        /// <value>title of the game used to sort collection eg Halo 1, Borderlands 1.5, etc.</value>
-
-        [JsonPropertyName("sort_title")]
-        public string? SortTitle { get; set; }
-
-
-        /// <summary>
         /// release date of the game
         /// </summary>
         /// <value>release date of the game</value>

@@ -44,7 +44,7 @@ namespace gamevault.UserControls
             InitializeComponent();
             ViewModel = new GameSettingsViewModel();
             ViewModel.Game = game;
-            ViewModel.UpdateGame = new UpdateGameDto() { UserMetadata = new UserGameMetadataDto() };
+            ViewModel.UpdateGame = new UpdateGameDto() { UserMetadata = new UpdateGameUserMetadataDto() };
             gameSizeConverter = new GameSizeConverter();
             if (IsGameInstalled(game))
             {
@@ -635,7 +635,7 @@ namespace gamevault.UserControls
                 {
                     try
                     {
-                        UpdateGameDto updateGame = new UpdateGameDto() { UserMetadata = new UserGameMetadataDto() };
+                        UpdateGameDto updateGame = new UpdateGameDto() { UserMetadata = new UpdateGameUserMetadataDto() };
                         if (tag == "box")
                         {
                             updateGame.UserMetadata.Cover = newImage;
@@ -811,7 +811,7 @@ namespace gamevault.UserControls
             this.Focus();
         }
         private async Task LoadGameMedatataProviders()
-        {           
+        {
             try
             {
                 ViewModel.MetadataProvidersLoaded = false;
@@ -837,7 +837,7 @@ namespace gamevault.UserControls
             {
                 string message = WebExceptionHelper.TryGetServerMessage(ex);
                 MainWindowViewModel.Instance.AppBarText = message;
-            }            
+            }
         }
 
         #endregion
@@ -862,7 +862,7 @@ namespace gamevault.UserControls
                     string remappedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}", JsonSerializer.Serialize(ViewModel.UpdateGame), true);
                     ViewModel.Game = JsonSerializer.Deserialize<Game>(remappedGame);
                     success = true;
-                    ViewModel.UpdateGame = new UpdateGameDto() { UserMetadata = new UserGameMetadataDto() };
+                    ViewModel.UpdateGame = new UpdateGameDto() { UserMetadata = new UpdateGameUserMetadataDto() };
                     MainWindowViewModel.Instance.AppBarText = $"Successfully edited {ViewModel.Game.Title}";
                 }
                 catch (Exception ex)
@@ -886,7 +886,7 @@ namespace gamevault.UserControls
             try
             {
                 string tag = ((FrameworkElement)sender).Tag.ToString();
-                if(tag == "description")
+                if (tag == "description")
                 {
                     ViewModel.UpdateGame.UserMetadata.Description = ViewModel.Game.Metadata.Description;
                 }
@@ -930,10 +930,5 @@ namespace gamevault.UserControls
             catch { }
         }
         #endregion
-
-        private void KeepData_Click(object sender, MouseButtonEventArgs e)
-        {
-
-        }
     }
 }

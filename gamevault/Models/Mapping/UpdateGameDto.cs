@@ -15,7 +15,7 @@ namespace gamevault.Models.Mapping
         /// </summary>
         /// <value>The updated user metadata. If not provided, the user_metadata will not be updated.</value>
         [JsonPropertyName("user_metadata")]
-        public UserGameMetadataDto? UserMetadata { get; set; }
+        public UpdateGameUserMetadataDto? UserMetadata { get; set; }
 
         /// <summary>
         /// The mapping requests. If not provided, the game will not be remapped.
