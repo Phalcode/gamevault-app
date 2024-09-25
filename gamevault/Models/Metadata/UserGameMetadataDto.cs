@@ -27,10 +27,18 @@ namespace IO.Swagger.Model
         public string? Title { get; set; }
 
         /// <summary>
+        /// Title of the game used to sort collection eg Halo 1, Borderlands 1.5, etc.
+        /// </summary>
+        /// <value>title of the game used to sort collection eg Halo 1, Borderlands 1.5, etc.</value>
+
+        [JsonPropertyName("sort_title")]
+        public string? SortTitle { get; set; }
+
+        /// <summary>
         /// release date of the game as ISO8601 string
         /// </summary>
         /// <value>release date of the game as ISO8601 string</value>
-        
+
         [JsonPropertyName("release_date")]
         public DateTime? ReleaseDate { get; set; }
 
