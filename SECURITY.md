@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-The following Docker Tags are supported by Phalcode and get regular security updates.
+The following Application Versions are supported by Phalcode and get regular security updates.
 
 | Version | Regular Updates | Supported |
 | ------- | --------------- |---------- |
