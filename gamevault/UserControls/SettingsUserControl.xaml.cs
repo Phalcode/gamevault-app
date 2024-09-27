@@ -268,11 +268,13 @@ namespace gamevault.UserControls
             try
             {
                 ViewModel.Themes = new System.Collections.Generic.List<ThemeItem> {
-               new ThemeItem() { Key = "GameVault (Dark)", Value = "pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultDark.xaml", IsPlus = false },
-               new  ThemeItem(){ Key="GameVault (Light)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultLight.xaml",IsPlus=false},
-               new  ThemeItem(){ Key="GameVault (Classic)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultClassicDark.xaml",IsPlus=false},
-               new  ThemeItem(){ Key="Phalcode (Dark)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemePhalcodeDark.xaml",IsPlus=true},
-               new  ThemeItem(){ Key="Phalcode (Light)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemePhalcodeLight.xaml",IsPlus=true}};
+                    new() { Key = "Default (Dark)", Value = "pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeDefaultDark.xaml", IsPlus = false },
+                    new() { Key="Default (Light)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeDefaultLight.xaml",IsPlus=false},
+                    new() { Key="Classic (Dark)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeClassicDark.xaml",IsPlus=false},
+                    new() { Key="Phalcode (Dark)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemePhalcodeDark.xaml",IsPlus=true},
+                    new() { Key="Phalcode (Light)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemePhalcodeLight.xaml",IsPlus=true},
+                    new() { Key = "Halloween (Dark)", Value = "pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeHalloweenDark.xaml", IsPlus = true }
+                };
                 if (Directory.Exists(AppFilePath.ThemesLoadDir))
                 {
                     foreach (var file in Directory.GetFiles(AppFilePath.ThemesLoadDir, "*.xaml", SearchOption.AllDirectories))
