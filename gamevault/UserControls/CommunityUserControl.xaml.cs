@@ -179,7 +179,7 @@ namespace gamevault.UserControls
         }
 
         private void GameImage_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {            
+        {
             if (((Progress)((FrameworkElement)sender).DataContext).Game == null)
             {
                 MainWindowViewModel.Instance.AppBarText = "Cannot open game";
@@ -215,8 +215,11 @@ namespace gamevault.UserControls
         }
         private void UserEdit_Clicked(object sender, RoutedEventArgs e)
         {
-            User user = JsonSerializer.Deserialize<User>(JsonSerializer.Serialize(ViewModel.CurrentShownUser)); //Dereference
-            MainWindowViewModel.Instance.OpenPopup(new UserSettingsUserControl(user) { Width = 1200, Height = 800, Margin = new Thickness(50) });
+            if (ViewModel.CurrentShownUser != null)
+            {
+                User user = JsonSerializer.Deserialize<User>(JsonSerializer.Serialize(ViewModel.CurrentShownUser)); //Dereference
+                MainWindowViewModel.Instance.OpenPopup(new UserSettingsUserControl(user) { Width = 1200, Height = 800, Margin = new Thickness(50) });
+            }
         }
         private async void DeleteProgress_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
