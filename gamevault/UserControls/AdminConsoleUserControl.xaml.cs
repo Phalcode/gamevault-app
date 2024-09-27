@@ -220,7 +220,7 @@ namespace gamevault.UserControls
             {
                 try
                 {
-                    WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/files/reindex", string.Empty);
+                    WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/reindex", string.Empty);
                     MainWindowViewModel.Instance.AppBarText = "Sucessfully reindexed games";
                 }
                 catch (Exception ex)
@@ -274,6 +274,6 @@ namespace gamevault.UserControls
             url = url.Replace("&", "^&");
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
             e.Handled = true;
-        }      
+        }
     }
 }
