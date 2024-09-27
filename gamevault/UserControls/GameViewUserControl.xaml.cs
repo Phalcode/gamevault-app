@@ -51,18 +51,24 @@ namespace gamevault.UserControls
             bool trailerPreloaded = false;
             bool gameplayPreloaded = false;
             if (data?.Trailers?.Count() > 0)
-            {
-                trailerPreloaded = true;
+            {             
                 string preloaded = await ConvertYoutubeLinkToEmbedded(data?.Trailers[0]);
-                MediaUrls.Add(preloaded);
-                await uiMediaSlider.LoadFirstElement(preloaded);
+                if (preloaded != string.Empty)
+                {
+                    trailerPreloaded = true;
+                    MediaUrls.Add(preloaded);
+                    await uiMediaSlider.LoadFirstElement(preloaded);
+                }
             }
             else if (data?.Gameplays?.Count() > 0)
-            {
-                gameplayPreloaded = true;
+            {             
                 string preloaded = await ConvertYoutubeLinkToEmbedded(data?.Gameplays[0]);
-                MediaUrls.Add(preloaded);
-                await uiMediaSlider.LoadFirstElement(preloaded);
+                if (preloaded != string.Empty)
+                {
+                    gameplayPreloaded = true;
+                    MediaUrls.Add(preloaded);
+                    await uiMediaSlider.LoadFirstElement(preloaded);
+                }
             }
 
             for (int i = 0; i < data?.Trailers?.Count(); i++)
@@ -71,7 +77,11 @@ namespace gamevault.UserControls
                 {
                     continue;//Prevent the first element from being reloaded
                 }
-                MediaUrls.Add(await ConvertYoutubeLinkToEmbedded(data?.Trailers[i]));
+                string url = await ConvertYoutubeLinkToEmbedded(data?.Trailers[i]);
+                if (url != string.Empty)
+                {
+                    MediaUrls.Add(url);
+                }
             }
             for (int i = 0; i < data?.Gameplays?.Count(); i++)
             {
@@ -79,7 +89,11 @@ namespace gamevault.UserControls
                 {
                     continue;//Prevent the first element from being reloaded
                 }
-                MediaUrls.Add(await ConvertYoutubeLinkToEmbedded(data?.Gameplays[i]));
+                string url = await ConvertYoutubeLinkToEmbedded(data?.Gameplays[i]);
+                if (url != string.Empty)
+                {
+                    MediaUrls.Add(url);
+                }
             }
             for (int i = 0; i < data?.Screenshots?.Count(); i++)
             {
@@ -94,17 +108,21 @@ namespace gamevault.UserControls
         }
         private async Task<string> ConvertYoutubeLinkToEmbedded(string input)
         {
-            if (input.Contains("youtu", StringComparison.OrdinalIgnoreCase))
+            try
             {
-                var streamManifest = await YoutubeClient.Videos.Streams.GetManifestAsync(input);
-                var streamInfo = streamManifest.GetMuxedStreams().GetWithHighestVideoQuality();
-                var streamUrl = streamInfo.Url;
-                return streamUrl;
+                if (input.Contains("youtu", StringComparison.OrdinalIgnoreCase))
+                {
+                    var streamManifest = await YoutubeClient.Videos.Streams.GetManifestAsync(input);
+                    var streamInfo = streamManifest.GetMuxedStreams().GetWithHighestVideoQuality();
+                    var streamUrl = streamInfo.Url;
+                    return streamUrl;
+                }
+                else
+                {
+                    return input;
+                }
             }
-            else
-            {
-                return input;
-            }
+            catch { return string.Empty; }
         }
         #endregion
 
@@ -178,7 +196,7 @@ namespace gamevault.UserControls
             {
                 await uiMediaSlider.SaveMediaVolume();//Set this to unload event, so it will dispose even if the main control changes
                 uiMediaSlider.Dispose();
-            }            
+            }
         }
         private bool IsGameInstalled(Game? game)
         {
