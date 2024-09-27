@@ -35,7 +35,10 @@ namespace gamevault.Models
         CreateDesktopShortcut,
         MediaSliderVolume,
         UnreadNews,
-        NewsHash
+        NewsHash,
+        RetainLibarySortByAndOrderBy,
+        LastLibrarySortBy,
+        LastLibraryOrderBy
     }
     public static class AppFilePath
     {

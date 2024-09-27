@@ -10,6 +10,7 @@ Recommended Gamevault Server Version: `v13.0.0`
 - Moved title bar action buttons
 - You can now copy the app bar text
 - The executable ignorelist is now editable in the settings tab
+- New setting 'Retain Sorting and Filter preferences after restart'
 ### Game Page
 - Overhauled the layout
 - Added Media Slider to display trailer/gameplay/screenshots

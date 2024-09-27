@@ -186,7 +186,7 @@
                                     </StackPanel>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
-                                    <ToggleButton Width="35" Height="35" Cursor="Hand" Margin="0,10,0,0" Checked="OrderBy_Changed" Unchecked="OrderBy_Changed">
+                                    <ToggleButton x:Name="uiFilterOrderBy" Width="35" Height="35" Cursor="Hand" Margin="0,10,0,0">
                                         <ToggleButton.Style>
                                             <Style TargetType="ToggleButton">
                                                 <Style.Setters>
@@ -215,7 +215,7 @@
                                             </Style>
                                         </ToggleButton.Style>
                                     </ToggleButton>
-                                    <ComboBox x:Name="uiFilterSortBy" Height="20" Width="175" Margin="25,10,10,0" DisplayMemberPath="Key" SelectedIndex="0" SelectedItem="{Binding SelectedGameFilterSortBy}" ItemsSource="{Binding GameFilterSortByValues}" SelectionChanged="SelectedGameFilterSortBy_SelectionChanged"/>
+                                    <ComboBox x:Name="uiFilterSortBy" Height="20" Width="175" Margin="25,10,10,0" DisplayMemberPath="Key" SelectedItem="{Binding SelectedGameFilterSortBy}" ItemsSource="{Binding GameFilterSortByValues}" SelectionChanged="SelectedGameFilterSortBy_SelectionChanged"/>
                                 </StackPanel>
                             </Grid>
                             <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" CornerRadius="5" Margin="-6,5,-6,0" VerticalAlignment="Top">

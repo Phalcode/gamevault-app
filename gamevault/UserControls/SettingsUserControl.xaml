@@ -76,6 +76,10 @@
                                 <local:IconButton Text="Open Theme Folder" FontSize="15" Icon="{StaticResource IconGameSettingsFolder}" IconMargin="0,0,5,2" Width="175" Margin="10,0,0,0" Click="OpenThemeFolder_Click"/>
                             </StackPanel>
                         </StackPanel>
+                        <StackPanel Margin="0,15,0,0">
+                            <TextBlock Text="Library" FontSize="20" FontWeight="Bold"/>
+                            <mah:ToggleSwitch Header="Retain Sorting and Filter preferences after restart" Margin="10,10,0,0" IsOn="{Binding RetainLibarySortByAndOrderBy}"/>
+                        </StackPanel>
                     </StackPanel>
                 </TabItem>
                 <TabItem Header="Installation">

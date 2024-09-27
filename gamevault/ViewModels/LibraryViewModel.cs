@@ -60,7 +60,7 @@ namespace gamevault.ViewModels
                     {"Release Date","metadata.release_date" },
                     {"Rating","metadata.rating" },
                     {"Download Count","download_count" },
-                    {"Average Playtime","metadata.average_playtime" },                   
+                    {"Average Playtime","metadata.average_playtime" },
                 };
                 return dict;
             }
@@ -70,7 +70,6 @@ namespace gamevault.ViewModels
             get { return m_SelectedGameFilterSortBy; }
             set { m_SelectedGameFilterSortBy = value; }
         }
-        public string OrderByValue = "ASC";
         public string FilterCounter
         {
             get { return filterCounter; }

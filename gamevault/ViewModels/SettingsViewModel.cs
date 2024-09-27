@@ -39,6 +39,7 @@ namespace gamevault.ViewModels
         private bool m_AutoExtract { get; set; }
         private bool autoInstallPortable { get; set; }
         private bool autoDeletePortableGameFiles { get; set; }
+        private bool retainLibarySortByAndOrderBy { get; set; }
         private string m_ServerUrl { get; set; }
         private float m_ImageCacheSize { get; set; }
         private float m_OfflineCacheSize { get; set; }
@@ -60,6 +61,7 @@ namespace gamevault.ViewModels
             m_BackgroundStart = (Preferences.Get(AppConfigKey.BackgroundStart, AppFilePath.UserFile) == "1"); OnPropertyChanged(nameof(BackgroundStart));
             m_AutoExtract = (Preferences.Get(AppConfigKey.AutoExtract, AppFilePath.UserFile) == "1"); OnPropertyChanged(nameof(AutoExtract));
             autoDeletePortableGameFiles = Preferences.Get(AppConfigKey.AutoDeletePortable, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(AutoDeletePortableGameFiles));
+            retainLibarySortByAndOrderBy = Preferences.Get(AppConfigKey.RetainLibarySortByAndOrderBy, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(RetainLibarySortByAndOrderBy));
 
             string autoInstallPortableStr = Preferences.Get(AppConfigKey.AutoInstallPortable, AppFilePath.UserFile);
             if (string.IsNullOrWhiteSpace(autoInstallPortableStr) || autoInstallPortableStr == "1")
@@ -202,6 +204,22 @@ namespace gamevault.ViewModels
                 Preferences.Set(AppConfigKey.AutoDeletePortable, stringValue, AppFilePath.UserFile);
             }
         }
+        public bool RetainLibarySortByAndOrderBy
+        {
+            get { return retainLibarySortByAndOrderBy; }
+            set
+            {
+                retainLibarySortByAndOrderBy = value;
+                OnPropertyChanged();
+                string stringValue = "1";
+                if (!retainLibarySortByAndOrderBy)
+                {
+                    stringValue = "0";
+                }
+                Preferences.Set(AppConfigKey.RetainLibarySortByAndOrderBy, stringValue, AppFilePath.UserFile);
+            }
+        }
+
         public string ServerUrl
         {
             get { return m_ServerUrl; }
