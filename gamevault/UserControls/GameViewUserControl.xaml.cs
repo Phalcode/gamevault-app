@@ -113,7 +113,7 @@ namespace gamevault.UserControls
                 if (input.Contains("youtu", StringComparison.OrdinalIgnoreCase))
                 {
                     var streamManifest = await YoutubeClient.Videos.Streams.GetManifestAsync(input);
-                    var streamInfo = streamManifest.GetMuxedStreams().GetWithHighestVideoQuality();
+                    var streamInfo = streamManifest.GetVideoStreams().GetWithHighestVideoQuality();
                     var streamUrl = streamInfo.Url;
                     return streamUrl;
                 }

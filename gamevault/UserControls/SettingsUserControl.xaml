@@ -50,8 +50,12 @@
                                 <ComboBox x:Name="uiCbTheme" ItemsSource="{Binding Themes}" Width="520" HorizontalAlignment="Left" SelectionChanged="Themes_SelectionChanged">
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
-                                            <Grid Width="496">
-                                                <TextBlock Text="{Binding Key}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                            <Grid Width="480" ToolTip="{Binding Description}">
+                                                <StackPanel Width="450" HorizontalAlignment="Left">
+                                                    <TextBlock Text="{Binding DisplayName}" FontWeight="Bold"/>
+                                                    <TextBlock Text="{Binding Description}" Margin="0,0,0,0" TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock Text="{Binding Author,StringFormat='{}Author: {0}'}" Margin="0,0,0,0" FontSize="10"/>
+                                                </StackPanel>
                                                 <Path Fill="{DynamicResource MahApps.Brushes.Accent}" HorizontalAlignment="Right" VerticalAlignment="Center">
                                                     <Path.Style>
                                                         <Style TargetType="Path">

@@ -315,8 +315,10 @@ namespace gamevault.ViewModels
     }
     public class ThemeItem
     {
-        public string Key { get; set; }
-        public string Value { get; set; }
+        public string DisplayName { get; set; }
+        public string Description { get; set; }
+        public string Author { get; set; }
+        public string Path { get; set; }
         public bool IsPlus { get; set; }
     }
 }

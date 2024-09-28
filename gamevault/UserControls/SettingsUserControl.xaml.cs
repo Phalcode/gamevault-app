@@ -240,7 +240,7 @@ namespace gamevault.UserControls
             ThemeItem selectedTheme = (ThemeItem)((ComboBox)sender).SelectedValue;
             if (((ComboBox)sender).SelectionBoxItem == string.Empty)
                 return;
-            if (((ThemeItem)((ComboBox)sender).SelectionBoxItem).Value == selectedTheme.Value)
+            if (((ThemeItem)((ComboBox)sender).SelectionBoxItem).Path == selectedTheme.Path)
                 return;
             if (selectedTheme.IsPlus == true && ViewModel.License.IsActive() == false)
             {
@@ -256,7 +256,7 @@ namespace gamevault.UserControls
             }
             try
             {
-                App.Current.Resources.MergedDictionaries[0] = new ResourceDictionary() { Source = new Uri(selectedTheme.Value) };
+                App.Current.Resources.MergedDictionaries[0] = new ResourceDictionary() { Source = new Uri(selectedTheme.Path) };
                 //Reload Base Styles to apply new colors
                 App.Current.Resources.MergedDictionaries[1] = new ResourceDictionary() { Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Base.xaml") };
                 Preferences.Set(AppConfigKey.Theme, JsonSerializer.Serialize(selectedTheme), AppFilePath.UserFile, true);
@@ -267,24 +267,44 @@ namespace gamevault.UserControls
         {
             try
             {
-                ViewModel.Themes = new System.Collections.Generic.List<ThemeItem> {
-                    new() { Key = "Default (Dark)", Value = "pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeDefaultDark.xaml", IsPlus = false },
-                    new() { Key="Default (Light)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeDefaultLight.xaml",IsPlus=false},
-                    new() { Key="Classic (Dark)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeClassicDark.xaml",IsPlus=false},
-                    new() { Key="Phalcode (Dark)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemePhalcodeDark.xaml",IsPlus=true},
-                    new() { Key="Phalcode (Light)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemePhalcodeLight.xaml",IsPlus=true},
-                    new() { Key = "Halloween (Dark)", Value = "pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeHalloweenDark.xaml", IsPlus = true }
-                };
+                ViewModel.Themes = new System.Collections.Generic.List<ThemeItem>();
+                //Load embedded Themes
+                ResourceDictionary res = new ResourceDictionary();
+                res.Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeDefaultDark.xaml");
+                ViewModel.Themes.Add(new ThemeItem() { DisplayName = (string)res["Theme.DisplayName"], Description = (string)res["Theme.Description"], Author = (string)res["Theme.Author"], IsPlus = false, Path = res.Source.OriginalString });
+
+                res.Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeDefaultLight.xaml");
+                ViewModel.Themes.Add(new ThemeItem() { DisplayName = (string)res["Theme.DisplayName"], Description = (string)res["Theme.Description"], Author = (string)res["Theme.Author"], IsPlus = false, Path = res.Source.OriginalString });
+
+                res.Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeClassicDark.xaml");
+                ViewModel.Themes.Add(new ThemeItem() { DisplayName = (string)res["Theme.DisplayName"], Description = (string)res["Theme.Description"], Author = (string)res["Theme.Author"], IsPlus = false, Path = res.Source.OriginalString });
+
+                res.Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemePhalcodeDark.xaml");
+                ViewModel.Themes.Add(new ThemeItem() { DisplayName = (string)res["Theme.DisplayName"], Description = (string)res["Theme.Description"], Author = (string)res["Theme.Author"], IsPlus = true, Path = res.Source.OriginalString });
+
+                res.Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemePhalcodeLight.xaml");
+                ViewModel.Themes.Add(new ThemeItem() { DisplayName = (string)res["Theme.DisplayName"], Description = (string)res["Theme.Description"], Author = (string)res["Theme.Author"], IsPlus = true, Path = res.Source.OriginalString });
+
+                res.Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeHalloweenDark.xaml");
+                ViewModel.Themes.Add(new ThemeItem() { DisplayName = (string)res["Theme.DisplayName"], Description = (string)res["Theme.Description"], Author = (string)res["Theme.Author"], IsPlus = true, Path = res.Source.OriginalString });
+
+
+
                 if (Directory.Exists(AppFilePath.ThemesLoadDir))
                 {
                     foreach (var file in Directory.GetFiles(AppFilePath.ThemesLoadDir, "*.xaml", SearchOption.AllDirectories))
                     {
-                        ViewModel.Themes.Add(new ThemeItem() { Key = Path.GetFileNameWithoutExtension(file), Value = file, IsPlus = true });
+                        try
+                        {
+                            res.Source = new Uri(file);
+                            ViewModel.Themes.Add(new ThemeItem() { DisplayName = (string)res["Theme.DisplayName"], Description = (string)res["Theme.Description"], Author = (string)res["Theme.Author"], IsPlus = true, Path = res.Source.OriginalString });
+                        }
+                        catch { }
                     }
                 }
                 string currentThemeString = Preferences.Get(AppConfigKey.Theme, AppFilePath.UserFile, true);
                 ThemeItem currentTheme = JsonSerializer.Deserialize<ThemeItem>(currentThemeString);
-                int themeIndex = ViewModel.Themes.FindIndex(i => i.Value == currentTheme.Value);
+                int themeIndex = ViewModel.Themes.FindIndex(i => i.Path == currentTheme.Path);
                 if (themeIndex != -1 && (ViewModel.Themes[themeIndex].IsPlus == true ? ViewModel.License.IsActive() : true))
                 {
                     uiCbTheme.SelectedIndex = themeIndex;

@@ -210,9 +210,9 @@ namespace gamevault
                 {
                     ThemeItem currentTheme = JsonSerializer.Deserialize<ThemeItem>(currentThemeString);
 
-                    if (App.Current.Resources.MergedDictionaries[0].Source.OriginalString != currentTheme.Value)
+                    if (App.Current.Resources.MergedDictionaries[0].Source.OriginalString != currentTheme.Path)
                     {
-                        App.Current.Resources.MergedDictionaries[0] = new ResourceDictionary() { Source = new Uri(currentTheme.Value) };
+                        App.Current.Resources.MergedDictionaries[0] = new ResourceDictionary() { Source = new Uri(currentTheme.Path) };
                     }
                 }
             }
