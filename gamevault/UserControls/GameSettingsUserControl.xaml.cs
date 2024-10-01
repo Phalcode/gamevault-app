@@ -567,64 +567,8 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.AppBarText = ex.Message;
             }
         }
-        #region Generic Events       
-        private InputTimer backgroundImageUrldebounceTimer { get; set; }
-        private InputTimer boxImageUrldebounceTimer { get; set; }
-        private void InitImageUrlTimer()
-        {
-            if (backgroundImageUrldebounceTimer == null)
-            {
-                backgroundImageUrldebounceTimer = new InputTimer() { Data = string.Empty };
-                backgroundImageUrldebounceTimer.Interval = TimeSpan.FromMilliseconds(400);
-                backgroundImageUrldebounceTimer.Tick += BackgroundImageDebounceTimerElapsed;
-            }
-            if (boxImageUrldebounceTimer == null)
-            {
-                boxImageUrldebounceTimer = new InputTimer() { Data = string.Empty };
-                boxImageUrldebounceTimer.Interval = TimeSpan.FromMilliseconds(400);
-                boxImageUrldebounceTimer.Tick += BoxImageDebounceTimerElapsed;
-            }
-        }
-        private async void BoxImage_Save(object sender, RoutedEventArgs e)
-        {
-            ViewModel.GameCoverImageChanged = false;
-            await SaveImage("box");
-        }
-        private async void BackgroundImage_Save(object sender, RoutedEventArgs e)
-        {
-            ViewModel.BackgroundImageChanged = false;
-            await SaveImage("");
-        }
-        private void BackgoundImageUrl_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            InitImageUrlTimer();
-            backgroundImageUrldebounceTimer.Stop();
-            backgroundImageUrldebounceTimer.Data = ((TextBox)sender).Text;
-            backgroundImageUrldebounceTimer.Start();
-        }
-        private void BoxImageUrl_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            InitImageUrlTimer();
-            boxImageUrldebounceTimer.Stop();
-            boxImageUrldebounceTimer.Data = ((TextBox)sender).Text;
-            boxImageUrldebounceTimer.Start();
-        }
-        private void BackgroundImageDebounceTimerElapsed(object? sender, EventArgs e)
-        {
-            backgroundImageUrldebounceTimer.Stop();
-            LoadImageUrl(backgroundImageUrldebounceTimer.Data, "");
-        }
-        private void BoxImageDebounceTimerElapsed(object? sender, EventArgs e)
-        {
-            boxImageUrldebounceTimer.Stop();
-            LoadImageUrl(boxImageUrldebounceTimer.Data, "box");
-        }
-        #endregion
-
         private async Task SaveImage(string tag)
         {
-            // TODO
-
             bool success = false;
             try
             {
@@ -699,6 +643,59 @@ namespace gamevault.UserControls
                 }
             }
         }
+        #region Generic Events       
+        private InputTimer backgroundImageUrldebounceTimer { get; set; }
+        private InputTimer boxImageUrldebounceTimer { get; set; }
+        private void InitImageUrlTimer()
+        {
+            if (backgroundImageUrldebounceTimer == null)
+            {
+                backgroundImageUrldebounceTimer = new InputTimer() { Data = string.Empty };
+                backgroundImageUrldebounceTimer.Interval = TimeSpan.FromMilliseconds(400);
+                backgroundImageUrldebounceTimer.Tick += BackgroundImageDebounceTimerElapsed;
+            }
+            if (boxImageUrldebounceTimer == null)
+            {
+                boxImageUrldebounceTimer = new InputTimer() { Data = string.Empty };
+                boxImageUrldebounceTimer.Interval = TimeSpan.FromMilliseconds(400);
+                boxImageUrldebounceTimer.Tick += BoxImageDebounceTimerElapsed;
+            }
+        }
+        private async void BoxImage_Save(object sender, RoutedEventArgs e)
+        {
+            ViewModel.GameCoverImageChanged = false;
+            await SaveImage("box");
+        }
+        private async void BackgroundImage_Save(object sender, RoutedEventArgs e)
+        {
+            ViewModel.BackgroundImageChanged = false;
+            await SaveImage("");
+        }
+        private void BackgoundImageUrl_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            InitImageUrlTimer();
+            backgroundImageUrldebounceTimer.Stop();
+            backgroundImageUrldebounceTimer.Data = ((TextBox)sender).Text;
+            backgroundImageUrldebounceTimer.Start();
+        }
+        private void BoxImageUrl_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            InitImageUrlTimer();
+            boxImageUrldebounceTimer.Stop();
+            boxImageUrldebounceTimer.Data = ((TextBox)sender).Text;
+            boxImageUrldebounceTimer.Start();
+        }
+        private void BackgroundImageDebounceTimerElapsed(object? sender, EventArgs e)
+        {
+            backgroundImageUrldebounceTimer.Stop();
+            LoadImageUrl(backgroundImageUrldebounceTimer.Data, "");
+        }
+        private void BoxImageDebounceTimerElapsed(object? sender, EventArgs e)
+        {
+            boxImageUrldebounceTimer.Stop();
+            LoadImageUrl(boxImageUrldebounceTimer.Data, "box");
+        }
+        #endregion
         #endregion
         #region Metadata
         private InputTimer GameMetadataSearchTimer { get; set; }

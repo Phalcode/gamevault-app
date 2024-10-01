@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 namespace gamevault.UserControls
@@ -15,7 +16,7 @@ namespace gamevault.UserControls
     /// </summary>
     public partial class MediaSlider : UserControl
     {
-        private List<string> MediaUrls = new List<string>();
+        private List<Tuple<string, string>> MediaUrls = new List<Tuple<string, string>>();
         private int mediaIndex = 0;
         private bool isMediaSliderFullscreen = false;
         private Grid webViewAnchor;
@@ -47,12 +48,12 @@ namespace gamevault.UserControls
             if (mediaIndex < MediaUrls.Count - 1)
             {
                 mediaIndex++;
-                await MediaSliderNavigate(MediaUrls[mediaIndex]);
+                await MediaSliderNavigate(MediaUrls[mediaIndex].Item1);
             }
             else
             {
                 mediaIndex = 0;
-                await MediaSliderNavigate(MediaUrls[mediaIndex]);
+                await MediaSliderNavigate(MediaUrls[mediaIndex].Item1);
             }
             uiTxtMediaIndex.Text = $"{mediaIndex + 1}/{MediaUrls.Count}";
         }
@@ -64,12 +65,12 @@ namespace gamevault.UserControls
             if (mediaIndex > 0)
             {
                 mediaIndex--;
-                await MediaSliderNavigate(MediaUrls[mediaIndex]);
+                await MediaSliderNavigate(MediaUrls[mediaIndex].Item1);
             }
             else
             {
                 mediaIndex = MediaUrls.Count - 1;
-                await MediaSliderNavigate(MediaUrls[mediaIndex]);
+                await MediaSliderNavigate(MediaUrls[mediaIndex].Item1);
             }
             uiTxtMediaIndex.Text = $"{mediaIndex + 1}/{MediaUrls.Count}";
         }
@@ -83,22 +84,52 @@ namespace gamevault.UserControls
                 uiWebView.CoreWebView2?.NavigateToString("<html><body></body></html>");
             }
         }
-        public string GetLastMediaVolume()
+        public async Task RestoreLastMediaVolume()
         {
             string result = Preferences.Get(AppConfigKey.MediaSliderVolume, AppFilePath.UserFile);
-            return string.IsNullOrWhiteSpace(result) ? "0.0" : result;
+            string lastMediaVolume = string.IsNullOrWhiteSpace(result) ? "0.0" : result;
+            if (double.TryParse(lastMediaVolume.Replace(".", ","), out double volume))
+            {
+                uiVolumeSlider.Value = volume;
+                string mutescript = @"if(audio){ audio.volume=" + lastMediaVolume + ";}";
+                await uiWebView.CoreWebView2.ExecuteScriptAsync(mutescript);
+            }
         }
-        public async Task SaveMediaVolume()
+        public async Task SetAndSaveMediaVolume()
         {
             try
             {
+                string result = uiVolumeSlider.Value.ToString().Replace(",", ".");
+                Preferences.Set(AppConfigKey.MediaSliderVolume, result, AppFilePath.UserFile);
                 if (uiWebView == null || uiWebView.CoreWebView2 == null)
                     return;
 
-                string result = await GetCurrentMediaVolume();
-                if (!string.IsNullOrWhiteSpace(result) && result != "null")
+                string mutescript = @"if(audio){ audio.volume=" + result + ";}";
+                await uiWebView.CoreWebView2.ExecuteScriptAsync(mutescript);
+
+            }
+            catch { }
+        }
+        private async void VolumeSlider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        {
+            await SetAndSaveMediaVolume();
+        }
+        private void DisableNonThumbInteraction(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                var slider = sender as Slider;
+                if (slider != null)
                 {
-                    Preferences.Set(AppConfigKey.MediaSliderVolume, result, AppFilePath.UserFile);
+                    // Get the Thumb control from the Slider
+                    var track = slider.Template.FindName("PART_Track", slider) as Track;
+                    var thumb = track?.Thumb; // Return the Thumb from the Track
+                                              // Check if the mouse is over the Thumb
+                    if (thumb != null && !thumb.IsMouseOver)
+                    {
+                        // Prevent the slider from changing value if clicked outside the Thumb
+                        e.Handled = true;
+                    }
                 }
             }
             catch { }
@@ -115,22 +146,23 @@ namespace gamevault.UserControls
             {
                 try
                 {
-                    string mutescript = @"var video = document.querySelector('video[name=""media""]');if(video){video.volume=" +
-                    GetLastMediaVolume() +
-                    ";}";
-                    await uiWebView.CoreWebView2.ExecuteScriptAsync(mutescript);
+                    await CreateAudioStream();
+                    await RestoreLastMediaVolume();
                     await ResizeMediaSlider();
                     await uiWebView.CoreWebView2.ExecuteScriptAsync(cssscript);
                 }
                 catch { }
             };
         }
-        public void SetMediaList(List<string> mediaUrls)
+        public void SetMediaList(List<Tuple<string, string>> mediaUrls)
         {
             this.MediaUrls = mediaUrls;
+            uiMediaCountLoadingRing.IsActive = false;
+            uiTxtMediaIndex.Visibility = Visibility.Visible;
             uiTxtMediaIndex.Text = $"{mediaIndex + 1}/{MediaUrls.Count}";
         }
-        public async Task LoadFirstElement(string? first = null)
+
+        public async Task LoadFirstElement(Tuple<string, string>? first = null)
         {
             if (first != null)
             {
@@ -139,32 +171,14 @@ namespace gamevault.UserControls
             if (uiWebView != null && uiWebView.Visibility == Visibility.Visible && MediaUrls.Count > 0)//Prevent only in this case from navigating because the Media Slider could be rendered on top of the game settings
             {
                 mediaIndex = 0;
-                await MediaSliderNavigate(MediaUrls[mediaIndex]);
-                uiTxtMediaIndex.Text = $"{mediaIndex + 1}/{MediaUrls.Count}";
+                await MediaSliderNavigate(MediaUrls[mediaIndex].Item1);
             }
         }
         public bool IsWebViewNull()
         {
             return uiWebView == null;
         }
-        public async Task<string> GetCurrentMediaVolume()
-        {
 
-
-            string result = await uiWebView.CoreWebView2.ExecuteScriptAsync(getVolumeScript);
-            result = System.Text.RegularExpressions.Regex.Unescape(result.Trim('"'));
-            var mediaStatus = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>(result);
-            double volume = mediaStatus.GetProperty("volume").GetDouble();
-            bool isMuted = mediaStatus.GetProperty("muted").GetBoolean();
-            if (isMuted)
-            {
-                return "0.0";
-            }
-            else
-            {
-                return volume.ToString().Replace(",", ".");//The media player needs a dot as seperator
-            }
-        }
 
         #endregion
         #region Private
@@ -173,7 +187,7 @@ namespace gamevault.UserControls
             uiWebView.Visibility = Visibility.Visible;
             if (MediaUrls.Count > 0)
             {
-                uiWebView.CoreWebView2.Navigate(MediaUrls[mediaIndex]);
+                uiWebView.CoreWebView2.Navigate(MediaUrls[mediaIndex].Item1);
             }
         }
         private async Task ResizeMediaSlider()
@@ -189,7 +203,6 @@ namespace gamevault.UserControls
             {
                 uiWebView.Visibility = Visibility.Visible;
             }
-            await SaveMediaVolume();
             uiWebView.CoreWebView2.Navigate(url);
 
         }
@@ -232,23 +245,29 @@ namespace gamevault.UserControls
         var cssRules = `video::-webkit-media-controls-fullscreen-button {
             display: none !important;
         }
-        video::-moz-media-controls-fullscreen-button {
-            display: none !important;
-        }
         video::-ms-media-controls-fullscreen-button {
             display: none !important;
-        }`;
+        }
+      
+video::-webkit-media-controls-volume-slider {
+display:none;
+}
+
+video::-webkit-media-controls-mute-button {
+display:none;
+}
+
+`;
         style.appendChild(document.createTextNode(cssRules));
         document.head.appendChild(style);
     ";
         private string getVolumeScript = @"
-    (function() {
-        var video = document.querySelector('video[name=""media""]');
-        return JSON.stringify({
-            volume: video.volume,
-            muted: video.muted
-        });
-    })();";
+(function() {
+    var audio = document.getElementById('externalAudio'); // Get the audio element by ID
+    return audio.volume; // Return current volume
+})();";
+
+
         string resizescript = @"
  var video = document.querySelector('video[name=""media""]');
 if(video)
@@ -263,6 +282,52 @@ if(video)
             video.style.zIndex = '1000'; // Ensure it is on top of other elements
 }
    ";
+        private async Task CreateAudioStream()
+        {
+            string audioScript = @"
+    // Select the video element by name attribute 'media'
+    var video = document.querySelector('video[name=""media""]');
+    if(video)
+{
+    // Dynamically create an audio element
+    var audio = document.createElement('audio');
+    audio.setAttribute('id', 'externalAudio');
+    audio.src = '" + MediaUrls[mediaIndex].Item2 + @"';  // Specify your external audio source
+    audio.controls = false;
+    document.body.appendChild(audio);  // Add the audio element to the body
+
+    // Synchronize audio with video playback
+    video.addEventListener('play', function() {
+        audio.currentTime = video.currentTime;
+        audio.play();
+    });
+
+    video.addEventListener('pause', function() {
+        audio.pause();
+    });
+
+    video.addEventListener('seeking', function() {
+        audio.currentTime = video.currentTime;
+    });
+
+    video.addEventListener('timeupdate', function() {
+        var diff = Math.abs(video.currentTime - audio.currentTime);
+        if (diff > 0.3) {
+            audio.currentTime = video.currentTime;
+        }
+    });
+}
+";
+            if (MediaUrls[mediaIndex] != null && MediaUrls[mediaIndex].Item2 != "")
+            {
+                await uiWebView.CoreWebView2.ExecuteScriptAsync(audioScript);
+            }
+        }
+
+
+
+
         #endregion
+
     }
 }

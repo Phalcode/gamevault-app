@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+             xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Focusable="True">
@@ -28,8 +29,13 @@
         </Border>
         <Border HorizontalAlignment="Right" Width="30" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" Opacity="0.7" CornerRadius="0,5,5,0"/>
         <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,0,0" Width="30">
-            <TextBlock x:Name="uiTxtMediaIndex" FontSize="12" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}" HorizontalAlignment="Left"/>
+            <TextBlock x:Name="uiTxtMediaIndex" FontSize="12" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}" HorizontalAlignment="Left" Visibility="Hidden"/>
         </Border>
+        <mah:ProgressRing x:Name="uiMediaCountLoadingRing" HorizontalAlignment="Right" VerticalAlignment="Top" RenderTransformOrigin="0.8,0.1">
+            <mah:ProgressRing.RenderTransform>
+                <ScaleTransform ScaleX="0.3" ScaleY="0.3"/>
+            </mah:ProgressRing.RenderTransform>
+        </mah:ProgressRing>
         <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,3,30" Click="PrevMedia_Click">
             <Grid Style="{DynamicResource HoverEffect}" Background="#02000000">
                 <!--#02000000-->
@@ -65,6 +71,11 @@
                 </Grid.RenderTransform>
             </Grid>
         </Button>
+        <Slider x:Name="uiVolumeSlider" Minimum="0" Maximum="1" Style="{DynamicResource MahApps.Styles.Slider.Flat}" Thumb.DragCompleted="VolumeSlider_DragCompleted" PreviewMouseDown="DisableNonThumbInteraction" FocusVisualStyle="{x:Null}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,6,35" Orientation="Vertical" Height="70">
+            <Slider.RenderTransform>
+                <ScaleTransform ScaleX="0.5" ScaleY="1"/>
+            </Slider.RenderTransform>
+        </Slider>
         <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="25" Height="25" Margin="0,0,3,2" Click="MediaSliderFullscreen_Click">
             <Grid Style="{DynamicResource HoverEffect}"  Background="#02000000">
                 <Path Data="{StaticResource IconGameViewMaximize}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="-0.05,-0.05">

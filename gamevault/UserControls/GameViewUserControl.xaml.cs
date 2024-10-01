@@ -42,7 +42,7 @@ namespace gamevault.UserControls
         private YoutubeClient YoutubeClient { get; set; }
         private async Task PrepareMetadataMedia(GameMetadata data)
         {
-            List<string> MediaUrls = new List<string>();
+            List<Tuple<string, string>> MediaUrls = new List<Tuple<string, string>>();
             if (YoutubeClient == null)
             {
                 YoutubeClient = new YoutubeClient();
@@ -51,9 +51,9 @@ namespace gamevault.UserControls
             bool trailerPreloaded = false;
             bool gameplayPreloaded = false;
             if (data?.Trailers?.Count() > 0)
-            {             
-                string preloaded = await ConvertYoutubeLinkToEmbedded(data?.Trailers[0]);
-                if (preloaded != string.Empty)
+            {
+                var preloaded = await ConvertYoutubeLinkToEmbedded(data?.Trailers[0]);
+                if (preloaded != null)
                 {
                     trailerPreloaded = true;
                     MediaUrls.Add(preloaded);
@@ -61,9 +61,9 @@ namespace gamevault.UserControls
                 }
             }
             else if (data?.Gameplays?.Count() > 0)
-            {             
-                string preloaded = await ConvertYoutubeLinkToEmbedded(data?.Gameplays[0]);
-                if (preloaded != string.Empty)
+            {
+                var preloaded = await ConvertYoutubeLinkToEmbedded(data?.Gameplays[0]);
+                if (preloaded != null)
                 {
                     gameplayPreloaded = true;
                     MediaUrls.Add(preloaded);
@@ -77,8 +77,8 @@ namespace gamevault.UserControls
                 {
                     continue;//Prevent the first element from being reloaded
                 }
-                string url = await ConvertYoutubeLinkToEmbedded(data?.Trailers[i]);
-                if (url != string.Empty)
+                var url = await ConvertYoutubeLinkToEmbedded(data?.Trailers[i]);
+                if (url != null)
                 {
                     MediaUrls.Add(url);
                 }
@@ -89,15 +89,15 @@ namespace gamevault.UserControls
                 {
                     continue;//Prevent the first element from being reloaded
                 }
-                string url = await ConvertYoutubeLinkToEmbedded(data?.Gameplays[i]);
-                if (url != string.Empty)
+                var url = await ConvertYoutubeLinkToEmbedded(data?.Gameplays[i]);
+                if (url != null)
                 {
                     MediaUrls.Add(url);
                 }
             }
             for (int i = 0; i < data?.Screenshots?.Count(); i++)
             {
-                MediaUrls.Add(data?.Screenshots[i]);
+                MediaUrls.Add(new Tuple<string, string>(data?.Screenshots[i], ""));
             }
 
             uiMediaSlider.SetMediaList(MediaUrls);
@@ -106,23 +106,23 @@ namespace gamevault.UserControls
                 await uiMediaSlider.LoadFirstElement();
             }
         }
-        private async Task<string> ConvertYoutubeLinkToEmbedded(string input)
+        private async Task<Tuple<string, string>> ConvertYoutubeLinkToEmbedded(string input)
         {
             try
             {
                 if (input.Contains("youtu", StringComparison.OrdinalIgnoreCase))
                 {
                     var streamManifest = await YoutubeClient.Videos.Streams.GetManifestAsync(input);
-                    var streamInfo = streamManifest.GetVideoStreams().GetWithHighestVideoQuality();
-                    var streamUrl = streamInfo.Url;
-                    return streamUrl;
+                    var videoStreamInfo = streamManifest.GetVideoStreams().GetWithHighestVideoQuality();
+                    var audioStreamInfo = streamManifest.GetAudioStreams().GetWithHighestBitrate();
+                    return new Tuple<string, string>(videoStreamInfo.Url, audioStreamInfo.Url);
                 }
                 else
                 {
-                    return input;
+                    return new Tuple<string, string>(input, "");
                 }
             }
-            catch { return string.Empty; }
+            catch { return null; }
         }
         #endregion
 
@@ -194,7 +194,7 @@ namespace gamevault.UserControls
             }
             if (!this.IsVisible && loaded && !uiMediaSlider.IsWebViewNull())
             {
-                await uiMediaSlider.SaveMediaVolume();//Set this to unload event, so it will dispose even if the main control changes
+                //Set this to unload event, so it will dispose even if the main control changes
                 uiMediaSlider.Dispose();
             }
         }
