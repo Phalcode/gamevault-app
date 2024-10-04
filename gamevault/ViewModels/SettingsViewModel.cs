@@ -40,6 +40,7 @@ namespace gamevault.ViewModels
         private bool autoInstallPortable { get; set; }
         private bool autoDeletePortableGameFiles { get; set; }
         private bool retainLibarySortByAndOrderBy { get; set; }
+        private bool sendAnonymousAnalytics { get; set; }
         private string m_ServerUrl { get; set; }
         private float m_ImageCacheSize { get; set; }
         private float m_OfflineCacheSize { get; set; }
@@ -62,6 +63,7 @@ namespace gamevault.ViewModels
             m_AutoExtract = (Preferences.Get(AppConfigKey.AutoExtract, AppFilePath.UserFile) == "1"); OnPropertyChanged(nameof(AutoExtract));
             autoDeletePortableGameFiles = Preferences.Get(AppConfigKey.AutoDeletePortable, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(AutoDeletePortableGameFiles));
             retainLibarySortByAndOrderBy = Preferences.Get(AppConfigKey.RetainLibarySortByAndOrderBy, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(RetainLibarySortByAndOrderBy));
+            sendAnonymousAnalytics = Preferences.Get(AppConfigKey.SendAnonymousAnalytics, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(SendAnonymousAnalytics));
 
             string autoInstallPortableStr = Preferences.Get(AppConfigKey.AutoInstallPortable, AppFilePath.UserFile);
             if (string.IsNullOrWhiteSpace(autoInstallPortableStr) || autoInstallPortableStr == "1")
@@ -219,6 +221,21 @@ namespace gamevault.ViewModels
                 Preferences.Set(AppConfigKey.RetainLibarySortByAndOrderBy, stringValue, AppFilePath.UserFile);
             }
         }
+        public bool SendAnonymousAnalytics
+        {
+            get { return sendAnonymousAnalytics; }
+            set
+            {
+                sendAnonymousAnalytics = value;
+                OnPropertyChanged();
+                string stringValue = "1";
+                if (!sendAnonymousAnalytics)
+                {
+                    stringValue = "0";
+                }
+                Preferences.Set(AppConfigKey.SendAnonymousAnalytics, stringValue, AppFilePath.UserFile);
+            }
+        }
 
         public string ServerUrl
         {
@@ -249,7 +266,7 @@ namespace gamevault.ViewModels
         {
             get
             {
-                if(ignoreList==null)
+                if (ignoreList == null)
                 {
                     ignoreList = new string[0];
                 }

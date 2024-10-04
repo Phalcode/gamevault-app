@@ -125,16 +125,32 @@ namespace gamevault.UserControls
                     string currentShownUser = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/{selectedUserId}");
                     return JsonSerializer.Deserialize<User>(currentShownUser);
                 });
-                if (uiSortBy.SelectedIndex == 2)
+
+                string lastSort = TryGetLastProgressSort();
+                if (uiSortBy.SelectedValue?.ToString()?.Replace("\"", "") == lastSort)
                 {
-                    SortBy_SelectionChanged(null, new SelectionChangedEventArgs(Selector.SelectionChangedEvent, new string[0], new string[] { "Last played" }));
+                    SortBy_SelectionChanged(null, new SelectionChangedEventArgs(Selector.SelectionChangedEvent, new string[0], new string[] { lastSort }));
                 }
                 else
                 {
-                    uiSortBy.SelectedIndex = 2;
+                    uiSortBy.SelectedValue = lastSort;
                 }
+
             }
             catch (Exception ex) { MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex); }
+        }
+        private string TryGetLastProgressSort()
+        {
+            string result = Preferences.Get(AppConfigKey.LastCommunitySortBy, AppFilePath.UserFile);
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(result) && ViewModel.SortBy.Contains(result))
+                {
+                    return result;
+                }
+            }
+            catch { }
+            return "Last played"; //default is 'Last played'
         }
         private User[] BringCurrentUserToTop(User[] users)
         {
@@ -161,7 +177,6 @@ namespace gamevault.UserControls
                     case "Time played":
                         {
                             ViewModel.UserProgresses = ViewModel.UserProgresses.OrderByDescending(o => o.MinutesPlayed).ToList();
-
                         }
                         break;
                     case "Last played":
@@ -176,9 +191,13 @@ namespace gamevault.UserControls
                         break;
                 }
             }
+            if (sender != null)
+            {
+                Preferences.Set(AppConfigKey.LastCommunitySortBy, uiSortBy.SelectedValue.ToString().Replace("\"", ""), AppFilePath.UserFile);
+            }
         }
 
-        private void GameImage_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void GameImage_Click(object sender, RoutedEventArgs e)
         {
             if (((Progress)((FrameworkElement)sender).DataContext).Game == null)
             {
@@ -221,7 +240,7 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.OpenPopup(new UserSettingsUserControl(user) { Width = 1200, Height = 800, Margin = new Thickness(50) });
             }
         }
-        private async void DeleteProgress_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private async void DeleteProgress_Click(object sender, RoutedEventArgs e)
         {
             try
             {

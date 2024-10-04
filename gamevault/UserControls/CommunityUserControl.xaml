@@ -50,26 +50,30 @@
                             <TextBlock Text="{Binding Path=CurrentShownUser.FirstName}" FontSize="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="140,0,0,0"/>
                         </Grid>
                         <Grid HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,5,0">
-                            <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Right" Visibility="{Binding SelectedIndex,ElementName=uiSelectUser,Converter={StaticResource roleToVisConv}}" Background="Transparent" Cursor="Hand" Width="25" Height="25" Margin="0,0,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="UserEdit_Clicked">
-                                <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}">
-                                    <Path.RenderTransform>
-                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                    </Path.RenderTransform>
-                                </Path>
-                                <Grid.RenderTransform>
-                                    <ScaleTransform/>
-                                </Grid.RenderTransform>
-                            </Grid>
-                            <Grid x:Name="uiBtnReloadUser" Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Cursor="Hand" Width="25" Height="25" Margin="0,0,30,0" RenderTransformOrigin="0.5,0.5" ToolTip="Reload current user (F5)" MouseLeftButtonUp="ReloadUser_Clicked">
-                                <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}">
-                                    <Path.RenderTransform>
-                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                    </Path.RenderTransform>
-                                </Path>
-                                <Grid.RenderTransform>
-                                    <ScaleTransform/>
-                                </Grid.RenderTransform>
-                            </Grid>
+                            <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Top" HorizontalAlignment="Right" Visibility="{Binding SelectedIndex,ElementName=uiSelectUser,Converter={StaticResource roleToVisConv}}" Cursor="Hand" Width="25" Height="25" Click="UserEdit_Clicked">
+                                <Grid Style="{DynamicResource HoverEffect}"  Background="Transparent" RenderTransformOrigin="0.5,0.5">
+                                    <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}">
+                                        <Path.RenderTransform>
+                                            <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                        </Path.RenderTransform>
+                                    </Path>
+                                    <Grid.RenderTransform>
+                                        <ScaleTransform/>
+                                    </Grid.RenderTransform>
+                                </Grid>
+                            </Button>
+                            <Button Style="{StaticResource ButtonWrapper}"  x:Name="uiBtnReloadUser" VerticalAlignment="Top" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,30,0" ToolTip="Reload current user (F5)" Click="ReloadUser_Clicked">
+                                <Grid Style="{DynamicResource HoverEffect}" Background="Transparent" RenderTransformOrigin="0.5,0.5">
+                                    <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}">
+                                        <Path.RenderTransform>
+                                            <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                        </Path.RenderTransform>
+                                    </Path>
+                                    <Grid.RenderTransform>
+                                        <ScaleTransform/>
+                                    </Grid.RenderTransform>
+                                </Grid>
+                            </Button>
                         </Grid>
                         <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="320,0,10,0">
 
@@ -90,8 +94,10 @@
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <DockPanel LastChildFill="True" Height="18" Margin="0,0,0,0" >
-                                            <local:CacheImage ImageCacheType="GameCover" Data="{Binding}" CornerRadius="2" Width="15" Height="15" Cursor="Hand" MouseLeftButtonUp="GameImage_MouseLeftButtonUp"/>
+                                        <DockPanel LastChildFill="True" Height="18">
+                                            <Button Style="{StaticResource ButtonWrapper}" Width="15" Height="15" Cursor="Hand" Click="GameImage_Click">
+                                                <local:CacheImage ImageCacheType="GameCover" Data="{Binding}" CornerRadius="2"/>
+                                            </Button>
                                             <Grid>
                                                 <TextBlock  FontSize="3" Margin="1,3,5,0" Width="55">
                                                     <TextBlock.Style>
@@ -108,16 +114,18 @@
                                                         </Style>
                                                     </TextBlock.Style>
                                                 </TextBlock>
-                                                <Grid Style="{DynamicResource HoverEffect}" Visibility="{Binding SelectedIndex,ElementName=uiSelectUser,Converter={StaticResource roleToVisConv}}" Background="Transparent" Cursor="Hand" VerticalAlignment="Top" HorizontalAlignment="Right" Height="4" Width="3" Margin="0,3.5,0.5,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="DeleteProgress_Click">
-                                                    <Path Data="{StaticResource IconTrash}" Fill="IndianRed" Margin="0,0.3,-17,-17">
-                                                        <Path.RenderTransform>
-                                                            <ScaleTransform ScaleX="0.13" ScaleY="0.13"/>
-                                                        </Path.RenderTransform>
-                                                    </Path>
-                                                    <Grid.RenderTransform>
-                                                        <ScaleTransform/>
-                                                    </Grid.RenderTransform>
-                                                </Grid>
+                                                <Button Style="{StaticResource ButtonWrapper}" Visibility="{Binding SelectedIndex,ElementName=uiSelectUser,Converter={StaticResource roleToVisConv}}" Cursor="Hand" VerticalAlignment="Top" HorizontalAlignment="Right" Height="4" Width="3" Margin="0,3.5,0.5,0" Click="DeleteProgress_Click">
+                                                    <Grid Style="{DynamicResource HoverEffect}"  Background="Transparent" RenderTransformOrigin="0.5,0.5">
+                                                        <Path Data="{StaticResource IconTrash}" Fill="IndianRed" Margin="0,0.3,-17,-17">
+                                                            <Path.RenderTransform>
+                                                                <ScaleTransform ScaleX="0.13" ScaleY="0.13"/>
+                                                            </Path.RenderTransform>
+                                                        </Path>
+                                                        <Grid.RenderTransform>
+                                                            <ScaleTransform/>
+                                                        </Grid.RenderTransform>
+                                                    </Grid>
+                                                </Button>
                                                 <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,1,3">
                                                     <TextBlock Text="{Binding Path=MinutesPlayed,StringFormat='{}Time played: {0}',Converter={StaticResource gameTimeConv}}" FontSize="2">
                                                         <TextBlock.ToolTip>

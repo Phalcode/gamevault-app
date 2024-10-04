@@ -355,8 +355,7 @@ namespace gamevault.UserControls
             return string.Format("{0:00}:{1:00}:{2:00}", ((int)t.TotalHours), t.Minutes, t.Seconds);
         }
 
-
-        private async void DeleteFile_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private async void DeleteFile_Click(object sender, RoutedEventArgs e)
         {
             await DeleteFile(confirm: true);
         }
@@ -401,14 +400,13 @@ namespace gamevault.UserControls
                 }
             }
         }
-
-        private void OpenDirectory_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void OpenDirectory_Click(object sender, RoutedEventArgs e)
         {
             if (Directory.Exists(m_DownloadPath))
                 Process.Start("explorer.exe", m_DownloadPath);
         }
 
-        private void GameImage_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void GameImage_Click(object sender, RoutedEventArgs e)
         {
             MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(ViewModel.Game, LoginManager.Instance.IsLoggedIn()));
         }
@@ -768,5 +766,6 @@ namespace gamevault.UserControls
             ViewModel.Game = null;
             ViewModel.Game = temp;
         }
+
     }
 }

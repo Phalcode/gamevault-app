@@ -161,6 +161,11 @@ namespace gamevault.UserControls
             PrepareMarkdownElements();
             this.IsEnabled = true;
         }
+        public void RefreshGame(Game game)
+        {
+            ViewModel.Game = game;
+            PrepareMarkdownElements();
+        }
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             this.Focus();
@@ -229,7 +234,7 @@ namespace gamevault.UserControls
         {
             InstallUserControl.PlayGame(ViewModel.Game.ID);
         }
-        private void GameSettings_Click(object sender, MouseButtonEventArgs e)
+        private void GameSettings_Click(object sender, RoutedEventArgs e)
         {
             if (ViewModel.Game == null)
                 return;
@@ -237,7 +242,7 @@ namespace gamevault.UserControls
             uiMediaSlider.UnloadMediaSlider();
             MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(ViewModel.Game) { Width = 1200, Height = 800, Margin = new Thickness(50) });
         }
-        private async void GameDownload_Click(object sender, MouseButtonEventArgs e)
+        private async void GameDownload_Click(object sender, RoutedEventArgs e)
         {
             if (ViewModel.Game == null)
                 return;
@@ -286,10 +291,6 @@ namespace gamevault.UserControls
             {
                 MainWindowViewModel.Instance.Community.ShowUser(selectedProgress.User);
             }
-        }
-        public void RefreshGame(Game game)
-        {
-            ViewModel.Game = game;
         }
         private void GameTitle_Click(object sender, MouseButtonEventArgs e)
         {
@@ -361,7 +362,7 @@ namespace gamevault.UserControls
             }
             catch { }
         }
-        private void Share_Click(object sender, MouseButtonEventArgs e)
+        private void Share_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -385,23 +386,25 @@ namespace gamevault.UserControls
         }
         private void PrepareMarkdownElements()
         {
-            if (!string.IsNullOrWhiteSpace(ViewModel?.Game?.Metadata?.Description))
+            try
             {
-                try
+                if (ViewModel?.Game?.Metadata?.Description != null)
                 {
                     ViewModel.DescriptionMarkdown = ViewModel.Game.Metadata.Description;
                 }
-                catch { }
             }
-            if (!string.IsNullOrWhiteSpace(ViewModel?.Game?.Metadata?.Notes))
+            catch { }
+            try
             {
-                try
+                if (ViewModel?.Game?.Metadata?.Notes != null)
                 {
                     ViewModel.NotesMarkdown = ViewModel.Game.Metadata.Notes;
                 }
-                catch { }
             }
+            catch { }
         }
         #endregion
+
+
     }
 }

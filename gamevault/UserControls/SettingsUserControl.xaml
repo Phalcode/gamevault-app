@@ -142,7 +142,7 @@
                                 <local:IconButton Text="Clear offline cache" FontSize="15" Icon="{StaticResource IconCleanup}" IconScale="0.08" IconMargin="-110,-100,-105,-100" Width="175" Height="30" HorizontalAlignment="Left" Click="ClearOfflineCache_Clicked" ToolTip="Clears the entire offline cache"/>
                                 <TextBlock Text="{Binding OfflineCacheSize,Converter={StaticResource sizeConv},StringFormat={}({0})}" FontSize="20" Margin="10,0,0,0"/>
                             </StackPanel>
-                            <GroupBox Header="ignored Executables" Margin="0,15,20,0" mah:ControlsHelper.CornerRadius="5">
+                            <GroupBox Header="ignored Executables" Margin="10,15,20,0" mah:ControlsHelper.CornerRadius="5">
                                 <Grid>
                                     <TextBox mah:ControlsHelper.CornerRadius="5" Text="{Binding IgnoreList,Converter={StaticResource stringToArrayConv},ConverterParameter=','}" mah:TextBoxHelper.Watermark="Edit ignorelist (seperate entries by comma)" Margin="0,0,120,0" TextWrapping="Wrap"/>
                                     <StackPanel>
@@ -151,6 +151,8 @@
                                     </StackPanel>
                                 </Grid>
                             </GroupBox>
+                            <TextBlock Text="Help Us Improve" FontSize="20" FontWeight="Bold" Margin="0,10,0,0"/>
+                            <mah:ToggleSwitch Header="Send anonymous usage reports to Phalcode to help us improve your experience." Margin="10,10,0,0" IsOn="{Binding SendAnonymousAnalytics}"/>
                         </StackPanel>
                     </StackPanel>
                 </TabItem>

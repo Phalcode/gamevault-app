@@ -42,7 +42,7 @@
             </local:CacheImage>
         </Viewbox>
         <Grid Background="{DynamicResource GameVault.Brushes.Blur}"/>
-       
+
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -50,7 +50,7 @@
                     <ColumnDefinition Width="4*" />
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-               
+
                 <Viewbox Grid.Column="1" VerticalAlignment="Top" MaxWidth="1200">
                     <Grid Background="Transparent" Margin="0,70,0,0" Height="881">
                         <Grid.ColumnDefinitions>
@@ -138,42 +138,46 @@
                                             </Style>
                                         </Grid.Style>
                                     </Grid>
-                                    <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Left" Background="#02000000"  Cursor="Hand" Width="35" Height="35" Margin="0,0,0,0" MouseLeftButtonUp="GameDownload_Click">
-                                        <Grid.ToolTip>
-                                            <TextBlock Text="{Binding Game.DownloadCount,StringFormat='{}Downloaded {0} times'}"/>
-                                        </Grid.ToolTip>
-                                        <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.00,0.2">
-                                            <Path.Style>
-                                                <Style TargetType="Path">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsDownloaded}" Value="True">
-                                                            <Setter Property="Data" Value="{StaticResource IconReDownload}"/>
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding IsDownloaded}" Value="False">
-                                                            <Setter Property="Data" Value="{StaticResource IconDownload}"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Path.Style>
-                                            <Path.RenderTransform>
-                                                <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
-                                            </Path.RenderTransform>
-                                        </Path>
-                                        <TextBlock Text="{Binding Path=Game.Size,Converter={StaticResource sizeConv}}" Margin="0,0,0,0" FontSize="7" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
-                                        <Grid.RenderTransform>
-                                            <ScaleTransform/>
-                                        </Grid.RenderTransform>
-                                    </Grid>
-                                    <Grid Style="{DynamicResource HoverEffect}" Visibility="{Binding IsInstalled,Converter={StaticResource settingsPermRoleVisConv}}" VerticalAlignment="Top" HorizontalAlignment="Left"  Cursor="Hand" Width="35" Height="35" Margin="15,0,0,0" Background="#02000000" MouseLeftButtonUp="GameSettings_Click">
-                                        <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="-0.00,0.01">
-                                            <Path.RenderTransform>
-                                                <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
-                                            </Path.RenderTransform>
-                                        </Path>
-                                        <Grid.RenderTransform>
-                                            <ScaleTransform/>
-                                        </Grid.RenderTransform>
-                                    </Grid>
+                                    <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Top" HorizontalAlignment="Left" Cursor="Hand" Width="35" Height="35" Click="GameDownload_Click">
+                                        <Grid Style="{DynamicResource HoverEffect}" Background="#02000000">
+                                            <Grid.ToolTip>
+                                                <TextBlock Text="{Binding Game.DownloadCount,StringFormat='{}Downloaded {0} times'}"/>
+                                            </Grid.ToolTip>
+                                            <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.00,0.2">
+                                                <Path.Style>
+                                                    <Style TargetType="Path">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsDownloaded}" Value="True">
+                                                                <Setter Property="Data" Value="{StaticResource IconReDownload}"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding IsDownloaded}" Value="False">
+                                                                <Setter Property="Data" Value="{StaticResource IconDownload}"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Path.Style>
+                                                <Path.RenderTransform>
+                                                    <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+                                                </Path.RenderTransform>
+                                            </Path>
+                                            <TextBlock Text="{Binding Path=Game.Size,Converter={StaticResource sizeConv}}" Margin="0,0,0,0" FontSize="7" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
+                                            <Grid.RenderTransform>
+                                                <ScaleTransform/>
+                                            </Grid.RenderTransform>
+                                        </Grid>
+                                    </Button>
+                                    <Button Style="{StaticResource ButtonWrapper}" Visibility="{Binding IsInstalled,Converter={StaticResource settingsPermRoleVisConv}}" VerticalAlignment="Top" HorizontalAlignment="Left"  Cursor="Hand" Width="35" Height="35" Margin="15,0,0,0" Click="GameSettings_Click">
+                                        <Grid Style="{DynamicResource HoverEffect}"  Background="#02000000">
+                                            <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="-0.00,0.01">
+                                                <Path.RenderTransform>
+                                                    <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+                                                </Path.RenderTransform>
+                                            </Path>
+                                            <Grid.RenderTransform>
+                                                <ScaleTransform/>
+                                            </Grid.RenderTransform>
+                                        </Grid>
+                                    </Button>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
                                     <StackPanel.Style>
@@ -215,16 +219,18 @@
                                             </Style>
                                         </ToggleButton.Style>
                                     </ToggleButton>
-                                    <Grid Style="{DynamicResource HoverEffect}"  Cursor="Hand" Width="35" Height="35" Margin="10,0,0,0" Background="#02000000" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="Share_Click">
-                                        <Path Data="{StaticResource IconGameViewShare}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.03,0.01">
-                                            <Path.RenderTransform>
-                                                <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
-                                            </Path.RenderTransform>
-                                        </Path>
-                                        <Grid.RenderTransform>
-                                            <ScaleTransform/>
-                                        </Grid.RenderTransform>
-                                    </Grid>
+                                    <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" Width="35" Height="35" Margin="10,0,0,0" Click="Share_Click">
+                                        <Grid Style="{DynamicResource HoverEffect}" Background="#02000000" RenderTransformOrigin="0.5,0.5">
+                                            <Path Data="{StaticResource IconGameViewShare}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.03,0.01">
+                                                <Path.RenderTransform>
+                                                    <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+                                                </Path.RenderTransform>
+                                            </Path>
+                                            <Grid.RenderTransform>
+                                                <ScaleTransform/>
+                                            </Grid.RenderTransform>
+                                        </Grid>
+                                    </Button>
                                 </StackPanel>
                             </Grid>
                             <ScrollViewer helper:ScrollViewerHelper.ScrollBarHeight="0" helper:ScrollViewerHelper.EnableHorizontalScroll="True" HorizontalAlignment="Left" Margin="0,5,0,0" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">

@@ -192,6 +192,9 @@ namespace gamevault.UserControls
         }
         private async Task ResizeMediaSlider()
         {
+            if (uiWebView == null || uiWebView.CoreWebView2 == null)
+                return;
+
             await uiWebView.CoreWebView2.ExecuteScriptAsync(resizescript);
         }
         private async Task MediaSliderNavigate(string url)

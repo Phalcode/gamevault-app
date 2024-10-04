@@ -55,26 +55,30 @@
                                     </TextBlock.Text>
                                 </TextBlock>
                                 <TextBox HorizontalAlignment="Center" Width="378" Margin="0,4,45,4" Style="{DynamicResource SearchTextBox}" TextChanged="Search_TextChanged"/>
-                                <Grid x:Name="uiBtnReloadLibrary" Style="{DynamicResource HoverEffect}" Background="Transparent" Height="25" Width="25" Margin="394,0,0,0" Cursor="Hand" ToolTip="Reload Library (F5)" MouseLeftButtonDown="ReloadLibrary_Click">
-                                    <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.IdealForeground}" Margin="0,0.6,0,0" RenderTransformOrigin="0.5,0.5">
-                                        <Path.RenderTransform>
-                                            <ScaleTransform ScaleX="1.51" ScaleY="1.51"/>
-                                        </Path.RenderTransform>
-                                    </Path>
-                                    <Grid.RenderTransform>
-                                        <ScaleTransform/>
-                                    </Grid.RenderTransform>
-                                </Grid>
-                                <Grid Style="{DynamicResource HoverEffect}" Background="Transparent" Height="30" Width="33" Margin="480,0,0,0" Cursor="Hand" ToolTip="I'm Feeling Lucky" MouseLeftButtonDown="RandomGame_Click">
-                                    <Path Data="{StaticResource IconLibraryDices}" Fill="{DynamicResource MahApps.Brushes.IdealForeground}" Margin="-229,-229,-227,-227" RenderTransformOrigin="0.5,0.5">
-                                        <Path.RenderTransform>
-                                            <ScaleTransform ScaleX="0.057" ScaleY="0.057"/>
-                                        </Path.RenderTransform>
-                                    </Path>
-                                    <Grid.RenderTransform>
-                                        <ScaleTransform/>
-                                    </Grid.RenderTransform>
-                                </Grid>
+                                <Button Style="{StaticResource ButtonWrapper}" x:Name="uiBtnReloadLibrary" Height="25" Width="25" Margin="394,0,0,0" Cursor="Hand" ToolTip="Reload Library (F5)" Click="ReloadLibrary_Click">
+                                    <Grid  Style="{DynamicResource HoverEffect}" Background="Transparent">
+                                        <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.IdealForeground}" Margin="0,0.6,0,0" RenderTransformOrigin="0.5,0.5">
+                                            <Path.RenderTransform>
+                                                <ScaleTransform ScaleX="1.51" ScaleY="1.51"/>
+                                            </Path.RenderTransform>
+                                        </Path>
+                                        <Grid.RenderTransform>
+                                            <ScaleTransform/>
+                                        </Grid.RenderTransform>
+                                    </Grid>
+                                </Button>
+                                <Button Style="{StaticResource ButtonWrapper}" Height="30" Width="33" Margin="480,0,0,0" Cursor="Hand" ToolTip="I'm Feeling Lucky" Click="RandomGame_Click">
+                                    <Grid Style="{DynamicResource HoverEffect}" Background="Transparent">
+                                        <Path Data="{StaticResource IconLibraryDices}" Fill="{DynamicResource MahApps.Brushes.IdealForeground}" Margin="-229,-229,-227,-227" RenderTransformOrigin="0.5,0.5">
+                                            <Path.RenderTransform>
+                                                <ScaleTransform ScaleX="0.057" ScaleY="0.057"/>
+                                            </Path.RenderTransform>
+                                        </Path>
+                                        <Grid.RenderTransform>
+                                            <ScaleTransform/>
+                                        </Grid.RenderTransform>
+                                    </Grid>
+                                </Button>
                                 <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" Width="30" Margin="0,0,40,0" Cursor="Hand" ToolTip="Clear all Filters" Background="Transparent" MouseLeftButtonDown="ClearAllFilters_Click">
                                     <Path Data="m11.25 4.75l-6.5 6.5m0-6.5l6.5 6.5" Stroke="IndianRed" StrokeThickness="2" RenderTransformOrigin="0.04,0.02">
                                         <Path.RenderTransform>

@@ -38,7 +38,9 @@ namespace gamevault.Models
         NewsHash,
         RetainLibarySortByAndOrderBy,
         LastLibrarySortBy,
-        LastLibraryOrderBy
+        LastLibraryOrderBy,
+        SendAnonymousAnalytics,
+        LastCommunitySortBy
     }
     public static class AppFilePath
     {

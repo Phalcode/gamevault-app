@@ -113,7 +113,7 @@ namespace gamevault.UserControls
             }
         }
 
-        private async void DeleteUser_Clicked(object sender, MouseButtonEventArgs e)
+        private async void DeleteUser_Clicked(object sender, RoutedEventArgs e)
         {
 
             User selectedUser = (User)((FrameworkElement)sender).DataContext;
@@ -153,8 +153,7 @@ namespace gamevault.UserControls
             });
             this.IsEnabled = true;
         }
-
-        private void EditUser_Clicked(object sender, MouseButtonEventArgs e)
+        private void EditUser_Clicked(object sender, RoutedEventArgs e)
         {
             User user = JsonSerializer.Deserialize<User>(JsonSerializer.Serialize((User)((FrameworkElement)sender).DataContext));//Dereference
             MainWindowViewModel.Instance.OpenPopup(new UserSettingsUserControl(user) { Width = 1200, Height = 800, Margin = new Thickness(50) });
@@ -207,7 +206,7 @@ namespace gamevault.UserControls
             await InitUserList();
         }
 
-        private void ShowUser_Click(object sender, MouseButtonEventArgs e)
+        private void ShowUser_Click(object sender, RoutedEventArgs e)
         {
             User selectedUser = ((FrameworkElement)sender).DataContext as User;
             MainWindowViewModel.Instance.Community.ShowUser(selectedUser);
@@ -275,5 +274,7 @@ namespace gamevault.UserControls
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
             e.Handled = true;
         }
+
+
     }
 }

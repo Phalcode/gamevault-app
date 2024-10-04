@@ -327,7 +327,7 @@ namespace gamevault.UserControls
         }
 
 
-        private async void RandomGame_Click(object sender, MouseButtonEventArgs e)
+        private async void RandomGame_Click(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
             ((FrameworkElement)sender).IsEnabled = false;

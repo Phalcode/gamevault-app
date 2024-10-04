@@ -123,7 +123,7 @@ namespace gamevault.Windows
             }
         }
 
-        private void UserAvatar_Clicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void UserAvatar_Clicked(object sender, RoutedEventArgs e)
         {
             MainWindowViewModel.Instance.Community.ShowUser(LoginManager.Instance.GetCurrentUser());
         }
@@ -218,7 +218,7 @@ namespace gamevault.Windows
         {
             try
             {
-                System.Windows.Clipboard.SetText(MainWindowViewModel.Instance.AppBarText);               
+                System.Windows.Clipboard.SetText(MainWindowViewModel.Instance.AppBarText);
             }
             catch { }
         }
