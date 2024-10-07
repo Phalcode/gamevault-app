@@ -230,7 +230,7 @@ namespace gamevault.UserControls
         {
             MainWindowViewModel.Instance.UndoActiveControl();
         }
-        private void GamePlay_Click(object sender, MouseButtonEventArgs e)
+        private void GamePlay_Click(object sender, RoutedEventArgs e)
         {
             InstallUserControl.PlayGame(ViewModel.Game.ID);
         }

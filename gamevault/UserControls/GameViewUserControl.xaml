@@ -118,17 +118,19 @@
                                             </Style.Triggers>
                                         </Style>
                                     </StackPanel.Style>
-                                    <Grid VerticalAlignment="Top" HorizontalAlignment="Left" Background="#02000000" Cursor="Hand" Width="35" Height="35" Margin="0,0,15,0" MouseLeftButtonUp="GamePlay_Click">
-                                        <Path Data="{StaticResource IconPlay}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.22,0.18">
-                                            <Path.RenderTransform>
-                                                <ScaleTransform ScaleX="2" ScaleY="2"/>
-                                            </Path.RenderTransform>
-                                        </Path>
-                                        <Grid.RenderTransform>
-                                            <ScaleTransform/>
-                                        </Grid.RenderTransform>
-                                        <Grid.Style>
-                                            <Style TargetType="Grid" BasedOn="{StaticResource HoverEffect}">
+                                    <Button VerticalAlignment="Top" HorizontalAlignment="Left" Cursor="Hand" Width="35" Height="35" Margin="0,0,15,0" Click="GamePlay_Click">
+                                        <Grid Style="{StaticResource HoverEffect}" Background="#02000000">
+                                            <Path Data="{StaticResource IconPlay}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.22,0.18">
+                                                <Path.RenderTransform>
+                                                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                                </Path.RenderTransform>
+                                            </Path>
+                                            <Grid.RenderTransform>
+                                                <ScaleTransform/>
+                                            </Grid.RenderTransform>
+                                        </Grid>
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource ButtonWrapper}">
                                                 <Setter Property="Visibility" Value="Collapsed"/>
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding IsInstalled}" Value="True">
@@ -136,8 +138,8 @@
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
-                                        </Grid.Style>
-                                    </Grid>
+                                        </Button.Style>
+                                    </Button>
                                     <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Top" HorizontalAlignment="Left" Cursor="Hand" Width="35" Height="35" Click="GameDownload_Click">
                                         <Grid Style="{DynamicResource HoverEffect}" Background="#02000000">
                                             <Grid.ToolTip>

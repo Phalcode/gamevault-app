@@ -71,7 +71,7 @@ namespace gamevault
             base.OnStartup(e);
             AnalyticsHelper.Instance.InitHeartBeat();
             AnalyticsHelper.Instance.RegisterGlobalEvents();
-            AnalyticsHelper.Instance.SendAppInitialized();
+            AnalyticsHelper.Instance.SendCustomEvent("APP_INITIALIZED", AnalyticsHelper.Instance.GetSysInfo());
         }
 
         private async void Application_Startup(object sender, StartupEventArgs e)

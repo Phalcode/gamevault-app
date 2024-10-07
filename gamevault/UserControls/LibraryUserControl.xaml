@@ -463,5 +463,6 @@
                 </Viewbox>
             </StackPanel>
         </ScrollViewer>
+        <MediaElement x:Name="uiImgRandom" Volume="0" LoadedBehavior="Play" Panel.ZIndex="1000" Grid.Row="0" Grid.RowSpan="2" Visibility="Collapsed"/>
     </Grid>
 </UserControl>

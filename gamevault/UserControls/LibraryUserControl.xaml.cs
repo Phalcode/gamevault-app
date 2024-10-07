@@ -13,6 +13,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 using Windows.Gaming.Input;
 
 namespace gamevault.UserControls
@@ -331,22 +332,40 @@ namespace gamevault.UserControls
         {
             e.Handled = true;
             ((FrameworkElement)sender).IsEnabled = false;
-            Game? result = await Task<Game>.Run(() =>
+            Random random = new Random();
+            if (random.Next(0, 100) < 7)
             {
                 try
                 {
-                    string randomGame = WebHelper.GetRequest($"{SettingsViewModel.Instance.ServerUrl}/api/games/random");
-                    return JsonSerializer.Deserialize<Game>(randomGame);
+                    uiImgRandom.Source = new Uri("https://phalco.de/images/gamevault/eastereggs/777.mp4");
+                    uiImgRandom.Visibility = Visibility.Visible;
+                    DispatcherTimer timer = new DispatcherTimer();
+                    timer.Interval = TimeSpan.FromMilliseconds(6000);
+                    timer.Tick += (s, e) => { timer.Stop(); uiImgRandom.Source = null; uiImgRandom.Visibility = Visibility.Collapsed; Process.Start(new ProcessStartInfo("https://www.ncpgambling.org/help-treatment/") { UseShellExecute = true }); };
+                    timer.Start();
+                    AnalyticsHelper.Instance.SendCustomEvent("EASTER_EGG", new { name = "777" });
                 }
-                catch (Exception ex)
-                {
-                    MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
-                    return null;
-                }
-            });
-            if (result != null)
+                catch { }
+            }
+            else
             {
-                MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(result, true));
+                Game? result = await Task<Game>.Run(() =>
+                {
+                    try
+                    {
+                        string randomGame = WebHelper.GetRequest($"{SettingsViewModel.Instance.ServerUrl}/api/games/random");
+                        return JsonSerializer.Deserialize<Game>(randomGame);
+                    }
+                    catch (Exception ex)
+                    {
+                        MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
+                        return null;
+                    }
+                });
+                if (result != null)
+                {
+                    MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(result, true));
+                }
             }
             ((FrameworkElement)sender).IsEnabled = true;
         }

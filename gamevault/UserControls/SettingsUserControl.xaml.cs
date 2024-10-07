@@ -337,11 +337,8 @@ namespace gamevault.UserControls
         private void Awesome_Click(object sender, MouseButtonEventArgs e)
         {
             ((FrameworkElement)sender).IsEnabled = false;
-#if DEBUG
-            imgAwesome.Data = "https://test.phalco.de/images/gamevault/eastereggs/awesome.gif";
-#else
             imgAwesome.Data = "https://phalco.de/images/gamevault/eastereggs/awesome.gif";
-#endif
+            AnalyticsHelper.Instance.SendCustomEvent("EASTER_EGG", new { name = "awesome" });
         }
 
         private void ExtractionPasswordSave_Click(object sender, RoutedEventArgs e)

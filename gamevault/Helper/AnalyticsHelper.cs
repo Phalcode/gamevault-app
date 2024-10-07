@@ -189,14 +189,14 @@ namespace gamevault.Helper
             var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { ExceptionType = ex.GetType().ToString(), ExceptionMessage = $"Message:{ex.Message} | InnerException:{ex.InnerException?.Message} | StackTrace:{ex.StackTrace?.Substring(0, 2000)} | Is Windows Package: {(App.IsWindowsPackage == true ? "True" : "False")}", Timezone = timeZone, Language = language }), Encoding.UTF8, "application/json");
             await client.PostAsync(AnalyticsTargets.ER, jsonContent);
         }
-        public void SendAppInitialized()
+        public void SendCustomEvent(string eventName, object meta)
         {
             if (!trackingEnabled) return;
             Task.Run(async () =>
             {
                 try
                 {
-                    var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { Event = "APP_INITIALIZED", Metadata = GetSysInfo(), Timezone = timeZone, Language = language }), Encoding.UTF8, "application/json");
+                    var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { Event = eventName, Metadata = meta, Timezone = timeZone, Language = language }), Encoding.UTF8, "application/json");
                     await client.PostAsync(AnalyticsTargets.CU, jsonContent);
                 }
                 catch { }
@@ -281,7 +281,7 @@ namespace gamevault.Helper
             public static string HB => Encoding.UTF8.GetString(Convert.FromBase64String("aHR0cHM6Ly9hbmFseXRpY3MucGxhdGZvcm0ucGhhbGNvLmRlL2xvZy9oYg=="));
             public static string LG => Encoding.UTF8.GetString(Convert.FromBase64String("aHR0cHM6Ly9hbmFseXRpY3MucGxhdGZvcm0ucGhhbGNvLmRlL2xvZw=="));
             public static string CU => Encoding.UTF8.GetString(Convert.FromBase64String("aHR0cHM6Ly9hbmFseXRpY3MucGxhdGZvcm0ucGhhbGNvLmRlL2xvZy9jdXN0b20="));
-            public static string ER => Encoding.UTF8.GetString(Convert.FromBase64String("aHR0cHM6Ly9hbmFseXRpY3MucGxhdGZvcm0ucGhhbGNvLmRlL2Vycm9y"));
+            public static string ER => Encoding.UTF8.GetString(Convert.FromBase64String("aHR0cHM6Ly9hbmFseXRpY3MucGxhdGZvcm0ucGhhbGNvLmRlL2xvZy9lcnJvcg=="));
         }
     }
 }
