@@ -63,7 +63,9 @@ namespace gamevault.ViewModels
             m_AutoExtract = (Preferences.Get(AppConfigKey.AutoExtract, AppFilePath.UserFile) == "1"); OnPropertyChanged(nameof(AutoExtract));
             autoDeletePortableGameFiles = Preferences.Get(AppConfigKey.AutoDeletePortable, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(AutoDeletePortableGameFiles));
             retainLibarySortByAndOrderBy = Preferences.Get(AppConfigKey.RetainLibarySortByAndOrderBy, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(RetainLibarySortByAndOrderBy));
-            sendAnonymousAnalytics = Preferences.Get(AppConfigKey.SendAnonymousAnalytics, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(SendAnonymousAnalytics));
+
+            string analyticsPreference = Preferences.Get(AppConfigKey.SendAnonymousAnalytics, AppFilePath.UserFile);
+            sendAnonymousAnalytics = (analyticsPreference == "" || analyticsPreference == "1"); OnPropertyChanged(nameof(SendAnonymousAnalytics));
 
             string autoInstallPortableStr = Preferences.Get(AppConfigKey.AutoInstallPortable, AppFilePath.UserFile);
             if (string.IsNullOrWhiteSpace(autoInstallPortableStr) || autoInstallPortableStr == "1")

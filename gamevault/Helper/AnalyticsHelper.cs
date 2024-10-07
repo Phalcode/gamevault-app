@@ -247,11 +247,11 @@ namespace gamevault.Helper
         public object GetSysInfo()
         {
             var OS = new ManagementObjectSearcher("select * from Win32_OperatingSystem").Get().Cast<ManagementObject>().First();
-            string os = $"OS: {OS["Caption"]} - {OS["OSArchitecture"]} - Version.{OS["Version"]}"; os = os.Replace("NT 5.1.2600", "XP"); os = os.Replace("NT 5.2.3790", "Server 2003");
-            string ram = $"RAM: {OS["TotalVisibleMemorySize"]} KB";
+            string os = $"{OS["Caption"]} - {OS["OSArchitecture"]} - Version.{OS["Version"]}"; os = os.Replace("NT 5.1.2600", "XP"); os = os.Replace("NT 5.2.3790", "Server 2003");
+            string ram = $"{OS["TotalVisibleMemorySize"]} KB";
             var CPU = new ManagementObjectSearcher("select * from Win32_Processor").Get().Cast<ManagementObject>().First();
-            string cpu = $"CPU: {CPU["Name"]} - {CPU["MaxClockSpeed"]} MHz - {CPU["NumberOfCores"]} Core";
-            return new { hardware_os = os, hardware_ram = ram, hardware_cpu = cpu, };
+            string cpu = $"{CPU["Name"]} - {CPU["MaxClockSpeed"]} MHz - {CPU["NumberOfCores"]} Core";
+            return new { app_version = SettingsViewModel.Instance.Version, hardware_os = os, hardware_ram = ram, hardware_cpu = cpu, };
         }
         private class AnalyticsData
         {
