@@ -5,10 +5,12 @@ using System;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Management;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
@@ -48,7 +50,6 @@ namespace gamevault.Helper
         }
         #endregion
         private Timer _heartBeatTimer;
-        private string IP = "";
         private string timeZone;
         private string language;
         private HttpClient client;
@@ -60,11 +61,6 @@ namespace gamevault.Helper
                 return;
 
             client = new HttpClient();
-            try
-            {
-                IP = client.GetStringAsync("https://api.ipify.org").Result;
-            }
-            catch { }
             client.DefaultRequestHeaders.UserAgent.Clear();
             client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Mozilla", "5.0"));
             client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("(Windows NT 10.0; Win64; x64)"));
@@ -72,7 +68,6 @@ namespace gamevault.Helper
             client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("(KHTML, like Gecko)"));
             client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Chrome", "129.0.0.0"));
             client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Safari", "537.36"));
-            client.DefaultRequestHeaders.Add("X-Client-IP-Address", IP);
             try
             {
                 TimeZoneInfo.TryConvertWindowsIdToIanaId(TimeZoneInfo.Local.Id, RegionInfo.CurrentRegion.TwoLetterISORegionName, out timeZone);
@@ -89,7 +84,7 @@ namespace gamevault.Helper
         }
         private void HeartBeat(object state)
         {
-            SendHeartBeat("https://analytics.platform.phalco.de/log/hb");
+            SendHeartBeat(AnalyticsTargets.HB);
         }
         internal void RegisterGlobalEvents()
         {
@@ -108,7 +103,7 @@ namespace gamevault.Helper
                 {
                     string methodName = ParseMethodName(button);
                     var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { Event = "BUTTON_CLICK", Metadata = new { Path = methodName }, Timezone = timeZone, Language = language }), Encoding.UTF8, "application/json");
-                    await client.PostAsync("https://analytics.platform.phalco.de/log/custom", jsonContent);
+                    await client.PostAsync(AnalyticsTargets.CU, jsonContent);
                 }
             }
             catch { }
@@ -160,7 +155,7 @@ namespace gamevault.Helper
             }
             return string.Empty;
         }
-        private async void SendHeartBeat(string url)
+        private async Task SendHeartBeat(string url)
         {
             try
             {
@@ -171,7 +166,7 @@ namespace gamevault.Helper
             catch (Exception e) { }
 
         }
-        public async void SendPageView(UserControl page, UserControl prevPage)
+        public async Task SendPageView(UserControl page, UserControl prevPage)
         {
             if (!trackingEnabled)
                 return;
@@ -181,10 +176,31 @@ namespace gamevault.Helper
                 string pageString = ParseUserControl(page);
                 string prevPageString = ParseUserControl(prevPage);
                 var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { Timezone = timeZone, CurrentPage = pageString, PreviousPage = prevPageString, Language = language }), Encoding.UTF8, "application/json");
-                await client.PostAsync("https://analytics.platform.phalco.de/log", jsonContent);
+                await client.PostAsync(AnalyticsTargets.LG, jsonContent);
             }
             catch (Exception e) { }
 
+        }
+        public async Task SendErrorLog(Exception ex)
+        {
+            if (!trackingEnabled)
+                return;
+
+            var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { ExceptionType = ex.GetType().ToString(), ExceptionMessage = $"Message:{ex.Message} | InnerException:{ex.InnerException?.Message} | StackTrace:{ex.StackTrace?.Substring(0, 2000)} | Is Windows Package: {(App.IsWindowsPackage == true ? "True" : "False")}", Timezone = timeZone, Language = language }), Encoding.UTF8, "application/json");
+            await client.PostAsync(AnalyticsTargets.ER, jsonContent);
+        }
+        public void SendAppInitialized()
+        {
+            if (!trackingEnabled) return;
+            Task.Run(async () =>
+            {
+                try
+                {
+                    var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { Event = "APP_INITIALIZED", Metadata = GetSysInfo(), Timezone = timeZone, Language = language }), Encoding.UTF8, "application/json");
+                    await client.PostAsync(AnalyticsTargets.CU, jsonContent);
+                }
+                catch { }
+            });
         }
         private string ParseUserControl(UserControl page)
         {
@@ -228,6 +244,15 @@ namespace gamevault.Helper
                     }
             }
         }
+        public object GetSysInfo()
+        {
+            var OS = new ManagementObjectSearcher("select * from Win32_OperatingSystem").Get().Cast<ManagementObject>().First();
+            string os = $"OS: {OS["Caption"]} - {OS["OSArchitecture"]} - Version.{OS["Version"]}"; os = os.Replace("NT 5.1.2600", "XP"); os = os.Replace("NT 5.2.3790", "Server 2003");
+            string ram = $"RAM: {OS["TotalVisibleMemorySize"]} KB";
+            var CPU = new ManagementObjectSearcher("select * from Win32_Processor").Get().Cast<ManagementObject>().First();
+            string cpu = $"CPU: {CPU["Name"]} - {CPU["MaxClockSpeed"]} MHz - {CPU["NumberOfCores"]} Core";
+            return new { hardware_os = os, hardware_ram = ram, hardware_cpu = cpu, };
+        }
         private class AnalyticsData
         {
             [JsonPropertyName("pid")]
@@ -245,6 +270,18 @@ namespace gamevault.Helper
             public string? Language { get; set; }
             [JsonPropertyName("meta")]
             public object? Metadata { get; set; }//Properties of type string only
+            //Error
+            [JsonPropertyName("name")]
+            public string? ExceptionType { get; set; }
+            [JsonPropertyName("message")]
+            public string? ExceptionMessage { get; set; }
+        }
+        private static class AnalyticsTargets
+        {
+            public static string HB => Encoding.UTF8.GetString(Convert.FromBase64String("aHR0cHM6Ly9hbmFseXRpY3MucGxhdGZvcm0ucGhhbGNvLmRlL2xvZy9oYg=="));
+            public static string LG => Encoding.UTF8.GetString(Convert.FromBase64String("aHR0cHM6Ly9hbmFseXRpY3MucGxhdGZvcm0ucGhhbGNvLmRlL2xvZw=="));
+            public static string CU => Encoding.UTF8.GetString(Convert.FromBase64String("aHR0cHM6Ly9hbmFseXRpY3MucGxhdGZvcm0ucGhhbGNvLmRlL2xvZy9jdXN0b20="));
+            public static string ER => Encoding.UTF8.GetString(Convert.FromBase64String("aHR0cHM6Ly9hbmFseXRpY3MucGxhdGZvcm0ucGhhbGNvLmRlL2Vycm9y"));
         }
     }
 }

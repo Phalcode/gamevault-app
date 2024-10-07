@@ -71,6 +71,7 @@ namespace gamevault
             base.OnStartup(e);
             AnalyticsHelper.Instance.InitHeartBeat();
             AnalyticsHelper.Instance.RegisterGlobalEvents();
+            AnalyticsHelper.Instance.SendAppInitialized();
         }
 
         private async void Application_Startup(object sender, StartupEventArgs e)
@@ -152,12 +153,9 @@ namespace gamevault
                 File.Create(errorLogPath).Close();
             }
             File.WriteAllText(errorLogPath, errorMessage + "\n" + errorStackTrace);
+            AnalyticsHelper.Instance.SendErrorLog(e);
             ExceptionWindow exWin = new ExceptionWindow();
-            if (exWin.ShowDialog() == true)
-            {
-                errorMessage += $"\nUSER_MESSAGE:{exWin.UserMessage}";
-                CrashReportHelper.SendCrashReport(errorMessage, errorStackTrace, $"Type: {e.GetType().ToString()}");
-            }
+            exWin.ShowDialog();
             ShutdownApp();
         }
 
