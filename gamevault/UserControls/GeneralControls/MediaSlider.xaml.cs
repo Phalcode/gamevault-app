@@ -91,8 +91,15 @@ namespace gamevault.UserControls
             if (double.TryParse(lastMediaVolume.Replace(".", ","), out double volume))
             {
                 uiVolumeSlider.Value = volume;
-                string mutescript = @"if(audio){ audio.volume=" + lastMediaVolume + ";}";
-                await uiWebView.CoreWebView2.ExecuteScriptAsync(mutescript);
+                string restoreLastMediaVolumeScript = @"
+    if (typeof audio !== 'undefined' && audio) {
+        audio.volume = " + lastMediaVolume + @";
+    }
+    var video = document.querySelector('video[name=""media""]');
+    if (typeof video !== 'undefined' && video) {
+        video.volume = " + lastMediaVolume + @";
+    }";
+                await uiWebView.CoreWebView2.ExecuteScriptAsync(restoreLastMediaVolumeScript);
             }
         }
         public async Task SetAndSaveMediaVolume()
@@ -104,8 +111,14 @@ namespace gamevault.UserControls
                 if (uiWebView == null || uiWebView.CoreWebView2 == null)
                     return;
 
-                string mutescript = @"if(audio){ audio.volume=" + result + ";}";
-                await uiWebView.CoreWebView2.ExecuteScriptAsync(mutescript);
+                string setAndSaveMediaVolumeScript = @"
+    if(typeof audio !== 'undefined' && audio) {
+        audio.volume=" + result + @";
+    }
+    if(typeof video !== 'undefined' && video) {
+        video.volume=" + result + @";
+    }";
+                await uiWebView.CoreWebView2.ExecuteScriptAsync(setAndSaveMediaVolumeScript);
 
             }
             catch { }

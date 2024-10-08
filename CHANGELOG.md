@@ -12,6 +12,7 @@ Recommended Gamevault Server Version: `v13.0.0`
 - The executable ignorelist is now editable in the settings tab
 - New setting 'Retain Sorting and Filter preferences after restart'
 - Last community tab 'sorty by' will be remembered
+- Downloads are paused without loss when GameVault is closed
 ### Game Page
 - Overhauled the layout
 - Added Media Slider to display trailer/gameplay/screenshots
