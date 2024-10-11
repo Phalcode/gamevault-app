@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:conv="clr-namespace:gamevault.Converter"
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:vm="clr-namespace:gamevault.ViewModels"
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -20,7 +21,26 @@
             <Button Style="{StaticResource ButtonWrapper}" HorizontalAlignment="Left" VerticalAlignment="Top" MaxWidth="52" Margin="2,2,120,2"  Cursor="Hand" Click="GameImage_Click">
                 <local:CacheImage ImageCacheType="GameCover" Data="{Binding Path=Game}" CornerRadius="2"/>
             </Button>
-            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="56,2,0,0" Text="{Binding Path=Game.Title}" MaxWidth="106" FontSize="6" FontWeight="Bold"/>
+            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="56,2,0,0" MaxWidth="106" FontSize="6" FontWeight="Bold">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Source={x:Static vm:SettingsViewModel.Instance},Path=ShowMappedTitle}" Value="True">
+                                <Setter Property="Text" Value="{Binding Path=Game.Metadata.Title}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=Game.Metadata.Title}" Value="{x:Null}">
+                                <Setter Property="Text" Value="{Binding Path=Game.Title}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=Game.Metadata.Title}" Value="">
+                                <Setter Property="Text" Value="{Binding Path=Game.Title}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Source={x:Static vm:SettingsViewModel.Instance},Path=ShowMappedTitle}" Value="False">
+                                <Setter Property="Text" Value="{Binding Path=Game.Title}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
             <StackPanel VerticalAlignment="Top" HorizontalAlignment="Right">
                 <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" HorizontalAlignment="Right" Width="8" Height="9" Margin="0,2,2,0" Click="DeleteFile_Click">
                     <Grid Style="{DynamicResource HoverEffect}" Background="Transparent"  RenderTransformOrigin="0.5,0.5">

@@ -604,6 +604,7 @@ namespace gamevault.UserControls
                 {
                     InstallViewModel.Instance.RefreshGame(ViewModel.Game);
                     MainWindowViewModel.Instance.Library.RefreshGame(ViewModel.Game);
+                    MainWindowViewModel.Instance.Downloads.RefreshGame(ViewModel.Game);
                     if (MainWindowViewModel.Instance.ActiveControl.GetType() == typeof(GameViewUserControl))
                     {
                         ((GameViewUserControl)MainWindowViewModel.Instance.ActiveControl).RefreshGame(ViewModel.Game);
@@ -874,6 +875,7 @@ namespace gamevault.UserControls
                 {
                     ((GameViewUserControl)MainWindowViewModel.Instance.ActiveControl).RefreshGame(ViewModel.Game);
                 }
+                MainWindowViewModel.Instance.Downloads.RefreshGame(ViewModel.Game);
             }
             this.IsEnabled = true;
             this.Focus();

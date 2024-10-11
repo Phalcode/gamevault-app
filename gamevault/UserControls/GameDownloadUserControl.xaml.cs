@@ -75,6 +75,10 @@ namespace gamevault.UserControls
                 }
             }
         }
+        public void Refresh(Game game)
+        {
+            ViewModel.Game = game;
+        }
         private void UpdateDataSizeUI()
         {
             Task.Run(() =>

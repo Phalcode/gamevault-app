@@ -6,7 +6,8 @@
              xmlns:conv="clr-namespace:gamevault.Converter"
              xmlns:markdig="clr-namespace:Markdig.Wpf;assembly=Markdig.Wpf"
              xmlns:helper="clr-namespace:gamevault.Helper"
-             xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"             
+             xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"          
+             xmlns:vm="clr-namespace:gamevault.ViewModels"           
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded" KeyDown="ReloadGameView_Click" Focusable="True" FocusVisualStyle="{x:Null}">
@@ -75,17 +76,20 @@
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding ShowMappedTitle}" Value="True">
+                                                    <DataTrigger Binding="{Binding Source={x:Static vm:SettingsViewModel.Instance},Path=ShowMappedTitle}" Value="True">
                                                         <Setter Property="Text" Value="{Binding Path=Game.Metadata.Title}" />
                                                         <Setter Property="ToolTip" Value="Click to Show File Title" />
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding Path=Game.Metadata.Title}" Value="{x:Null}">
                                                         <Setter Property="Text" Value="{Binding Path=Game.Title}" />
                                                     </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Path=Game.Metadata.Title}" Value="">
+                                                        <Setter Property="Text" Value="{Binding Path=Game.Title}" />
+                                                    </DataTrigger>
                                                     <DataTrigger Binding="{Binding Path=Game.DeletedAt,Converter={StaticResource inverseNullConv}}" Value="False">
                                                         <Setter Property="TextDecorations" Value="Strikethrough" />
                                                     </DataTrigger>
-                                                    <DataTrigger Binding="{Binding ShowMappedTitle}" Value="False">
+                                                    <DataTrigger Binding="{Binding Source={x:Static vm:SettingsViewModel.Instance},Path=ShowMappedTitle}" Value="False">
                                                         <Setter Property="Text" Value="{Binding Path=Game.Title}" />
                                                         <Setter Property="ToolTip" Value="Click to Show Mapped Title" />
                                                     </DataTrigger>

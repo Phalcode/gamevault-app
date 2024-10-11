@@ -156,8 +156,7 @@ namespace gamevault.UserControls
             }
             catch (Exception ex) { }
             ViewModel.IsInstalled = IsGameInstalled(ViewModel.Game);
-            ViewModel.IsDownloaded = IsGameDownloaded(ViewModel.Game);
-            ViewModel.ShowMappedTitle = Preferences.Get(AppConfigKey.ShowMappedTitle, AppFilePath.UserFile) == "1";
+            ViewModel.IsDownloaded = IsGameDownloaded(ViewModel.Game);           
             PrepareMarkdownElements();
             this.IsEnabled = true;
         }
@@ -185,8 +184,7 @@ namespace gamevault.UserControls
                     catch (Exception ex) { }
                 }
                 ViewModel.IsInstalled = IsGameInstalled(ViewModel.Game);
-                ViewModel.IsDownloaded = IsGameDownloaded(ViewModel.Game);
-                ViewModel.ShowMappedTitle = Preferences.Get(AppConfigKey.ShowMappedTitle, AppFilePath.UserFile) == "1";
+                ViewModel.IsDownloaded = IsGameDownloaded(ViewModel.Game);               
                 PrepareMarkdownElements();
                 //MediaSlider
                 try
@@ -296,8 +294,7 @@ namespace gamevault.UserControls
         {
             try
             {
-                ViewModel.ShowMappedTitle = !ViewModel.ShowMappedTitle;
-                Preferences.Set(AppConfigKey.ShowMappedTitle, ViewModel.ShowMappedTitle ? "1" : "0", AppFilePath.UserFile);
+                SettingsViewModel.Instance.ShowMappedTitle = !SettingsViewModel.Instance.ShowMappedTitle;
             }
             catch { }
         }

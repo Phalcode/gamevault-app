@@ -6,6 +6,7 @@
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:vwp="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
              xmlns:conv="clr-namespace:gamevault.Converter"
+             xmlns:vm="clr-namespace:gamevault.ViewModels"       
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" KeyDown="ReloadLibrary_Click" Focusable="True" FocusVisualStyle="{x:Null}" IsVisibleChanged="UserControl_IsVisibleChanged">
@@ -341,6 +342,22 @@
                                                                         <Style x:Key="BookmarkKey" TargetType="ToggleButton">
                                                                             <EventSetter Event="Click" Handler="CardBookmark_Click"/>
                                                                         </Style>
+                                                                        <Style x:Key="MappedTitleCheck" TargetType="TextBlock">
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding Source={x:Static vm:SettingsViewModel.Instance},Path=ShowMappedTitle}" Value="True">
+                                                                                    <Setter Property="Text" Value="{Binding Path=Metadata.Title}" />
+                                                                                </DataTrigger>
+                                                                                <DataTrigger Binding="{Binding Path=Metadata.Title}" Value="{x:Null}">
+                                                                                    <Setter Property="Text" Value="{Binding Path=Title}" />
+                                                                                </DataTrigger>
+                                                                                <DataTrigger Binding="{Binding Path=Metadata.Title}" Value="">
+                                                                                    <Setter Property="Text" Value="{Binding Path=Title}" />
+                                                                                </DataTrigger>
+                                                                                <DataTrigger Binding="{Binding Source={x:Static vm:SettingsViewModel.Instance},Path=ShowMappedTitle}" Value="False">
+                                                                                    <Setter Property="Text" Value="{Binding Path=Title}" />
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
                                                                     </ContentControl.Resources>
                                                                     <ContentControl.Style>
                                                                         <Style TargetType="{x:Type ContentControl}">
@@ -392,7 +409,7 @@
                                                                                                             </Style>
                                                                                                         </ToggleButton.Style>
                                                                                                     </ToggleButton>
-                                                                                                    <TextBlock Text="{Binding Path=Title}" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}" TextAlignment="Center" TextWrapping="Wrap"/>
+                                                                                                    <TextBlock Style="{StaticResource MappedTitleCheck}" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}" TextAlignment="Center" TextWrapping="Wrap"/>
                                                                                                     <Button Style="{StaticResource DownloadKey}">
                                                                                                         <Grid Style="{StaticResource HoverEffect}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,30" Background="Transparent" Height="61" Width="65">
                                                                                                             <Grid.ToolTip>

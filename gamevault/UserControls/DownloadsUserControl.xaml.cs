@@ -91,6 +91,17 @@ namespace gamevault.UserControls
                 DownloadsViewModel.Instance.DownloadedGames.Add(new GameDownloadUserControl(game, false));
             }
         }
+        public void RefreshGame(Game game)
+        {
+            for (int i = 0; i < DownloadsViewModel.Instance.DownloadedGames.Count; i++)
+            {
+                if (DownloadsViewModel.Instance.DownloadedGames[i].GetGameId() == game.ID)
+                {
+                    DownloadsViewModel.Instance.DownloadedGames[i].Refresh(game);
+                    return;
+                }
+            }
+        }
         public void CancelAllDownloads()
         {
             foreach (var download in DownloadsViewModel.Instance.DownloadedGames)

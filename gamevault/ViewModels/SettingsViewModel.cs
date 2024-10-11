@@ -50,6 +50,7 @@ namespace gamevault.ViewModels
         private User m_RegistrationUser = new User() { Avatar = new Media(), Background = new Media() };
         private PhalcodeProduct license { get; set; }
         private List<ThemeItem> themes { get; set; }
+        private bool showMappedTitle { get; set; }
 
         #endregion
 
@@ -58,6 +59,9 @@ namespace gamevault.ViewModels
             UserName = Preferences.Get(AppConfigKey.Username, AppFilePath.UserFile);
             RootPath = Preferences.Get(AppConfigKey.RootPath, AppFilePath.UserFile);
             ServerUrl = Preferences.Get(AppConfigKey.ServerUrl, AppFilePath.UserFile, true);
+
+            string showMappedTitleString = Preferences.Get(AppConfigKey.ShowMappedTitle, AppFilePath.UserFile);
+            showMappedTitle = showMappedTitleString == "1" || showMappedTitleString == "";
 
             m_BackgroundStart = (Preferences.Get(AppConfigKey.BackgroundStart, AppFilePath.UserFile) == "1"); OnPropertyChanged(nameof(BackgroundStart));
             m_AutoExtract = (Preferences.Get(AppConfigKey.AutoExtract, AppFilePath.UserFile) == "1"); OnPropertyChanged(nameof(AutoExtract));
@@ -275,6 +279,14 @@ namespace gamevault.ViewModels
                 return ignoreList;
             }
             set { ignoreList = value; OnPropertyChanged(); }
+        }
+        public bool ShowMappedTitle
+        {
+            get
+            {
+                return showMappedTitle;
+            }
+            set { showMappedTitle = value; Preferences.Set(AppConfigKey.ShowMappedTitle, showMappedTitle ? "1" : "0", AppFilePath.UserFile); OnPropertyChanged(); }
         }
         public User RegistrationUser
         {
