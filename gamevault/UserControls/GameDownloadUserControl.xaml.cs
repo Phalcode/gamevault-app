@@ -563,7 +563,7 @@ namespace gamevault.UserControls
                 uiCbSetupExecutable.ItemsSource = allExecutables;
                 if (!string.IsNullOrWhiteSpace(ViewModel.Game?.Metadata?.InstallerExecutable))
                 {
-                    var entry = allExecutables.Select((kv, index) => new { kv.Key, kv.Value, Index = index }).FirstOrDefault(kv => string.Equals(kv.Key, ViewModel.Game?.Metadata?.InstallerExecutable, StringComparison.OrdinalIgnoreCase));
+                    var entry = allExecutables.Select((kv, index) => new { kv.Key, kv.Value, Index = index }).FirstOrDefault(kv => kv.Key.Contains(ViewModel.Game?.Metadata?.InstallerExecutable.Replace("/","\\"), StringComparison.OrdinalIgnoreCase));
                     if (entry != null)
                         uiCbSetupExecutable.SelectedIndex = entry.Index;
                 }
@@ -706,7 +706,7 @@ namespace gamevault.UserControls
                 {
                     string extension = Path.GetExtension(ViewModel.Game?.Metadata?.LaunchExecutable);
                     var files = Directory.GetFiles(ViewModel.InstallPath, $"*{extension}", SearchOption.AllDirectories);
-                    var targetFile = files.FirstOrDefault(file => string.Equals(Path.GetFileName(file), ViewModel.Game?.Metadata?.LaunchExecutable, StringComparison.OrdinalIgnoreCase));
+                    var targetFile = files.FirstOrDefault(file => file.Contains(ViewModel.Game?.Metadata?.LaunchExecutable.Replace("/","\\"),StringComparison.OrdinalIgnoreCase));
                     if (targetFile != null)
                     {
                         if (!File.Exists($"{ViewModel.InstallPath}\\gamevault-exec"))
