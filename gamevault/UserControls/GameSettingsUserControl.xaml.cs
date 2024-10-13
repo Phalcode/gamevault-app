@@ -573,7 +573,7 @@ namespace gamevault.UserControls
             try
             {
                 BitmapSource bitmapSource = tag == "box" ? (BitmapSource)ViewModel.GameCoverImageSource : (BitmapSource)ViewModel.BackgroundImageSource;
-                string resp = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/media", BitmapHelper.BitmapSourceToMemoryStream(bitmapSource), "x.png", null);
+                string resp = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/media", BitmapHelper.BitmapSourceToMemoryStream(bitmapSource), "x.jpg", null);
                 Media? newImage = JsonSerializer.Deserialize<Media>(resp);
                 await Task.Run(() =>
                 {
@@ -804,6 +804,7 @@ namespace gamevault.UserControls
                 {
                     ((GameViewUserControl)MainWindowViewModel.Instance.ActiveControl).RefreshGame(ViewModel.Game);
                 }
+                ViewModel.CurrentShownMappedGame = ViewModel.CurrentShownMappedGame;
             }
             this.IsEnabled = true;
             this.Focus();

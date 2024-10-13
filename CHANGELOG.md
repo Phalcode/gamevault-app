@@ -13,12 +13,12 @@ Recommended Gamevault Server Version: `v13.0.0`
 - New setting 'Retain Sorting and Filter preferences after restart'
 - Last community tab 'sorty by' will be remembered
 - Downloads are paused without loss when GameVault is closed
-### Game Page
 - Overhauled the layout
 - Added Media Slider to display trailer/gameplay/screenshots
 - Added Age Rating
 - Added Notes
 - Description and notes support Markdown
+- Bug fix: Upload large images error
 ### Overhauled Game Settings
 - Display available metadata providers
 - Change priority of selected provider

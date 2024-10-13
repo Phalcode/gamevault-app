@@ -56,7 +56,7 @@ namespace gamevault.ViewModels
                 {
                     {"Title","sort_title"},
                     {"Size","size" },
-                    {"Recently Added","created_at" },
+                    {"Date Added","created_at" },
                     {"Release Date","metadata.release_date" },
                     {"Rating","metadata.rating" },
                     {"Download Count","download_count" },

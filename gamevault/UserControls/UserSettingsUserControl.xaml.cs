@@ -253,7 +253,7 @@ namespace gamevault.UserControls
             try
             {
                 MemoryStream ms = null;
-                string filename = "x.png";
+                string filename = "x.jpg";
                 if (tag == "avatar")
                 {
                     ViewModel.AvatarImageChanged = false;
