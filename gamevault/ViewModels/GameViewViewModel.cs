@@ -18,8 +18,7 @@ namespace gamevault.ViewModels
         private Progress[]? userProgresses { get; set; }
         private Dictionary<string, string> gameStates { get; set; }
         private bool isInstalled { get; set; }
-        private bool? isDownloaded { get; set; }
-        private bool showMappedTitle { get; set; }
+        private bool? isDownloaded { get; set; }       
         private string? descriptionMarkdown { get; set; }
         private string? notesMarkdown { get; set; }
         #endregion
@@ -57,12 +56,7 @@ namespace gamevault.ViewModels
         {
             get { return isDownloaded; }
             set { isDownloaded = value; OnPropertyChanged(); }
-        }
-        public bool ShowMappedTitle
-        {
-            get { return showMappedTitle; }
-            set { showMappedTitle = value; OnPropertyChanged(); }
-        }
+        }       
         public string? DescriptionMarkdown
         {
             get { return descriptionMarkdown; }

@@ -10,6 +10,7 @@ using System.Net.Http.Headers;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using Windows.Media.Protection.PlayReady;
 
 namespace gamevault.Helper
 {
@@ -220,6 +221,7 @@ namespace gamevault.Helper
                 {
                     httpClient.DefaultRequestHeaders.Add(additionalHeader.Value.Key, additionalHeader.Value.Value);
                 }
+                httpClient.DefaultRequestHeaders.UserAgent.ParseAdd($"GameVault/{SettingsViewModel.Instance.Version}");
                 using (var formData = new MultipartFormDataContent())
                 {
                     var imageContent = new StreamContent(imageStream);

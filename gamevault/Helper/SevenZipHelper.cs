@@ -52,6 +52,7 @@ namespace gamevault.Helper
             ProcessStartInfo info = new ProcessStartInfo();
             info.CreateNoWindow = true;
             info.RedirectStandardOutput = true;
+            info.RedirectStandardError = true;
             info.UseShellExecute = false;
             info.FileName = $"{AppDomain.CurrentDomain.BaseDirectory}Lib\\7z\\7z.exe";
             return info;
@@ -62,11 +63,12 @@ namespace gamevault.Helper
             Process process = new Process();
             ProcessShepherd.AddProcess(process);
             process.StartInfo = CreateProcessHeader();
-            process.StartInfo.Arguments = $"l -slt \"{archivePath}\"";
+            process.StartInfo.Arguments = $"l -slt -pskibidibopmmdadap \"{archivePath}\"";
             process.Start();
-            string stdout = await process.StandardOutput.ReadToEndAsync();
+            string output = await process.StandardOutput.ReadToEndAsync();
+            string error = await process.StandardError.ReadToEndAsync();
             await process.WaitForExitAsync();
-            if (stdout.Contains("Encrypted = +"))
+            if (error.Contains("encrypted", StringComparison.OrdinalIgnoreCase) || output.Contains("Encrypted = +"))
             {
                 result = true;
             }
@@ -81,7 +83,6 @@ namespace gamevault.Helper
                  process = new Process();
                  ProcessShepherd.AddProcess(process);
                  process.StartInfo = CreateProcessHeader();
-                 process.StartInfo.RedirectStandardError = true;
                  process.StartInfo.Arguments = $"x -y -bsp1 -o\"{outputDir}\" \"{archivePath}\"";
                  if (password != "")
                  {

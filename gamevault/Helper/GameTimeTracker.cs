@@ -15,11 +15,10 @@ namespace gamevault.Helper
     public class GameTimeTracker
     {
         private Timer? m_Timer { get; set; }
-        private string[]? m_IgnoreList { get; set; }
         public async Task Start()
         {
             await SendOfflineProcess();
-            await GetIgnoreList();
+            await SettingsViewModel.Instance.InitIgnoreList();
 
             m_Timer = new Timer();
             m_Timer.AutoReset = true;
@@ -166,43 +165,10 @@ namespace gamevault.Helper
                 return keys.ToArray();
             }
             return new string[0];
-        }
-        private async Task GetIgnoreList()
-        {
-            await Task.Run(() =>
-            {
-                try
-                {
-                    if (!File.Exists(AppFilePath.IgnoreList))
-                    {
-                        string response = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/ignorefile");
-                        m_IgnoreList = JsonSerializer.Deserialize<string[]>(response);
-                        Preferences.Set("IL", response.Replace("\n", ""), AppFilePath.IgnoreList);
-                    }
-                    else
-                    {
-                        string result = Preferences.Get("IL", AppFilePath.IgnoreList);
-                        m_IgnoreList = JsonSerializer.Deserialize<string[]>(result);
-                    }
-                }
-                catch
-                {
-                    try
-                    {
-                        string result = Preferences.Get("IL", AppFilePath.IgnoreList);
-                        m_IgnoreList = JsonSerializer.Deserialize<string[]>(result);
-                    }
-                    catch { }
-                }
-                if (m_IgnoreList == null)
-                {
-                    m_IgnoreList = new string[0];
-                }
-            });
-        }
+        }        
         private bool ContainsValueFromIgnoreList(string value)
         {
-            return m_IgnoreList.Any(x => x.Contains(value, StringComparison.OrdinalIgnoreCase));
+            return SettingsViewModel.Instance.IgnoreList.Any(x => x.Contains(value, StringComparison.OrdinalIgnoreCase));
         }
     }
 }

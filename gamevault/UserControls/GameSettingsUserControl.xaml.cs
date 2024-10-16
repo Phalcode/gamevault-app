@@ -44,7 +44,7 @@ namespace gamevault.UserControls
             InitializeComponent();
             ViewModel = new GameSettingsViewModel();
             ViewModel.Game = game;
-            ViewModel.UpdateGame = new UpdateGameDto() { UserMetadata = new UserGameMetadataDto() };
+            ViewModel.UpdateGame = new UpdateGameDto() { UserMetadata = new UpdateGameUserMetadataDto() };
             gameSizeConverter = new GameSizeConverter();
             if (IsGameInstalled(game))
             {
@@ -195,7 +195,7 @@ namespace gamevault.UserControls
             }
             else if (ViewModel.Game.Type == GameType.WINDOWS_SETUP)
             {
-                MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to uninstall '{ViewModel.Game.Title}' ?\nAs this is a Windows setup, you will need to select an uninstall executable", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+                MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to uninstall '{ViewModel.Game.Title}' ?\nAs this is a Windows Setup Game, you will need to select an uninstall executable manually", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
                 if (result == MessageDialogResult.Affirmative)
                 {
                     using (var dialog = new System.Windows.Forms.OpenFileDialog())
@@ -409,7 +409,7 @@ namespace gamevault.UserControls
         }
         private static bool ContainsValueFromIgnoreList(string value)
         {
-            return (InstallViewModel.Instance.IgnoreList != null && InstallViewModel.Instance.IgnoreList.Any(s => Path.GetFileNameWithoutExtension(value).Contains(s, StringComparison.OrdinalIgnoreCase)));
+            return (SettingsViewModel.Instance.IgnoreList != null && SettingsViewModel.Instance.IgnoreList.Any(s => Path.GetFileNameWithoutExtension(value).Contains(s, StringComparison.OrdinalIgnoreCase)));
         }
         private void ExecutableSelection_Opened(object sender, EventArgs e)
         {
@@ -567,6 +567,104 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.AppBarText = ex.Message;
             }
         }
+        private async Task SaveImage(string tag)
+        {
+            bool success = false;
+            try
+            {
+                BitmapSource bitmapSource = tag == "box" ? (BitmapSource)ViewModel.GameCoverImageSource : (BitmapSource)ViewModel.BackgroundImageSource;
+                string resp = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/media", BitmapHelper.BitmapSourceToMemoryStream(bitmapSource), "x.jpg", null);
+                Media? newImage = JsonSerializer.Deserialize<Media>(resp);
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        UpdateGameDto updateGame = new UpdateGameDto() { UserMetadata = new UpdateGameUserMetadataDto() };
+                        if (tag == "box")
+                        {
+                            updateGame.UserMetadata.Cover = newImage;
+                        }
+                        else
+                        {
+                            updateGame.UserMetadata.Background = newImage;
+                        }
+
+                        string changedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}", JsonSerializer.Serialize(updateGame), true);
+                        ViewModel.Game = JsonSerializer.Deserialize<Game>(changedGame);
+                        success = true;
+                        MainWindowViewModel.Instance.AppBarText = "Successfully updated image";
+                    }
+                    catch (Exception ex)
+                    {
+                        MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
+                    }
+                });
+                //Update Data Context for Library. So that the images are also refreshed there directly
+                if (success)
+                {
+                    InstallViewModel.Instance.RefreshGame(ViewModel.Game);
+                    MainWindowViewModel.Instance.Library.RefreshGame(ViewModel.Game);
+                    MainWindowViewModel.Instance.Downloads.RefreshGame(ViewModel.Game);
+                    if (MainWindowViewModel.Instance.ActiveControl.GetType() == typeof(GameViewUserControl))
+                    {
+                        ((GameViewUserControl)MainWindowViewModel.Instance.ActiveControl).RefreshGame(ViewModel.Game);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
+            }
+        }
+        private void Image_Paste(object sender, KeyEventArgs e)
+        {
+            if (e.KeyboardDevice.Modifiers == ModifierKeys.Control)
+            {
+                if (e.Key == Key.V)
+                {
+                    try
+                    {
+                        if (Clipboard.ContainsImage())
+                        {
+                            var image = Clipboard.GetImage();
+                            if (((FrameworkElement)sender).Tag != null && ((FrameworkElement)sender).Tag.ToString() == "box")
+                            {
+                                ViewModel.GameCoverImageSource = image;
+                            }
+                            else
+                            {
+                                ViewModel.BackgroundImageSource = image;
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MainWindowViewModel.Instance.AppBarText = ex.Message;
+                    }
+                }
+            }
+        }
+        private void CopyImageToClipboard_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                BitmapSource bitmapSource = null;
+                if(((FrameworkElement)sender).Tag?.ToString() == "CurrentShownMappedGame")
+                {
+                    bitmapSource = (BitmapSource)uiImgCurrentShownMappedGame.GetImageSource();
+                }
+                else
+                {
+                    bitmapSource = (BitmapSource)uiImgCurrentMergedGame.GetImageSource();
+                }
+                Clipboard.SetImage(bitmapSource);
+                MainWindowViewModel.Instance.AppBarText = "Image copied to Clipboard";
+            }
+            catch (Exception ex)
+            {
+                MainWindowViewModel.Instance.AppBarText = ex.Message;
+            }
+        }
         #region Generic Events       
         private InputTimer backgroundImageUrldebounceTimer { get; set; }
         private InputTimer boxImageUrldebounceTimer { get; set; }
@@ -620,85 +718,6 @@ namespace gamevault.UserControls
             LoadImageUrl(boxImageUrldebounceTimer.Data, "box");
         }
         #endregion
-
-        private async Task SaveImage(string tag)
-        {
-            // TODO
-
-            bool success = false;
-            try
-            {
-                BitmapSource bitmapSource = tag == "box" ? (BitmapSource)ViewModel.GameCoverImageSource : (BitmapSource)ViewModel.BackgroundImageSource;
-                string resp = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/media", BitmapHelper.BitmapSourceToMemoryStream(bitmapSource), "x.png", null);
-                Media? newImage = JsonSerializer.Deserialize<Media>(resp);
-                await Task.Run(() =>
-                {
-                    try
-                    {
-                        UpdateGameDto updateGame = new UpdateGameDto() { UserMetadata = new UserGameMetadataDto() };
-                        if (tag == "box")
-                        {
-                            updateGame.UserMetadata.Cover = newImage;
-                        }
-                        else
-                        {
-                            updateGame.UserMetadata.Background = newImage;
-                        }
-
-                        string changedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}", JsonSerializer.Serialize(updateGame), true);
-                        ViewModel.Game = JsonSerializer.Deserialize<Game>(changedGame);
-                        success = true;
-                        MainWindowViewModel.Instance.AppBarText = "Successfully updated image";
-                    }
-                    catch (Exception ex)
-                    {
-                        MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
-                    }
-                });
-                //Update Data Context for Library. So that the images are also refreshed there directly
-                if (success)
-                {
-                    InstallViewModel.Instance.RefreshGame(ViewModel.Game);
-                    MainWindowViewModel.Instance.Library.RefreshGame(ViewModel.Game);
-                    if (MainWindowViewModel.Instance.ActiveControl.GetType() == typeof(GameViewUserControl))
-                    {
-                        ((GameViewUserControl)MainWindowViewModel.Instance.ActiveControl).RefreshGame(ViewModel.Game);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
-            }
-        }
-        private void Image_Paste(object sender, KeyEventArgs e)
-        {
-            if (e.KeyboardDevice.Modifiers == ModifierKeys.Control)
-            {
-                if (e.Key == Key.V)
-                {
-                    try
-                    {
-                        if (Clipboard.ContainsImage())
-                        {
-                            var image = Clipboard.GetImage();
-                            if (((FrameworkElement)sender).Tag != null && ((FrameworkElement)sender).Tag.ToString() == "box")
-                            {
-                                ViewModel.GameCoverImageSource = image;
-                            }
-                            else
-                            {
-                                ViewModel.BackgroundImageSource = image;
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        MainWindowViewModel.Instance.AppBarText = ex.Message;
-                    }
-                }
-            }
-        }
         #endregion
         #region Metadata
         private InputTimer GameMetadataSearchTimer { get; set; }
@@ -806,12 +825,13 @@ namespace gamevault.UserControls
                 {
                     ((GameViewUserControl)MainWindowViewModel.Instance.ActiveControl).RefreshGame(ViewModel.Game);
                 }
+                ViewModel.CurrentShownMappedGame = ViewModel.CurrentShownMappedGame;
             }
             this.IsEnabled = true;
             this.Focus();
         }
         private async Task LoadGameMedatataProviders()
-        {           
+        {
             try
             {
                 ViewModel.MetadataProvidersLoaded = false;
@@ -837,14 +857,14 @@ namespace gamevault.UserControls
             {
                 string message = WebExceptionHelper.TryGetServerMessage(ex);
                 MainWindowViewModel.Instance.AppBarText = message;
-            }            
+            }
         }
 
         #endregion
         #region Edit Game Details
         private async void ClearUserData_Click(object sender, RoutedEventArgs e)
         {
-            MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure to delete all User Data?\nThis can't be undone.", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+            MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to wipe all manually edited custom metadata and images?\n\nAll fields will revert to the merged provider metadata (if available).\n\nThis action cannot be undone.", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
             if (result == MessageDialogResult.Affirmative)
             {
                 int gameId = ViewModel.Game.ID;
@@ -862,7 +882,7 @@ namespace gamevault.UserControls
                     string remappedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}", JsonSerializer.Serialize(ViewModel.UpdateGame), true);
                     ViewModel.Game = JsonSerializer.Deserialize<Game>(remappedGame);
                     success = true;
-                    ViewModel.UpdateGame = new UpdateGameDto() { UserMetadata = new UserGameMetadataDto() };
+                    ViewModel.UpdateGame = new UpdateGameDto() { UserMetadata = new UpdateGameUserMetadataDto() };
                     MainWindowViewModel.Instance.AppBarText = $"Successfully edited {ViewModel.Game.Title}";
                 }
                 catch (Exception ex)
@@ -877,6 +897,7 @@ namespace gamevault.UserControls
                 {
                     ((GameViewUserControl)MainWindowViewModel.Instance.ActiveControl).RefreshGame(ViewModel.Game);
                 }
+                MainWindowViewModel.Instance.Downloads.RefreshGame(ViewModel.Game);
             }
             this.IsEnabled = true;
             this.Focus();
@@ -886,7 +907,7 @@ namespace gamevault.UserControls
             try
             {
                 string tag = ((FrameworkElement)sender).Tag.ToString();
-                if(tag == "description")
+                if (tag == "description")
                 {
                     ViewModel.UpdateGame.UserMetadata.Description = ViewModel.Game.Metadata.Description;
                 }

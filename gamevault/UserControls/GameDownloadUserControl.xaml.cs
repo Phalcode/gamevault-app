@@ -75,6 +75,10 @@ namespace gamevault.UserControls
                 }
             }
         }
+        public void Refresh(Game game)
+        {
+            ViewModel.Game = game;
+        }
         private void UpdateDataSizeUI()
         {
             Task.Run(() =>
@@ -355,8 +359,7 @@ namespace gamevault.UserControls
             return string.Format("{0:00}:{1:00}:{2:00}", ((int)t.TotalHours), t.Minutes, t.Seconds);
         }
 
-
-        private async void DeleteFile_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private async void DeleteFile_Click(object sender, RoutedEventArgs e)
         {
             await DeleteFile(confirm: true);
         }
@@ -401,14 +404,13 @@ namespace gamevault.UserControls
                 }
             }
         }
-
-        private void OpenDirectory_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void OpenDirectory_Click(object sender, RoutedEventArgs e)
         {
             if (Directory.Exists(m_DownloadPath))
                 Process.Start("explorer.exe", m_DownloadPath);
         }
 
-        private void GameImage_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void GameImage_Click(object sender, RoutedEventArgs e)
         {
             MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(ViewModel.Game, LoginManager.Instance.IsLoggedIn()));
         }
@@ -487,9 +489,9 @@ namespace gamevault.UserControls
                 ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
 
                 if (!App.Instance.IsWindowActiveAndControlInFocus(MainControl.Downloads))
-                    ToastMessageHelper.CreateToastMessage("Extraction Complete", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.Metadata.Cover?.ID}");
+                    ToastMessageHelper.CreateToastMessage("Extraction Complete", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game?.ID}.{ViewModel.Game?.Metadata?.Cover?.ID}");
 
-                if (SettingsViewModel.Instance.AutoInstallPortable && (ViewModel.Game.Type == GameType.WINDOWS_PORTABLE || ViewModel.Game.Type == GameType.LINUX_PORTABLE))
+                if (SettingsViewModel.Instance.AutoInstallPortable && (ViewModel.Game?.Type == GameType.WINDOWS_PORTABLE || ViewModel.Game?.Type == GameType.LINUX_PORTABLE))
                 {
                     await Task.Delay(1000);//Just to be sure the extraction stream is closed and the files are ready to copy
                     await Install();
@@ -524,7 +526,7 @@ namespace gamevault.UserControls
                 {
                     ViewModel.State = "Something went wrong during extraction";
                     if (!App.Instance.IsWindowActiveAndControlInFocus(MainControl.Downloads))
-                        ToastMessageHelper.CreateToastMessage("Extraction Failed", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.Metadata?.Cover?.ID}");
+                        ToastMessageHelper.CreateToastMessage("Extraction Failed", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game?.ID}.{ViewModel.Game?.Metadata?.Cover?.ID}");
                 }
                 ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
             }
@@ -561,7 +563,7 @@ namespace gamevault.UserControls
                 uiCbSetupExecutable.ItemsSource = allExecutables;
                 if (!string.IsNullOrWhiteSpace(ViewModel.Game?.Metadata?.InstallerExecutable))
                 {
-                    var entry = allExecutables.Select((kv, index) => new { kv.Key, kv.Value, Index = index }).FirstOrDefault(kv => string.Equals(kv.Key, ViewModel.Game?.Metadata?.InstallerExecutable, StringComparison.OrdinalIgnoreCase));
+                    var entry = allExecutables.Select((kv, index) => new { kv.Key, kv.Value, Index = index }).FirstOrDefault(kv => kv.Key.Contains(ViewModel.Game?.Metadata?.InstallerExecutable.Replace("/","\\"), StringComparison.OrdinalIgnoreCase));
                     if (entry != null)
                         uiCbSetupExecutable.SelectedIndex = entry.Index;
                 }
@@ -704,7 +706,7 @@ namespace gamevault.UserControls
                 {
                     string extension = Path.GetExtension(ViewModel.Game?.Metadata?.LaunchExecutable);
                     var files = Directory.GetFiles(ViewModel.InstallPath, $"*{extension}", SearchOption.AllDirectories);
-                    var targetFile = files.FirstOrDefault(file => string.Equals(Path.GetFileName(file), ViewModel.Game?.Metadata?.LaunchExecutable, StringComparison.OrdinalIgnoreCase));
+                    var targetFile = files.FirstOrDefault(file => file.Contains(ViewModel.Game?.Metadata?.LaunchExecutable.Replace("/","\\"),StringComparison.OrdinalIgnoreCase));
                     if (targetFile != null)
                     {
                         if (!File.Exists($"{ViewModel.InstallPath}\\gamevault-exec"))
@@ -761,12 +763,13 @@ namespace gamevault.UserControls
             }
         }
 
-        private void InitOverwriteGameType_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void InitOverwriteGameType_Click(object sender, RoutedEventArgs e)
         {
             var temp = ViewModel.Game;
             temp.Type = GameType.UNDETECTABLE;
             ViewModel.Game = null;
             ViewModel.Game = temp;
         }
+
     }
 }

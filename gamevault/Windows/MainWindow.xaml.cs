@@ -123,7 +123,7 @@ namespace gamevault.Windows
             }
         }
 
-        private void UserAvatar_Clicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void UserAvatar_Clicked(object sender, RoutedEventArgs e)
         {
             MainWindowViewModel.Instance.Community.ShowUser(LoginManager.Instance.GetCurrentUser());
         }
@@ -189,8 +189,8 @@ namespace gamevault.Windows
         {
             try
             {
-                var root = this.Template.FindName("PART_Content", this);
-                System.Windows.Controls.Panel.SetZIndex((MetroContentControl)root, 6);
+                //var root = this.Template.FindName("PART_Content", this);
+                //System.Windows.Controls.Panel.SetZIndex((MetroContentControl)root, 6);
                 var thumb = (FrameworkElement)this.Template.FindName("PART_WindowTitleThumb", this);
                 thumb.Margin = new Thickness(50, 0, 0, 0);
                 System.Windows.Controls.Panel.SetZIndex(thumb, 7);
@@ -210,6 +210,15 @@ namespace gamevault.Windows
                     Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
                 }
                 e.Handled = true;
+            }
+            catch { }
+        }
+
+        private void CopyMessage_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                System.Windows.Clipboard.SetText(MainWindowViewModel.Instance.AppBarText);
             }
             catch { }
         }

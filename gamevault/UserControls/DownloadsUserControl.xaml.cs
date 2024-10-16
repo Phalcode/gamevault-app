@@ -91,6 +91,17 @@ namespace gamevault.UserControls
                 DownloadsViewModel.Instance.DownloadedGames.Add(new GameDownloadUserControl(game, false));
             }
         }
+        public void RefreshGame(Game game)
+        {
+            for (int i = 0; i < DownloadsViewModel.Instance.DownloadedGames.Count; i++)
+            {
+                if (DownloadsViewModel.Instance.DownloadedGames[i].GetGameId() == game.ID)
+                {
+                    DownloadsViewModel.Instance.DownloadedGames[i].Refresh(game);
+                    return;
+                }
+            }
+        }
         public void CancelAllDownloads()
         {
             foreach (var download in DownloadsViewModel.Instance.DownloadedGames)
@@ -177,7 +188,7 @@ namespace gamevault.UserControls
             return false;
         }
 
-        private async void DeleteAllDownloads_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private async void DeleteAllDownloads_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to delete all canceled and completed downloads?\n\nThis cannot be undone.", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
 

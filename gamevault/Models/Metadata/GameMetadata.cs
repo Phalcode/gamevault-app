@@ -241,6 +241,9 @@ namespace gamevault.Models
         {
             get
             {
+                if (Publishers == null)
+                    return string.Empty;
+
                 return string.Join(",", Publishers.Select(publisher => publisher.Name));
             }
         }
@@ -255,6 +258,9 @@ namespace gamevault.Models
         {
             get
             {
+                if (Developers == null)
+                    return string.Empty;
+
                 return string.Join(",", Developers.Select(developer => developer.Name));
             }
         }
@@ -270,6 +276,9 @@ namespace gamevault.Models
         {
             get
             {
+                if (Tags == null)
+                    return string.Empty;
+
                 return string.Join(",", Tags.Select(tag => tag.Name));
             }
         }
@@ -285,6 +294,9 @@ namespace gamevault.Models
         {
             get
             {
+                if (Genres == null)
+                    return string.Empty;
+
                 return string.Join(",", Genres.Select(genre => genre.Name));
             }
         }

@@ -65,7 +65,7 @@
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.3.1" />
 		<PackageReference Include="System.Management" Version="8.0.0" />
 		<PackageReference Include="VirtualizingWrapPanel" Version="1.5.8" />
-		<PackageReference Include="YoutubeExplode" Version="6.4.0" />
+		<PackageReference Include="YoutubeExplode" Version="6.4.2" />
 	</ItemGroup>
 
 	<ItemGroup>

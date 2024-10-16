@@ -41,7 +41,6 @@ namespace gamevault.UserControls
         }
         public async Task RestoreInstalledGames()
         {
-            InstallViewModel.Instance.IgnoreList = GetIgnoreList();
             Dictionary<int, string> foundGames = new Dictionary<int, string>();
             Game[]? games = await Task<Game[]>.Run(() =>
             {
@@ -261,15 +260,6 @@ namespace gamevault.UserControls
                 e.Handled = true;
             }
             catch (Exception ex) { MainWindowViewModel.Instance.AppBarText = ex.Message; }
-        }
-        private string[]? GetIgnoreList()
-        {
-            try
-            {
-                string result = Preferences.Get("IL", AppFilePath.IgnoreList);
-                return JsonSerializer.Deserialize<string[]>(result);
-            }
-            catch { return null; }
         }
         private void GameCard_Clicked(object sender, RoutedEventArgs e)
         {

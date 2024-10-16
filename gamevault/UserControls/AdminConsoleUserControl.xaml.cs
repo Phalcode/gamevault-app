@@ -77,7 +77,7 @@ namespace gamevault.UserControls
                 }
                 if (LoginManager.Instance.IsLoggedIn() && selectedUser.ID == LoginManager.Instance.GetCurrentUser().ID)
                 {
-                    MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to change your role?",
+                    MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to change your own role?\nYou may lose privileges.",
                     "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
                     if (result != MessageDialogResult.Affirmative)
                     {
@@ -113,7 +113,7 @@ namespace gamevault.UserControls
             }
         }
 
-        private async void DeleteUser_Clicked(object sender, MouseButtonEventArgs e)
+        private async void DeleteUser_Clicked(object sender, RoutedEventArgs e)
         {
 
             User selectedUser = (User)((FrameworkElement)sender).DataContext;
@@ -153,8 +153,7 @@ namespace gamevault.UserControls
             });
             this.IsEnabled = true;
         }
-
-        private void EditUser_Clicked(object sender, MouseButtonEventArgs e)
+        private void EditUser_Clicked(object sender, RoutedEventArgs e)
         {
             User user = JsonSerializer.Deserialize<User>(JsonSerializer.Serialize((User)((FrameworkElement)sender).DataContext));//Dereference
             MainWindowViewModel.Instance.OpenPopup(new UserSettingsUserControl(user) { Width = 1200, Height = 800, Margin = new Thickness(50) });
@@ -207,7 +206,7 @@ namespace gamevault.UserControls
             await InitUserList();
         }
 
-        private void ShowUser_Click(object sender, MouseButtonEventArgs e)
+        private void ShowUser_Click(object sender, RoutedEventArgs e)
         {
             User selectedUser = ((FrameworkElement)sender).DataContext as User;
             MainWindowViewModel.Instance.Community.ShowUser(selectedUser);
@@ -216,6 +215,7 @@ namespace gamevault.UserControls
         private async void Reindex_Click(object sender, RoutedEventArgs e)
         {
             ((FrameworkElement)sender).IsEnabled = false;
+            return;
             await Task.Run(() =>
             {
                 try
@@ -275,5 +275,7 @@ namespace gamevault.UserControls
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
             e.Handled = true;
         }
+
+
     }
 }

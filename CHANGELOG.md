@@ -8,18 +8,24 @@ Recommended Gamevault Server Version: `v13.0.0`
 - Layout changes to the title bar
 - Layout changes to the settings page
 - Moved title bar action buttons
-### Game Page
+- You can now copy the app bar text
+- The executable ignorelist is now editable in the settings tab
+- New setting 'Retain Sorting and Filter preferences after restart'
+- Last community tab 'sorty by' will be remembered
+- Downloads are safely paused, even if gamevault crashes or is forced to close
 - Overhauled the layout
 - Added Media Slider to display trailer/gameplay/screenshots
 - Added Age Rating
 - Added Notes
 - Description and notes support Markdown
+- Bug fix: Upload large images error
 ### Overhauled Game Settings
 - Display available metadata providers
 - Change priority of selected provider
 - Unmap selected metadata provider
 - Recache selected metadata provider
 - Added new tab 'Edit Details' that gives you full control over every detail of the game. You can undo manual changes at any time with the 'Clear User Data' Button
+- You can now specify default launch/setup executable and default launch parameter
 
 ## 1.11.2.0
 Recommended Gamevault Server Version: `v12.2.0`

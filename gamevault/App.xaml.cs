@@ -8,6 +8,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Forms;
 using Application = System.Windows.Application;
+using ButtonBase = System.Windows.Controls.Primitives.ButtonBase;
 using System.Linq;
 using gamevault.Helper;
 using System.Threading.Tasks;
@@ -19,6 +20,15 @@ using System.Drawing;
 using System.Windows.Shell;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Media;
+using gamevault.UserControls;
+using System.Windows.Controls;
+using System.Reflection;
+using System.Windows.Controls.Primitives;
+using System.ComponentModel;
+using System.Collections.Generic;
+using Button = System.Windows.Controls.Button;
+using System.Reflection.Metadata;
 
 namespace gamevault
 {
@@ -55,6 +65,14 @@ namespace gamevault
         private JumpList jumpList;
 
         private GameTimeTracker m_gameTimeTracker;
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+            AnalyticsHelper.Instance.InitHeartBeat();
+            AnalyticsHelper.Instance.RegisterGlobalEvents();
+            AnalyticsHelper.Instance.SendCustomEvent("APP_INITIALIZED", AnalyticsHelper.Instance.GetSysInfo());
+        }
 
         private async void Application_Startup(object sender, StartupEventArgs e)
         {
@@ -135,12 +153,9 @@ namespace gamevault
                 File.Create(errorLogPath).Close();
             }
             File.WriteAllText(errorLogPath, errorMessage + "\n" + errorStackTrace);
+            AnalyticsHelper.Instance.SendErrorLog(e);
             ExceptionWindow exWin = new ExceptionWindow();
-            if (exWin.ShowDialog() == true)
-            {
-                errorMessage += $"\nUSER_MESSAGE:{exWin.UserMessage}";
-                CrashReportHelper.SendCrashReport(errorMessage, errorStackTrace, $"Type: {e.GetType().ToString()}");
-            }
+            exWin.ShowDialog();
             ShutdownApp();
         }
 
@@ -210,9 +225,9 @@ namespace gamevault
                 {
                     ThemeItem currentTheme = JsonSerializer.Deserialize<ThemeItem>(currentThemeString);
 
-                    if (App.Current.Resources.MergedDictionaries[0].Source.OriginalString != currentTheme.Value)
+                    if (App.Current.Resources.MergedDictionaries[0].Source.OriginalString != currentTheme.Path)
                     {
-                        App.Current.Resources.MergedDictionaries[0] = new ResourceDictionary() { Source = new Uri(currentTheme.Value) };
+                        App.Current.Resources.MergedDictionaries[0] = new ResourceDictionary() { Source = new Uri(currentTheme.Path) };
                     }
                 }
             }
@@ -247,7 +262,7 @@ namespace gamevault
                 {
                     MainWindow.Show();
                 }
-                MessageDialogResult result = await ((MetroWindow)MainWindow).ShowMessageAsync($"Downloads are still running in the background, are you sure you want to close the app anyway?", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+                MessageDialogResult result = await ((MetroWindow)MainWindow).ShowMessageAsync($"Downloads are still running in the background, are you sure you want to exit the app anyway?", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
                 if (result == MessageDialogResult.Affirmative)
                 {
                     MainWindowViewModel.Instance.Downloads.CancelAllDownloads();

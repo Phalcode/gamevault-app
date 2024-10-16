@@ -91,11 +91,11 @@ namespace gamevault.Helper
             MemoryStream pasteStream = new MemoryStream();
             using (MemoryStream outStream = new MemoryStream())
             {
-                BitmapEncoder enc = new PngBitmapEncoder();
+                BitmapEncoder enc = new JpegBitmapEncoder();
                 enc.Frames.Add(BitmapFrame.Create(src));
                 enc.Save(outStream);
                 bitmap = new System.Drawing.Bitmap(outStream);
-                bitmap.Save(pasteStream, ImageFormat.Png);
+                bitmap.Save(pasteStream, ImageFormat.Jpeg);
             }
             pasteStream.Seek(0, SeekOrigin.Begin);
             return pasteStream;

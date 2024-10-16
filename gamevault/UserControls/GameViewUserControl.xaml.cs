@@ -42,7 +42,7 @@ namespace gamevault.UserControls
         private YoutubeClient YoutubeClient { get; set; }
         private async Task PrepareMetadataMedia(GameMetadata data)
         {
-            List<string> MediaUrls = new List<string>();
+            List<Tuple<string, string>> MediaUrls = new List<Tuple<string, string>>();
             if (YoutubeClient == null)
             {
                 YoutubeClient = new YoutubeClient();
@@ -52,17 +52,23 @@ namespace gamevault.UserControls
             bool gameplayPreloaded = false;
             if (data?.Trailers?.Count() > 0)
             {
-                trailerPreloaded = true;
-                string preloaded = await ConvertYoutubeLinkToEmbedded(data?.Trailers[0]);
-                MediaUrls.Add(preloaded);
-                await uiMediaSlider.LoadFirstElement(preloaded);
+                var preloaded = await ConvertYoutubeLinkToEmbedded(data?.Trailers[0]);
+                if (preloaded != null)
+                {
+                    trailerPreloaded = true;
+                    MediaUrls.Add(preloaded);
+                    await uiMediaSlider.LoadFirstElement(preloaded);
+                }
             }
             else if (data?.Gameplays?.Count() > 0)
             {
-                gameplayPreloaded = true;
-                string preloaded = await ConvertYoutubeLinkToEmbedded(data?.Gameplays[0]);
-                MediaUrls.Add(preloaded);
-                await uiMediaSlider.LoadFirstElement(preloaded);
+                var preloaded = await ConvertYoutubeLinkToEmbedded(data?.Gameplays[0]);
+                if (preloaded != null)
+                {
+                    gameplayPreloaded = true;
+                    MediaUrls.Add(preloaded);
+                    await uiMediaSlider.LoadFirstElement(preloaded);
+                }
             }
 
             for (int i = 0; i < data?.Trailers?.Count(); i++)
@@ -71,7 +77,11 @@ namespace gamevault.UserControls
                 {
                     continue;//Prevent the first element from being reloaded
                 }
-                MediaUrls.Add(await ConvertYoutubeLinkToEmbedded(data?.Trailers[i]));
+                var url = await ConvertYoutubeLinkToEmbedded(data?.Trailers[i]);
+                if (url != null)
+                {
+                    MediaUrls.Add(url);
+                }
             }
             for (int i = 0; i < data?.Gameplays?.Count(); i++)
             {
@@ -79,11 +89,15 @@ namespace gamevault.UserControls
                 {
                     continue;//Prevent the first element from being reloaded
                 }
-                MediaUrls.Add(await ConvertYoutubeLinkToEmbedded(data?.Gameplays[i]));
+                var url = await ConvertYoutubeLinkToEmbedded(data?.Gameplays[i]);
+                if (url != null)
+                {
+                    MediaUrls.Add(url);
+                }
             }
             for (int i = 0; i < data?.Screenshots?.Count(); i++)
             {
-                MediaUrls.Add(data?.Screenshots[i]);
+                MediaUrls.Add(new Tuple<string, string>(data?.Screenshots[i], ""));
             }
 
             uiMediaSlider.SetMediaList(MediaUrls);
@@ -92,19 +106,23 @@ namespace gamevault.UserControls
                 await uiMediaSlider.LoadFirstElement();
             }
         }
-        private async Task<string> ConvertYoutubeLinkToEmbedded(string input)
+        private async Task<Tuple<string, string>> ConvertYoutubeLinkToEmbedded(string input)
         {
-            if (input.Contains("youtu", StringComparison.OrdinalIgnoreCase))
+            try
             {
-                var streamManifest = await YoutubeClient.Videos.Streams.GetManifestAsync(input);
-                var streamInfo = streamManifest.GetMuxedStreams().GetWithHighestVideoQuality();
-                var streamUrl = streamInfo.Url;
-                return streamUrl;
+                if (input.Contains("youtu", StringComparison.OrdinalIgnoreCase))
+                {
+                    var streamManifest = await YoutubeClient.Videos.Streams.GetManifestAsync(input);
+                    var videoStreamInfo = streamManifest.GetVideoStreams().GetWithHighestVideoQuality();
+                    var audioStreamInfo = streamManifest.GetAudioStreams().GetWithHighestBitrate();
+                    return new Tuple<string, string>(videoStreamInfo.Url, audioStreamInfo.Url);
+                }
+                else
+                {
+                    return new Tuple<string, string>(input, "");
+                }
             }
-            else
-            {
-                return input;
-            }
+            catch { return null; }
         }
         #endregion
 
@@ -138,10 +156,14 @@ namespace gamevault.UserControls
             }
             catch (Exception ex) { }
             ViewModel.IsInstalled = IsGameInstalled(ViewModel.Game);
-            ViewModel.IsDownloaded = IsGameDownloaded(ViewModel.Game);
-            ViewModel.ShowMappedTitle = Preferences.Get(AppConfigKey.ShowMappedTitle, AppFilePath.UserFile) == "1";
+            ViewModel.IsDownloaded = IsGameDownloaded(ViewModel.Game);           
             PrepareMarkdownElements();
             this.IsEnabled = true;
+        }
+        public void RefreshGame(Game game)
+        {
+            ViewModel.Game = game;
+            PrepareMarkdownElements();
         }
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
@@ -162,8 +184,7 @@ namespace gamevault.UserControls
                     catch (Exception ex) { }
                 }
                 ViewModel.IsInstalled = IsGameInstalled(ViewModel.Game);
-                ViewModel.IsDownloaded = IsGameDownloaded(ViewModel.Game);
-                ViewModel.ShowMappedTitle = Preferences.Get(AppConfigKey.ShowMappedTitle, AppFilePath.UserFile) == "1";
+                ViewModel.IsDownloaded = IsGameDownloaded(ViewModel.Game);               
                 PrepareMarkdownElements();
                 //MediaSlider
                 try
@@ -176,9 +197,9 @@ namespace gamevault.UserControls
             }
             if (!this.IsVisible && loaded && !uiMediaSlider.IsWebViewNull())
             {
-                await uiMediaSlider.SaveMediaVolume();//Set this to unload event, so it will dispose even if the main control changes
+                //Set this to unload event, so it will dispose even if the main control changes
                 uiMediaSlider.Dispose();
-            }            
+            }
         }
         private bool IsGameInstalled(Game? game)
         {
@@ -207,11 +228,11 @@ namespace gamevault.UserControls
         {
             MainWindowViewModel.Instance.UndoActiveControl();
         }
-        private void GamePlay_Click(object sender, MouseButtonEventArgs e)
+        private void GamePlay_Click(object sender, RoutedEventArgs e)
         {
             InstallUserControl.PlayGame(ViewModel.Game.ID);
         }
-        private void GameSettings_Click(object sender, MouseButtonEventArgs e)
+        private void GameSettings_Click(object sender, RoutedEventArgs e)
         {
             if (ViewModel.Game == null)
                 return;
@@ -219,7 +240,7 @@ namespace gamevault.UserControls
             uiMediaSlider.UnloadMediaSlider();
             MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(ViewModel.Game) { Width = 1200, Height = 800, Margin = new Thickness(50) });
         }
-        private async void GameDownload_Click(object sender, MouseButtonEventArgs e)
+        private async void GameDownload_Click(object sender, RoutedEventArgs e)
         {
             if (ViewModel.Game == null)
                 return;
@@ -269,16 +290,11 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.Community.ShowUser(selectedProgress.User);
             }
         }
-        public void RefreshGame(Game game)
-        {
-            ViewModel.Game = game;
-        }
         private void GameTitle_Click(object sender, MouseButtonEventArgs e)
         {
             try
             {
-                ViewModel.ShowMappedTitle = !ViewModel.ShowMappedTitle;
-                Preferences.Set(AppConfigKey.ShowMappedTitle, ViewModel.ShowMappedTitle ? "1" : "0", AppFilePath.UserFile);
+                SettingsViewModel.Instance.ShowMappedTitle = !SettingsViewModel.Instance.ShowMappedTitle;
             }
             catch { }
         }
@@ -343,7 +359,7 @@ namespace gamevault.UserControls
             }
             catch { }
         }
-        private void Share_Click(object sender, MouseButtonEventArgs e)
+        private void Share_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -367,23 +383,25 @@ namespace gamevault.UserControls
         }
         private void PrepareMarkdownElements()
         {
-            if (!string.IsNullOrWhiteSpace(ViewModel?.Game?.Metadata?.Description))
+            try
             {
-                try
+                if (ViewModel?.Game?.Metadata?.Description != null)
                 {
                     ViewModel.DescriptionMarkdown = ViewModel.Game.Metadata.Description;
                 }
-                catch { }
             }
-            if (!string.IsNullOrWhiteSpace(ViewModel?.Game?.Metadata?.Notes))
+            catch { }
+            try
             {
-                try
+                if (ViewModel?.Game?.Metadata?.Notes != null)
                 {
                     ViewModel.NotesMarkdown = ViewModel.Game.Metadata.Notes;
                 }
-                catch { }
             }
+            catch { }
         }
         #endregion
+
+
     }
 }

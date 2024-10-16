@@ -152,7 +152,7 @@
                                 </StackPanel>
                             </mah:ContentControlEx.Content>
                         </mah:ContentControlEx>
-                        <Border Name="Disabled_Border"  Visibility="Collapsed" CornerRadius="{TemplateBinding CornerRadius}" BorderThickness="2" Background="{DynamicResource GameVault.Brushes.Button.Disabled}" BorderBrush="{DynamicResource GameVault.Brushes.Button.Disabled}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        <Border Name="Disabled_Border" Visibility="Collapsed" CornerRadius="{TemplateBinding CornerRadius}" BorderThickness="{TemplateBinding BorderThickness}" Background="{DynamicResource GameVault.Brushes.Button.Disabled}" BorderBrush="{DynamicResource GameVault.Brushes.Button.Disabled}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="Kind" Value="Primary">

@@ -128,7 +128,7 @@ namespace gamevault.UserControls
         }
 
         private async Task DataChanged(object newData)
-        {          
+        {
             if (newData == null)
                 return;
 
@@ -230,6 +230,7 @@ namespace gamevault.UserControls
             {
                 try
                 {
+                    if (imageId == -1) { throw new Exception("image id does not exist"); }
                     uiImg.Source = await WebHelper.DownloadImageFromUrlAsync($"{SettingsViewModel.Instance.ServerUrl}/api/media/{imageId}");
                 }
                 catch (Exception ex)
@@ -241,6 +242,10 @@ namespace gamevault.UserControls
             {
                 await CacheHelper.HandleImageCacheAsync(media.Identifier, imageId, cachePath, ImageCacheType, uiImg);
             }
+        }
+        public ImageSource GetImageSource()
+        {
+            return uiImg.Source;
         }
     }
 }

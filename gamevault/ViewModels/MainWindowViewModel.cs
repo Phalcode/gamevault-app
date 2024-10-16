@@ -16,7 +16,7 @@ namespace gamevault.ViewModels
     public enum MainControl
     {
         Library = 0,
-        Downloads = 1,        
+        Downloads = 1,
         Community = 2,
         Settings = 3,
         AdminConsole = 4
@@ -121,6 +121,7 @@ namespace gamevault.ViewModels
             set
             {
                 if (m_ActiveControl != null) { m_ActiveControl.Visibility = System.Windows.Visibility.Collapsed; }
+                AnalyticsHelper.Instance.SendPageView(value, m_ActiveControl);
                 m_ActiveControl = value;
                 if (m_ActiveControl != null)
                 {
