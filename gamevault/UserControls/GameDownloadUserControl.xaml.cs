@@ -763,7 +763,7 @@ namespace gamevault.UserControls
             }
         }
 
-        private void InitOverwriteGameType_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void InitOverwriteGameType_Click(object sender, RoutedEventArgs e)
         {
             var temp = ViewModel.Game;
             temp.Type = GameType.UNDETECTABLE;

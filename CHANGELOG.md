@@ -12,7 +12,7 @@ Recommended Gamevault Server Version: `v13.0.0`
 - The executable ignorelist is now editable in the settings tab
 - New setting 'Retain Sorting and Filter preferences after restart'
 - Last community tab 'sorty by' will be remembered
-- Downloads are paused without loss when GameVault is closed
+- Downloads are safely paused, even if gamevault crashes or is forced to close
 - Overhauled the layout
 - Added Media Slider to display trailer/gameplay/screenshots
 - Added Age Rating
@@ -25,6 +25,7 @@ Recommended Gamevault Server Version: `v13.0.0`
 - Unmap selected metadata provider
 - Recache selected metadata provider
 - Added new tab 'Edit Details' that gives you full control over every detail of the game. You can undo manual changes at any time with the 'Clear User Data' Button
+- You can now specify default launch/setup executable and default launch parameter
 
 ## 1.11.2.0
 Recommended Gamevault Server Version: `v12.2.0`

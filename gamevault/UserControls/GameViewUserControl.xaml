@@ -70,7 +70,7 @@
                         </Border>
                         <StackPanel Grid.Column="0" Width="546">
                             <Grid Background="Transparent" Height="100">
-                                <local:CacheImage Data="{Binding Game}" ImageCacheType="GameCover" Stretch="Uniform" CornerRadius="5" HorizontalAlignment="Left" Height="100" Width="75" Margin="0,0,0,0"/>
+                                <local:CacheImage Data="{Binding Game}" ImageCacheType="GameCover" Stretch="Fill" CornerRadius="5" HorizontalAlignment="Left" Height="100" Width="75" Margin="0,0,0,0"/>
                                 <StackPanel Orientation="Horizontal" Margin="90,0,-300,0" VerticalAlignment="Center" HorizontalAlignment="Left" Cursor="Hand" MouseLeftButtonUp="GameTitle_Click">
                                     <TextBlock FontSize="25" FontWeight="Bold">
                                         <TextBlock.Style>

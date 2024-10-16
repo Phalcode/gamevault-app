@@ -243,5 +243,9 @@ namespace gamevault.UserControls
                 await CacheHelper.HandleImageCacheAsync(media.Identifier, imageId, cachePath, ImageCacheType, uiImg);
             }
         }
+        public ImageSource GetImageSource()
+        {
+            return uiImg.Source;
+        }
     }
 }

@@ -644,6 +644,27 @@ namespace gamevault.UserControls
                 }
             }
         }
+        private void CopyImageToClipboard_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                BitmapSource bitmapSource = null;
+                if(((FrameworkElement)sender).Tag?.ToString() == "CurrentShownMappedGame")
+                {
+                    bitmapSource = (BitmapSource)uiImgCurrentShownMappedGame.GetImageSource();
+                }
+                else
+                {
+                    bitmapSource = (BitmapSource)uiImgCurrentMergedGame.GetImageSource();
+                }
+                Clipboard.SetImage(bitmapSource);
+                MainWindowViewModel.Instance.AppBarText = "Image copied to Clipboard";
+            }
+            catch (Exception ex)
+            {
+                MainWindowViewModel.Instance.AppBarText = ex.Message;
+            }
+        }
         #region Generic Events       
         private InputTimer backgroundImageUrldebounceTimer { get; set; }
         private InputTimer boxImageUrldebounceTimer { get; set; }
@@ -930,5 +951,6 @@ namespace gamevault.UserControls
             catch { }
         }
         #endregion
+
     }
 }
