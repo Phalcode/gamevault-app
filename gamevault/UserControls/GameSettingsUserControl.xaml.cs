@@ -105,7 +105,7 @@ namespace gamevault.UserControls
                         }
                     case 4:
                         {
-                            url = "https://gamevau.lt/docs/client-docs/gui#edit-game-details";
+                            url = "https://gamevau.lt/docs/client-docs/gui#custom-metadata";
                             break;
                         }
                 }
@@ -649,7 +649,7 @@ namespace gamevault.UserControls
             try
             {
                 BitmapSource bitmapSource = null;
-                if(((FrameworkElement)sender).Tag?.ToString() == "CurrentShownMappedGame")
+                if (((FrameworkElement)sender).Tag?.ToString() == "CurrentShownMappedGame")
                 {
                     bitmapSource = (BitmapSource)uiImgCurrentShownMappedGame.GetImageSource();
                 }
