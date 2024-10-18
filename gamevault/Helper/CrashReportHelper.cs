@@ -22,7 +22,7 @@ namespace gamevault.Helper
         {
             try
             {
-                string sysInfo = $"Version: {SettingsViewModel.Instance.Version} EA | Is Windows Package: {(App.IsWindowsPackage == true ? "True" : "False")}";
+                string sysInfo = $"Version: {SettingsViewModel.Instance.Version} | Is Windows Package: {(App.IsWindowsPackage == true ? "True" : "False")}";
                 try
                 {
                     sysInfo += "\n" + GetSysInfo();

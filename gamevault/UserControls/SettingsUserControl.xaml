@@ -28,7 +28,7 @@
                 <TextBlock Text="Settings" FontSize="35" Margin="20,0,0,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
             </Grid>
         </Border>
-        <TextBlock Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Text="{Binding Version,StringFormat='{}V {0} EA'}" Margin="20,0,0,5"/>
+        <TextBlock Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Text="{Binding Version,StringFormat='{}V {0}'}" Margin="20,0,0,5"/>
         <ScrollViewer Grid.Row="1" Margin="10" VerticalScrollBarVisibility="Auto">
             <TabControl x:Name="uiTabControl" TabStripPlacement="Left" SelectionChanged="TabControl_SelectionChanged" FocusVisualStyle="{x:Null}">
                 <TabItem Header="Application">
@@ -361,7 +361,7 @@
                         <TextBlock Text="About" FontSize="20" FontWeight="Bold"/>
                         <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
                             <TextBlock Text="Application Version" FontSize="15" Width="200"/>
-                            <TextBlock Text="{Binding Version,StringFormat='{}{0} EA'}" FontSize="15"/>
+                            <TextBlock Text="{Binding Version,StringFormat='{}{0}'}" FontSize="15"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
                             <TextBlock Text="Developed by Phalcode" FontSize="15" Width="200"/>
