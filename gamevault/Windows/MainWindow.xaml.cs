@@ -107,7 +107,48 @@ namespace gamevault.Windows
 
             uiNewsBadge.Badge = await CheckForNews() ? "!" : "";
             InitNewsTimer();
+
+            if (await IsServerTooOutdated())
+            {
+                try
+                {
+                    MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync("CLIENT-SERVER-INCOMPABILITY DETECTED",
+                          $"Your GameVault Client is not compatible with the GameVault Server you are using (<13.0.0). This server is too old for your client.\r\n\r\nYou have the following options:\r\n",
+                          MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Install the older version of the client from GitHub", NegativeButtonText = "Update the server to version 13", AnimateHide = false, DialogMessageFontSize = 25, DialogTitleFontSize = 30 });
+                    if (result == MessageDialogResult.Affirmative)
+                    {
+                        Process.Start(new ProcessStartInfo("https://github.com/Phalcode/gamevault-app/releases") { UseShellExecute = true });
+                    }
+                    else
+                    {
+                        Process.Start(new ProcessStartInfo("https://github.com/Phalcode/gamevault-backend/releases/tag/12.2.0") { UseShellExecute = true });
+                    }
+                }
+                catch { }
+            }
         }
+        //User Notification for major client/serveWPFr update 
+        private async Task<bool> IsServerTooOutdated()
+        {
+            try
+            {
+                using (System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient())
+                {
+
+                    httpClient.DefaultRequestHeaders.Add("User-Agent", "Other");
+                    string serverResonse = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/health");
+                    string currentServerVersion = System.Text.Json.JsonSerializer.Deserialize<ServerInfo>(serverResonse).Version;
+                    if (currentServerVersion == null || currentServerVersion == "")
+                    {
+                        return true;
+                    }
+                    return new Version(currentServerVersion) < new Version("13.0.0");
+                }
+            }
+            catch { }
+            return false;
+        }
+        //######
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
