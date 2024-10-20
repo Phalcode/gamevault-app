@@ -1,6 +1,6 @@
 # GameVault App Changelog
 
-## 1.12.5.0
+## 1.12.5
 Recommended Gamevault Server Version: `v13.0.0`
 ### Changes
 
@@ -42,7 +42,7 @@ Recommended Gamevault Server Version: `v12.2.0`
 - Bug fix: Crash on download/extraction notification if box image is not set
 - Bug fix: Rare crash on Phalcode sign-in window
 
-## 1.11.0.0
+## 1.11.0
 Recommended Gamevault Server Version: `v12.2.0`
 ### Changes
 
@@ -60,7 +60,7 @@ Recommended Gamevault Server Version: `v12.2.0`
 - Bug fix: Crash on local download directory has wrong name format
 - Bug fix: The header of the image downloader was sometimes encoded incorrectly
 
-## 1.10.1.0
+## 1.10.1
 Recommended Gamevault Server Version: `v12.1.1`
 ### Changes
 
@@ -72,7 +72,7 @@ Recommended Gamevault Server Version: `v12.1.1`
 - Bug fix: Crash on download game - restart app - extract game
 - Bug fix: Download UI sometimes did not display the status correctly when the game was installed
 
-## 1.10.0.0
+## 1.10.0
 Recommended Gamevault Server Version: `v12.1.0`
 ### Changes
 - Added Encrypted (password protected) archive support. Including a default password setting.
@@ -84,19 +84,19 @@ Recommended Gamevault Server Version: `v12.1.0`
 - Bug fix: Displayed download speed has adjusted very slowly with larger fluctuations
 - Bug fix: Too much offset of the bookmark button if game setting button was not visible
 
-## 1.9.2.0
+## 1.9.2
 Recommended Gamevault Server Version: `v12.0.0`
 ### Changes
 - Added Bookmarks to library and gameview. Also the corresponding library filter
 - Changed Early Access library filter visual
 - Bug fix: Auto extract sometimes did not work when trying to unpack very large files
 
-## 1.9.1.0
+## 1.9.1
 Recommended Gamevault Server Version: `v11.0.2`
 ### Changes
 - Bug fix: GameVault+ license was not loaded correctly
 
-## 1.9.0.0
+## 1.9.0
 Recommended Gamevault Server Version: `v11.0.2`
 ### Changes
 - Added GameVault+ infrastructure
@@ -120,13 +120,13 @@ Recommended Gamevault Server Version: `v11.0.2`
 - Bug fix: Center user background image on window resize
 - Bug fix: Game settings form data flies in from outside the window
 
-## 1.8.3.0
+## 1.8.3
 Recommended Gamevault Server Version: `v10.2.0`
 ### Changes
 - Bug fix: Re-Download icon not appearing on library cards. Also improved loading times by create library cards content only by hover over.
 - Bug fix: Game webite text no longer has the clickable style if no value has been set on GameView 
 
-## 1.8.2.0
+## 1.8.2
 Recommended Gamevault Server Version: `v10.1.0`
 ### Changes
 - Write permissions of the root folder are now checked on selection
@@ -142,7 +142,7 @@ Recommended Gamevault Server Version: `v10.1.0`
 - Added Troubleshoot message to the library expander if the library fails to load
 - Bug fix: The library does not load automatically on first login
 
-## 1.8.1.0
+## 1.8.1
 Recommended Gamevault Server Version: `v10.0.2`
 ### Changes
 - Implemented to display whether and how many filters are active
@@ -159,7 +159,7 @@ Recommended Gamevault Server Version: `v10.0.2`
 - Bug fix: Progesses from other users were cut off in GameView
 - Bug fix: Lower boxart quality in the GameView
 
-## 1.8.0.0
+## 1.8.0
 Recommended Gamevault Server Version: `v10.0.0`
 ### Changes
 -Installation tab has been integrated into the Library tab
@@ -172,23 +172,23 @@ Recommended Gamevault Server Version: `v10.0.0`
 -Games can now be started and downloaded from the Library and the GameView
 -Progresses from other users are displayed in the GameView
 
-## 1.7.3.0
+## 1.7.3
 Recommended Gamevault Server Version: `v9.0.0`
 ### Changes
 - Switched to non-deprecated APIs
 - Bug fix: Rare case in the time tracker where a game was not recognized as a game
 
-## 1.7.2.0
+## 1.7.2
 ### Changes
 - Bug fix: The installer executable selection list gave an error if there was an executable file with the same name in one of the subfolders
 
-## 1.7.1.0
+## 1.7.1
 ### Changes
 - Current server version is now displayed in the Admin Console. Additionally a message is displayed when the server is outdated
 - Bug fix: Error when selecting script as installer in the Download Tab
 - Bug fix: Current selected executable turned Blank after open the executable dropdown in the Installation Tab
 
-## 1.7.0.0
+## 1.7.0
 ### Changes
 - Added support for more executable files in the download tab
 - When you remove the download, the installation folder will be deleted automatically if it is empty
@@ -203,12 +203,12 @@ Recommended Gamevault Server Version: `v9.0.0`
 - Bug fix: Last selected user is not refreshed, when entering the community tab
 - Bug fix: Added a few more safeties in the offline cache
 
-## 1.6.2.0
+## 1.6.2
 ### Changes
 - Bug fix: Update Notification for non Microsoft Store Version was shown in the Microsoft Store Version
 - Bug fix: Error while setting the installation path to Clipboard
 
-## 1.6.1.0
+## 1.6.1
 ### Changes
 - Admins can delete user progress
 - Bug fix: Setup games were not uninstalled correctly
@@ -216,7 +216,7 @@ Recommended Gamevault Server Version: `v9.0.0`
 - Bug fix: When changing the role of a user, the user was deactivated
 - Bug fix: Progress for deleted games are now displayed. Also added validation for this in the game view
 
-## 1.6.0.0
+## 1.6.0
 ### Changes
 - Faster Rawg search in the game view
 - More detailed error messages when downloading
@@ -232,7 +232,7 @@ Recommended Gamevault Server Version: `v9.0.0`
 - Bug fix: Game Title was also not displayed when the Release Date was not set
 - Bug fix: Could not navigate to errorlog on Microsoft Store version
 
-## 1.5.0.0
+## 1.5.0
 ### Changes
 - Reorganized settings tab
 - "Auto-Extract Downloaded Games" option added to settings
@@ -244,13 +244,13 @@ Recommended Gamevault Server Version: `v9.0.0`
 - Download progress is now displayed in the taskbar
 - It is now possible to upload images from the client 
 
-## 1.4.1.0
+## 1.4.1
 ### Changes
 - Bug fix: Image optimization was skipped if it was not a Microsoft store version
 - Bug fix: System tray icon was still visible after closing the application until hovering over it with the mouse
 - Bug fix: Incompatible request header for download in server version 3. Fallback included for downloading regardless.
 
-## 1.4.0.0
+## 1.4.0
 ### Changes
 - In case of an unhandled exception, you can now navigate directly to the error logs
 - In the admin console, you can now jump directly to the profiles
@@ -261,7 +261,7 @@ Recommended Gamevault Server Version: `v9.0.0`
 - Bug fix: A long error message in the download tab, no longer rescales the individual elements
 - Bug fix: Download speed not shown, when it's KB/s and below 
 
-## 1.3.0.0
+## 1.3.0
 ### Changes
 - Installation pipeline implemented. The UI for the download tab has been completely overhauled. GameVault is now able to extract downloaded game archives and perform the installation process depending on the game type.
 - Added new game types filter in the library
@@ -271,16 +271,16 @@ Recommended Gamevault Server Version: `v9.0.0`
 - Other UI changes especially in terms of spacing and round corners
 - Bug fix: When re-loading a user in the community tab, the filter was not sorting the progresses correctly afterwards
 
-## 1.2.1.0
+## 1.2.1
 ### Changes
 - Autostart fix (For self build and Microsoft Store)
 
-## 1.2.0.0
+## 1.2.0
 ### Changes
 - Renamed Crackpipe to Gamevault
 - Automatic migration of existing data
 
-## 1.1.0.0
+## 1.1.0
 ### Changes
 - Show asterisks in registration password fields instead of clear text
 - Notify user, when app is still running in the system tray
@@ -289,7 +289,7 @@ Recommended Gamevault Server Version: `v9.0.0`
 - Rework Playtime UI in Game View
 - Auto load library as default in the settings
 
-## 1.0.1.0
+## 1.0.1
 ### Changes
 - Bug fix: When registering a new user, the message "Each field must be filled" was displayed, although all fields were set.
 
