@@ -40,4 +40,3 @@ GameVault manages DRM-free games and is solely a tool to address this need. We a
 When we say DRM-free games, we only mean games obtained legally. While GameVault can theoretically be used with illegally obtained games, we do not endorse or support piracy.
 
 Users must be aware of and comply with copyright laws in their respective jurisdictions. We encourage responsible and legal use of GameVault. Unlawful use is strictly improper and unauthorized.
- 
