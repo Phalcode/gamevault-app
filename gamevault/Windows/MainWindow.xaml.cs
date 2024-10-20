@@ -11,6 +11,12 @@ using System;
 using Microsoft.Toolkit.Uwp.Notifications;
 using System.Windows.Forms;
 using gamevault.Models;
+using ControlzEx.Standard;
+using System.Text;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
+using System.Windows.Threading;
+using System.Windows.Controls;
 
 namespace gamevault.Windows
 {
@@ -69,6 +75,7 @@ namespace gamevault.Windows
 
         private async void MetroWindow_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
+            AdjustWindowChrome();
             if (SettingsViewModel.Instance.SetupCompleted())
             {
                 MainWindowViewModel.Instance.SetActiveControl(MainControl.Library);
@@ -96,8 +103,52 @@ namespace gamevault.Windows
             }
             await MainWindowViewModel.Instance.Library.GetGameInstalls().RestoreInstalledGames();
             await MainWindowViewModel.Instance.Downloads.RestoreDownloadedGames();
-            MainWindowViewModel.Instance.UserIcon = LoginManager.Instance.GetCurrentUser();
+            MainWindowViewModel.Instance.UserAvatar = LoginManager.Instance.GetCurrentUser();
+
+            uiNewsBadge.Badge = await CheckForNews() ? "!" : "";
+            InitNewsTimer();
+
+            if (await IsServerTooOutdated())
+            {
+                try
+                {
+                    MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync("CLIENT-SERVER-INCOMPABILITY DETECTED",
+                          $"Your GameVault Client is not compatible with the GameVault Server you are using (<13.0.0). This server is too old for your client.\r\n\r\nYou have the following options:\r\n",
+                          MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Install the older version of the client from GitHub", NegativeButtonText = "Update the server to version 13", AnimateHide = false, DialogMessageFontSize = 25, DialogTitleFontSize = 30 });
+                    if (result == MessageDialogResult.Affirmative)
+                    {
+                        Process.Start(new ProcessStartInfo("https://github.com/Phalcode/gamevault-app/releases") { UseShellExecute = true });
+                    }
+                    else
+                    {
+                        Process.Start(new ProcessStartInfo("https://github.com/Phalcode/gamevault-backend/releases/tag/12.2.0") { UseShellExecute = true });
+                    }
+                }
+                catch { }
+            }
         }
+        //User Notification for major client/serveWPFr update 
+        private async Task<bool> IsServerTooOutdated()
+        {
+            try
+            {
+                using (System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient())
+                {
+
+                    httpClient.DefaultRequestHeaders.Add("User-Agent", "Other");
+                    string serverResonse = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/health");
+                    string currentServerVersion = System.Text.Json.JsonSerializer.Deserialize<ServerInfo>(serverResonse).Version;
+                    if (currentServerVersion == null || currentServerVersion == "")
+                    {
+                        return true;
+                    }
+                    return new Version(currentServerVersion) < new Version("13.0.0");
+                }
+            }
+            catch { }
+            return false;
+        }
+        //######
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -113,11 +164,84 @@ namespace gamevault.Windows
             }
         }
 
-        private void UserIcon_Clicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void UserAvatar_Clicked(object sender, RoutedEventArgs e)
         {
             MainWindowViewModel.Instance.Community.ShowUser(LoginManager.Instance.GetCurrentUser());
         }
-        private void WindowCommand_Clicked(object sender, RoutedEventArgs e)
+
+
+        private void Premium_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            MainWindowViewModel.Instance.SetActiveControl(MainControl.Settings);
+            MainWindowViewModel.Instance.Settings.SetTabIndex(4);
+        }
+
+        private async Task<bool> CheckForNews()
+        {
+            try
+            {
+                if (Preferences.Get(AppConfigKey.UnreadNews, AppFilePath.UserFile) == "1")
+                {
+                    return true;
+                }
+                string gameVaultNews = await WebHelper.DownloadFileContentAsync("https://gamevau.lt/news.md");
+                string serverNews = await WebHelper.GetRequestAsync($"{SettingsViewModel.Instance.ServerUrl}/api/config/news");
+
+                string hash = await CacheHelper.CreateHashAsync(gameVaultNews + serverNews);
+                if (Preferences.Get(AppConfigKey.NewsHash, AppFilePath.UserFile) != hash)
+                {
+                    Preferences.Set(AppConfigKey.UnreadNews, "1", AppFilePath.UserFile);
+                    Preferences.Set(AppConfigKey.NewsHash, hash, AppFilePath.UserFile);
+                    return true;
+                }
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        private void InitNewsTimer()
+        {
+            DispatcherTimer newsTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromHours(1)
+            };
+            newsTimer.Tick += async (s, e) => { uiNewsBadge.Badge = await CheckForNews() ? "!" : ""; };
+            newsTimer.Start();
+        }
+
+        private void News_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (MainWindowViewModel.Instance.ActiveControl.GetType() == typeof(GameViewUserControl))//Else the news popup would be rendered below the media slider because of the airspace problem
+            {
+                ((GameViewUserControl)MainWindowViewModel.Instance.ActiveControl).uiMediaSlider.UnloadMediaSlider();
+            }
+            MainWindowViewModel.Instance.OpenPopup(new NewsPopup());
+            try
+            {
+                uiNewsBadge.Badge = "";
+                Preferences.Set(AppConfigKey.UnreadNews, "0", AppFilePath.UserFile);
+            }
+            catch
+            { }
+        }
+        private void AdjustWindowChrome()
+        {
+            try
+            {
+                //var root = this.Template.FindName("PART_Content", this);
+                //System.Windows.Controls.Panel.SetZIndex((MetroContentControl)root, 6);
+                var thumb = (FrameworkElement)this.Template.FindName("PART_WindowTitleThumb", this);
+                thumb.Margin = new Thickness(50, 0, 0, 0);
+                System.Windows.Controls.Panel.SetZIndex(thumb, 7);
+                var btnCommands = (FrameworkElement)this.Template.FindName("PART_WindowButtonCommands", this);
+                System.Windows.Controls.Panel.SetZIndex(btnCommands, 8);
+            }
+            catch { }
+        }
+
+        private void Shortlink_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             try
             {
@@ -131,10 +255,13 @@ namespace gamevault.Windows
             catch { }
         }
 
-        private void Premium_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void CopyMessage_Click(object sender, RoutedEventArgs e)
         {
-            MainWindowViewModel.Instance.SetActiveControl(MainControl.Settings);
-            MainWindowViewModel.Instance.Settings.SetTabIndex(3);
+            try
+            {
+                System.Windows.Clipboard.SetText(MainWindowViewModel.Instance.AppBarText);
+            }
+            catch { }
         }
     }
 }

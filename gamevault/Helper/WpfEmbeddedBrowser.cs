@@ -95,7 +95,12 @@ namespace gamevault.Helper
             signinWindow.Show();
 
             // Initialization
-            var env = await CoreWebView2Environment.CreateAsync(null, AppFilePath.WebConfigDir);
+            //Alternative options: "--disk-cache-size=1000000 --disable-cache --disable-gpu-shader-disk-cache --disable-features=SubresourceFilter --disable-graphite-dawn-cache --disable-shader-cache"
+            var startupOptions = new CoreWebView2EnvironmentOptions
+            {
+                AdditionalBrowserArguments = "--disk-cache-size=1000000"
+            };
+            var env = await CoreWebView2Environment.CreateAsync(null, AppFilePath.WebConfigDir, startupOptions);
             await webView.EnsureCoreWebView2Async(env);
 
             // Delete existing Cookies so previous logins won't remembered

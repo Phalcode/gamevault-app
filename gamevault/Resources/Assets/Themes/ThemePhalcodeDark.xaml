@@ -10,7 +10,7 @@
     <!-- Describe this theme -->
     <system:String x:Key="Theme.Description">A dark theme aligned with our Phalcode brand.</system:String>
     <!-- How the theme will be shown in UI -->
-    <system:String x:Key="Theme.DisplayName">Phalcode Theme (Dark)</system:String>
+    <system:String x:Key="Theme.DisplayName">Phalcode (Dark)</system:String>
 
     <!-- Text Color | On Realtime-Colors this is "Text" -->
     <Color x:Key="GameVault.Colors.Foreground">#FFEEF1EF</Color>

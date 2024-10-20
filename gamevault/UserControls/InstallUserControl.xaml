@@ -3,7 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:helper="clr-namespace:gamevault.Helper"
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:vm="clr-namespace:gamevault.ViewModels"
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
@@ -15,7 +17,7 @@
                     <TextBox HorizontalAlignment="Center" Width="376" Margin="0,4,44,4" Style="{DynamicResource SearchTextBox}" TextChanged="Search_TextChanged"/>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,0,0">
                         <TextBlock Text="Rows" VerticalAlignment="Center" FontSize="15" Margin="0,0,10,0"/>
-                        <mah:NumericUpDown x:Name="uiRowsUpDown" ButtonsAlignment="Opposite" Minimum="1" ValueChanged="Rows_ValueChanged"/>
+                        <mah:NumericUpDown x:Name="uiRowsUpDown" ButtonsAlignment="Opposite" Minimum="1" ValueChanged="Rows_ValueChanged" SwitchUpDownButtons="True"/>
                         <mah:NumericUpDown Value="{Binding Path=InstalledGames.Count,Mode=OneWay}" ValueChanged="Collection_Updated" Visibility="Collapsed"/>
                     </StackPanel>
                 </Grid>
@@ -44,6 +46,24 @@
                         </TextBlock>
                     </StackPanel>
                     <ItemsControl ItemsSource="{Binding Path=InstalledGames}" Background="Transparent" IsTabStop="False">
+                        <ItemsControl.Resources>
+                            <Style x:Key="MappedTitleCheck" TargetType="TextBlock">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Source={x:Static vm:SettingsViewModel.Instance},Path=ShowMappedTitle}" Value="True">
+                                        <Setter Property="Text" Value="{Binding Path=Key.Metadata.Title}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=Key.Metadata.Title}" Value="{x:Null}">
+                                        <Setter Property="Text" Value="{Binding Path=Key.Title}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=Key.Metadata.Title}" Value="">
+                                        <Setter Property="Text" Value="{Binding Path=Key.Title}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Source={x:Static vm:SettingsViewModel.Instance},Path=ShowMappedTitle}" Value="False">
+                                        <Setter Property="Text" Value="{Binding Path=Key.Title}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ItemsControl.Resources>
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <UniformGrid Rows="{Binding Rows}" Columns="{Binding Colums}" Margin="6,5,0,5" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.ScrollUnit="Pixel" VirtualizingPanel.VirtualizationMode="Recycling"/>
@@ -51,7 +71,7 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.Template>
                             <ControlTemplate TargetType="ItemsControl">
-                                <ScrollViewer Style="{DynamicResource SecondaryScrollView}" CanContentScroll="False" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto" Padding="{TemplateBinding Padding}" Focusable="False" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
+                                <ScrollViewer Style="{DynamicResource SecondaryScrollView}" CanContentScroll="False" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto" Padding="{TemplateBinding Padding}" Focusable="False" helper:ScrollViewerHelper.EnableHorizontalScroll="True">
                                     <ItemsPresenter/>
                                 </ScrollViewer>
                             </ControlTemplate>
@@ -89,7 +109,7 @@
                                                 </Style>
                                             </Grid.Style>
                                             <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground}" CornerRadius="8">
-                                                <local:CacheImage Stretch="Fill" ImageCacheType="BoxArt" Data="{Binding Key}" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                <local:CacheImage Stretch="Fill" ImageCacheType="GameCover" Data="{Binding Key}" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <Border Name="banner" VerticalAlignment="Stretch" Background="{DynamicResource GameVault.Brushes.Blur}" CornerRadius="8">
                                                 <Border.Style>
@@ -115,7 +135,9 @@
                                                             </Grid.RenderTransform>
                                                         </Grid>
                                                     </Button>
-                                                    <TextBlock Text="{Binding Path=Key.Title}" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}" TextAlignment="Center" TextWrapping="Wrap"/>
+                                                    <TextBlock Style="{StaticResource MappedTitleCheck}" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}" TextAlignment="Center" TextWrapping="Wrap"/>
+
+
                                                     <Button Style="{StaticResource ButtonWrapper}" Click="Play_Click">
                                                         <Grid Style="{DynamicResource HoverEffect}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,40" Background="Transparent" Height="40" Width="40">
                                                             <Path Data="{StaticResource IconPlay}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.2,0.2">

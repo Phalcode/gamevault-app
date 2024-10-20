@@ -16,9 +16,9 @@ namespace gamevault.Converter
         {
             try
             {
-                if (value.GetType() == typeof(User[]))
+                if (value.GetType() == typeof(List<User>))
                 {
-                    return ((User[])value).Any(u => u.ID == LoginManager.Instance.GetCurrentUser().ID);
+                    return ((List<User>)value).Any(u => u.ID == LoginManager.Instance.GetCurrentUser().ID);
                 }
             }
             catch { }

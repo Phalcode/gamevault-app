@@ -19,9 +19,9 @@ namespace gamevault.UserControls
         Genres,
         GameType
     }
-    public partial class TagSelector : UserControl
+    public partial class PillSelector : UserControl
     {
-        public static readonly DependencyProperty SelectionTypeProperty = DependencyProperty.Register(name: "SelectionType", propertyType: typeof(Selection), ownerType: typeof(TagSelector));
+        public static readonly DependencyProperty SelectionTypeProperty = DependencyProperty.Register(name: "SelectionType", propertyType: typeof(Selection), ownerType: typeof(PillSelector));
         public Selection SelectionType
         {
             get => (Selection)GetValue(SelectionTypeProperty);
@@ -30,8 +30,8 @@ namespace gamevault.UserControls
         public event EventHandler EntriesUpdated;
         private bool loaded = false;
         private InputTimer debounceTimer { get; set; }
-        private List<Genre_Tag> selectedEntries = new List<Genre_Tag>();
-        public TagSelector()
+        private List<Pill> selectedEntries = new List<Pill>();
+        public PillSelector()
         {
             InitializeComponent();
         }
@@ -71,12 +71,12 @@ namespace gamevault.UserControls
             selectedEntries.Clear();
             uiSelectedEntries.ItemsSource = null;
         }
-        public void SetEntries(Genre_Tag[] data)
+        public void SetEntries(Pill[] data)
         {
             ClearEntries();
-            foreach (Genre_Tag dataEntry in data)
+            foreach (Pill dataEntry in data)
             {
-                selectedEntries.Add(dataEntry);             
+                selectedEntries.Add(dataEntry);
             }
             uiSelectedEntries.ItemsSource = selectedEntries;
             if (EntriesUpdated != null)
@@ -91,14 +91,14 @@ namespace gamevault.UserControls
         }
         private async Task LoadSelectionEntries()
         {
-            Genre_Tag[] data = null;
+            Pill[] data = null;
             if (SelectionType != Selection.GameType)
             {
                 string url = string.Empty;
                 url = SelectionType switch
                 {
                     Selection.Tags => $"{SettingsViewModel.Instance.ServerUrl}/api/tags?search={debounceTimer.Data}&limit=25",
-                    Selection.Genres => $"{SettingsViewModel.Instance.ServerUrl}/api/genres"
+                    Selection.Genres => $"{SettingsViewModel.Instance.ServerUrl}/api/genres?search={debounceTimer.Data}&limit=25"
                 };
 
                 Selection selection = SelectionType;
@@ -109,8 +109,8 @@ namespace gamevault.UserControls
                         string result = WebHelper.GetRequest(url);
                         data = selection switch
                         {
-                            Selection.Tags => JsonSerializer.Deserialize<PaginatedData<Genre_Tag>>(result).Data,
-                            Selection.Genres => JsonSerializer.Deserialize<Genre_Tag[]>(result).Where(x => x.Name.Contains(debounceTimer.Data, StringComparison.OrdinalIgnoreCase)).ToArray()
+                            Selection.Tags => JsonSerializer.Deserialize<PaginatedData<Pill>>(result).Data,
+                            Selection.Genres => JsonSerializer.Deserialize<PaginatedData<Pill>>(result).Data//.Where(x => x.Name.Contains(debounceTimer.Data, StringComparison.OrdinalIgnoreCase)).ToArray()
                         };
                     }
                     catch (Exception ex)
@@ -122,13 +122,13 @@ namespace gamevault.UserControls
             else
             {
                 EnumDescriptionConverter conv = new EnumDescriptionConverter();
-                List<Genre_Tag> list = new List<Genre_Tag>();
+                List<Pill> list = new List<Pill>();
                 foreach (GameType type in Enum.GetValues(typeof(GameType)))
                 {
                     if (type == GameType.UNDETECTABLE)
                         continue;
 
-                    list.Add(new Genre_Tag() { OriginName = type.ToString(), Name = (string)conv.Convert(type, null, null, null) });
+                    list.Add(new Pill() { OriginName = type.ToString(), Name = (string)conv.Convert(type, null, null, null) });
                 }
                 data = list.ToArray();
                 data = data.Where(x => x.Name.Contains(debounceTimer.Data, StringComparison.OrdinalIgnoreCase)).ToArray();
@@ -156,8 +156,8 @@ namespace gamevault.UserControls
 
         private void AddEntry_Click(object sender, MouseButtonEventArgs e)
         {
-            if (selectedEntries.Contains((Genre_Tag)((FrameworkElement)sender).DataContext)) return;
-            selectedEntries.Add((Genre_Tag)((FrameworkElement)sender).DataContext);
+            if (selectedEntries.Contains((Pill)((FrameworkElement)sender).DataContext)) return;
+            selectedEntries.Add((Pill)((FrameworkElement)sender).DataContext);
             uiSelectedEntries.ItemsSource = null;
             uiSelectedEntries.ItemsSource = selectedEntries;
             if (EntriesUpdated != null)
@@ -168,7 +168,7 @@ namespace gamevault.UserControls
 
         private void RemoveEntry_Click(object sender, MouseButtonEventArgs e)
         {
-            selectedEntries.Remove((Genre_Tag)((FrameworkElement)sender).DataContext);
+            selectedEntries.Remove((Pill)((FrameworkElement)sender).DataContext);
             uiSelectedEntries.ItemsSource = null;
             uiSelectedEntries.ItemsSource = selectedEntries;
             if (EntriesUpdated != null)

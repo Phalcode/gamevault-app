@@ -41,7 +41,6 @@ namespace gamevault.UserControls
         }
         public async Task RestoreInstalledGames()
         {
-            InstallViewModel.Instance.IgnoreList = GetIgnoreList();
             Dictionary<int, string> foundGames = new Dictionary<int, string>();
             Game[]? games = await Task<Game[]>.Run(() =>
             {
@@ -262,19 +261,13 @@ namespace gamevault.UserControls
             }
             catch (Exception ex) { MainWindowViewModel.Instance.AppBarText = ex.Message; }
         }
-        private string[]? GetIgnoreList()
-        {
-            try
-            {
-                string result = Preferences.Get("IL", AppFilePath.IgnoreList);
-                return JsonSerializer.Deserialize<string[]>(result);
-            }
-            catch { return null; }
-        }
         private void GameCard_Clicked(object sender, RoutedEventArgs e)
         {
             if (((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key == null)
+            {
+                MainWindowViewModel.Instance.AppBarText = "Cannot open game";
                 return;
+            }
             MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key, LoginManager.Instance.IsLoggedIn()));
         }
         private void Search_TextChanged(object sender, TextChangedEventArgs e)
@@ -351,37 +344,26 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.AppBarText = $"Could not find Executable '{savedExecutable}'";
             }
         }
-        private void Settings_Click(object sender, RoutedEventArgs e)
+        private async void Settings_Click(object sender, RoutedEventArgs e)
         {
-            e.Handled = true;
-            MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key) { Width = 1200, Height = 800, Margin = new Thickness(50) });
+            e.Handled = true;            
+            try
+            {
+                int ID = ((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key.ID;
+                string result = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{ID}");
+                Game resultGame = JsonSerializer.Deserialize<Game>(result);
+                MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(resultGame) { Width = 1200, Height = 800, Margin = new Thickness(50) });
+            }
+            catch (Exception ex)
+            {
+                MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
+            }
         }
         private void InitTimer()
         {
             inputTimer = new InputTimer();
             inputTimer.Interval = TimeSpan.FromMilliseconds(400);
             inputTimer.Tick += InputTimerElapsed;
-        }
-
-        private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            if (((ScrollViewer)sender).ComputedHorizontalScrollBarVisibility == Visibility.Visible)
-            {
-                e.Handled = true;
-                if (e.Delta > 0)
-                    ((ScrollViewer)sender).LineLeft();
-                else
-                    ((ScrollViewer)sender).LineRight();
-            }
-            else
-            {
-                e.Handled = true;
-                ScrollViewer parent = VisualHelper.FindNextParentByType<ScrollViewer>((ScrollViewer)sender);
-                var eventArg = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
-                eventArg.RoutedEvent = UIElement.MouseWheelEvent;
-                eventArg.Source = sender;
-                parent.RaiseEvent(eventArg);
-            }
         }
 
         private void InstalledGames_Toggled(object sender, RoutedEventArgs e)

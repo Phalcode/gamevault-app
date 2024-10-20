@@ -20,10 +20,10 @@ namespace gamevault.Models
         public int ID { get; set; }
         [JsonPropertyName("username")]
         public string Username { get; set; }
-        [JsonPropertyName("profile_picture")]
-        public Image ProfilePicture { get; set; }
-        [JsonPropertyName("background_image")]
-        public Image BackgroundImage { get; set; }
+        [JsonPropertyName("avatar")]
+        public Media Avatar { get; set; }
+        [JsonPropertyName("background")]
+        public Media Background { get; set; }
         [JsonPropertyName("email")]
         public string EMail { get; set; }
         [JsonPropertyName("first_name")]
@@ -34,15 +34,7 @@ namespace gamevault.Models
         public string Password { get; set; }
         public string RepeatPassword { get; set; }
         [JsonPropertyName("progresses")]
-        public Progress[]? Progresses { get; set; }
-        [JsonPropertyName("profile_picture_url")]
-        public string ProfilePictureUrl { get; set; }
-        [JsonPropertyName("profile_picture_id")]
-        public long? ProfilePictureId { get; set; }
-        [JsonPropertyName("background_image_url")]
-        public string BackgroundImageUrl { get; set; }
-        [JsonPropertyName("background_image_id")]
-        public long? BackgroundImageId { get; set; }
+        public Progress[]? Progresses { get; set; }       
         [JsonPropertyName("role")]
         public PERMISSION_ROLE? Role { get; set; }
         [JsonPropertyName("activated")]
@@ -51,5 +43,7 @@ namespace gamevault.Models
         public string DeletedAt { get; set; }
         [JsonPropertyName("created_at")]
         public DateTime? CreatedAt { get; set; }
+        [JsonPropertyName("birth_date")]
+        public DateTime? BirthDate { get; set; }
     }
 }

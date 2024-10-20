@@ -16,6 +16,7 @@
         <conv:LicenseConverter x:Key="licenseConv"/>
         <conv:InverseNullConverter x:Key="nullConv"/>
         <conv:UTCtoLocalTimeConverter x:Key="utcToLocalTimeConv"/>
+        <conv:StringToArrayConverter x:Key="stringToArrayConv"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -25,9 +26,9 @@
         <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Grid.Row="0">
             <Grid>
                 <TextBlock Text="Settings" FontSize="35" Margin="20,0,0,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
-                <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Version,StringFormat='{}V {0}'}" Margin="0,0,5,0"/>
             </Grid>
         </Border>
+        <TextBlock Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Text="{Binding Version,StringFormat='{}V {0}'}" Margin="20,0,0,5"/>
         <ScrollViewer Grid.Row="1" Margin="10" VerticalScrollBarVisibility="Auto">
             <TabControl x:Name="uiTabControl" TabStripPlacement="Left" SelectionChanged="TabControl_SelectionChanged" FocusVisualStyle="{x:Null}">
                 <TabItem Header="Application">
@@ -49,8 +50,12 @@
                                 <ComboBox x:Name="uiCbTheme" ItemsSource="{Binding Themes}" Width="520" HorizontalAlignment="Left" SelectionChanged="Themes_SelectionChanged">
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
-                                            <Grid Width="496">
-                                                <TextBlock Text="{Binding Key}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                            <Grid Width="480" ToolTip="{Binding Description}">
+                                                <StackPanel Width="450" HorizontalAlignment="Left">
+                                                    <TextBlock Text="{Binding DisplayName}" FontWeight="Bold"/>
+                                                    <TextBlock Text="{Binding Description}" Margin="0,0,0,0" TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock Text="{Binding Author,StringFormat='{}Author: {0}'}" Margin="0,0,0,0" FontSize="10"/>
+                                                </StackPanel>
                                                 <Path Fill="{DynamicResource MahApps.Brushes.Accent}" HorizontalAlignment="Right" VerticalAlignment="Center">
                                                     <Path.Style>
                                                         <Style TargetType="Path">
@@ -74,6 +79,10 @@
                                 </ComboBox>
                                 <local:IconButton Text="Open Theme Folder" FontSize="15" Icon="{StaticResource IconGameSettingsFolder}" IconMargin="0,0,5,2" Width="175" Margin="10,0,0,0" Click="OpenThemeFolder_Click"/>
                             </StackPanel>
+                        </StackPanel>
+                        <StackPanel Margin="0,15,0,0">
+                            <TextBlock Text="Library" FontSize="20" FontWeight="Bold"/>
+                            <mah:ToggleSwitch Header="Retain Sorting and Filter preferences after restart" Margin="10,10,0,0" IsOn="{Binding RetainLibarySortByAndOrderBy}"/>
                         </StackPanel>
                     </StackPanel>
                 </TabItem>
@@ -133,6 +142,17 @@
                                 <local:IconButton Text="Clear offline cache" FontSize="15" Icon="{StaticResource IconCleanup}" IconScale="0.08" IconMargin="-110,-100,-105,-100" Width="175" Height="30" HorizontalAlignment="Left" Click="ClearOfflineCache_Clicked" ToolTip="Clears the entire offline cache"/>
                                 <TextBlock Text="{Binding OfflineCacheSize,Converter={StaticResource sizeConv},StringFormat={}({0})}" FontSize="20" Margin="10,0,0,0"/>
                             </StackPanel>
+                            <GroupBox Header="ignored Executables" Margin="10,15,20,0" mah:ControlsHelper.CornerRadius="5">
+                                <Grid>
+                                    <TextBox mah:ControlsHelper.CornerRadius="5" Text="{Binding IgnoreList,Converter={StaticResource stringToArrayConv},ConverterParameter=','}" mah:TextBoxHelper.Watermark="Edit ignorelist (seperate entries by comma)" Margin="0,0,120,0" TextWrapping="Wrap"/>
+                                    <StackPanel>
+                                        <local:IconButton Text="Reset" FontSize="15" Icon="{DynamicResource IconReload}" IconMargin="0,0,5,2" IsEnabled="{Binding BackgroundImageChanged}" Width="115" Height="33" HorizontalAlignment="Right" Click="IgnoredExecutablesReset_Click"/>
+                                        <local:IconButton Text="Save" FontSize="15" Icon="{DynamicResource IconGameSettingsSave}" IconMargin="0,0,5,2" IsEnabled="{Binding BackgroundImageChanged}" Margin="0,5,0,0" Width="115" Height="33" HorizontalAlignment="Right" Click="IgnoredExecutablesSave_Click"/>
+                                    </StackPanel>
+                                </Grid>
+                            </GroupBox>
+                            <TextBlock Text="Help Us Improve" FontSize="20" FontWeight="Bold" Margin="0,10,0,0"/>
+                            <mah:ToggleSwitch Header="Send anonymous usage reports to Phalcode to help us improve your experience." Margin="10,10,0,0" IsOn="{Binding SendAnonymousAnalytics}"/>
                         </StackPanel>
                     </StackPanel>
                 </TabItem>
@@ -341,7 +361,7 @@
                         <TextBlock Text="About" FontSize="20" FontWeight="Bold"/>
                         <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
                             <TextBlock Text="Application Version" FontSize="15" Width="200"/>
-                            <TextBlock Text="{Binding Version}" FontSize="15"/>
+                            <TextBlock Text="{Binding Version,StringFormat='{}{0}'}" FontSize="15"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
                             <TextBlock Text="Developed by Phalcode" FontSize="15" Width="200"/>
@@ -375,9 +395,9 @@
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
                             <TextBlock Text="Metadata Providers:" FontSize="15" Width="200"/>
-                            <TextBlock Text="RAWG" FontSize="15"/>
+                            <TextBlock Text="IGDB" FontSize="15"/>
                             <TextBlock FontSize="15" Margin="10,0,0,0">
-                                <Hyperlink NavigateUri="https://rawg.io" RequestNavigate="Hyperlink_RequestNavigate">https://rawg.io</Hyperlink>
+                                <Hyperlink NavigateUri="https://www.igdb.com" RequestNavigate="Hyperlink_RequestNavigate">https://www.igdb.com</Hyperlink>
                             </TextBlock>
                         </StackPanel>
                     </StackPanel>

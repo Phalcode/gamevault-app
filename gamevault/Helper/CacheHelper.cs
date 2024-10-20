@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -39,7 +40,7 @@ namespace gamevault.Helper
                 }
                 if (File.Exists(cacheFile))
                 {
-                    if (cacheType == ImageCache.UserIcon)
+                    if (cacheType == ImageCache.UserAvatar)
                     {
                         if (TaskQueue.Instance.IsAlreadyInProcess(imageId))
                         {
@@ -68,8 +69,8 @@ namespace gamevault.Helper
                         {
                             File.Delete(files[0]);
                         }
-                        await TaskQueue.Instance.Enqueue(() => WebHelper.DownloadImageFromUrlAsync($"{SettingsViewModel.Instance.ServerUrl}/api/images/{imageId}", cacheFile), imageId);
-                        if (cacheType == ImageCache.UserIcon)
+                        await TaskQueue.Instance.Enqueue(() => WebHelper.DownloadImageFromUrlAsync($"{SettingsViewModel.Instance.ServerUrl}/api/media/{imageId}", cacheFile), imageId);
+                        if (cacheType == ImageCache.UserAvatar)
                         {
                             if (GifHelper.IsGif(cacheFile))
                             {
@@ -107,24 +108,26 @@ namespace gamevault.Helper
                     }
                 }
                 catch { }
-                switch (cacheType)
-                {
-                    case ImageCache.BoxArt:
-                        {
-                            img.Source = BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/library_NoBoxart.png");
-                            break;
-                        }
-                    case ImageCache.UserIcon:
-                        {
-                            img.Source = BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/com_NoUserIcon.png");
-                            break;
-                        }
-                    default:
-                        {
-                            img.Source = BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/gameView_NoBackground.jpg");
-                            break;
-                        }
-                }
+                img.Source = GetReplacementImage(cacheType);
+            }
+        }
+        internal static BitmapImage GetReplacementImage(ImageCache cacheType)
+        {
+            switch (cacheType)
+            {
+                case ImageCache.GameCover:
+                    {
+                        return BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/library_NoGameCover.png");
+                    }
+                case ImageCache.UserAvatar:
+                    {
+                        return BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/com_NoUserAvatar.png");
+
+                    }
+                default:
+                    {
+                        return BitmapHelper.GetBitmapImage("pack://application:,,,/gamevault;component/Resources/Images/gameView_NoBackground.jpg");
+                    }
             }
         }
 
@@ -162,6 +165,21 @@ namespace gamevault.Helper
                     catch { }
                 }
             });
+        }
+        internal static async Task<string> CreateHashAsync(string input)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            using (MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(input)))
+            {
+                byte[] bytes = await sha256.ComputeHashAsync(stream);
+                StringBuilder builder = new StringBuilder();
+                foreach (byte b in bytes)
+                {
+                    builder.Append(b.ToString("x2"));
+                }
+                string hash = builder.ToString();
+                return hash;
+            }
         }
         private static void ResizeImage(string path, int maxHeight)
         {

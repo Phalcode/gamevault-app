@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:conv="clr-namespace:gamevault.Converter"
-             xmlns:local="clr-namespace:gamevault.UserControls"
+             xmlns:local="clr-namespace:gamevault.UserControls"            
+             xmlns:vm="clr-namespace:gamevault.ViewModels"            
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded" KeyDown="Reload_Click" Focusable="True" IsVisibleChanged="UserControl_IsVisibleChanged">
@@ -18,42 +19,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Grid.Row="0">
-            <Grid>
-                <TextBlock Text="Admin Console" FontSize="35" Margin="20,0,0,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
-                <StackPanel Orientation="Horizontal" Margin="270,0,0,0" HorizontalAlignment="Left">
-                    <TextBlock Text="{Binding Path=ServerVersionInfo.Key}" FontSize="20" VerticalAlignment="Center"/>
-                    <TextBlock VerticalAlignment="Center" FontSize="20" Margin="5,0,0,0">
-                        <TextBlock.Style>
-                            <Style TargetType="{x:Type TextBlock}">
-                                <Setter Property="Visibility" Value="Hidden"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Path=ServerVersionInfo.Value,Converter={StaticResource InvertStringConv}}" Value="False">
-                                        <Setter Property="Visibility" Value="Visible"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBlock.Style>
-                        <Hyperlink TextDecorations="None" Foreground="Red" NavigateUri="{Binding Path=ServerVersionInfo.Value}" RequestNavigate="ServerUpdate_Navigate">
-                            <Hyperlink.Inlines>
-                                <Run Text="(Update Available)"/>
-                            </Hyperlink.Inlines>
-                        </Hyperlink>
-                    </TextBlock>
-                </StackPanel>
-                <mah:ToggleSwitch Header="Show deleted Users" IsOn="{Binding ShowDeletedUsers,Mode=TwoWay}" HorizontalAlignment="Right" Margin="0,0,430,0" Padding="0,0,0,0"/>
-                <local:IconButton Text="Backup / Restore Database" Icon="{StaticResource IconDatabase}" IconMargin="0,0,5,2" HorizontalAlignment="Right" FontSize="15" Width="225" Margin="10,10,200,10" Click="BackupRestore_Click"/>
-                <local:IconButton Text="Reindex Games" HorizontalAlignment="Right" FontSize="15" Icon="{StaticResource IconReload}" IconMargin="0,0,5,2" Width="140" Margin="10,10,46,10" Click="Reindex_Click"/>
-                <Grid x:Name="uiBtnReload" Style="{DynamicResource HoverEffect}" VerticalAlignment="Center" HorizontalAlignment="Right" Background="Transparent" Cursor="Hand" Width="30" Height="30" Margin="0,0,5,0" RenderTransformOrigin="0.5,0.5" ToolTip="Refresh admin console (F5)" MouseLeftButtonUp="Reload_Click">
-                    <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}">
-                        <Path.RenderTransform>
-                            <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
-                        </Path.RenderTransform>
-                    </Path>
-                    <Grid.RenderTransform>
-                        <ScaleTransform/>
-                    </Grid.RenderTransform>
-                </Grid>
-            </Grid>
+            <TextBlock Text="Admin Console" FontSize="35" Margin="20,0,0,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
         </Border>
         <Grid Grid.RowSpan="2" Panel.ZIndex="1">
             <Viewbox>
@@ -62,88 +28,164 @@
                 </Grid>
             </Viewbox>
         </Grid>
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" FocusVisualStyle="{x:Null}">
-            <Viewbox VerticalAlignment="Top">
-                <ItemsControl ItemsSource="{Binding Path=Users}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Height="6" Width="100" Margin="1,1,0,0">
-                                <Grid.Style>
-                                    <Style TargetType="{x:Type Grid}">
-                                        <Setter Property="Visibility" Value="Visible"/>
-                                        <Setter Property="Background" Value="#26FF0000"/>
-                                        <Style.Triggers>
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition Binding="{Binding Path=DataContext.ShowDeletedUsers,RelativeSource={RelativeSource AncestorType=UserControl}}" Value="False" />
-                                                    <Condition Binding="{Binding Path=DeletedAt,Converter={StaticResource InvertNullConv}}" Value="False" />
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                            </MultiDataTrigger>
-                                            <DataTrigger Binding="{Binding Path=DeletedAt}" Value="{x:Null}">
-                                                <Setter Property="Background" Value="{x:Null}"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Grid.Style>
 
-                                <local:CacheImage ImageCacheType="UserIcon" Data="{Binding}" Stretch="Fill" Width="6" CornerRadius="0.5" HorizontalAlignment="Left" Cursor="Hand" MouseLeftButtonUp="ShowUser_Click">
-                                </local:CacheImage>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="3.9*" />
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
 
-                                <TextBlock FontSize="2" Margin="8,0,0,0" Text="{Binding Path=Username}" VerticalAlignment="Center"/>
-
-                                <Viewbox Width="8" Margin="0,0,20,0" HorizontalAlignment="Right" >
-                                    <mah:ToggleSwitch Header="Activated" IsOn="{Binding Path=Activated}" Toggled="Activated_Toggled"/>
-                                </Viewbox>
-
-                                <Viewbox Width="11" Margin="0,0,10,0" HorizontalAlignment="Right">
-                                    <ComboBox ItemsSource="{Binding Path=DataContext.PermissionRoleEnumTypes,RelativeSource={RelativeSource AncestorType=UserControl}}" SelectedItem="{Binding Path=Role}" SelectionChanged="PermissionRole_SelectionChanged"/>
-                                </Viewbox>
-
-                                <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Cursor="Hand" Width="2.5" Height="2.5" Margin="0,1.8,5,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="EditUser_Clicked">
-                                    <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Margin="0,0,-20,-20">
-                                        <Path.RenderTransform>
-                                            <ScaleTransform ScaleX="0.1" ScaleY="0.1"/>
-                                        </Path.RenderTransform>
-                                    </Path>
-                                    <Grid.RenderTransform>
-                                        <ScaleTransform/>
-                                    </Grid.RenderTransform>
+                <Viewbox Grid.Column="1" VerticalAlignment="Top" MaxWidth="1200">
+                    <StackPanel Margin="0,0.5,0,0">
+                        <StackPanel Orientation="Vertical" Width="70">
+                            <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" CornerRadius="1" Height="6">
+                                <Grid>
+                                    <TextBlock Text="Server Information" FontSize="1.5" FontWeight="Bold" Margin="1,0,0,0"/>
+                                    <StackPanel Orientation="Horizontal" Margin="2,3,0,0" HorizontalAlignment="Left">
+                                        <TextBlock Text="{Binding Path=ServerVersionInfo.Key}" FontSize="1.1" VerticalAlignment="Center"/>
+                                        <TextBlock VerticalAlignment="Center" FontSize="1.1" Margin="1,0,0,0">
+                                            <TextBlock.Style>
+                                                <Style TargetType="{x:Type TextBlock}">
+                                                    <Setter Property="Visibility" Value="Hidden"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Path=ServerVersionInfo.Value,Converter={StaticResource InvertStringConv}}" Value="False">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+<Hyperlink TextDecorations="None" Foreground="Red" NavigateUri="{Binding Path=ServerVersionInfo.Value}" RequestNavigate="ServerUpdate_Navigate">
+    <Hyperlink.Inlines>
+        <Run Text="(Update Available)"/>
+    </Hyperlink.Inlines>
+</Hyperlink>
+                                        </TextBlock>
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding Source={x:Static vm:SettingsViewModel.Instance},Path=ServerUrl,StringFormat='{}Server Address: {0}'}" FontSize="1.1" Margin="2,2,0,0" VerticalAlignment="Top"/>
                                 </Grid>
-                                <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Cursor="Hand" Width="2.5" Height="2.5" Margin="0,1.8,1,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="DeleteUser_Clicked">
-                                    <Path Margin="0,0,-20,-20">
-                                        <Path.Style>
-                                            <Style TargetType="{x:Type Path}">
-                                                <Setter Property="Data" Value="{DynamicResource IconReload}"/>
-                                                <Setter Property="Fill" Value="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
-                                                <Setter Property="ToolTip" Value="Recover user"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Path=DeletedAt}" Value="{x:Null}">
-                                                        <Setter Property="Data" Value="{DynamicResource IconTrash}"/>
-                                                        <Setter Property="Fill" Value="IndianRed"/>
-                                                        <Setter Property="ToolTip" Value="Delete user"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Path.Style>
-                                        <Path.RenderTransform>
-                                            <ScaleTransform ScaleX="0.1" ScaleY="0.1"/>
-                                        </Path.RenderTransform>
-                                    </Path>
-                                    <Grid.RenderTransform>
-                                        <ScaleTransform/>
-                                    </Grid.RenderTransform>
+                            </Border>
+                            <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" CornerRadius="1" Margin="0,0.5,0,0" Height="6">
+                                <Grid>
+                                    <TextBlock Text="Action Buttons" FontSize="1.5" FontWeight="Bold" VerticalAlignment="Top" Margin="1,0,0,0"/>
+                                    <StackPanel Orientation="Horizontal" Margin="1,0,0,0">
+
+                                        <local:IconButton Text="Backup / Restore Database" Icon="{StaticResource IconDatabase}" IconScale="0.08" CornerRadius="0.7" IconMargin="-10,-10.2,-9,-10" FontSize="1.2" Width="19" Height="2" Margin="0,2,0,0" Click="BackupRestore_Click"/>
+                                        <local:IconButton Text="Reindex Games" FontSize="1.2" Icon="{StaticResource IconReload}" IconScale="0.08" CornerRadius="0.7" IconMargin="-10,-10.2,-8.6,-10" Height="2" Width="12" Margin="1,2,0,0" Click="Reindex_Click">
+                                          
+                                        </local:IconButton>
+                                        <mah:ToggleSwitch Header="Show deleted Users" IsOn="{Binding ShowDeletedUsers,Mode=TwoWay}" mah:HeaderedControlHelper.HeaderFontSize="16" VerticalAlignment="Top" Margin="24,2.5,0,-50" Padding="0,0,0,0">
+                                            <mah:ToggleSwitch.RenderTransform>
+                                                <ScaleTransform ScaleX="0.05" ScaleY="0.05"/>
+                                            </mah:ToggleSwitch.RenderTransform>
+                                        </mah:ToggleSwitch>
+                                        <Grid x:Name="uiBtnReload" Style="{DynamicResource HoverEffect}" Background="Transparent" Cursor="Hand" Width="2" Height="2" Margin="-287,2,0,0"  ToolTip="Refresh admin console (F5)" MouseLeftButtonUp="Reload_Click">
+                                            <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.49,0.49" Margin="-9,-9,-9,-9">
+                                                <Path.RenderTransform>
+                                                    <ScaleTransform ScaleX="0.1" ScaleY="0.1"/>
+                                                </Path.RenderTransform>
+                                            </Path>
+                                            <Grid.RenderTransform>
+                                                <ScaleTransform/>
+                                            </Grid.RenderTransform>
+                                        </Grid>
+                                    </StackPanel>
                                 </Grid>
+                            </Border>
+                        </StackPanel>
+                        <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Margin="0,0.5,0,0"  CornerRadius="1">
+                            <Grid>
+                                <TextBlock Text="Users" FontSize="1.5" FontWeight="Bold" VerticalAlignment="Top" Margin="1,0,0,0"/>
+                                <ItemsControl ItemsSource="{Binding Path=Users}" Margin="0,1.4,0,1" FocusVisualStyle="{x:Null}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Height="6" Margin="1,1,0,0">
+                                                <Grid.Style>
+                                                    <Style TargetType="{x:Type Grid}">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                        <Setter Property="Background" Value="#26FF0000"/>
+                                                        <Style.Triggers>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding Path=DataContext.ShowDeletedUsers,RelativeSource={RelativeSource AncestorType=UserControl}}" Value="False" />
+                                                                    <Condition Binding="{Binding Path=DeletedAt,Converter={StaticResource InvertNullConv}}" Value="False" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                            </MultiDataTrigger>
+                                                            <DataTrigger Binding="{Binding Path=DeletedAt}" Value="{x:Null}">
+                                                                <Setter Property="Background" Value="{x:Null}"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Grid.Style>
+
+                                                <Button Style="{StaticResource ButtonWrapper}" Width="6" HorizontalAlignment="Left" Cursor="Hand" Click="ShowUser_Click">
+                                                    <local:CacheImage ImageCacheType="UserAvatar" Data="{Binding}" Stretch="Fill" CornerRadius="0.5"/>
+                                                </Button>
+                                                <TextBlock FontSize="2" Margin="8,0,0,0" Text="{Binding Path=Username}" VerticalAlignment="Center"/>
+
+                                                <Viewbox Width="8" Margin="0,0,20,0" HorizontalAlignment="Right" >
+                                                    <mah:ToggleSwitch Header="Activated" IsOn="{Binding Path=Activated}" Toggled="Activated_Toggled"/>
+                                                </Viewbox>
+
+                                                <Viewbox Width="11" Margin="0,0,10,0" HorizontalAlignment="Right">
+                                                    <ComboBox ItemsSource="{Binding Path=DataContext.PermissionRoleEnumTypes,RelativeSource={RelativeSource AncestorType=UserControl}}" SelectedItem="{Binding Path=Role}" SelectionChanged="PermissionRole_SelectionChanged"/>
+                                                </Viewbox>
+
+                                                <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Top" HorizontalAlignment="Right" Cursor="Hand" Width="2.5" Height="2.5" Margin="0,1.8,5,0" Click="EditUser_Clicked">
+                                                    <Grid Style="{DynamicResource HoverEffect}"  Background="Transparent"  RenderTransformOrigin="0.5,0.5">
+                                                        <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Margin="0,0,-20,-20">
+                                                            <Path.RenderTransform>
+                                                                <ScaleTransform ScaleX="0.1" ScaleY="0.1"/>
+                                                            </Path.RenderTransform>
+                                                        </Path>
+                                                        <Grid.RenderTransform>
+                                                            <ScaleTransform/>
+                                                        </Grid.RenderTransform>
+                                                    </Grid>
+                                                </Button>
+                                                <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Top" HorizontalAlignment="Right" Cursor="Hand" Width="2.5" Height="2.5" Margin="0,1.8,1,0" Click="DeleteUser_Clicked">
+                                                    <Grid Style="{DynamicResource HoverEffect}" Background="Transparent" RenderTransformOrigin="0.5,0.5">
+                                                        <Path Margin="0,0,-20,-20">
+                                                            <Path.Style>
+                                                                <Style TargetType="{x:Type Path}">
+                                                                    <Setter Property="Data" Value="{DynamicResource IconReload}"/>
+                                                                    <Setter Property="Fill" Value="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+                                                                    <Setter Property="ToolTip" Value="Recover user"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding Path=DeletedAt}" Value="{x:Null}">
+                                                                            <Setter Property="Data" Value="{DynamicResource IconTrash}"/>
+                                                                            <Setter Property="Fill" Value="IndianRed"/>
+                                                                            <Setter Property="ToolTip" Value="Delete user"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Path.Style>
+                                                            <Path.RenderTransform>
+                                                                <ScaleTransform ScaleX="0.1" ScaleY="0.1"/>
+                                                            </Path.RenderTransform>
+                                                        </Path>
+                                                        <Grid.RenderTransform>
+                                                            <ScaleTransform/>
+                                                        </Grid.RenderTransform>
+                                                    </Grid>
+                                                </Button>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
                             </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </Viewbox>
+                        </Border>
+                    </StackPanel>
+                </Viewbox>
+
+            </Grid>
         </ScrollViewer>
     </Grid>
 </UserControl>

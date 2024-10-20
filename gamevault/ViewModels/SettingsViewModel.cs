@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace gamevault.ViewModels
 {
@@ -37,14 +39,19 @@ namespace gamevault.ViewModels
         private bool m_AutoExtract { get; set; }
         private bool autoInstallPortable { get; set; }
         private bool autoDeletePortableGameFiles { get; set; }
+        private bool retainLibarySortByAndOrderBy { get; set; }
+        private bool sendAnonymousAnalytics { get; set; }
         private string m_ServerUrl { get; set; }
         private float m_ImageCacheSize { get; set; }
         private float m_OfflineCacheSize { get; set; }
         private long m_DownloadLimit { get; set; }
         private long m_DownloadLimitUIValue { get; set; }
-        private User m_RegistrationUser = new User() { ProfilePicture = new Image(), BackgroundImage = new Image() };
+        private string[] ignoreList { get; set; }
+        private User m_RegistrationUser = new User() { Avatar = new Media(), Background = new Media() };
         private PhalcodeProduct license { get; set; }
         private List<ThemeItem> themes { get; set; }
+        private bool showMappedTitle { get; set; }
+
         #endregion
 
         public SettingsViewModel()
@@ -52,10 +59,17 @@ namespace gamevault.ViewModels
             UserName = Preferences.Get(AppConfigKey.Username, AppFilePath.UserFile);
             RootPath = Preferences.Get(AppConfigKey.RootPath, AppFilePath.UserFile);
             ServerUrl = Preferences.Get(AppConfigKey.ServerUrl, AppFilePath.UserFile, true);
-           
+
+            string showMappedTitleString = Preferences.Get(AppConfigKey.ShowMappedTitle, AppFilePath.UserFile);
+            showMappedTitle = showMappedTitleString == "1" || showMappedTitleString == "";
+
             m_BackgroundStart = (Preferences.Get(AppConfigKey.BackgroundStart, AppFilePath.UserFile) == "1"); OnPropertyChanged(nameof(BackgroundStart));
             m_AutoExtract = (Preferences.Get(AppConfigKey.AutoExtract, AppFilePath.UserFile) == "1"); OnPropertyChanged(nameof(AutoExtract));
             autoDeletePortableGameFiles = Preferences.Get(AppConfigKey.AutoDeletePortable, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(AutoDeletePortableGameFiles));
+            retainLibarySortByAndOrderBy = Preferences.Get(AppConfigKey.RetainLibarySortByAndOrderBy, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(RetainLibarySortByAndOrderBy));
+
+            string analyticsPreference = Preferences.Get(AppConfigKey.SendAnonymousAnalytics, AppFilePath.UserFile);
+            sendAnonymousAnalytics = (analyticsPreference == "" || analyticsPreference == "1"); OnPropertyChanged(nameof(SendAnonymousAnalytics));
 
             string autoInstallPortableStr = Preferences.Get(AppConfigKey.AutoInstallPortable, AppFilePath.UserFile);
             if (string.IsNullOrWhiteSpace(autoInstallPortableStr) || autoInstallPortableStr == "1")
@@ -82,6 +96,35 @@ namespace gamevault.ViewModels
                 DownloadLimit = 0;
                 DownloadLimitUIValue = 0;
             }
+        }
+        public async Task InitIgnoreList()
+        {
+            await Task.Run(() =>
+            {
+                try
+                {
+                    if (!File.Exists(AppFilePath.IgnoreList))
+                    {
+                        string response = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/ignorefile");
+                        IgnoreList = JsonSerializer.Deserialize<string[]>(response);
+                        Preferences.Set("IL", response.Replace("\n", ""), AppFilePath.IgnoreList);
+                    }
+                    else
+                    {
+                        string result = Preferences.Get("IL", AppFilePath.IgnoreList);
+                        IgnoreList = JsonSerializer.Deserialize<string[]>(result);
+                    }
+                }
+                catch
+                {
+                    try
+                    {
+                        string result = Preferences.Get("IL", AppFilePath.IgnoreList);
+                        IgnoreList = JsonSerializer.Deserialize<string[]>(result);
+                    }
+                    catch { }
+                }
+            });
         }
 
         public string UserName
@@ -169,6 +212,37 @@ namespace gamevault.ViewModels
                 Preferences.Set(AppConfigKey.AutoDeletePortable, stringValue, AppFilePath.UserFile);
             }
         }
+        public bool RetainLibarySortByAndOrderBy
+        {
+            get { return retainLibarySortByAndOrderBy; }
+            set
+            {
+                retainLibarySortByAndOrderBy = value;
+                OnPropertyChanged();
+                string stringValue = "1";
+                if (!retainLibarySortByAndOrderBy)
+                {
+                    stringValue = "0";
+                }
+                Preferences.Set(AppConfigKey.RetainLibarySortByAndOrderBy, stringValue, AppFilePath.UserFile);
+            }
+        }
+        public bool SendAnonymousAnalytics
+        {
+            get { return sendAnonymousAnalytics; }
+            set
+            {
+                sendAnonymousAnalytics = value;
+                OnPropertyChanged();
+                string stringValue = "1";
+                if (!sendAnonymousAnalytics)
+                {
+                    stringValue = "0";
+                }
+                Preferences.Set(AppConfigKey.SendAnonymousAnalytics, stringValue, AppFilePath.UserFile);
+            }
+        }
+
         public string ServerUrl
         {
             get { return m_ServerUrl; }
@@ -193,6 +267,26 @@ namespace gamevault.ViewModels
         {
             get { return m_DownloadLimitUIValue; }
             set { m_DownloadLimitUIValue = value; OnPropertyChanged(); }
+        }
+        public string[] IgnoreList
+        {
+            get
+            {
+                if (ignoreList == null)
+                {
+                    ignoreList = new string[0];
+                }
+                return ignoreList;
+            }
+            set { ignoreList = value; OnPropertyChanged(); }
+        }
+        public bool ShowMappedTitle
+        {
+            get
+            {
+                return showMappedTitle;
+            }
+            set { showMappedTitle = value; Preferences.Set(AppConfigKey.ShowMappedTitle, showMappedTitle ? "1" : "0", AppFilePath.UserFile); OnPropertyChanged(); }
         }
         public User RegistrationUser
         {
@@ -252,8 +346,10 @@ namespace gamevault.ViewModels
     }
     public class ThemeItem
     {
-        public string Key { get; set; }
-        public string Value { get; set; }
+        public string DisplayName { get; set; }
+        public string Description { get; set; }
+        public string Author { get; set; }
+        public string Path { get; set; }
         public bool IsPlus { get; set; }
     }
 }

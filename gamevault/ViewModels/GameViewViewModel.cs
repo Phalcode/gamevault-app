@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 
 namespace gamevault.ViewModels
 {
@@ -17,8 +18,9 @@ namespace gamevault.ViewModels
         private Progress[]? userProgresses { get; set; }
         private Dictionary<string, string> gameStates { get; set; }
         private bool isInstalled { get; set; }
-        private bool? isDownloaded { get; set; }
-        private bool showRawgTitle { get; set; }
+        private bool? isDownloaded { get; set; }       
+        private string? descriptionMarkdown { get; set; }
+        private string? notesMarkdown { get; set; }
         #endregion
         public Game? Game
         {
@@ -54,11 +56,16 @@ namespace gamevault.ViewModels
         {
             get { return isDownloaded; }
             set { isDownloaded = value; OnPropertyChanged(); }
-        }
-        public bool ShowRawgTitle
+        }       
+        public string? DescriptionMarkdown
         {
-            get { return showRawgTitle; }
-            set { showRawgTitle = value; OnPropertyChanged(); }
+            get { return descriptionMarkdown; }
+            set { descriptionMarkdown = value; OnPropertyChanged(); }
+        }
+        public string? NotesMarkdown
+        {
+            get { return notesMarkdown; }
+            set { notesMarkdown = value; OnPropertyChanged(); }
         }
     }
 }

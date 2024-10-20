@@ -8,9 +8,9 @@ namespace gamevault.Models
 {
     public enum ImageCache
     {
-        BoxArt,
+        GameCover,
         GameBackground,
-        UserBackground,
-        UserIcon
+        UserAvatar,
+        UserBackground    
     }
 }

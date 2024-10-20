@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:conv="clr-namespace:gamevault.Converter"
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:vm="clr-namespace:gamevault.ViewModels"
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -17,20 +18,46 @@
 
     <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Margin="1" Height="80" CornerRadius="2">
         <Grid>
-            <local:CacheImage HorizontalAlignment="Left" VerticalAlignment="Top" MaxWidth="52" Margin="2,2,120,2" ImageCacheType="BoxArt" Data="{Binding Path=Game}" CornerRadius="2" Cursor="Hand" MouseLeftButtonUp="GameImage_MouseLeftButtonUp"/>
-
-            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="56,2,0,0" Text="{Binding Path=Game.Title}" MaxWidth="106" FontSize="6" FontWeight="Bold"/>
+            <Button Style="{StaticResource ButtonWrapper}" HorizontalAlignment="Left" VerticalAlignment="Top" MaxWidth="52" Margin="2,2,120,2" Cursor="Hand" Click="GameImage_Click">
+                <local:CacheImage ImageCacheType="GameCover" Stretch="Fill" Data="{Binding Path=Game}" CornerRadius="2"/>
+            </Button>
+            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="56,2,0,0" MaxWidth="106" FontSize="6" FontWeight="Bold" TextTrimming="CharacterEllipsis">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Source={x:Static vm:SettingsViewModel.Instance},Path=ShowMappedTitle}" Value="True">
+                                <Setter Property="Text" Value="{Binding Path=Game.Metadata.Title}" />
+                                <Setter Property="ToolTip" Value="{Binding Path=Game.Metadata.Title}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=Game.Metadata.Title}" Value="{x:Null}">
+                                <Setter Property="Text" Value="{Binding Path=Game.Title}" />
+                                <Setter Property="ToolTip" Value="{Binding Path=Game.Title}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=Game.Metadata.Title}" Value="">
+                                <Setter Property="Text" Value="{Binding Path=Game.Title}" />
+                                <Setter Property="ToolTip" Value="{Binding Path=Game.Title}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Source={x:Static vm:SettingsViewModel.Instance},Path=ShowMappedTitle}" Value="False">
+                                <Setter Property="Text" Value="{Binding Path=Game.Title}" />
+                                <Setter Property="ToolTip" Value="{Binding Path=Game.Title}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
             <StackPanel VerticalAlignment="Top" HorizontalAlignment="Right">
-                <Grid Style="{DynamicResource HoverEffect}" Background="Transparent" Cursor="Hand" HorizontalAlignment="Right" Width="8" Height="9" Margin="0,2,2,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="DeleteFile_MouseLeftButtonUp">
-                    <Path Data="{StaticResource IconTrash}" Fill="IndianRed" Margin="0,0,-13,-13">
-                        <Path.RenderTransform>
-                            <ScaleTransform ScaleX="0.35" ScaleY="0.35"/>
-                        </Path.RenderTransform>
-                    </Path>
-                    <Grid.RenderTransform>
-                        <ScaleTransform/>
-                    </Grid.RenderTransform>
-                </Grid>
+                <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" HorizontalAlignment="Right" Width="8" Height="9" Margin="0,2,2,0" Click="DeleteFile_Click">
+                    <Grid Style="{DynamicResource HoverEffect}" Background="Transparent"  RenderTransformOrigin="0.5,0.5">
+                        <Path Data="{StaticResource IconTrash}" Fill="IndianRed" Margin="0,0,-13,-13">
+                            <Path.RenderTransform>
+                                <ScaleTransform ScaleX="0.35" ScaleY="0.35"/>
+                            </Path.RenderTransform>
+                        </Path>
+                        <Grid.RenderTransform>
+                            <ScaleTransform/>
+                        </Grid.RenderTransform>
+                    </Grid>
+                </Button>
                 <TextBlock Text="{Binding TotalDataSize,Converter={StaticResource sizeConv}}" FontSize="2" HorizontalAlignment="Center" Margin="0,0,1.3,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
@@ -43,17 +70,18 @@
                     </TextBlock.Style>
                 </TextBlock>
             </StackPanel>
-            <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Cursor="Hand" Width="8" Height="9" Margin="0,2,12,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="OpenDirectory_MouseLeftButtonUp">
-                <Path Data="{StaticResource IconGameSettingsFolder}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Margin="0,0,-14,-13">
-                    <Path.RenderTransform>
-                        <ScaleTransform ScaleX="0.35" ScaleY="0.35"/>
-                    </Path.RenderTransform>
-                </Path>
-                <Grid.RenderTransform>
-                    <ScaleTransform/>
-                </Grid.RenderTransform>
-            </Grid>
-
+            <Button Style="{StaticResource ButtonWrapper}"  VerticalAlignment="Top" HorizontalAlignment="Right" Cursor="Hand" Width="8" Height="9" Margin="0,2,12,0" Click="OpenDirectory_Click">
+                <Grid Style="{DynamicResource HoverEffect}" Background="Transparent" RenderTransformOrigin="0.5,0.5">
+                    <Path Data="{StaticResource IconGameSettingsFolder}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Margin="0,0,-14,-13">
+                        <Path.RenderTransform>
+                            <ScaleTransform ScaleX="0.35" ScaleY="0.35"/>
+                        </Path.RenderTransform>
+                    </Path>
+                    <Grid.RenderTransform>
+                        <ScaleTransform/>
+                    </Grid.RenderTransform>
+                </Grid>
+            </Button>
             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="56,10,0,0" Text="{Binding State,StringFormat={}State: {0}}" ToolTip="{Binding State}" FontSize="4" Width="122"/>
 
             <local:IconButton Text="Retry" FontSize="5" Icon="{StaticResource IconReload}" IconScale="0.3" IconMargin="-9,-5.5,-5,-5" Visibility="{Binding DownloadFailedVisibility}" CornerRadius="2" Height="9" Width="34" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="64,18.3,0,0" ToolTip="Download Game" Click="RetryDownload_Click"/>
@@ -267,28 +295,30 @@
                         </mah:ToggleSwitch.RenderTransform>
                     </mah:ToggleSwitch>
                 </Grid>
-                <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Background="Transparent" ToolTip="Overwrite game type" Cursor="Hand" Width="8" Height="8" Margin="49,0,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="InitOverwriteGameType_Click">
-                    <Grid.Style>
-                        <Style TargetType="Grid" BasedOn="{StaticResource HoverEffect}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=Game.Type}" Value="UNDETECTABLE">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Path=IsActive,ElementName=uiProgressRingInstall}" Value="True">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Grid.Style>
-                    <Path Data="{StaticResource IconGameSettingsEditDetails}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Margin="0,0,-14,-13">
-                        <Path.RenderTransform>
-                            <ScaleTransform ScaleX="0.28" ScaleY="0.28"/>
-                        </Path.RenderTransform>
-                    </Path>
-                    <Grid.RenderTransform>
-                        <ScaleTransform/>
-                    </Grid.RenderTransform>
-                </Grid>
+                <Button Style="{StaticResource ButtonWrapper}" HorizontalAlignment="Left" VerticalAlignment="Top"  Cursor="Hand" Width="8" Height="8" Margin="49,0,0,0" Click="InitOverwriteGameType_Click">
+                    <Grid  Background="Transparent" ToolTip="Overwrite game type">
+                        <Grid.Style>
+                            <Style TargetType="Grid" BasedOn="{StaticResource HoverEffect}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Path=Game.Type}" Value="UNDETECTABLE">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=IsActive,ElementName=uiProgressRingInstall}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <Path Data="{StaticResource IconGameSettingsEditDetails}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Margin="0,0,-14,-13">
+                            <Path.RenderTransform>
+                                <ScaleTransform ScaleX="0.28" ScaleY="0.28"/>
+                            </Path.RenderTransform>
+                        </Path>
+                        <Grid.RenderTransform>
+                            <ScaleTransform/>
+                        </Grid.RenderTransform>
+                    </Grid>
+                </Button>
                 <local:IconButton Kind="Skeleton" Text="Back" FontSize="5" CornerRadius="2" Height="9" Width="34" BorderThickness="0.2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,43,1,0" Click="InstallOptionCancel_Click"/>
             </Grid>
         </Grid>

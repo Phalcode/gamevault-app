@@ -3,6 +3,7 @@ using gamevault.Models;
 using gamevault.ViewModels;
 using MahApps.Metro.Controls;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
@@ -12,6 +13,8 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
+using Windows.Gaming.Input;
 
 namespace gamevault.UserControls
 {
@@ -28,6 +31,30 @@ namespace gamevault.UserControls
         {
             InitializeComponent();
             ViewModel = new LibraryViewModel();
+            int sortByIndex = 0;
+            if (SettingsViewModel.Instance.RetainLibarySortByAndOrderBy)
+            {
+                try
+                {
+                    uiFilterOrderBy.IsChecked = Preferences.Get(AppConfigKey.LastLibraryOrderBy, AppFilePath.UserFile) == "desc" ? true : false;
+
+                    string lastSortBy = Preferences.Get(AppConfigKey.LastLibrarySortBy, AppFilePath.UserFile);
+
+                    for (int i = 0; i < ViewModel.GameFilterSortByValues.Count; i++)
+                    {
+                        if (ViewModel.GameFilterSortByValues.ElementAt(i).Value == lastSortBy)
+                        {
+                            sortByIndex = i;
+                            break;
+                        }
+                    }
+                }
+                catch { }
+            }
+            uiFilterSortBy.SelectedIndex = sortByIndex;
+            uiFilterOrderBy.Checked += OrderBy_Changed;
+            uiFilterOrderBy.Unchecked += OrderBy_Changed;
+
             this.DataContext = ViewModel;
             InitTimer();
         }
@@ -87,7 +114,7 @@ namespace gamevault.UserControls
             TaskQueue.Instance.ClearQueue();
 
             string gameSortByFilter = ViewModel.SelectedGameFilterSortBy.Value;
-            string gameOrderByFilter = ViewModel.OrderByValue;
+            string gameOrderByFilter = (bool)uiFilterOrderBy.IsChecked ? "DESC" : "ASC";
             ViewModel.GameCards.Clear();
             string filterUrl = @$"{SettingsViewModel.Instance.ServerUrl}/api/games?search={inputTimer.Data}&sortBy={gameSortByFilter}:{gameOrderByFilter}&limit=50";
             filterUrl = ApplyFilter(filterUrl);
@@ -186,10 +213,10 @@ namespace gamevault.UserControls
             {
                 uiExpanderGameCards.IsExpanded = true;
             }
-            if(ViewModel.FilterVisibility == Visibility.Collapsed)
+            if (ViewModel.FilterVisibility == Visibility.Collapsed)
             {
                 ViewModel.FilterVisibility = Visibility.Visible;
-            }      
+            }
         }
         private async void ClearAllFilters_Click(object sender, MouseButtonEventArgs e)
         {
@@ -201,7 +228,7 @@ namespace gamevault.UserControls
         {
             uiFilterGameTypeSelector.ClearEntries();
             uiFilterGenreSelector.ClearEntries();
-            uiFilterTagSelector.ClearEntries();
+            uiFilterPillSelector.ClearEntries();
             uiFilterReleaseDateRangeSelector.ClearSelection();
 
             uiFilterBookmarks.IsChecked = false;
@@ -250,7 +277,7 @@ namespace gamevault.UserControls
 
         private async void OrderBy_Changed(object sender, RoutedEventArgs e)
         {
-            ViewModel.OrderByValue = (ViewModel.OrderByValue == "ASC") ? "DESC" : "ASC";
+            Preferences.Set(AppConfigKey.LastLibraryOrderBy, (bool)uiFilterOrderBy.IsChecked ? "desc" : "asc", AppFilePath.UserFile);
             await Search();
         }
         private string ApplyFilter(string filter)
@@ -271,12 +298,12 @@ namespace gamevault.UserControls
             string genres = uiFilterGenreSelector.GetSelectedEntries();
             if (genres != string.Empty)
             {
-                filter += $"&filter.genres.name=$in:{genres}";
+                filter += $"&filter.metadata.genres.name=$in:{genres}";
             }
-            string tags = uiFilterTagSelector.GetSelectedEntries();
+            string tags = uiFilterPillSelector.GetSelectedEntries();
             if (tags != string.Empty)
             {
-                filter += $"&filter.tags.name=$in:{tags}";
+                filter += $"&filter.metadata.tags.name=$in:{tags}";
             }
             if (uiFilterBookmarks.IsChecked == true)
             {
@@ -291,40 +318,80 @@ namespace gamevault.UserControls
         }
         private async void FilterUpdated(object sender, EventArgs e)
         {
+            if (sender == uiFilterSortBy)
+            {
+                Preferences.Set(AppConfigKey.LastLibrarySortBy, ViewModel.SelectedGameFilterSortBy.Value, AppFilePath.UserFile);
+            }
             OpenFilterIfClosed();
             RefreshFilterCounter();
             await Search();
         }
 
 
-        private async void RandomGame_Click(object sender, MouseButtonEventArgs e)
+        private async void RandomGame_Click(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
             ((FrameworkElement)sender).IsEnabled = false;
-            Game? result = await Task<Game>.Run(() =>
+            Random random = new Random();
+            if (random.Next(0, 100) < 7)
             {
                 try
                 {
-                    string randomGame = WebHelper.GetRequest($"{SettingsViewModel.Instance.ServerUrl}/api/games/random");
-                    return JsonSerializer.Deserialize<Game>(randomGame);
+                    uiImgRandom.Source = new Uri("https://phalco.de/images/gamevault/eastereggs/777.mp4");
+                    uiImgRandom.Visibility = Visibility.Visible;
+                    DispatcherTimer timer = new DispatcherTimer();
+                    timer.Interval = TimeSpan.FromMilliseconds(6000);
+                    timer.Tick += (s, e) => { timer.Stop(); uiImgRandom.Source = null; uiImgRandom.Visibility = Visibility.Collapsed; Process.Start(new ProcessStartInfo("https://www.ncpgambling.org/help-treatment/") { UseShellExecute = true }); };
+                    timer.Start();
+                    AnalyticsHelper.Instance.SendCustomEvent("EASTER_EGG", new { name = "777" });
+                }
+                catch { }
+            }
+            else
+            {
+                Game? result = await Task<Game>.Run(() =>
+                {
+                    try
+                    {
+                        string randomGame = WebHelper.GetRequest($"{SettingsViewModel.Instance.ServerUrl}/api/games/random");
+                        return JsonSerializer.Deserialize<Game>(randomGame);
+                    }
+                    catch (Exception ex)
+                    {
+                        MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
+                        return null;
+                    }
+                });
+                if (result != null)
+                {
+                    MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(result, true));
+                }
+            }
+            ((FrameworkElement)sender).IsEnabled = true;
+        }
+        private async void CardSettings_Click(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+            try
+            {
+                ContentControl parent = ((Grid)((FrameworkElement)sender).Parent).TemplatedParent as ContentControl;
+                if (parent.Tag == "busy")
+                    return;
+
+                parent.Tag = "busy";
+                try
+                {
+                    string result = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{((Game)((FrameworkElement)sender).DataContext).ID}");
+                    Game resultGame = JsonSerializer.Deserialize<Game>(result);
+                    MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(resultGame) { Width = 1200, Height = 800, Margin = new Thickness(50) });
                 }
                 catch (Exception ex)
                 {
                     MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
-                    return null;
                 }
-            });
-            if (result != null)
-            {
-                MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(result, true));
+                parent.Tag = "";
             }
-            ((FrameworkElement)sender).IsEnabled = true;
-        }
-        private void CardSettings_Click(object sender, RoutedEventArgs e)
-        {
-            e.Handled = true;
-            //var installedGame = InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ((Game)((FrameworkElement)sender).DataContext).ID).FirstOrDefault();
-            MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl((Game)((FrameworkElement)sender).DataContext) { Width = 1200, Height = 800, Margin = new Thickness(50) });
+            catch { }
         }
         private async void CardBookmark_Click(object sender, RoutedEventArgs e)
         {
@@ -344,12 +411,12 @@ namespace gamevault.UserControls
                     if ((bool)((ToggleButton)sender).IsChecked == false)
                     {
                         await WebHelper.DeleteAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me/bookmark/{currentGame.ID}");
-                        currentGame.BookmarkedUsers = new User[0];
+                        currentGame.BookmarkedUsers = new List<User>();
                     }
                     else
                     {
                         await WebHelper.PostAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me/bookmark/{currentGame.ID}");
-                        currentGame.BookmarkedUsers = new User[] { LoginManager.Instance.GetCurrentUser() };
+                        currentGame.BookmarkedUsers = new List<User> { LoginManager.Instance.GetCurrentUser()! };
                     }
 
                 }
@@ -372,7 +439,7 @@ namespace gamevault.UserControls
             int filterCount = 0;
             filterCount += uiFilterGameTypeSelector.HasEntries() ? 1 : 0;
             filterCount += uiFilterGenreSelector.HasEntries() ? 1 : 0;
-            filterCount += uiFilterTagSelector.HasEntries() ? 1 : 0;
+            filterCount += uiFilterPillSelector.HasEntries() ? 1 : 0;
             filterCount += (bool)uiFilterEarlyAccess.IsChecked ? 1 : 0;
             filterCount += (bool)uiFilterBookmarks.IsChecked ? 1 : 0;
 

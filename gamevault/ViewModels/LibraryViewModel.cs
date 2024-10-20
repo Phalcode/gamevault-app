@@ -54,12 +54,13 @@ namespace gamevault.ViewModels
             {
                 var dict = new Dictionary<string, string>
                 {
-                    {"Title","title"},
+                    {"Title","sort_title"},
                     {"Size","size" },
-                    {"Recently Added","created_at" },
-                    {"Release Date","release_date" },
-                    {"Metacritic Rating","metacritic_rating" },
-                    {"Average Playtime","average_playtime" },
+                    {"Date Added","created_at" },
+                    {"Release Date","metadata.release_date" },
+                    {"Rating","metadata.rating" },
+                    {"Download Count","download_count" },
+                    {"Average Playtime","metadata.average_playtime" },
                 };
                 return dict;
             }
@@ -69,7 +70,6 @@ namespace gamevault.ViewModels
             get { return m_SelectedGameFilterSortBy; }
             set { m_SelectedGameFilterSortBy = value; }
         }
-        public string OrderByValue = "ASC";
         public string FilterCounter
         {
             get { return filterCounter; }

@@ -152,7 +152,7 @@
                                 </StackPanel>
                             </mah:ContentControlEx.Content>
                         </mah:ContentControlEx>
-                        <Border Name="Disabled_Border"  Visibility="Collapsed" CornerRadius="{TemplateBinding CornerRadius}" BorderThickness="2" Background="{DynamicResource GameVault.Brushes.Button.Disabled}" BorderBrush="{DynamicResource GameVault.Brushes.Button.Disabled}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        <Border Name="Disabled_Border" Visibility="Collapsed" CornerRadius="{TemplateBinding CornerRadius}" BorderThickness="{TemplateBinding BorderThickness}" Background="{DynamicResource GameVault.Brushes.Button.Disabled}" BorderBrush="{DynamicResource GameVault.Brushes.Button.Disabled}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="Kind" Value="Primary">
@@ -630,7 +630,7 @@
                                 <Path x:Name="PolygonDown" Data="F1 M 19,38 L 57,38 57,44 19,44 19,38 Z" Fill="{DynamicResource MahApps.Brushes.Gray1}" Height="3" Stretch="Fill" Width="14"/>
                             </RepeatButton>
                         </Grid>
-                        <Border x:Name="DisabledVisualElement" Background="{DynamicResource MahApps.Brushes.Control.Disabled}" BorderBrush="{DynamicResource MahApps.Brushes.Control.Disabled}" BorderThickness="{TemplateBinding BorderThickness}" IsHitTestVisible="False" Opacity="0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Visibility="{Binding (mah:ControlsHelper.DisabledVisualElementVisibility), Mode=OneWay, RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
+                        <Border x:Name="DisabledVisualElement" Background="{DynamicResource GameVault.Brushes.Button.Disabled}" BorderBrush="{DynamicResource MahApps.Brushes.Control.Disabled}" BorderThickness="{TemplateBinding BorderThickness}" IsHitTestVisible="False" Opacity="0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Visibility="{Binding (mah:ControlsHelper.DisabledVisualElementVisibility), Mode=OneWay, RelativeSource={RelativeSource Mode=TemplatedParent}}" CornerRadius="5"/>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <MultiTrigger>

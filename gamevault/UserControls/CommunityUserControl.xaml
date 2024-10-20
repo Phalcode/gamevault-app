@@ -15,6 +15,7 @@
         <conv:GameStateDescriptionConverter x:Key="gameStateDescConv"/>
         <conv:GameTimeConverter x:Key="gameTimeConv"/>
         <conv:UTCtoLocalTimeConverter x:Key="UtcTimeConv"/>
+        <conv:InverseNullConverter x:Key="inverseNullConv"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -24,14 +25,9 @@
         <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Grid.Row="0">
             <Grid>
                 <TextBlock Text="Community" FontSize="35" Margin="20,0,0,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
-                <ComboBox x:Name="uiSelectUser" ItemsSource="{Binding Users}" DisplayMemberPath="Username" Margin="5" HorizontalAlignment="Right" SelectionChanged="Users_SelectionChanged"/>
             </Grid>
         </Border>
-        <Grid  Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="40*"/>
-                <RowDefinition Height="169*"/>
-            </Grid.RowDefinitions>
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
@@ -40,122 +36,133 @@
             <Viewbox Grid.RowSpan="2" Grid.ColumnSpan="3" Stretch="UniformToFill" HorizontalAlignment="Center">
                 <local:CacheImage ImageCacheType="UserBackground" Data="{Binding Path=CurrentShownUser}"/>
             </Viewbox>
-            <Grid Grid.Column="1" Grid.RowSpan="2" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Opacity="0.8"/>
-            <Viewbox Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left">
-                <Grid>
+            <Border Grid.Column="1" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Opacity="0.8" CornerRadius="10" Margin="0,10,0,10" MaxWidth="800"/>
+            <DockPanel Grid.Column="1" LastChildFill="True" Background="Transparent" Margin="0,10,0,0" MaxWidth="800">
+                <Viewbox DockPanel.Dock="Top">
                     <Grid>
-                        <local:CacheImage Height="130" Width="130" Margin="-340,5,0,0" Stretch="Fill" ImageCacheType="UserIcon" CornerRadius="10" Data="{Binding Path=CurrentShownUser}"/>
+                        <Grid>
+                            <ComboBox x:Name="uiSelectUser" FontWeight="Bold" ItemsSource="{Binding Users}" DisplayMemberPath="Username" Margin="140,0,0,0" Height="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" SelectionChanged="Users_SelectionChanged"/>
+                            <local:CacheImage Height="130" Width="130" Margin="-340,5,0,0" Stretch="Fill" ImageCacheType="UserAvatar" CornerRadius="10" Data="{Binding Path=CurrentShownUser}"/>
 
-                        <Border Background="{DynamicResource MahApps.Brushes.Accent}" Width="47" Height="23" Padding="3" CornerRadius="5" Margin="145,70,0,0" HorizontalAlignment="Left">
-                            <TextBlock Text="{Binding Path=CurrentShownUser.Role}" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" TextAlignment="Center"/>
-                        </Border>
-                        <StackPanel Margin="145,55,0,0">
-                            <TextBlock Text="{Binding Path=CurrentShownUser.Username}" FontWeight="Bold"/>
-                            <TextBlock Text="{Binding Path=CurrentShownUser.FirstName}"/>
+                            <Border Background="{DynamicResource MahApps.Brushes.Accent}" Width="47" Height="23" Padding="3" CornerRadius="5" Margin="140,30,0,0" HorizontalAlignment="Left">
+                                <TextBlock Text="{Binding Path=CurrentShownUser.Role}" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" TextAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="{Binding Path=CurrentShownUser.FirstName}" FontSize="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="140,0,0,0"/>
+                        </Grid>
+                        <Grid HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,5,0">
+                            <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Top" HorizontalAlignment="Right" Visibility="{Binding SelectedIndex,ElementName=uiSelectUser,Converter={StaticResource roleToVisConv}}" Cursor="Hand" Width="25" Height="25" Click="UserEdit_Clicked">
+                                <Grid Style="{DynamicResource HoverEffect}"  Background="Transparent" RenderTransformOrigin="0.5,0.5">
+                                    <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}">
+                                        <Path.RenderTransform>
+                                            <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                        </Path.RenderTransform>
+                                    </Path>
+                                    <Grid.RenderTransform>
+                                        <ScaleTransform/>
+                                    </Grid.RenderTransform>
+                                </Grid>
+                            </Button>
+                            <Button Style="{StaticResource ButtonWrapper}"  x:Name="uiBtnReloadUser" VerticalAlignment="Top" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,30,0" ToolTip="Reload current user (F5)" Click="ReloadUser_Clicked">
+                                <Grid Style="{DynamicResource HoverEffect}" Background="Transparent" RenderTransformOrigin="0.5,0.5">
+                                    <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}">
+                                        <Path.RenderTransform>
+                                            <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                        </Path.RenderTransform>
+                                    </Path>
+                                    <Grid.RenderTransform>
+                                        <ScaleTransform/>
+                                    </Grid.RenderTransform>
+                                </Grid>
+                            </Button>
+                        </Grid>
+                        <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="320,0,10,0">
+
+                            <ComboBox x:Name="uiSortBy" ItemsSource="{Binding SortBy}" SelectionChanged="SortBy_SelectionChanged"/>
                         </StackPanel>
-                    </Grid>
-                    <Grid HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,5,0">
-                        <Grid Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Right" Visibility="{Binding SelectedIndex,ElementName=uiSelectUser,Converter={StaticResource roleToVisConv}}" Background="Transparent" Cursor="Hand" Width="25" Height="25" Margin="0,0,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="UserEdit_Clicked">
-                            <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}">
-                                <Path.RenderTransform>
-                                    <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                </Path.RenderTransform>
-                            </Path>
-                            <Grid.RenderTransform>
-                                <ScaleTransform/>
-                            </Grid.RenderTransform>
-                        </Grid>
-                        <Grid x:Name="uiBtnReloadUser" Style="{DynamicResource HoverEffect}" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Cursor="Hand" Width="25" Height="25" Margin="0,0,30,0" RenderTransformOrigin="0.5,0.5" ToolTip="Reload current user (F5)" MouseLeftButtonUp="ReloadUser_Clicked">
-                            <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}">
-                                <Path.RenderTransform>
-                                    <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                </Path.RenderTransform>
-                            </Path>
-                            <Grid.RenderTransform>
-                                <ScaleTransform/>
-                            </Grid.RenderTransform>
-                        </Grid>
-                    </Grid>
-                    <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="320,0,10,0">
-                       
-                        <ComboBox x:Name="uiSortBy" ItemsSource="{Binding SortBy}" SelectionChanged="SortBy_SelectionChanged"/>
-                    </StackPanel>
 
-                </Grid>
-
-            </Viewbox>
-            <ScrollViewer x:Name="uiProgressScrollView"  Grid.Column="1" Grid.Row="1" VerticalAlignment="Top" Margin="10,10,0,0">
-                <Viewbox>
-                    <Grid>
-                        <ItemsControl ItemsSource="{Binding Path=UserProgresses}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Vertical"/>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <DockPanel LastChildFill="True" Height="18" Margin="0,0,0,0" >
-                                        <local:CacheImage ImageCacheType="BoxArt" Data="{Binding}" CornerRadius="2" Width="15" Height="15" Cursor="Hand" MouseLeftButtonUp="GameImage_MouseLeftButtonUp"/>
-                                        <Grid>
-                                            <TextBlock  FontSize="3" Margin="1,3,5,0" Width="55">
-                                                <TextBlock.Style>
-                                                    <Style TargetType="{x:Type TextBlock}">
-                                                        <Setter Property="TextBlock.Text" Value="{Binding Path=Game.Title}"/>
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding Path=Game.Title}" Value="{x:Null}">
-                                                                <Setter Property="Text" Value="Unknown game" />
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </TextBlock.Style>
-                                            </TextBlock>
-                                            <Grid Style="{DynamicResource HoverEffect}" Visibility="{Binding SelectedIndex,ElementName=uiSelectUser,Converter={StaticResource roleToVisConv}}" Background="Transparent" Cursor="Hand" VerticalAlignment="Top" HorizontalAlignment="Right" Height="4" Width="3" Margin="0,3.5,0.5,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="DeleteProgress_Click">
-                                                <Path Data="{StaticResource IconTrash}" Fill="IndianRed" Margin="0,0.3,-17,-17">
-                                                    <Path.RenderTransform>
-                                                        <ScaleTransform ScaleX="0.13" ScaleY="0.13"/>
-                                                    </Path.RenderTransform>
-                                                </Path>
-                                                <Grid.RenderTransform>
-                                                    <ScaleTransform/>
-                                                </Grid.RenderTransform>
-                                            </Grid>
-                                            <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,1,3">
-                                                <TextBlock Text="{Binding Path=MinutesPlayed,StringFormat='{}Time played: {0}',Converter={StaticResource gameTimeConv}}" FontSize="2">
-                                                    <TextBlock.ToolTip>
-                                                        <TextBlock Text="{Binding Path=MinutesPlayed,StringFormat='{}{0} min'}"/>
-                                                    </TextBlock.ToolTip>
-                                                </TextBlock>
-                                                <TextBlock FontSize="2" DataContext="{Binding Path=LastPlayedAt,Converter={StaticResource UtcTimeConv}}" Text="{Binding StringFormat='{}Last played: {0:dd.MM.yyyy}'}">
-                                                    <TextBlock.ToolTip>
-                                                        <TextBlock Text="{Binding StringFormat='{}{0:HH:mm:ss&#x0a;dd.MM.yyyy}'}"/>
-                                                    </TextBlock.ToolTip>
-                                            </TextBlock>
-                                            </StackPanel>
-                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Margin="1,0,0,3">
-                                                <TextBlock Text="State: " FontSize="2"/>
-                                                <TextBlock Text="{Binding Path=State,Converter={StaticResource gameStateDescConv}}" Foreground="{Binding Path=State,Converter={StaticResource gameStateColorConv}}" FontSize="2" />
-                                            </StackPanel>
-                                        </Grid>
-                                    </DockPanel>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                        <TextBlock Text="No games played yet" FontSize="1" Margin="5,9,5,0">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Visibility" Value="Collapsed" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding UserProgresses.Count}" Value="0">
-                                            <Setter Property="Visibility" Value="Visible" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
                     </Grid>
+
                 </Viewbox>
-            </ScrollViewer>
+                <ScrollViewer x:Name="uiProgressScrollView" Margin="10,10,0,20" VerticalAlignment="Top">
+                    <Viewbox>
+                        <Grid>
+                            <ItemsControl ItemsSource="{Binding Path=UserProgresses}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Vertical"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <DockPanel LastChildFill="True" Height="18">
+                                            <Button Style="{StaticResource ButtonWrapper}" Width="15" Height="15" Cursor="Hand" Click="GameImage_Click">
+                                                <local:CacheImage ImageCacheType="GameCover" Data="{Binding}" CornerRadius="2"/>
+                                            </Button>
+                                            <Grid>
+                                                <TextBlock  FontSize="3" Margin="1,3,5,0" Width="55">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="{x:Type TextBlock}">
+                                                            <Setter Property="TextBlock.Text" Value="{Binding Path=Game.Metadata.Title}"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Path=Game.Metadata.Title}" Value="{x:Null}">
+                                                                    <Setter Property="Text" Value="{Binding Path=Game.Title}" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding Path=Game.DeletedAt,Converter={StaticResource inverseNullConv}}" Value="False">
+                                                                    <Setter Property="TextDecorations" Value="Strikethrough" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                                <Button Style="{StaticResource ButtonWrapper}" Visibility="{Binding SelectedIndex,ElementName=uiSelectUser,Converter={StaticResource roleToVisConv}}" Cursor="Hand" VerticalAlignment="Top" HorizontalAlignment="Right" Height="4" Width="3" Margin="0,3.5,0.5,0" Click="DeleteProgress_Click">
+                                                    <Grid Style="{DynamicResource HoverEffect}"  Background="Transparent" RenderTransformOrigin="0.5,0.5">
+                                                        <Path Data="{StaticResource IconTrash}" Fill="IndianRed" Margin="0,0.3,-17,-17">
+                                                            <Path.RenderTransform>
+                                                                <ScaleTransform ScaleX="0.13" ScaleY="0.13"/>
+                                                            </Path.RenderTransform>
+                                                        </Path>
+                                                        <Grid.RenderTransform>
+                                                            <ScaleTransform/>
+                                                        </Grid.RenderTransform>
+                                                    </Grid>
+                                                </Button>
+                                                <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,1,3">
+                                                    <TextBlock Text="{Binding Path=MinutesPlayed,StringFormat='{}Time played: {0}',Converter={StaticResource gameTimeConv}}" FontSize="2">
+                                                        <TextBlock.ToolTip>
+                                                            <TextBlock Text="{Binding Path=MinutesPlayed,StringFormat='{}{0} min'}"/>
+                                                        </TextBlock.ToolTip>
+                                                </TextBlock>
+                                                    <TextBlock FontSize="2" DataContext="{Binding Path=LastPlayedAt,Converter={StaticResource UtcTimeConv}}" Text="{Binding StringFormat='{}Last played: {0:dd.MM.yyyy}'}">
+                                                        <TextBlock.ToolTip>
+                                                            <TextBlock Text="{Binding StringFormat='{}{0:HH:mm:ss&#x0a;dd.MM.yyyy}'}"/>
+                                                        </TextBlock.ToolTip>
+                                            </TextBlock>
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Margin="1,0,0,3">
+                                                    <TextBlock Text="State: " FontSize="2"/>
+                                                    <TextBlock Text="{Binding Path=State,Converter={StaticResource gameStateDescConv}}" Foreground="{Binding Path=State,Converter={StaticResource gameStateColorConv}}" FontSize="2" />
+                                                </StackPanel>
+                                            </Grid>
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <TextBlock Text="No games played yet" FontSize="1" Margin="5,9,5,0">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding UserProgresses.Count}" Value="0">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+                    </Viewbox>
+                </ScrollViewer>
+            </DockPanel>
         </Grid>
     </Grid>
 </UserControl>

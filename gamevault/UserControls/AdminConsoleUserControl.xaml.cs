@@ -16,6 +16,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Navigation;
+using gamevault.Models.Mapping;
 
 namespace gamevault.UserControls
 {
@@ -76,7 +77,7 @@ namespace gamevault.UserControls
                 }
                 if (LoginManager.Instance.IsLoggedIn() && selectedUser.ID == LoginManager.Instance.GetCurrentUser().ID)
                 {
-                    MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to change your role?",
+                    MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to change your own role?\nYou may lose privileges.",
                     "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
                     if (result != MessageDialogResult.Affirmative)
                     {
@@ -86,7 +87,7 @@ namespace gamevault.UserControls
                         return;
                     }
                 }
-                WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/{selectedUser.ID}", JsonSerializer.Serialize(new User() { Role = selectedUser.Role }));
+                WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/{selectedUser.ID}", JsonSerializer.Serialize(new UpdateUserDto() { Role = selectedUser.Role }));
                 MainWindowViewModel.Instance.AppBarText = $"Successfully updated permission role of user '{selectedUser.Username}' to '{selectedUser.Role}'";
             }
             catch (Exception ex)
@@ -112,7 +113,7 @@ namespace gamevault.UserControls
             }
         }
 
-        private async void DeleteUser_Clicked(object sender, MouseButtonEventArgs e)
+        private async void DeleteUser_Clicked(object sender, RoutedEventArgs e)
         {
 
             User selectedUser = (User)((FrameworkElement)sender).DataContext;
@@ -152,10 +153,9 @@ namespace gamevault.UserControls
             });
             this.IsEnabled = true;
         }
-
-        private void EditUser_Clicked(object sender, MouseButtonEventArgs e)
+        private void EditUser_Clicked(object sender, RoutedEventArgs e)
         {
-            User user = JsonSerializer.Deserialize<User>(JsonSerializer.Serialize((User)((FrameworkElement)sender).DataContext));
+            User user = JsonSerializer.Deserialize<User>(JsonSerializer.Serialize((User)((FrameworkElement)sender).DataContext));//Dereference
             MainWindowViewModel.Instance.OpenPopup(new UserSettingsUserControl(user) { Width = 1200, Height = 800, Margin = new Thickness(50) });
         }
         private void BackupRestore_Click(object sender, RoutedEventArgs e)
@@ -201,12 +201,12 @@ namespace gamevault.UserControls
             if (LoginManager.Instance.GetCurrentUser().ID == selectedUser.ID)
             {
                 await LoginManager.Instance.ManualLogin(selectedUser.Username, string.IsNullOrEmpty(selectedUser.Password) ? WebHelper.GetCredentials()[1] : selectedUser.Password);
-                MainWindowViewModel.Instance.UserIcon = LoginManager.Instance.GetCurrentUser();
+                MainWindowViewModel.Instance.UserAvatar = LoginManager.Instance.GetCurrentUser();
             }
             await InitUserList();
         }
 
-        private void ShowUser_Click(object sender, MouseButtonEventArgs e)
+        private void ShowUser_Click(object sender, RoutedEventArgs e)
         {
             User selectedUser = ((FrameworkElement)sender).DataContext as User;
             MainWindowViewModel.Instance.Community.ShowUser(selectedUser);
@@ -215,11 +215,12 @@ namespace gamevault.UserControls
         private async void Reindex_Click(object sender, RoutedEventArgs e)
         {
             ((FrameworkElement)sender).IsEnabled = false;
+            return;
             await Task.Run(() =>
             {
                 try
                 {
-                    WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/files/reindex", string.Empty);
+                    WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/reindex", string.Empty);
                     MainWindowViewModel.Instance.AppBarText = "Sucessfully reindexed games";
                 }
                 catch (Exception ex)
@@ -273,6 +274,8 @@ namespace gamevault.UserControls
             url = url.Replace("&", "^&");
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
             e.Handled = true;
-        }      
+        }
+
+
     }
 }

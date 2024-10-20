@@ -1,5 +1,38 @@
 # GameVault App Changelog
 
+## 1.12.5.0
+Recommended Gamevault Server Version: `v13.0.0`
+### Changes
+
+- Switched to new server API.
+- Added a news button to show the latest updates from GameVault and your own server. When news is available, a red badge appears next to the button. Also supports Markdown.
+- Layout changes to the title bar, settings page and admin page.
+- Moved title bar action buttons.
+- You can now copy the app bar text.
+- The executable ignore list is now editable in the settings tab.
+- New setting: 'Retain sorting and filter preferences after restart.'
+- Added a new Halloween theme (+).
+- The last 'Community Tab Sort By' option will be remembered.
+- Downloads are safely paused, even if GameVault crashes or is forced to close.
+- Overhauled the layout.
+- Added a media slider to display trailers, gameplay, and screenshots.
+- Added age ratings.
+- Added notes.
+- Descriptions and notes now support Markdown.
+- Bug fix: Uploading large images error.
+- Display available metadata providers.
+- Change the priority of selected providers.
+- Unmap selected metadata providers.
+- Recache selected metadata providers.
+- Added a new 'Edit Details' tab, giving you full control over every detail of the game. You can undo manual changes at any time with the 'Wipe Custom Metadata' button.
+- You can now specify the default launch/setup executable and default launch parameters.
+
+## 1.11.2.0
+Recommended Gamevault Server Version: `v12.2.0`
+### Changes
+
+- Reversed buttons for row count for installed games section
+
 ## 1.11.1.0
 Recommended Gamevault Server Version: `v12.2.0`
 ### Changes

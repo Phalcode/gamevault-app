@@ -13,6 +13,7 @@ using MahApps.Metro.Controls.Dialogs;
 using MahApps.Metro.Controls;
 using System.Text.Json;
 using System.Security.Policy;
+using AngleSharp.Io;
 
 namespace gamevault.UserControls
 {
@@ -110,7 +111,7 @@ namespace gamevault.UserControls
 
         private async void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (((TabControl)sender).SelectedIndex == 2)
+            if (((TabControl)sender).SelectedIndex == 3)
             {
                 ViewModel.ImageCacheSize = await CalculateDirectorySize(new DirectoryInfo(AppFilePath.ImageCache));
                 ViewModel.OfflineCacheSize = (File.Exists(AppFilePath.OfflineCache) ? new FileInfo(AppFilePath.OfflineCache).Length : 0);
@@ -142,7 +143,7 @@ namespace gamevault.UserControls
         private void Logout_Click(object sender, RoutedEventArgs e)
         {
             LoginManager.Instance.Logout();
-            MainWindowViewModel.Instance.UserIcon = null;
+            MainWindowViewModel.Instance.UserAvatar = null;
             MainWindowViewModel.Instance.AppBarText = "Successfully logged out";
         }
 
@@ -239,7 +240,7 @@ namespace gamevault.UserControls
             ThemeItem selectedTheme = (ThemeItem)((ComboBox)sender).SelectedValue;
             if (((ComboBox)sender).SelectionBoxItem == string.Empty)
                 return;
-            if (((ThemeItem)((ComboBox)sender).SelectionBoxItem).Value == selectedTheme.Value)
+            if (((ThemeItem)((ComboBox)sender).SelectionBoxItem).Path == selectedTheme.Path)
                 return;
             if (selectedTheme.IsPlus == true && ViewModel.License.IsActive() == false)
             {
@@ -247,7 +248,7 @@ namespace gamevault.UserControls
                 try
                 {
                     MainWindowViewModel.Instance.SetActiveControl(MainControl.Settings);
-                    MainWindowViewModel.Instance.Settings.SetTabIndex(3);
+                    MainWindowViewModel.Instance.Settings.SetTabIndex(4);
                     MainWindowViewModel.Instance.AppBarText = "Oops! You just reached a premium feature of GameVault - Upgrade now and support the devs!";
                 }
                 catch { }
@@ -255,7 +256,7 @@ namespace gamevault.UserControls
             }
             try
             {
-                App.Current.Resources.MergedDictionaries[0] = new ResourceDictionary() { Source = new Uri(selectedTheme.Value) };
+                App.Current.Resources.MergedDictionaries[0] = new ResourceDictionary() { Source = new Uri(selectedTheme.Path) };
                 //Reload Base Styles to apply new colors
                 App.Current.Resources.MergedDictionaries[1] = new ResourceDictionary() { Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Base.xaml") };
                 Preferences.Set(AppConfigKey.Theme, JsonSerializer.Serialize(selectedTheme), AppFilePath.UserFile, true);
@@ -266,22 +267,44 @@ namespace gamevault.UserControls
         {
             try
             {
-                ViewModel.Themes = new System.Collections.Generic.List<ThemeItem> {
-               new ThemeItem() { Key = "GameVault (Dark)", Value = "pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultDark.xaml", IsPlus = false },
-               new  ThemeItem(){ Key="GameVault (Light)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultLight.xaml",IsPlus=false},
-               new  ThemeItem(){ Key="GameVault (Classic)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeGameVaultClassicDark.xaml",IsPlus=false},
-               new  ThemeItem(){ Key="Phalcode (Dark)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemePhalcodeDark.xaml",IsPlus=true},
-               new  ThemeItem(){ Key="Phalcode (Light)",Value="pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemePhalcodeLight.xaml",IsPlus=true}};
+                ViewModel.Themes = new System.Collections.Generic.List<ThemeItem>();
+                //Load embedded Themes
+                ResourceDictionary res = new ResourceDictionary();
+                res.Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeDefaultDark.xaml");
+                ViewModel.Themes.Add(new ThemeItem() { DisplayName = (string)res["Theme.DisplayName"], Description = (string)res["Theme.Description"], Author = (string)res["Theme.Author"], IsPlus = false, Path = res.Source.OriginalString });
+
+                res.Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeDefaultLight.xaml");
+                ViewModel.Themes.Add(new ThemeItem() { DisplayName = (string)res["Theme.DisplayName"], Description = (string)res["Theme.Description"], Author = (string)res["Theme.Author"], IsPlus = false, Path = res.Source.OriginalString });
+
+                res.Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeClassicDark.xaml");
+                ViewModel.Themes.Add(new ThemeItem() { DisplayName = (string)res["Theme.DisplayName"], Description = (string)res["Theme.Description"], Author = (string)res["Theme.Author"], IsPlus = false, Path = res.Source.OriginalString });
+
+                res.Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemePhalcodeDark.xaml");
+                ViewModel.Themes.Add(new ThemeItem() { DisplayName = (string)res["Theme.DisplayName"], Description = (string)res["Theme.Description"], Author = (string)res["Theme.Author"], IsPlus = true, Path = res.Source.OriginalString });
+
+                res.Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemePhalcodeLight.xaml");
+                ViewModel.Themes.Add(new ThemeItem() { DisplayName = (string)res["Theme.DisplayName"], Description = (string)res["Theme.Description"], Author = (string)res["Theme.Author"], IsPlus = true, Path = res.Source.OriginalString });
+
+                res.Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeHalloweenDark.xaml");
+                ViewModel.Themes.Add(new ThemeItem() { DisplayName = (string)res["Theme.DisplayName"], Description = (string)res["Theme.Description"], Author = (string)res["Theme.Author"], IsPlus = true, Path = res.Source.OriginalString });
+
+
+
                 if (Directory.Exists(AppFilePath.ThemesLoadDir))
                 {
                     foreach (var file in Directory.GetFiles(AppFilePath.ThemesLoadDir, "*.xaml", SearchOption.AllDirectories))
                     {
-                        ViewModel.Themes.Add(new ThemeItem() { Key = Path.GetFileNameWithoutExtension(file), Value = file, IsPlus = true });
+                        try
+                        {
+                            res.Source = new Uri(file);
+                            ViewModel.Themes.Add(new ThemeItem() { DisplayName = (string)res["Theme.DisplayName"], Description = (string)res["Theme.Description"], Author = (string)res["Theme.Author"], IsPlus = true, Path = res.Source.OriginalString });
+                        }
+                        catch { }
                     }
                 }
                 string currentThemeString = Preferences.Get(AppConfigKey.Theme, AppFilePath.UserFile, true);
                 ThemeItem currentTheme = JsonSerializer.Deserialize<ThemeItem>(currentThemeString);
-                int themeIndex = ViewModel.Themes.FindIndex(i => i.Value == currentTheme.Value);
+                int themeIndex = ViewModel.Themes.FindIndex(i => i.Path == currentTheme.Path);
                 if (themeIndex != -1 && (ViewModel.Themes[themeIndex].IsPlus == true ? ViewModel.License.IsActive() : true))
                 {
                     uiCbTheme.SelectedIndex = themeIndex;
@@ -314,17 +337,33 @@ namespace gamevault.UserControls
         private void Awesome_Click(object sender, MouseButtonEventArgs e)
         {
             ((FrameworkElement)sender).IsEnabled = false;
-#if DEBUG
-            imgAwesome.Data = "https://test.phalco.de/images/gamevault/eastereggs/awesome.gif";
-#else
             imgAwesome.Data = "https://phalco.de/images/gamevault/eastereggs/awesome.gif";
-#endif
+            AnalyticsHelper.Instance.SendCustomEvent("EASTER_EGG", new { name = "awesome" });
         }
 
         private void ExtractionPasswordSave_Click(object sender, RoutedEventArgs e)
         {
             Preferences.Set(AppConfigKey.ExtractionPassword, uiPwExtraction.Password, AppFilePath.UserFile, true);
             MainWindowViewModel.Instance.AppBarText = "Successfully saved extraction password";
+        }
+        private async void IgnoredExecutablesReset_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (File.Exists(AppFilePath.IgnoreList))
+                    File.Delete(AppFilePath.IgnoreList);
+
+                await SettingsViewModel.Instance.InitIgnoreList();
+            }
+            catch { }
+        }
+        private void IgnoredExecutablesSave_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Preferences.Set("IL", SettingsViewModel.Instance.IgnoreList, AppFilePath.IgnoreList);
+            }
+            catch { }
         }
     }
 }

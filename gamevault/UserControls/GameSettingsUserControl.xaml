@@ -27,10 +27,10 @@
         <Style x:Key="TabItemHeaderPathStroke" TargetType="Path">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="True">
-                    <Setter Property="Stroke" Value="{DynamicResource MahApps.Brushes.Accent}"/>
+                    <Setter Property="Fill" Value="{DynamicResource MahApps.Brushes.Accent}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="False">
-                    <Setter Property="Stroke" Value="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+                    <Setter Property="Fill" Value="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsMouseOver}" Value="True">
                     <Setter Property="Opacity" Value="0.8"/>
@@ -55,6 +55,8 @@
         </Style>
         <conv:GameSettingsTabVisibilityConverter x:Key="tabVisConv"/>
         <conv:InverseNullConverter x:Key="invNullConv"/>
+        <conv:StringToArrayConverter x:Key="stringToArrayConv"/>
+        <conv:IsGameMappedConverter x:Key="isGameMappedConv"/>
     </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Key="Esc">
@@ -112,14 +114,6 @@
                     <StackPanel Visibility="{Binding Game,Converter={StaticResource tabVisConv},ConverterParameter='server'}">
                         <TextBlock Text="Server" FontSize="30" Margin="0,30,0,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
                         <TabControl x:Name="uiSettingsHeadersRemote" TabStripPlacement="Left" Background="Transparent" SelectionChanged="SettingsTabControl_SelectionChanged">
-                            <!--<TabItem>
-                                <TabItem.Header>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Path Style="{StaticResource TabItemHeaderPath}" Data="{DynamicResource IconGameSettingsEditDetails}" VerticalAlignment="Center"/>
-                                        <TextBlock Style="{StaticResource TabItemHeaderTextBlock}" Text="Edit Details"/>
-                                    </StackPanel>
-                                </TabItem.Header>
-                            </TabItem>-->
                             <TabItem>
                                 <TabItem.Header>
                                     <StackPanel Orientation="Horizontal">
@@ -131,8 +125,16 @@
                             <TabItem>
                                 <TabItem.Header>
                                     <StackPanel Orientation="Horizontal">
-                                        <Path Style="{StaticResource TabItemHeaderPathStroke}" StrokeThickness="2" Data="{DynamicResource IconGameSettingsRawg}" VerticalAlignment="Center"/>
-                                        <TextBlock Style="{StaticResource TabItemHeaderTextBlock}" Text="RAWG Integration"/>
+                                        <Path Style="{StaticResource TabItemHeaderPathStroke}" Data="{DynamicResource IconDatabase}" VerticalAlignment="Center"/>
+                                        <TextBlock Style="{StaticResource TabItemHeaderTextBlock}" Text="Metadata"/>
+                                    </StackPanel>
+                                </TabItem.Header>
+                            </TabItem>
+                            <TabItem>
+                                <TabItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Style="{StaticResource TabItemHeaderPathStroke}" Data="{DynamicResource IconGameSettingsEditDetails}" VerticalAlignment="Center"/>
+                                        <TextBlock Style="{StaticResource TabItemHeaderTextBlock}" Text="Custom Metadata"/>
                                     </StackPanel>
                                 </TabItem.Header>
                             </TabItem>
@@ -275,11 +277,11 @@
                                         </Border.Style>
                                         <StackPanel>
                                             <Grid HorizontalAlignment="Center">
-                                                <local:CacheImage ImageCacheType="BoxArt" Data="{Binding Game}" CornerRadius="5" Stretch="Fill" Height="250" Width="167" Margin="10,10,10,0">
+                                                <local:CacheImage ImageCacheType="GameCover" Data="{Binding Game}" CornerRadius="5" Stretch="Fill" Height="250" Width="167" Margin="10,10,10,0">
                                                     <local:CacheImage.Style>
                                                         <Style TargetType="local:CacheImage">
                                                             <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding BoxArtImageSource,Converter={StaticResource invNullConv}}" Value="False">
+                                                                <DataTrigger Binding="{Binding GameCoverImageSource,Converter={StaticResource invNullConv}}" Value="False">
                                                                     <Setter Property="Visibility" Value="Hidden" />
                                                                 </DataTrigger>
                                                             </Style.Triggers>
@@ -288,7 +290,7 @@
                                                 </local:CacheImage>
                                                 <Border CornerRadius="5" Height="250" Width="167" Margin="10,10,10,0">
                                                     <Border.Background>
-                                                        <ImageBrush ImageSource="{Binding BoxArtImageSource}" Stretch="Fill"/>
+                                                        <ImageBrush ImageSource="{Binding GameCoverImageSource}" Stretch="Fill"/>
                                                     </Border.Background>
                                                 </Border>
                                             </Grid>
@@ -309,7 +311,7 @@
                                     </StackPanel>
                                     <TextBox Margin="10" Height="28" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" mah:TextBoxHelper.Watermark="https://example.com/example.png" TextChanged="BoxImageUrl_TextChanged"/>
                                     <Grid Margin="10,95,10,0">
-                                        <local:IconButton Text="Save" FontSize="15" Icon="{DynamicResource IconGameSettingsSave}" IconMargin="0,0,5,2" IsEnabled="{Binding BoxArtImageChanged}" Width="115" Height="33" HorizontalAlignment="Right" Click="BoxImage_Save"/>
+                                        <local:IconButton Text="Save" FontSize="15" Icon="{DynamicResource IconGameSettingsSave}" IconMargin="0,0,5,2" IsEnabled="{Binding GameCoverImageChanged}" Width="115" Height="33" HorizontalAlignment="Right" Click="BoxImage_Save"/>
                                         <local:IconButton Text="Find Images" FontSize="15" Icon="{DynamicResource IconGameSettingsGoogle}" IconMargin="0,0,5,2" HorizontalAlignment="Left" Height="33" Width="115" Tag="Game Box Art" Click="FindImages_Click"/>
                                     </Grid>
                                 </StackPanel>
@@ -317,73 +319,442 @@
                         </Grid>
                     </mah:MetroTabItem>
                     <mah:MetroTabItem>
-                        <StackPanel Margin="20,20,0,0">
+                        <StackPanel Margin="20,20,0,0" IsEnabled="{Binding MetadataProvidersLoaded}">
                             <StackPanel Orientation="Horizontal">
-                                <Path Data="{DynamicResource IconGameSettingsRawg}" Stroke="{DynamicResource MahApps.Brushes.ThemeForeground}" StrokeThickness="2" VerticalAlignment="Center"/>
-                                <TextBlock Text="RAWG Integration" FontSize="20" FontWeight="Bold" Margin="5,0,0,0"/>
+                                <Path Data="{DynamicResource IconDatabase}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" VerticalAlignment="Center"/>
+                                <TextBlock Text="Metadata" FontSize="20" FontWeight="Bold" Margin="5,0,0,0"/>
                             </StackPanel>
-                            <TextBlock Text="Here, you can remap your games to other RAWG games or recache all information for them from the RAWG database." FontSize="15"  Margin="0,5,0,0"/>
-                            <StackPanel Margin="0,10,0,0">
-                                <TextBlock Text="Your Game File" FontSize="15" FontWeight="Bold" TextDecorations="Underline"/>
-                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                                    <TextBlock Text="Game ID" FontSize="15" FontWeight="Bold"/>
-                                    <TextBlock Text="File" FontSize="15" FontWeight="Bold" Margin="30,0,0,0"/>
-                                    <TextBlock Text="Release Date" FontSize="15" FontWeight="Bold" Margin="296,0,0,0"/>
-                                    <TextBlock Text="Added" FontSize="15" FontWeight="Bold" Margin="110,0,0,0"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Path=Game.ID}" FontSize="15" Width="70"/>
-                                    <TextBlock Text="{Binding Path=Game.FilePath}" FontSize="15" Margin="20,0,0,0" Width="310" TextTrimming="CharacterEllipsis" ToolTip="{Binding Path=Game.FilePath}"/>
-                                    <TextBlock Text="{Binding Path=Game.ReleaseDate,StringFormat='{}{0:dd/MM/yyyy}'}" Width="100" FontSize="15" Margin="12,0,0,0"/>
-                                    <TextBlock Text="{Binding Path=Game.CreatedAt,StringFormat='{}{0:dd/MM/yyyy}'}" FontSize="15" Margin="98,0,0,0"/>
-                                </StackPanel>
-                                <TextBlock Text="Currently Mapped RAWG Game" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
-                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                                    <TextBlock Text="RAWG ID" FontSize="15" FontWeight="Bold"/>
-                                    <TextBlock Text="RAWG Title" FontSize="15" FontWeight="Bold" Margin="25,0,0,0"/>
-                                    <TextBlock Text="RAWG Release Date" FontSize="15" FontWeight="Bold" Margin="240,0,0,0"/>
-                                    <TextBlock Text="Last Cached" FontSize="15" FontWeight="Bold" Margin="63,0,0,0"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Path=Game.RawgId}" FontSize="15" Width="70"/>
-                                    <TextBlock Text="{Binding Path=Game.RawgTitle}" FontSize="15" Margin="20,0,0,0" Width="280"/>
-                                    <TextBlock Text="{Binding Path=Game.RawgReleaseDate,StringFormat='{}{0:dd/MM/yyyy}'}" Width="100" FontSize="15" Margin="42,0,0,0"/>
-                                    <TextBlock Text="{Binding Path=Game.LastCached,StringFormat='{}{0:dd/MM/yyyy}'}" FontSize="15" Margin="102,0,0,0"/>
-                                </StackPanel>
-                            </StackPanel>
-                            <TextBlock Text="Recache Game" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
-                            <TextBlock Text="When pressed, this Button will re-fetch all data for the mapped RAWG Game from RAWG.IO and cache it on the Server." FontSize="15" Margin="0,5,0,0"/>
-                            <local:IconButton Text="Recache Game" FontSize="15" Icon="{DynamicResource IconReload}" IconMargin="0,0,5,2" HorizontalAlignment="Left" Margin="0,5,0,0" Width="140" Height="33" Click="Recache_Click"/>
-
-                            <TextBlock Text="Remap Game" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,20,0,0"/>
-                            <TextBlock Text="Is the currently mapped Game incorrect or missing? Manually search the RAWG API and re-map your Game here." FontSize="15" Margin="0,5,0,0"/>
-                            <TextBox Style="{DynamicResource SearchTextBox}" HorizontalAlignment="Left" Height="27" Width="500" Margin="0,10,0,0" TextChanged="RawgGameSearch_TextChanged"/>
-                            <ItemsControl ItemsSource="{Binding RawgGames}" Height="300" Width="500" Margin="0,10,0,0" HorizontalAlignment="Left">
-                                <ItemsControl.ItemsPanel>
+                            <TextBlock Text="Here, you can remap your games to other games of metadata providers on this server or refresh their information" FontSize="15"  Margin="0,5,0,0"/>
+                            <TextBlock Text="Metadata Providers" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,0" HorizontalAlignment="Left"/>
+                            <ListBox ItemsSource="{Binding MetadataProviders}" SelectedIndex="{Binding SelectedMetadataProviderIndex}" HorizontalAlignment="Left"  Margin="0,10,0,0" Background="Transparent">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource MahApps.Styles.ListBoxItem}">
+                                        <Setter Property="Cursor" Value="Hand"/>
+                                        <Setter Property="Margin" Value="2,0,2,0"/>
+                                        <Style.Resources>
+                                            <Style TargetType="Border">
+                                                <Setter Property="CornerRadius" Value="5"/>
+                                            </Style>
+                                        </Style.Resources>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                                <ListBox.ItemsPanel>
                                     <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Vertical"/>
+                                        <WrapPanel IsItemsHost="True"/>
                                     </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.Template>
-                                    <ControlTemplate TargetType="ItemsControl">
-                                        <ScrollViewer CanContentScroll="False" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="{TemplateBinding Padding}" Focusable="False">
-                                            <ItemsPresenter/>
-                                        </ScrollViewer>
-                                    </ControlTemplate>
-                                </ItemsControl.Template>
-                                <ItemsControl.ItemTemplate>
+                                </ListBox.ItemsPanel>
+                                <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <Border CornerRadius="5" Height="60"  Margin="0,5,0,0" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}">
-                                            <Grid Margin="5">
-                                                <Image Source="{Binding Path=BoxImageUrl}" Stretch="UniformToFill" Width="100" HorizontalAlignment="Left"/>
-                                                <TextBlock Text="{Binding Path=Title}" Width="200" FontSize="13" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="105,0,0,0"/>
-                                                <TextBlock Text="{Binding Path=ReleaseDate,StringFormat='{}{0:MM/dd/yyyy}'}" Width="160" FontSize="13" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="105,0,0,0"/>
-                                                <local:IconButton Text="Remap" VerticalAlignment="Center" HorizontalAlignment="Right" Width="50" Height="20" FontSize="10" Click="RawgGameRemap_Click"/>
-                                            </Grid>
-                                        </Border>
+                                        <TextBlock Margin="5,5,7,5" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" FontSize="17">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Value="False">
+                                                            <DataTrigger.Binding>
+                                                                <MultiBinding Converter="{StaticResource isGameMappedConv}">
+                                                                    <Binding Path="DataContext.Game.ProviderMetadata" RelativeSource="{RelativeSource AncestorType=ListBox}"/>
+                                                                    <Binding Path="." />
+                                                                </MultiBinding>
+                                                            </DataTrigger.Binding>
+                                                            <Setter Property="Opacity" Value="0.3"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0}({1})">
+                                                    <Binding Path="Name" />
+                                                    <Binding Path="Priority"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
                                     </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <Grid Margin="0,5,20,0">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                    <StackPanel>
+                                        <TextBlock Text="GameVault" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,0,0,0"/>
+                                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                            <Grid>
+                                                <local:CacheImage x:Name="uiImgCurrentMergedGame" ImageCacheType="GameCover" Data="{Binding Game}" Height="120" Width="90" CornerRadius="5"/>
+                                                <Button HorizontalAlignment="Right" VerticalAlignment="Bottom" Panel.ZIndex="1" Cursor="Hand" Opacity="0.7" Margin="0,0,4,5" ToolTip="Copy Image to Clipboard" Click="CopyImageToClipboard_Click">
+                                                    <Button.Style>
+                                                        <Style TargetType="Button" BasedOn="{StaticResource ButtonWrapper}">
+                                                            <Style.Triggers>
+                                                                <MultiDataTrigger>
+                                                                    <MultiDataTrigger.Conditions>
+                                                                        <Condition Binding="{Binding IsMouseOver,ElementName=uiImgCurrentMergedGame}" Value="False"/>
+                                                                        <Condition Binding="{Binding IsMouseOver,RelativeSource={RelativeSource Self}}" Value="True"/>
+                                                                    </MultiDataTrigger.Conditions>
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                </MultiDataTrigger>
+                                                                <MultiDataTrigger>
+                                                                    <MultiDataTrigger.Conditions>
+                                                                        <Condition Binding="{Binding IsMouseOver,ElementName=uiImgCurrentMergedGame}" Value="False"/>
+                                                                        <Condition Binding="{Binding IsMouseOver,RelativeSource={RelativeSource Self}}" Value="False"/>
+                                                                    </MultiDataTrigger.Conditions>
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                </MultiDataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Button.Style>
+                                                    <Grid Style="{StaticResource HoverEffect}" Background="#02000000">
+                                                        <Path Data="{StaticResource IconCopy}" Fill="White"/>
+                                                        <Grid.RenderTransform>
+                                                            <ScaleTransform/>
+                                                        </Grid.RenderTransform>
+                                                    </Grid>
+                                                </Button>
+                                            </Grid>
+                                            <StackPanel Margin="5,0,0,0">
+                                                <TextBlock Text="File" FontSize="15" FontWeight="Bold"/>
+                                                <TextBlock Text="{Binding Path=Game.Path}" FontSize="15" Width="250" ToolTip="{Binding Path=Game.Path}" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="Release Date" FontSize="15" FontWeight="Bold"/>
+                                                <TextBlock Text="{Binding Path=Game.ReleaseDate,StringFormat='{}{0:dd/MM/yyyy}'}" FontSize="15"/>
+                                                <TextBlock Text="Added" FontSize="15" FontWeight="Bold"/>
+                                                <TextBlock Text="{Binding Path=Game.CreatedAt,StringFormat='{}{0:dd/MM/yyyy}'}" FontSize="15"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <StackPanel Margin="60,0,0,0">
+                                        <TextBlock Text="Mapped Game" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,0,0,0"/>
+                                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                            <Grid>
+                                                <local:CacheImage x:Name="uiImgCurrentShownMappedGame" DoNotCache="True" ImageCacheType="GameCover" Data="{Binding CurrentShownMappedGame}" Height="120" Width="90" CornerRadius="5"/>
+                                                <Button HorizontalAlignment="Right" VerticalAlignment="Bottom" Panel.ZIndex="1" Cursor="Hand" Opacity="0.7" Margin="0,0,4,5" ToolTip="Copy Image to Clipboard" Click="CopyImageToClipboard_Click" Tag="CurrentShownMappedGame">
+                                                    <Button.Style>
+                                                        <Style TargetType="Button" BasedOn="{StaticResource ButtonWrapper}">
+                                                            <Style.Triggers>
+                                                                <MultiDataTrigger>
+                                                                    <MultiDataTrigger.Conditions>
+                                                                        <Condition Binding="{Binding IsMouseOver,ElementName=uiImgCurrentShownMappedGame}" Value="False"/>
+                                                                        <Condition Binding="{Binding IsMouseOver,RelativeSource={RelativeSource Self}}" Value="True"/>
+                                                                    </MultiDataTrigger.Conditions>
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                </MultiDataTrigger>
+                                                                <MultiDataTrigger>
+                                                                    <MultiDataTrigger.Conditions>
+                                                                        <Condition Binding="{Binding IsMouseOver,ElementName=uiImgCurrentShownMappedGame}" Value="False"/>
+                                                                        <Condition Binding="{Binding IsMouseOver,RelativeSource={RelativeSource Self}}" Value="False"/>
+                                                                    </MultiDataTrigger.Conditions>
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                </MultiDataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Button.Style>
+                                                    <Grid Style="{StaticResource HoverEffect}" Background="#02000000">
+                                                        <Path Data="{StaticResource IconCopy}" Fill="White"/>
+                                                        <Grid.RenderTransform>
+                                                            <ScaleTransform/>
+                                                        </Grid.RenderTransform>
+                                                    </Grid>
+                                                </Button>
+                                            </Grid>
+                                            <StackPanel Margin="5,0,0,0">
+                                                <TextBlock Text="Title" FontSize="15" FontWeight="Bold"/>
+                                                <TextBlock FontSize="15">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Text" Value="{Binding Path=CurrentShownMappedGame.Title}"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Path=CurrentShownMappedGame.Title}" Value="{x:Null}">
+                                                                    <Setter Property="Text" Value="N/A"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                                <TextBlock Text="Release Date" FontSize="15" FontWeight="Bold"/>
+                                                <TextBlock FontSize="15">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Text" Value="{Binding Path=CurrentShownMappedGame.ReleaseDate,StringFormat='{}{0:dd/MM/yyyy}'}"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Path=CurrentShownMappedGame.ReleaseDate}" Value="{x:Null}">
+                                                                    <Setter Property="Text" Value="N/A"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                                <TextBlock Text="Last Cached" FontSize="15" FontWeight="Bold"/>
+                                                <TextBlock FontSize="15">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Text" Value="{Binding Path=CurrentShownMappedGame.UpdatedAt,StringFormat='{}{0:dd/MM/yyyy}'}"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Path=CurrentShownMappedGame.UpdatedAt}" Value="{x:Null}">
+                                                                    <Setter Property="Text" Value="N/A"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center" Background="Transparent">
+                                    <StackPanel.Style>
+                                        <Style TargetType="StackPanel">
+                                            <Style.Triggers>
+                                                <DataTrigger Value="False">
+                                                    <DataTrigger.Binding>
+                                                        <MultiBinding Converter="{StaticResource isGameMappedConv}">
+                                                            <Binding Path="Game.ProviderMetadata"/>
+                                                            <Binding Path="CurrentShownMappedGame" />
+                                                        </MultiBinding>
+                                                    </DataTrigger.Binding>
+                                                    <Setter Property="IsEnabled" Value="False"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackPanel.Style>
+                                    <StackPanel>
+                                        <mah:NumericUpDown x:Name="uiProviderPriority" Value="1" ButtonsAlignment="Opposite" TextAlignment="Center" BorderThickness="0"/>
+                                        <local:IconButton Text="Save Priority" FontSize="12" Icon="{DynamicResource IconGameSettingsSave}" IconScale="0.7" IconMargin="0,0,1,0" Height="23" Margin="0,0,0,0" Click="SavePriority_Click"/>
+                                    </StackPanel>
+                                    <local:IconButton Text="Unmap" FontSize="15" Icon="{DynamicResource IconGameSettingsUnlinked}" IconMargin="0,0,5,2" Width="140" Height="33" Margin="0,15,0,15" Click="Unmap_Click"/>
+                                    <local:IconButton Text="Recache Game" FontSize="15" Icon="{DynamicResource IconReload}" IconMargin="0,0,5,2" Width="140" Height="33" Click="Recache_Click"/>
+                                </StackPanel>
+                            </Grid>
+                            <StackPanel>
+                                <TextBlock Text="Remap Game" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,10,0,0"/>
+                                <TextBlock Text="Is the mapped game incorrect or missing? Manually search the provider and remap it here." TextWrapping="Wrap" FontSize="15" Margin="0,5,0,0"/>
+                                <TextBox Style="{DynamicResource SearchTextBox}" Height="27" Margin="0,10,20,0" TextChanged="ProviderGameSearch_TextChanged"/>
+                                <ItemsControl ItemsSource="{Binding RemapSearchResults}" Height="370" Margin="0,10,20,0" HorizontalAlignment="Stretch">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Vertical"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.Template>
+                                        <ControlTemplate TargetType="ItemsControl">
+                                            <ScrollViewer CanContentScroll="False" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="{TemplateBinding Padding}" Focusable="False">
+                                                <ItemsPresenter/>
+                                            </ScrollViewer>
+                                        </ControlTemplate>
+                                    </ItemsControl.Template>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border CornerRadius="5" Height="60"  Margin="0,5,0,0" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}">
+                                                <Grid Margin="5">
+                                                    <Image Source="{Binding Path=CoverUrl}" Stretch="UniformToFill" Width="100" HorizontalAlignment="Left"/>
+                                                    <TextBlock Text="{Binding Path=Title}" Width="200" FontSize="13" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="105,0,0,0"/>
+                                                    <TextBlock Text="{Binding Path=ReleaseDate,StringFormat='{}{0:MM/dd/yyyy}'}" Width="160" FontSize="13" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="105,0,0,0"/>
+                                                    <local:IconButton Text="Remap" VerticalAlignment="Center" HorizontalAlignment="Right" Width="52" Height="23" FontSize="12" Click="GameRemap_Click"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+
+
+                        </StackPanel>
+                    </mah:MetroTabItem>
+                    <mah:MetroTabItem>
+                        <StackPanel Margin="20,20,20,0">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{DynamicResource IconGameSettingsEditDetails}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" VerticalAlignment="Center"/>
+                                <TextBlock Text="Custom Metadata" FontSize="20" FontWeight="Bold" Margin="5,0,0,0"/>
+                            </StackPanel>
+                            <Grid>
+                                <TextBlock Text="Overwrite any existing metadata with custom values. Fields left blank will remain the same." TextWrapping="Wrap" FontSize="15" Margin="0,5,0,0"/>
+                                <local:IconButton Kind="Danger" Text="Wipe Custom Metadata" FontSize="15" Icon="{StaticResource IconCleanup}" IconScale="0.08" IconMargin="-110,-100,-105,-100" Width="200" Height="30" HorizontalAlignment="Right" Click="ClearUserData_Click"/>
+                            </Grid>
+                            <ScrollViewer Background="Transparent" Height="650">
+                                <StackPanel>
+                                    <TextBlock Text="Title" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <TextBox TextWrapping="Wrap" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Title}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Title,TargetNullValue='',FallbackValue={x:Null}}" mah:ControlsHelper.CornerRadius="5"/>
+                                    <TextBlock Text="Sorting Title" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <TextBox TextWrapping="Wrap" mah:TextBoxHelper.Watermark="{Binding Game.SortTitle}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.SortTitle,TargetNullValue='',FallbackValue={x:Null}}" mah:ControlsHelper.CornerRadius="5"/>
+                                    <Grid>
+                                        <TextBlock Text="Description" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                        <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Paste Current Description" Click="KeepData_Click" Tag="description">
+                                            <Grid Style="{DynamicResource HoverEffect}"   Background="Transparent">
+                                                <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
+                                                    <Path.RenderTransform>
+                                                        <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                                    </Path.RenderTransform>
+                                                </Path>
+                                                <Grid.RenderTransform>
+                                                    <ScaleTransform/>
+                                                </Grid.RenderTransform>
+                                            </Grid>
+                                        </Button>
+                                    </Grid>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <TextBox TextWrapping="Wrap" AcceptsReturn="True" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Description}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Description,TargetNullValue='',FallbackValue={x:Null}}" mah:ControlsHelper.CornerRadius="5"/>
+                                        <GridSplitter Grid.Row="1" Height="2" Margin="5,0,5,0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="Transparent"/>
+                                    </Grid>
+                                    <Grid>
+                                        <TextBlock Text="Notes" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                        <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Paste Current Notes" Click="KeepData_Click" Tag="notes">
+                                            <Grid Style="{DynamicResource HoverEffect}"   Background="Transparent">
+                                                <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
+                                                    <Path.RenderTransform>
+                                                        <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                                    </Path.RenderTransform>
+                                                </Path>
+                                                <Grid.RenderTransform>
+                                                    <ScaleTransform/>
+                                                </Grid.RenderTransform>
+                                            </Grid>
+                                        </Button>
+                                    </Grid>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <TextBox TextWrapping="Wrap" AcceptsReturn="True" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Notes}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Notes,TargetNullValue='',FallbackValue={x:Null}}" mah:ControlsHelper.CornerRadius="5"/>
+                                        <GridSplitter Grid.Row="1" Height="2" Margin="5,0,5,0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="Transparent"/>
+                                    </Grid>
+                                    <UniformGrid Rows="1">
+                                        <TextBlock Text="Avg. Playtime Minutes" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                        <TextBlock Text="Age Rating" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="50,5,0,5"/>
+                                        <TextBlock Text="Release Date" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="50,5,0,5"/>
+                                        <TextBlock Text="Rating" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="50,5,0,5"/>
+                                        <TextBlock Text="Early Access" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="50,5,0,5"/>
+                                    </UniformGrid>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                        <TextBox Width="100" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.AveragePlaytime}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.AveragePlaytime,TargetNullValue='',FallbackValue={x:Null}}" mah:ControlsHelper.CornerRadius="5"/>
+                                        <TextBox Width="100" Margin="115,0,0,0" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.AgeRating}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.AgeRating,TargetNullValue='',FallbackValue={x:Null}}" mah:ControlsHelper.CornerRadius="5"/>
+                                        <DatePicker Width="100" Margin="69,0,0,0" SelectedDate="{Binding UpdateGame.UserMetadata.ReleaseDate}" mah:TextBoxHelper.Watermark="{Binding Path=Game.Metadata.ReleaseDate,StringFormat='{}{0:dd/MM/yyyy}'}" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.UseFloatingWatermark="True"/>
+                                        <TextBox Width="100" Margin="67,0,0,0" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Rating}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Rating}" mah:ControlsHelper.CornerRadius="5"/>
+                                        <CheckBox Content="Yes" IsChecked="{Binding UpdateGame.UserMetadata.EarlyAccess}" Margin="68,0,0,0"/>
+                                    </StackPanel>
+
+                                    <TextBlock Text="Default Launch Executable" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <TextBox Text="{Binding UpdateGame.UserMetadata.LaunchExecutable,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.LaunchExecutable}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                    <TextBlock Text="Default Launch Parameters" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <TextBox Text="{Binding UpdateGame.UserMetadata.LaunchParameters,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.LaunchParameters}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                    <TextBlock Text="Default Installer Executable" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <TextBox Text="{Binding UpdateGame.UserMetadata.InstallerExecutable,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.InstallerExecutable}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+
+                                    <TextBlock Text="Website URLs" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <TextBox Text="{Binding UpdateGame.UserMetadata.UrlWebsites,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.WebsiteNames}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                    <TextBlock Text="Genres" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <Grid>
+                                        <TextBox Text="{Binding UpdateGame.UserMetadata.Genres,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.GenreNames}" Margin="0,0,40,0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                        <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Paste Current Genres" Click="KeepData_Click" Tag="genre">
+                                            <Grid Style="{DynamicResource HoverEffect}"   Background="Transparent">
+                                                <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
+                                                    <Path.RenderTransform>
+                                                        <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                                    </Path.RenderTransform>
+                                                </Path>
+                                                <Grid.RenderTransform>
+                                                    <ScaleTransform/>
+                                                </Grid.RenderTransform>
+                                            </Grid>
+                                        </Button>
+                                    </Grid>
+                                    <TextBlock Text="Tags" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <Grid>
+                                        <TextBox Text="{Binding UpdateGame.UserMetadata.Tags,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.TagNames}" Margin="0,0,40,0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                        <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Paste Current Tags" Click="KeepData_Click" Tag="tag">
+                                            <Grid Style="{DynamicResource HoverEffect}"   Background="Transparent">
+                                                <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
+                                                    <Path.RenderTransform>
+                                                        <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                                    </Path.RenderTransform>
+                                                </Path>
+                                                <Grid.RenderTransform>
+                                                    <ScaleTransform/>
+                                                </Grid.RenderTransform>
+                                            </Grid>
+                                        </Button>
+                                    </Grid>
+                                    <TextBlock Text="Publishers" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <Grid>
+                                        <TextBox Text="{Binding UpdateGame.UserMetadata.Publishers,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.PublisherNames}" Margin="0,0,40,0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                        <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Paste Current Publishers" Click="KeepData_Click" Tag="publisher">
+                                            <Grid Style="{DynamicResource HoverEffect}"   Background="Transparent">
+                                                <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
+                                                    <Path.RenderTransform>
+                                                        <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                                    </Path.RenderTransform>
+                                                </Path>
+                                                <Grid.RenderTransform>
+                                                    <ScaleTransform/>
+                                                </Grid.RenderTransform>
+                                            </Grid>
+                                        </Button>
+                                    </Grid>
+                                    <TextBlock Text="Developers" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <Grid>
+                                        <TextBox Text="{Binding UpdateGame.UserMetadata.Developers,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.DeveloperNames}" Margin="0,0,40,0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                        <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Paste Current Developers" Click="KeepData_Click" Tag="developer">
+                                            <Grid Style="{DynamicResource HoverEffect}"   Background="Transparent">
+                                                <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
+                                                    <Path.RenderTransform>
+                                                        <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                                    </Path.RenderTransform>
+                                                </Path>
+                                                <Grid.RenderTransform>
+                                                    <ScaleTransform/>
+                                                </Grid.RenderTransform>
+                                            </Grid>
+                                        </Button>
+                                    </Grid>
+                                    <TextBlock Text="Trailer URLs" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <Grid>
+                                        <TextBox Text="{Binding UpdateGame.UserMetadata.UrlTrailers,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.TrailerNames}" Margin="0,0,40,0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                        <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Paste Current Trailer URLs" Click="KeepData_Click" Tag="trailer">
+                                            <Grid Style="{DynamicResource HoverEffect}"   Background="Transparent">
+                                                <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
+                                                    <Path.RenderTransform>
+                                                        <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                                    </Path.RenderTransform>
+                                                </Path>
+                                                <Grid.RenderTransform>
+                                                    <ScaleTransform/>
+                                                </Grid.RenderTransform>
+                                            </Grid>
+                                        </Button>
+                                    </Grid>
+                                    <TextBlock Text="Gameplay URLs" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <Grid>
+                                        <TextBox Text="{Binding UpdateGame.UserMetadata.UrlGameplays,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.GameplayNames}" Margin="0,0,40,0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                        <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Paste Current Gameplay URLs" Click="KeepData_Click" Tag="gameplays">
+                                            <Grid Style="{DynamicResource HoverEffect}"   Background="Transparent">
+                                                <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
+                                                    <Path.RenderTransform>
+                                                        <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                                    </Path.RenderTransform>
+                                                </Path>
+                                                <Grid.RenderTransform>
+                                                    <ScaleTransform/>
+                                                </Grid.RenderTransform>
+                                            </Grid>
+                                        </Button>
+                                    </Grid>
+                                    <TextBlock Text="Screenshot URLs" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <Grid>
+                                        <TextBox Text="{Binding UpdateGame.UserMetadata.UrlScreenshots,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.ScreenshotNames}" Margin="0,0,40,0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                        <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Paste Current Screenshot URLs" Click="KeepData_Click" Tag="screenshots">
+                                            <Grid Style="{DynamicResource HoverEffect}"   Background="Transparent">
+                                                <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
+                                                    <Path.RenderTransform>
+                                                        <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                                    </Path.RenderTransform>
+                                                </Path>
+                                                <Grid.RenderTransform>
+                                                    <ScaleTransform/>
+                                                </Grid.RenderTransform>
+                                            </Grid>
+                                        </Button>
+                                    </Grid>
+                                </StackPanel>
+                            </ScrollViewer>
+                            <local:IconButton Text="Save" FontSize="15" Icon="{DynamicResource IconGameSettingsSave}" IconMargin="0,0,5,2" IsEnabled="true" Width="115" Height="33" Margin="0,10,0,0" HorizontalAlignment="Right" Click="SaveGameDetails_Click"/>
                         </StackPanel>
                     </mah:MetroTabItem>
                 </mah:MetroAnimatedTabControl>

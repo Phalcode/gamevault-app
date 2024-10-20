@@ -9,6 +9,8 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
+using Windows.Media.Protection.PlayReady;
 
 namespace gamevault.Helper
 {
@@ -181,10 +183,31 @@ namespace gamevault.Helper
         public static async Task DownloadImageFromUrlAsync(string imageUrl, string cacheFile)
         {
             using (WebClient client = new WebClient())
-            {              
+            {
                 client.Headers.Add(HttpRequestHeader.Authorization, "Basic " + Convert.ToBase64String(System.Text.UTF8Encoding.UTF8.GetBytes($"{m_UserName}:{m_Password}")));
                 client.Headers.Add($"User-Agent: GameVault/{SettingsViewModel.Instance.Version}");
                 await client.DownloadFileTaskAsync(new Uri(imageUrl), cacheFile);
+            }
+        }
+        public static async Task<BitmapImage> DownloadImageFromUrlAsync(string imageUrl)
+        {
+            using (WebClient client = new WebClient())
+            {
+                client.Headers.Add(HttpRequestHeader.Authorization, "Basic " + Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"{m_UserName}:{m_Password}")));
+                client.Headers.Add($"User-Agent: GameVault/{SettingsViewModel.Instance.Version}");
+
+                byte[] imageData = await client.DownloadDataTaskAsync(new Uri(imageUrl));
+
+                using (MemoryStream memoryStream = new MemoryStream(imageData))
+                {
+                    BitmapImage bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.StreamSource = memoryStream;
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.EndInit();
+                    bitmap.Freeze(); // Freeze to make it cross-thread accessible
+                    return bitmap;
+                }
             }
         }
         public static async Task<string> UploadFileAsync(string apiUrl, Stream imageStream, string fileName, KeyValuePair<string, string>? additionalHeader)
@@ -198,6 +221,7 @@ namespace gamevault.Helper
                 {
                     httpClient.DefaultRequestHeaders.Add(additionalHeader.Value.Key, additionalHeader.Value.Value);
                 }
+                httpClient.DefaultRequestHeaders.UserAgent.ParseAdd($"GameVault/{SettingsViewModel.Instance.Version}");
                 using (var formData = new MultipartFormDataContent())
                 {
                     var imageContent = new StreamContent(imageStream);
@@ -216,6 +240,23 @@ namespace gamevault.Helper
                         dynamic obj = JsonNode.Parse(responseContent);
                         throw new HttpRequestException($"{response.StatusCode}: {obj["message"]}");
                     }
+                }
+            }
+        }
+        public static async Task<string> DownloadFileContentAsync(string url)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
+                    string content = await response.Content.ReadAsStringAsync();
+                    return content;
+                }
+                catch (Exception ex)
+                {
+                    return null;
                 }
             }
         }

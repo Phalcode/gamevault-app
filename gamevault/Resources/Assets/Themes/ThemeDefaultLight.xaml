@@ -4,32 +4,32 @@
     <!-- A version number you can use to update your theme -->
     <system:Int32 x:Key="Theme.Version">1</system:Int32>
     <!-- Theme File Name Convention is Theme+YourThemeName+Dark/Light (e.g. ThemeOceanLight) -->
-    <system:String x:Key="Theme.Name">ThemeGameVaultClassicDark</system:String>
+    <system:String x:Key="Theme.Name">ThemeDefaultLight</system:String>
     <!-- Ideally your GitHub Username -->
     <system:String x:Key="Theme.Author">Phalcode</system:String>
     <!-- Describe this theme -->
-    <system:String x:Key="Theme.Description">This theme preserves the traditional application colors for users accustomed to the old dark design of GameVault.</system:String>
+    <system:String x:Key="Theme.Description">An alternative light version of the default GameVault theme, also based on the 2024 GameVault rebrand.</system:String>
     <!-- How the theme will be shown in UI -->
-    <system:String x:Key="Theme.DisplayName">GameVault Theme Classic (Dark)</system:String>
+    <system:String x:Key="Theme.DisplayName">Default (Light)</system:String>
 
     <!-- Text Color | On Realtime-Colors this is "Text" -->
-    <Color x:Key="GameVault.Colors.Foreground">#FFFFFFFF</Color>
+    <Color x:Key="GameVault.Colors.Foreground">#FF06050A</Color>
     <!-- Text Color on top of Primary Color -->
-    <Color x:Key="GameVault.Colors.Foreground2">#FFFFFFFF</Color>
+    <Color x:Key="GameVault.Colors.Foreground2">#FFF6F5FA</Color>
     <!-- Background Color (The one that takes most background space) | On Realtime-Colors this is "Background" -->
-    <Color x:Key="GameVault.Colors.Background">#FF252525</Color>
+    <Color x:Key="GameVault.Colors.Background">#FFE2E1EF</Color>
     <!-- Background Color (for cards and layouts) | On Realtime-Colors this is "Secondary" -->
-    <Color x:Key="GameVault.Colors.Background2">#FF444444</Color>
+    <Color x:Key="GameVault.Colors.Background2">#FFD9D7EA</Color>
     <!-- Primary / Accent Color | On Realtime-Colors this is "Primary" -->
-    <Color x:Key="GameVault.Colors.Accent">#FF574EB9</Color>
+    <Color x:Key="GameVault.Colors.Accent">#FF5950B9</Color>
     <!-- Primary Accent Color with 60% Opacity -->
-    <Color x:Key="GameVault.Colors.Accent2">#99574EB9</Color>
+    <Color x:Key="GameVault.Colors.Accent2">#995950B9</Color>
     <!-- Primary Accent Color with 40% Opacity -->
-    <Color x:Key="GameVault.Colors.Accent3">#66574EB9</Color>
+    <Color x:Key="GameVault.Colors.Accent3">#665950B9</Color>
     <!-- Primary Accent Color with 20% Opacity -->
-    <Color x:Key="GameVault.Colors.Accent4">#33574EB9</Color>
+    <Color x:Key="GameVault.Colors.Accent4">#335950B9</Color>
     <!-- Border Colors | On Realtime-Colors this is "Accent" -->
-    <Color x:Key="GameVault.Colors.Border">#FF3B3767</Color>
+    <Color x:Key="GameVault.Colors.Border">#FF5C569F</Color>
     <!-- Blur Overlay Color | Usually "White" for Light Themes and "Black" for Dark Themes  -->
-    <Color x:Key="GameVault.Colors.Blur">Black</Color>
+    <Color x:Key="GameVault.Colors.Blur">White</Color>
 </ResourceDictionary>
