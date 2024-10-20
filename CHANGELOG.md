@@ -27,13 +27,13 @@ Recommended Gamevault Server Version: `v13.0.0`
 - Added a new 'Edit Details' tab, giving you full control over every detail of the game. You can undo manual changes at any time with the 'Wipe Custom Metadata' button.
 - You can now specify the default launch/setup executable and default launch parameters.
 
-## 1.11.2.0
+## 1.11.2
 Recommended Gamevault Server Version: `v12.2.0`
 ### Changes
 
 - Reversed buttons for row count for installed games section
 
-## 1.11.1.0
+## 1.11.1
 Recommended Gamevault Server Version: `v12.2.0`
 ### Changes
 
@@ -293,6 +293,6 @@ Recommended Gamevault Server Version: `v9.0.0`
 ### Changes
 - Bug fix: When registering a new user, the message "Each field must be filled" was displayed, although all fields were set.
 
-## 1.0.0.0
+## 1.0.0
 ### Changes
 - Initial Release
