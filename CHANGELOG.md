@@ -1,5 +1,12 @@
 # GameVault App Changelog
 
+## 1.12.6
+Recommended Gamevault Server Version: `v13.0.0`
+### Changes
+
+- GameVault now stores the forced installation type for the uninstallation
+- Bug fix: Application name is blank in the taskbar
+
 ## 1.12.5
 Recommended Gamevault Server Version: `v13.0.0`
 ### Changes
