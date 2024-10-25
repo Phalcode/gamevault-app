@@ -4,8 +4,11 @@
 Recommended Gamevault Server Version: `v13.0.0`
 ### Changes
 
+- You can now filter by game state in the library
 - GameVault now stores the forced installation type for the uninstallation
 - Bug fix: Application name is blank in the taskbar
+- Bug fix: Sometimes the colors of the Genre/Tag pills were too bright
+- Bug fix: Sometimes the add buttons on the pill selector were cut off
 
 ## 1.12.5
 Recommended Gamevault Server Version: `v13.0.0`

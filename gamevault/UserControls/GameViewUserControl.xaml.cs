@@ -344,7 +344,7 @@ namespace gamevault.UserControls
             {
                 TagMetadata data = (TagMetadata)((FrameworkElement)sender).DataContext;
                 MainWindowViewModel.Instance.Library.ClearAllFilters();
-                MainWindowViewModel.Instance.Library.uiFilterPillSelector.SetEntries(new Pill[] { new Pill() { ID = data.ID, Name = data.Name, ProviderDataId = data.ProviderDataId } });
+                MainWindowViewModel.Instance.Library.uiFilterTagSelector.SetEntries(new Pill[] { new Pill() { ID = data.ID, Name = data.Name, ProviderDataId = data.ProviderDataId } });
                 MainWindowViewModel.Instance.SetActiveControl(MainControl.Library);
             }
             catch { }

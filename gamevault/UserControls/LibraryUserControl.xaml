@@ -116,8 +116,9 @@
                             <Grid Visibility="{Binding FilterVisibility}">
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                                     <local:PillSelector x:Name="uiFilterGameTypeSelector" SelectionType="GameType" Margin="12,0,24,0" Width="175" EntriesUpdated="FilterUpdated"/>
-                                    <local:PillSelector x:Name="uiFilterPillSelector" SelectionType="Tags" Margin="0,0,24,0" Width="175" EntriesUpdated="FilterUpdated"/>
-                                    <local:PillSelector x:Name="uiFilterGenreSelector" SelectionType="Genres" Margin="0,0,23,0" Width="175" EntriesUpdated="FilterUpdated"/>
+                                    <local:PillSelector x:Name="uiFilterTagSelector" SelectionType="Tags" Margin="0,0,24,0" Width="175" EntriesUpdated="FilterUpdated"/>
+                                    <local:PillSelector x:Name="uiFilterGenreSelector" SelectionType="Genres" Margin="0,0,24,0" Width="175" EntriesUpdated="FilterUpdated"/>
+                                    <local:PillSelector x:Name="uiFilterGameStateSelector" SelectionType="GameState" Margin="0,0,23,0" Width="175" EntriesUpdated="FilterUpdated"/>
                                     <StackPanel Margin="0,0,97,0">
                                         <TextBlock Text="Release Year" FontSize="15"/>
                                         <local:DateRangeSelector x:Name="uiFilterReleaseDateRangeSelector" EntriesUpdated="FilterUpdated"/>
@@ -158,7 +159,7 @@
                                     </StackPanel>
                                     <StackPanel>
                                         <TextBlock Text="Bookmarks" FontSize="15"/>
-                                        <ToggleButton x:Name="uiFilterBookmarks"  Cursor="Hand" Margin="3,3,0,0" HorizontalAlignment="Left" Click="FilterUpdated">
+                                        <ToggleButton x:Name="uiFilterBookmarks"  Cursor="Hand" Margin="0,3,0,0" HorizontalAlignment="Left" Click="FilterUpdated">
                                             <ToggleButton.Style>
                                                 <Style TargetType="ToggleButton">
                                                     <Style.Setters>

@@ -17,7 +17,9 @@ namespace gamevault.UserControls
     {
         Tags,
         Genres,
-        GameType
+        GameType,
+        GameState
+
     }
     public partial class PillSelector : UserControl
     {
@@ -44,6 +46,7 @@ namespace gamevault.UserControls
                 Selection.Tags => "Tags",
                 Selection.Genres => "Genres",
                 Selection.GameType => "Game Type",
+                Selection.GameState => "Game State",
                 _ => uiTxtHeader.Text
             };
             InitTimer();
@@ -58,6 +61,9 @@ namespace gamevault.UserControls
         public string GetSelectedEntries()
         {
             if (SelectionType == Selection.GameType)
+                return string.Join(",", selectedEntries.Select(o => o.OriginName));
+
+            if (SelectionType == Selection.GameState)
                 return string.Join(",", selectedEntries.Select(o => o.OriginName));
 
             return string.Join(",", selectedEntries.Select(o => o.Name));
@@ -92,7 +98,32 @@ namespace gamevault.UserControls
         private async Task LoadSelectionEntries()
         {
             Pill[] data = null;
-            if (SelectionType != Selection.GameType)
+            if (SelectionType == Selection.GameType)
+            {
+                EnumDescriptionConverter conv = new EnumDescriptionConverter();
+                List<Pill> list = new List<Pill>();
+                foreach (GameType type in Enum.GetValues(typeof(GameType)))
+                {
+                    if (type == GameType.UNDETECTABLE)
+                        continue;
+
+                    list.Add(new Pill() { OriginName = type.ToString(), Name = (string)conv.Convert(type, null, null, null) });
+                }
+                data = list.ToArray();
+                data = data.Where(x => x.Name.Contains(debounceTimer.Data, StringComparison.OrdinalIgnoreCase)).ToArray();
+            }
+            else if (SelectionType == Selection.GameState)
+            {
+                EnumDescriptionConverter conv = new EnumDescriptionConverter();
+                List<Pill> list = new List<Pill>();
+                foreach (State type in Enum.GetValues(typeof(State)))
+                {
+                    list.Add(new Pill() { OriginName = type.ToString(), Name = (string)conv.Convert(type, null, null, null) });
+                }
+                data = list.ToArray();
+                data = data.Where(x => x.Name.Contains(debounceTimer.Data, StringComparison.OrdinalIgnoreCase)).ToArray();
+            }
+            else
             {
                 string url = string.Empty;
                 url = SelectionType switch
@@ -118,20 +149,6 @@ namespace gamevault.UserControls
                         MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
                     }
                 });
-            }
-            else
-            {
-                EnumDescriptionConverter conv = new EnumDescriptionConverter();
-                List<Pill> list = new List<Pill>();
-                foreach (GameType type in Enum.GetValues(typeof(GameType)))
-                {
-                    if (type == GameType.UNDETECTABLE)
-                        continue;
-
-                    list.Add(new Pill() { OriginName = type.ToString(), Name = (string)conv.Convert(type, null, null, null) });
-                }
-                data = list.ToArray();
-                data = data.Where(x => x.Name.Contains(debounceTimer.Data, StringComparison.OrdinalIgnoreCase)).ToArray();
             }
             uiSelectionEntries.ItemsSource = data;
         }
