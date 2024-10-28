@@ -66,13 +66,9 @@ namespace gamevault.Helper
 
             client = new HttpClient();
             client.DefaultRequestHeaders.UserAgent.Clear();
-            //client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Mozilla", "5.0"));
-            //client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("(Windows NT 10.0; Win64; x64)"));
-            //client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("AppleWebKit", "537.36"));
-            //client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("(KHTML, like Gecko)"));
-            //client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Chrome", "129.0.0.0"));
-            //client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Safari", "537.36"));
-            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("GameVault", SettingsViewModel.Instance.Version));
+            string plattform = IsWineRunning() ? "Linux" : "Windows NT";
+            var userAgent = $"GameVault/{SettingsViewModel.Instance.Version} ({plattform})";
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent);
             try
             {
                 TimeZoneInfo.TryConvertWindowsIdToIanaId(TimeZoneInfo.Local.Id, RegionInfo.CurrentRegion.TwoLetterISORegionName, out timeZone);
@@ -176,7 +172,7 @@ namespace gamevault.Helper
             catch (Exception e) { }
 
         }
-        public async Task SendPageView(UserControl page, UserControl prevPage)
+        public async Task SendPageView(UserControl page)
         {
             if (!trackingEnabled)
                 return;
@@ -184,8 +180,7 @@ namespace gamevault.Helper
             try
             {
                 string? pageString = ParseUserControl(page);
-                string? prevPageString = ParseUserControl(prevPage);
-                var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { Timezone = timeZone, CurrentPage = pageString, PreviousPage = prevPageString, Language = language }), Encoding.UTF8, "application/json");
+                var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { Timezone = timeZone, CurrentPage = pageString, Language = language }), Encoding.UTF8, "application/json");
                 await client.PostAsync(AnalyticsTargets.LG, jsonContent);
             }
             catch (Exception e) { }
@@ -270,6 +265,12 @@ namespace gamevault.Helper
             string cpu = $"{CPU["Name"]} - {CPU["MaxClockSpeed"]} MHz - {CPU["NumberOfCores"]} Core";
             return new { app_version = SettingsViewModel.Instance.Version, hardware_os = os, hardware_ram = ram, hardware_cpu = cpu, };
         }
+        private bool IsWineRunning()
+        {
+            // Search for WINLOGON process
+            int p = Process.GetProcessesByName("winlogon").Length;
+            return p == 0;
+        }
         private class AnalyticsData
         {
             [JsonPropertyName("pid")]
@@ -281,8 +282,7 @@ namespace gamevault.Helper
             public string? Timezone { get; set; }
             [JsonPropertyName("pg")]
             public string? CurrentPage { get; set; }
-            [JsonPropertyName("prev")]
-            public string? PreviousPage { get; set; }
+
             [JsonPropertyName("lc")]
             public string? Language { get; set; }
             [JsonPropertyName("meta")]

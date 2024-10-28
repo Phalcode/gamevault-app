@@ -1,7 +1,7 @@
 # GameVault App Changelog
 
-## 1.12.6
-Recommended Gamevault Server Version: `v13.0.0`
+## 1.13.0
+Recommended Gamevault Server Version: `v13.1.0`
 ### Changes
 
 - You can now filter by game state in the library

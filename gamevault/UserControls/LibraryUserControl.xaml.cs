@@ -309,7 +309,7 @@ namespace gamevault.UserControls
             string gameStates = uiFilterGameStateSelector.GetSelectedEntries();
             if (gameStates != string.Empty)
             {
-                filter += $"&filter.progresses.state=$in:{gameStates}&filter.progresses.user.id=$eq:{LoginManager.Instance.GetCurrentUser()?.ID}";
+                filter += $"&filter.progresses.state=$eq:{gameStates}&filter.progresses.user.id=$eq:{LoginManager.Instance.GetCurrentUser()?.ID}";
             }
             if (uiFilterBookmarks.IsChecked == true)
             {

@@ -29,6 +29,12 @@ namespace gamevault.UserControls
             get => (Selection)GetValue(SelectionTypeProperty);
             set => SetValue(SelectionTypeProperty, value);
         }
+        public static readonly DependencyProperty MaxSelectionProperty = DependencyProperty.Register(name: "MaxSelection", propertyType: typeof(int), ownerType: typeof(PillSelector));
+        public int MaxSelection
+        {
+            get => (int)GetValue(MaxSelectionProperty);
+            set => SetValue(MaxSelectionProperty, value);
+        }
         public event EventHandler EntriesUpdated;
         private bool loaded = false;
         private InputTimer debounceTimer { get; set; }
@@ -174,6 +180,8 @@ namespace gamevault.UserControls
         private void AddEntry_Click(object sender, MouseButtonEventArgs e)
         {
             if (selectedEntries.Contains((Pill)((FrameworkElement)sender).DataContext)) return;
+            if (MaxSelection > 0 && selectedEntries.Count >= MaxSelection) return;
+
             selectedEntries.Add((Pill)((FrameworkElement)sender).DataContext);
             uiSelectedEntries.ItemsSource = null;
             uiSelectedEntries.ItemsSource = selectedEntries;

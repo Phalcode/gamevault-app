@@ -123,7 +123,7 @@ namespace gamevault.ViewModels
                 if (m_ActiveControl != null) { m_ActiveControl.Visibility = System.Windows.Visibility.Collapsed; }
                 if (value != null)
                 {
-                    AnalyticsHelper.Instance.SendPageView(value, m_ActiveControl);
+                    AnalyticsHelper.Instance.SendPageView(value);
                 }
                 m_ActiveControl = value;
                 if (m_ActiveControl != null)
