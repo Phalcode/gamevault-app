@@ -19,22 +19,24 @@ namespace gamevault.Converter
             }
             return Brushes.Black;
         }
-
         private Color GenerateColor(int numericValue)
         {
             byte red = (byte)((numericValue >> 16) & 0xFF);
             byte green = (byte)((numericValue >> 8) & 0xFF);
             byte blue = (byte)(numericValue & 0xFF);
 
-            // Darken the color by reducing each component by a fixed amount
-            const int darkeningAmount = 10;
-            red = (byte)Math.Max(0, red - darkeningAmount);
-            green = (byte)Math.Max(0, green - darkeningAmount);
-            blue = (byte)Math.Max(0, blue - darkeningAmount);
+            // Ensure the color is saturated by setting the maximum component to 255
+            byte maxComponent = Math.Max(red, Math.Max(green, blue));
+            if (maxComponent > 0)
+            {
+                float scale = 200f / maxComponent;
+                red = (byte)(red * scale);
+                green = (byte)(green * scale);
+                blue = (byte)(blue * scale);
+            }
 
             return Color.FromRgb(red, green, blue);
         }
-
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {

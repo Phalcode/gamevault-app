@@ -14,9 +14,14 @@ namespace gamevault.Converter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if ((GameType)value != GameType.UNDETECTABLE)
+            if (value is GameType && (GameType)value != GameType.UNDETECTABLE)
             {
                 string result = ((DescriptionAttribute[])typeof(GameType).GetField(((GameType)value).ToString()).GetCustomAttributes(typeof(DescriptionAttribute), false))[0].Description.ToString();
+                return result;
+            }
+            else if (value is State)
+            {
+                string result = ((DescriptionAttribute[])typeof(State).GetField(((State)value).ToString()).GetCustomAttributes(typeof(DescriptionAttribute), false))[0].Description.ToString();
                 return result;
             }
             return string.Empty;

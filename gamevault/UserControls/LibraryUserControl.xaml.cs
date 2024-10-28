@@ -228,7 +228,8 @@ namespace gamevault.UserControls
         {
             uiFilterGameTypeSelector.ClearEntries();
             uiFilterGenreSelector.ClearEntries();
-            uiFilterPillSelector.ClearEntries();
+            uiFilterTagSelector.ClearEntries();
+            uiFilterGameStateSelector.ClearEntries();
             uiFilterReleaseDateRangeSelector.ClearSelection();
 
             uiFilterBookmarks.IsChecked = false;
@@ -300,14 +301,19 @@ namespace gamevault.UserControls
             {
                 filter += $"&filter.metadata.genres.name=$in:{genres}";
             }
-            string tags = uiFilterPillSelector.GetSelectedEntries();
+            string tags = uiFilterTagSelector.GetSelectedEntries();
             if (tags != string.Empty)
             {
                 filter += $"&filter.metadata.tags.name=$in:{tags}";
             }
+            string gameStates = uiFilterGameStateSelector.GetSelectedEntries();
+            if (gameStates != string.Empty)
+            {
+                filter += $"&filter.progresses.state=$eq:{gameStates}&filter.progresses.user.id=$eq:{LoginManager.Instance.GetCurrentUser()?.ID}";
+            }
             if (uiFilterBookmarks.IsChecked == true)
             {
-                filter += $"&filter.bookmarked_users.id=$eq:{LoginManager.Instance.GetCurrentUser().ID}";
+                filter += $"&filter.bookmarked_users.id=$eq:{LoginManager.Instance.GetCurrentUser()?.ID}";
             }
             return filter;
         }
@@ -439,7 +445,8 @@ namespace gamevault.UserControls
             int filterCount = 0;
             filterCount += uiFilterGameTypeSelector.HasEntries() ? 1 : 0;
             filterCount += uiFilterGenreSelector.HasEntries() ? 1 : 0;
-            filterCount += uiFilterPillSelector.HasEntries() ? 1 : 0;
+            filterCount += uiFilterTagSelector.HasEntries() ? 1 : 0;
+            filterCount += uiFilterGameStateSelector.HasEntries() ? 1 : 0;
             filterCount += (bool)uiFilterEarlyAccess.IsChecked ? 1 : 0;
             filterCount += (bool)uiFilterBookmarks.IsChecked ? 1 : 0;
 

@@ -9,7 +9,8 @@
         xmlns:uc="clr-namespace:gamevault.UserControls"
 		xmlns:conv="clr-namespace:gamevault.Converter"
         mc:Ignorable="d"
-                WindowTitleBrush="Transparent" NonActiveWindowTitleBrush="Transparent"
+        Title="GameVault" TitleForeground="Transparent"
+        WindowTitleBrush="Transparent" NonActiveWindowTitleBrush="Transparent"
        Height="450" Width="800" WindowStartupLocation="CenterScreen" WindowState="Maximized" MinWidth="600" MinHeight="345" Loaded="MetroWindow_Loaded" Closing="MetroWindow_Closing">
     <mah:MetroWindow.TaskbarItemInfo>
         <TaskbarItemInfo ProgressValue="{Binding TaskbarProgress}" ProgressState="Normal"/>

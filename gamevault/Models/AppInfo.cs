@@ -40,7 +40,8 @@ namespace gamevault.Models
         LastLibrarySortBy,
         LastLibraryOrderBy,
         SendAnonymousAnalytics,
-        LastCommunitySortBy
+        LastCommunitySortBy,
+        ForcedInstallationType
     }
     public static class AppFilePath
     {

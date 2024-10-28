@@ -25,6 +25,7 @@ using Windows.Gaming.Input;
 using System.Runtime.Serialization.Formatters.Binary;
 using IO.Swagger.Model;
 using gamevault.Windows;
+using Microsoft.Extensions.Primitives;
 
 namespace gamevault.UserControls
 {
@@ -173,6 +174,19 @@ namespace gamevault.UserControls
 
         public async Task UninstallGame()
         {
+            //Check for forced installation type
+            try
+            {
+                if (Directory.Exists(ViewModel.Directory) && int.TryParse(Preferences.Get(AppConfigKey.ForcedInstallationType, $"{ViewModel.Directory}\\gamevault-exec"), out int intValue))
+                {
+                    if (Enum.IsDefined(typeof(GameType), intValue))
+                    {
+                        ViewModel.Game.Type = (GameType)intValue;
+                    }
+                }
+            }
+            catch { }
+
             if (ViewModel.Game.Type == GameType.WINDOWS_PORTABLE)
             {
                 MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to uninstall '{ViewModel.Game.Title}' ?", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });

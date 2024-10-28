@@ -30,6 +30,7 @@ namespace gamevault.UserControls
 
         private GameSizeConverter gameSizeConverter { get; set; }
         private InputTimer downloadRetryTimer { get; set; }
+        private bool isGameTypeForced = false;
 
         public GameDownloadUserControl(Game game, bool download)
         {
@@ -563,7 +564,7 @@ namespace gamevault.UserControls
                 uiCbSetupExecutable.ItemsSource = allExecutables;
                 if (!string.IsNullOrWhiteSpace(ViewModel.Game?.Metadata?.InstallerExecutable))
                 {
-                    var entry = allExecutables.Select((kv, index) => new { kv.Key, kv.Value, Index = index }).FirstOrDefault(kv => kv.Key.Contains(ViewModel.Game?.Metadata?.InstallerExecutable.Replace("/","\\"), StringComparison.OrdinalIgnoreCase));
+                    var entry = allExecutables.Select((kv, index) => new { kv.Key, kv.Value, Index = index }).FirstOrDefault(kv => kv.Key.Contains(ViewModel.Game?.Metadata?.InstallerExecutable.Replace("/", "\\"), StringComparison.OrdinalIgnoreCase));
                     if (entry != null)
                         uiCbSetupExecutable.SelectedIndex = entry.Index;
                 }
@@ -686,15 +687,20 @@ namespace gamevault.UserControls
             uiInstallOptions.Visibility = System.Windows.Visibility.Collapsed;
             uiProgressRingInstall.IsActive = false;
             uiBtnExtract.IsEnabled = true;
+            //Save forced install type for uninstallation
+            if (isGameTypeForced && Directory.Exists(ViewModel.InstallPath) && ViewModel?.Game?.Type != null)
+            {
+                try
+                {
+                    Preferences.Set(AppConfigKey.ForcedInstallationType, ViewModel?.Game?.Type, $"{ViewModel.InstallPath}\\gamevault-exec");
+                }
+                catch { }
+            }
             //Set default launch parameter if available
             if (!string.IsNullOrWhiteSpace(ViewModel.Game?.Metadata?.LaunchParameters) && Directory.Exists(ViewModel.InstallPath))
             {
                 try
                 {
-                    if (!File.Exists($"{ViewModel.InstallPath}\\gamevault-exec"))
-                    {
-                        File.Create($"{ViewModel.InstallPath}\\gamevault-exec").Close();
-                    }
                     Preferences.Set(AppConfigKey.LaunchParameter, ViewModel.Game?.Metadata?.LaunchParameters, $"{ViewModel.InstallPath}\\gamevault-exec");
                 }
                 catch { }
@@ -706,13 +712,9 @@ namespace gamevault.UserControls
                 {
                     string extension = Path.GetExtension(ViewModel.Game?.Metadata?.LaunchExecutable);
                     var files = Directory.GetFiles(ViewModel.InstallPath, $"*{extension}", SearchOption.AllDirectories);
-                    var targetFile = files.FirstOrDefault(file => file.Contains(ViewModel.Game?.Metadata?.LaunchExecutable.Replace("/","\\"),StringComparison.OrdinalIgnoreCase));
+                    var targetFile = files.FirstOrDefault(file => file.Contains(ViewModel.Game?.Metadata?.LaunchExecutable.Replace("/", "\\"), StringComparison.OrdinalIgnoreCase));
                     if (targetFile != null)
                     {
-                        if (!File.Exists($"{ViewModel.InstallPath}\\gamevault-exec"))
-                        {
-                            File.Create($"{ViewModel.InstallPath}\\gamevault-exec").Close();
-                        }
                         Preferences.Set(AppConfigKey.Executable, targetFile, $"{ViewModel.InstallPath}\\gamevault-exec");
                     }
                 }
@@ -756,6 +758,7 @@ namespace gamevault.UserControls
                 temp.Type = (GameType)uiCbOverwriteGameType.SelectedValue;
                 ViewModel.Game = null;
                 ViewModel.Game = temp;
+                isGameTypeForced = true;
             }
             else
             {

@@ -22,6 +22,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Shapes;
 using Windows.UI;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
@@ -65,18 +66,16 @@ namespace gamevault.Helper
 
             client = new HttpClient();
             client.DefaultRequestHeaders.UserAgent.Clear();
-            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Mozilla", "5.0"));
-            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("(Windows NT 10.0; Win64; x64)"));
-            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("AppleWebKit", "537.36"));
-            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("(KHTML, like Gecko)"));
-            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Chrome", "129.0.0.0"));
-            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Safari", "537.36"));
+            string plattform = IsWineRunning() ? "Linux" : "Windows NT";
+            var userAgent = $"GameVault/{SettingsViewModel.Instance.Version} ({plattform})";
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent);
             try
             {
                 TimeZoneInfo.TryConvertWindowsIdToIanaId(TimeZoneInfo.Local.Id, RegionInfo.CurrentRegion.TwoLetterISORegionName, out timeZone);
                 language = CultureInfo.CurrentCulture.Name;
             }
             catch { }
+
         }
         internal void InitHeartBeat()
         {
@@ -156,6 +155,10 @@ namespace gamevault.Helper
                     return $"{className}.{methodName}";
                 }
             }
+            else if (buttonBase.Command != null)
+            {
+                return ((System.Windows.Input.RoutedCommand)buttonBase.Command).Name;
+            }
             return string.Empty;
         }
         private async Task SendHeartBeat(string url)
@@ -169,28 +172,34 @@ namespace gamevault.Helper
             catch (Exception e) { }
 
         }
-        public async Task SendPageView(UserControl page, UserControl prevPage)
+        public async Task SendPageView(UserControl page)
         {
             if (!trackingEnabled)
                 return;
 
             try
             {
-                string pageString = ParseUserControl(page);
-                string prevPageString = ParseUserControl(prevPage);
-                var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { Timezone = timeZone, CurrentPage = pageString, PreviousPage = prevPageString, Language = language }), Encoding.UTF8, "application/json");
+                string? pageString = ParseUserControl(page);
+                var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { Timezone = timeZone, CurrentPage = pageString, Language = language }), Encoding.UTF8, "application/json");
                 await client.PostAsync(AnalyticsTargets.LG, jsonContent);
             }
             catch (Exception e) { }
 
         }
-        public async Task SendErrorLog(Exception ex)
+        public void SendErrorLog(Exception ex)
         {
             if (!trackingEnabled)
                 return;
 
-            var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { ExceptionType = ex.GetType().ToString(), ExceptionMessage = $"Message:{ex.Message} | InnerException:{ex.InnerException?.Message} | StackTrace:{ex.StackTrace?.Substring(0, 2000)} | Is Windows Package: {(App.IsWindowsPackage == true ? "True" : "False")}", Timezone = timeZone, Language = language }), Encoding.UTF8, "application/json");
-            await client.PostAsync(AnalyticsTargets.ER, jsonContent);
+            Task.Run(async () =>
+            {
+                try
+                {
+                    var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { ExceptionType = ex.GetType().ToString(), ExceptionMessage = $"Message:{ex.Message} | InnerException:{ex.InnerException?.Message} | StackTrace:{ex.StackTrace?.Substring(0, Math.Min(2000, ex.StackTrace.Length))} | Is Windows Package: {(App.IsWindowsPackage == true ? "True" : "False")}", Timezone = timeZone, Language = language }), Encoding.UTF8, "application/json");
+                    await client.PostAsync(AnalyticsTargets.ER, jsonContent);
+                }
+                catch (Exception ex) { }
+            });
         }
         public void SendCustomEvent(string eventName, object meta)
         {
@@ -205,7 +214,7 @@ namespace gamevault.Helper
                 catch { }
             });
         }
-        private string ParseUserControl(UserControl page)
+        private string? ParseUserControl(UserControl page)
         {
             switch (page)
             {
@@ -243,7 +252,7 @@ namespace gamevault.Helper
                     }
                 default:
                     {
-                        return "/unknown";
+                        return null;
                     }
             }
         }
@@ -256,6 +265,12 @@ namespace gamevault.Helper
             string cpu = $"{CPU["Name"]} - {CPU["MaxClockSpeed"]} MHz - {CPU["NumberOfCores"]} Core";
             return new { app_version = SettingsViewModel.Instance.Version, hardware_os = os, hardware_ram = ram, hardware_cpu = cpu, };
         }
+        private bool IsWineRunning()
+        {
+            // Search for WINLOGON process
+            int p = Process.GetProcessesByName("winlogon").Length;
+            return p == 0;
+        }
         private class AnalyticsData
         {
             [JsonPropertyName("pid")]
@@ -267,8 +282,7 @@ namespace gamevault.Helper
             public string? Timezone { get; set; }
             [JsonPropertyName("pg")]
             public string? CurrentPage { get; set; }
-            [JsonPropertyName("prev")]
-            public string? PreviousPage { get; set; }
+
             [JsonPropertyName("lc")]
             public string? Language { get; set; }
             [JsonPropertyName("meta")]

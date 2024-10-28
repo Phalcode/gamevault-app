@@ -279,7 +279,7 @@
                                             <DataTemplate>
                                                 <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" Height="25" Margin="5,0,0,0" Click="Genre_Clicked">
                                                     <Border CornerRadius="5" Background="{Binding Name,Converter={StaticResource nameColorConv}}" Padding="0" >
-                                                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="8,0,8,0" FontSize="10" FontWeight="Bold"/>
+                                                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" Margin="8,0,8,0" FontSize="10" FontWeight="Bold"/>
                                                     </Border>
                                                 </Button>
                                             </DataTemplate>
