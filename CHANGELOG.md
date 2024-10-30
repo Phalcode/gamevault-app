@@ -1,5 +1,14 @@
 # GameVault App Changelog
 
+## 1.13.1
+Recommended Gamevault Server Version: `v13.1.0`
+### Changes
+
+- Updated to .NET 8
+- The game type filter now replaces the previous entry when you select a new one
+- Bug fix: Admin tab reindex button did nothing
+- Bug fix: Crash on startup if the installed .NET version is too old for some use cases
+
 ## 1.13.0
 Recommended Gamevault Server Version: `v13.1.0`
 ### Changes

@@ -215,7 +215,6 @@ namespace gamevault.UserControls
         private async void Reindex_Click(object sender, RoutedEventArgs e)
         {
             ((FrameworkElement)sender).IsEnabled = false;
-            return;
             await Task.Run(() =>
             {
                 try
