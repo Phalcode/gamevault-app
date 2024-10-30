@@ -35,6 +35,12 @@ namespace gamevault.UserControls
             get => (int)GetValue(MaxSelectionProperty);
             set => SetValue(MaxSelectionProperty, value);
         }
+        public static readonly DependencyProperty IsMultiSelectionProperty = DependencyProperty.Register(name: "IsMultiSelection", propertyType: typeof(bool), ownerType: typeof(PillSelector), new PropertyMetadata(true));
+        public bool IsMultiSelection
+        {
+            get => (bool)GetValue(IsMultiSelectionProperty);
+            set => SetValue(IsMultiSelectionProperty, value);
+        }
         public event EventHandler EntriesUpdated;
         private bool loaded = false;
         private InputTimer debounceTimer { get; set; }
@@ -181,6 +187,10 @@ namespace gamevault.UserControls
         {
             if (selectedEntries.Contains((Pill)((FrameworkElement)sender).DataContext)) return;
             if (MaxSelection > 0 && selectedEntries.Count >= MaxSelection) return;
+            if(!IsMultiSelection)
+            {
+                selectedEntries.Clear();
+            }
 
             selectedEntries.Add((Pill)((FrameworkElement)sender).DataContext);
             uiSelectedEntries.ItemsSource = null;

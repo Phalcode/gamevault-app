@@ -8,27 +8,14 @@ using System.IO;
 using System.Windows;
 using System.Windows.Forms;
 using Application = System.Windows.Application;
-using ButtonBase = System.Windows.Controls.Primitives.ButtonBase;
 using System.Linq;
 using gamevault.Helper;
 using System.Threading.Tasks;
-using System.IO.Pipes;
 using System.Windows.Threading;
 using System.Text.Json;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Shell;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using System.Windows.Media;
-using gamevault.UserControls;
-using System.Windows.Controls;
-using System.Reflection;
-using System.Windows.Controls.Primitives;
-using System.ComponentModel;
-using System.Collections.Generic;
-using Button = System.Windows.Controls.Button;
-using System.Reflection.Metadata;
 
 namespace gamevault
 {
