@@ -1,5 +1,13 @@
 # GameVault App Changelog
 
+## 1.13.2
+Recommended Gamevault Server Version: `v13.1.0`
+### Changes
+
+- Bug fix: Media slider video was sometimes rendered on top of a popup
+- Bug fix: Crash on Media Slider navigation
+- Bug fix: Crash on create shortcut after installation
+
 ## 1.13.1
 Recommended Gamevault Server Version: `v13.1.0`
 ### Changes

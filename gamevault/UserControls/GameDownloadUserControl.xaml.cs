@@ -725,7 +725,7 @@ namespace gamevault.UserControls
             {
                 await Task.Delay(1000);
                 var game = InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).FirstOrDefault();
-                if (game.Key == null)
+                if (game.Key == null || !Directory.Exists(game.Value))
                     return;
 
                 if (!File.Exists(Preferences.Get(AppConfigKey.Executable, $"{game.Value}\\gamevault-exec")))
