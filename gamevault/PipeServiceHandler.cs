@@ -313,7 +313,7 @@ namespace gamevault
             if (options == null)
                 return null;
 
-            if (options.Action != CommandOptions.ActionEnum.Show && options.Action != CommandOptions.ActionEnum.Start && !SettingsViewModel.Instance.License.IsActive())
+            if ((options.Action == CommandOptions.ActionEnum.Install || options.Action == CommandOptions.ActionEnum.Uninstall) && !SettingsViewModel.Instance.License.IsActive())
             {
                 try
                 {
