@@ -4,6 +4,7 @@
 Recommended Gamevault Server Version: `v13.1.0`
 ### Changes
 
+- Sync installed Gamevault games with Steam shortcuts (+)
 - Bug fix: Media slider video was sometimes rendered on top of a popup
 - Bug fix: Crash on Media Slider navigation
 - Bug fix: Crash on create shortcut after installation

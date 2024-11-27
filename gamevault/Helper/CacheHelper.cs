@@ -181,6 +181,16 @@ namespace gamevault.Helper
                 return hash;
             }
         }
+        internal static Dictionary<string, string> GetImageCacheForGame(Game game)
+        {
+            Dictionary<string, string> imageCache = new Dictionary<string, string>();
+            string cachePath = AppFilePath.ImageCache;
+            var boxArt = Directory.GetFiles(Path.Combine(cachePath, "gbox").Replace("/", "\\"), $"{game.ID}.*").FirstOrDefault();
+            var background = Directory.GetFiles(Path.Combine(cachePath, "gbg").Replace("/", "\\"), $"{game.ID}.*").FirstOrDefault();
+            imageCache.Add("gbox", boxArt);
+            imageCache.Add("gbg", background);
+            return imageCache;
+        }
         private static void ResizeImage(string path, int maxHeight)
         {
             using (var imageMagick = new MagickImage(path))

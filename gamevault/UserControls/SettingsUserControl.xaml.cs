@@ -14,6 +14,9 @@ using MahApps.Metro.Controls;
 using System.Text.Json;
 using System.Security.Policy;
 using AngleSharp.Io;
+using AngleSharp.Common;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace gamevault.UserControls
 {
@@ -364,6 +367,23 @@ namespace gamevault.UserControls
                 Preferences.Set("IL", SettingsViewModel.Instance.IgnoreList, AppFilePath.IgnoreList);
             }
             catch { }
+        }
+
+        private void SyncSteamShortcuts_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (((ToggleSwitch)sender).IsOn)
+            {
+                SteamHelper.SyncGamesWithSteamShortcuts(InstallViewModel.Instance.InstalledGames.ToDictionary(pair => pair.Key, pair => pair.Value));
+            }
+            else
+            {
+                SteamHelper.RemoveGameVaultGamesFromSteamShortcuts();
+            }
+        }
+
+        private void RestoreSteamShortcutBackup_Click(object sender, RoutedEventArgs e)
+        {
+            SteamHelper.RestoreBackup();
         }
     }
 }
