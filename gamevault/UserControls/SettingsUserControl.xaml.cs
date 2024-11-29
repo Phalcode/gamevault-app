@@ -371,6 +371,9 @@ namespace gamevault.UserControls
 
         private void SyncSteamShortcuts_Toggled(object sender, RoutedEventArgs e)
         {
+            if (!this.loaded)//Make sure the toggle came from the ui
+                return;
+
             if (((ToggleSwitch)sender).IsOn)
             {
                 SteamHelper.SyncGamesWithSteamShortcuts(InstallViewModel.Instance.InstalledGames.ToDictionary(pair => pair.Key, pair => pair.Value));

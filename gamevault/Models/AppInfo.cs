@@ -41,7 +41,8 @@ namespace gamevault.Models
         LastLibraryOrderBy,
         SendAnonymousAnalytics,
         LastCommunitySortBy,
-        ForcedInstallationType
+        ForcedInstallationType,
+        SyncSteamShortcuts
     }
     public static class AppFilePath
     {

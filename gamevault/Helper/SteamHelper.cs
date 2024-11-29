@@ -1,4 +1,5 @@
 ﻿using gamevault.Models;
+using gamevault.ViewModels;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -231,6 +232,9 @@ namespace gamevault.Helper
         {
             try
             {
+                if (!SettingsViewModel.Instance.License.IsActive())
+                    return;
+
                 string shortcutsDirectory = GetMostRecentUserUserDirectory();
                 if (!Directory.Exists(shortcutsDirectory))
                     return;
@@ -286,12 +290,13 @@ namespace gamevault.Helper
         }
         internal static void RemoveGameVaultGamesFromSteamShortcuts()
         {
-            string shortcutsDirectory = GetMostRecentUserUserDirectory();
-            if (!Directory.Exists(shortcutsDirectory))
-                return;
-
             try
             {
+                string shortcutsDirectory = GetMostRecentUserUserDirectory();
+                if (!Directory.Exists(shortcutsDirectory))
+                    return;
+
+
                 string shortcutFile = Path.Combine(shortcutsDirectory, "shortcuts.vdf");
                 VdfMap shortcutFileMap = VdfUtilities.ReadVdf(File.ReadAllBytes(shortcutFile));
                 shortcutFileMap = TrimFirstOffsetEntry(shortcutFileMap);//Making sure to have a clean game list

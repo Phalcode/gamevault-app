@@ -51,6 +51,7 @@ namespace gamevault.ViewModels
         private PhalcodeProduct license { get; set; }
         private List<ThemeItem> themes { get; set; }
         private bool showMappedTitle { get; set; }
+        private bool syncSteamShortcuts { get; set; }
 
         #endregion
 
@@ -62,7 +63,7 @@ namespace gamevault.ViewModels
 
             string showMappedTitleString = Preferences.Get(AppConfigKey.ShowMappedTitle, AppFilePath.UserFile);
             showMappedTitle = showMappedTitleString == "1" || showMappedTitleString == "";
-
+            //Setting the private members to avoid writing to the user config file over and over again
             m_BackgroundStart = (Preferences.Get(AppConfigKey.BackgroundStart, AppFilePath.UserFile) == "1"); OnPropertyChanged(nameof(BackgroundStart));
             m_AutoExtract = (Preferences.Get(AppConfigKey.AutoExtract, AppFilePath.UserFile) == "1"); OnPropertyChanged(nameof(AutoExtract));
             autoDeletePortableGameFiles = Preferences.Get(AppConfigKey.AutoDeletePortable, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(AutoDeletePortableGameFiles));
@@ -70,6 +71,8 @@ namespace gamevault.ViewModels
 
             string analyticsPreference = Preferences.Get(AppConfigKey.SendAnonymousAnalytics, AppFilePath.UserFile);
             sendAnonymousAnalytics = (analyticsPreference == "" || analyticsPreference == "1"); OnPropertyChanged(nameof(SendAnonymousAnalytics));
+           
+            syncSteamShortcuts = Preferences.Get(AppConfigKey.SyncSteamShortcuts, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(SyncSteamShortcuts));
 
             string autoInstallPortableStr = Preferences.Get(AppConfigKey.AutoInstallPortable, AppFilePath.UserFile);
             if (string.IsNullOrWhiteSpace(autoInstallPortableStr) || autoInstallPortableStr == "1")
@@ -287,6 +290,14 @@ namespace gamevault.ViewModels
                 return showMappedTitle;
             }
             set { showMappedTitle = value; Preferences.Set(AppConfigKey.ShowMappedTitle, showMappedTitle ? "1" : "0", AppFilePath.UserFile); OnPropertyChanged(); }
+        } 
+        public bool SyncSteamShortcuts
+        {
+            get
+            {
+                return syncSteamShortcuts;
+            }
+            set { syncSteamShortcuts = value; Preferences.Set(AppConfigKey.SyncSteamShortcuts, SyncSteamShortcuts ? "1" : "0", AppFilePath.UserFile); OnPropertyChanged(); }
         }
         public User RegistrationUser
         {

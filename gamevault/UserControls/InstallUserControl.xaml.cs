@@ -346,7 +346,7 @@ namespace gamevault.UserControls
         }
         private async void Settings_Click(object sender, RoutedEventArgs e)
         {
-            e.Handled = true;            
+            e.Handled = true;
             try
             {
                 int ID = ((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key.ID;
@@ -422,6 +422,10 @@ namespace gamevault.UserControls
         private void Collection_Updated(object sender, RoutedPropertyChangedEventArgs<double?> e)
         {
             Rows_ValueChanged(null, null);
+            if (e.OldValue != null && e.OldValue != e.NewValue && SettingsViewModel.Instance.SyncSteamShortcuts)//Make sure that a game has really been added or removed
+            {
+                SteamHelper.SyncGamesWithSteamShortcuts(InstallViewModel.Instance.InstalledGames.ToDictionary(pair => pair.Key, pair => pair.Value));
+            }
         }
     }
 }

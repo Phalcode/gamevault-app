@@ -370,7 +370,7 @@
                     <StackPanel Margin="30,0,0,0">
                         <StackPanel Margin="0,10,0,0">
                             <TextBlock Text="Steam" FontSize="20" FontWeight="Bold"/>
-                            <mah:ToggleSwitch Header="Sync installed games with steam shortcuts (You need to restart Steam to see the changes)" Margin="10,10,0,0" Toggled="SyncSteamShortcuts_Toggled"/>
+                            <mah:ToggleSwitch Header="Sync installed games with steam shortcuts (You need to restart Steam to see the changes)" Margin="10,10,0,0" IsOn="{Binding SyncSteamShortcuts}" Toggled="SyncSteamShortcuts_Toggled"/>
                             <StackPanel Orientation="Horizontal" Margin="10,10,0,0">
                                 <local:IconButton Text="Restore Backup" FontSize="15" Icon="{DynamicResource IconReload}" IconMargin="0,0,5,2" Width="135" Height="33" HorizontalAlignment="Right" Click="RestoreSteamShortcutBackup_Click"/>
                             </StackPanel>
