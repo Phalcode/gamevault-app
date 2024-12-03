@@ -42,7 +42,8 @@ namespace gamevault.Models
         SendAnonymousAnalytics,
         LastCommunitySortBy,
         ForcedInstallationType,
-        SyncSteamShortcuts
+        SyncSteamShortcuts,
+        SyncDiscordPresence
     }
     public static class AppFilePath
     {

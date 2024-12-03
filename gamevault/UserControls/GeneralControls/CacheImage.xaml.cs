@@ -240,7 +240,7 @@ namespace gamevault.UserControls
             }
             else
             {
-                await CacheHelper.HandleImageCacheAsync(media.Identifier, imageId, cachePath, ImageCacheType, uiImg);
+                await CacheHelper.LoadImageCacheToUIAsync(media.Identifier, imageId, cachePath, ImageCacheType, uiImg);
             }
         }
         public ImageSource GetImageSource()

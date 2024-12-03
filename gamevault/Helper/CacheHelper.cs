@@ -29,7 +29,7 @@ namespace gamevault.Helper
             catch { }
         }
 
-        internal static async Task HandleImageCacheAsync(int identifier, int imageId, string cachePath, ImageCache cacheType, System.Windows.Controls.Image img)
+        internal static async Task LoadImageCacheToUIAsync(int identifier, int imageId, string cachePath, ImageCache cacheType, System.Windows.Controls.Image img)
         {
             string cacheFile = $"{cachePath}/{identifier}.{imageId}";
             try
@@ -110,6 +110,45 @@ namespace gamevault.Helper
                 catch { }
                 img.Source = GetReplacementImage(cacheType);
             }
+        }
+        internal static async Task EnsureImageCacheForGame(Game game)
+        {
+            try
+            {
+                if (LoginManager.Instance.IsLoggedIn())
+                {
+                    if (TaskQueue.Instance.IsAlreadyInProcess(game.Metadata.Background.ID))
+                    {
+                        await TaskQueue.Instance.WaitForProcessToFinish(game.Metadata.Background.ID);
+                    }
+                    if (TaskQueue.Instance.IsAlreadyInProcess(game.Metadata.Cover.ID))
+                    {
+                        await TaskQueue.Instance.WaitForProcessToFinish(game.Metadata.Cover.ID);
+                    }
+
+                    string backGroundCacheFile = $"{AppFilePath.ImageCache}/gbg/{game.ID}.{game.Metadata.Background.ID}";
+                    string boxArtCacheFile = $"{AppFilePath.ImageCache}/gbox/{game.ID}.{game.Metadata.Cover.ID}";
+                    if (!Directory.Exists($"{AppFilePath.ImageCache}/gbg"))
+                    {
+                        Directory.CreateDirectory($"{AppFilePath.ImageCache}/gbg");
+                    }
+                    if (!Directory.Exists($"{AppFilePath.ImageCache}/gbox"))
+                    {
+                        Directory.CreateDirectory($"{AppFilePath.ImageCache}/gbox");
+                    }
+
+                    if (!File.Exists(backGroundCacheFile))
+                    {
+                        //Not in que because its not loading images for the UI
+                        await WebHelper.DownloadImageFromUrlAsync($"{SettingsViewModel.Instance.ServerUrl}/api/media/{game.Metadata.Background.ID}", backGroundCacheFile);
+                    }
+                    if (!File.Exists(boxArtCacheFile))
+                    {
+                        await WebHelper.DownloadImageFromUrlAsync($"{SettingsViewModel.Instance.ServerUrl}/api/media/{game.Metadata.Cover.ID}", boxArtCacheFile);
+                    }
+                }
+            }
+            catch { }
         }
         internal static BitmapImage GetReplacementImage(ImageCache cacheType)
         {

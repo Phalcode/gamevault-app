@@ -354,25 +354,73 @@
                                 </Style>
                             </local:IconButton.Style>
                         </local:IconButton>
-                    </StackPanel>
-                </TabItem>
-                <TabItem Header="Integrations">
-                    <TabItem.Style>
-                        <Style TargetType="TabItem" BasedOn="{StaticResource MahApps.Styles.TabItem}">
-                            <Setter Property="Visibility" Value="Collapsed"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding License.UserName,Converter={StaticResource licenseConv}}" Value="True">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TabItem.Style>
-                    <StackPanel Margin="30,0,0,0">
-                        <StackPanel Margin="0,10,0,0">
-                            <TextBlock Text="Steam" FontSize="20" FontWeight="Bold"/>
-                            <mah:ToggleSwitch Header="Sync installed games with steam shortcuts (You need to restart Steam to see the changes)" Margin="10,10,0,0" IsOn="{Binding SyncSteamShortcuts}" Toggled="SyncSteamShortcuts_Toggled"/>
-                            <StackPanel Orientation="Horizontal" Margin="10,10,0,0">
-                                <local:IconButton Text="Restore Backup" FontSize="15" Icon="{DynamicResource IconReload}" IconMargin="0,0,5,2" Width="135" Height="33" HorizontalAlignment="Right" Click="RestoreSteamShortcutBackup_Click"/>
+                        <!--Features-->
+                        <StackPanel>
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding License.UserName,Converter={StaticResource licenseConv}}" Value="True">
+                                            <Setter Property="IsEnabled" Value="True"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <StackPanel Margin="0,30,0,0">
+                                <TextBlock Text="Features" FontSize="20" FontWeight="Bold"/>
+                                <StackPanel Orientation="Horizontal" Margin="10,10,0,0">
+                                    <Rectangle Fill="{StaticResource MahApps.Brushes.Accent}" Width="2"/>
+                                    <StackPanel Margin="10,0,0,0">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Path Data="{StaticResource IconGameSettingsSteam}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
+                                                <Path.RenderTransform>
+                                                    <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
+                                                </Path.RenderTransform>
+                                            </Path>
+                                            <TextBlock Text="Steam" FontSize="20" FontWeight="Bold" Margin="5,0,0,0"/>
+                                        </StackPanel>
+                                        <TextBlock Text="GameVault+ offers seamless integration with Steam through the Steam Sync Integration. When enabled, all your installed &#x0a;games are automatically synced to your Steam Library and appear as Non-Steam Games. Launching these games via Steam will &#x0a;route them through GameVault, ensuring all your custom launch options are preserved." FontSize="15"/>
+                                        <mah:ToggleSwitch Header="Sync (You have to restart the steam client to see the changes)" Margin="0,10,0,0" IsOn="{Binding SyncSteamShortcuts}" Toggled="SyncSteamShortcuts_Toggled"/>
+                                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                            <local:IconButton Text="Restore Backup" Kind="Danger" FontSize="15" Icon="{DynamicResource IconReload}" IconMargin="0,0,5,2" Width="135" Height="30" HorizontalAlignment="Right" Click="RestoreSteamShortcutBackup_Click"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="10,20,0,0">
+                                <Rectangle Fill="{StaticResource MahApps.Brushes.Accent}" Width="2"/>
+                                <StackPanel Margin="10,0,0,0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource IconGameSettingsDiscord}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
+                                            <Path.RenderTransform>
+                                                <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
+                                            </Path.RenderTransform>
+                                        </Path>
+                                        <TextBlock Text="Discord" FontSize="20" FontWeight="Bold" Margin="5,0,0,0"/>
+                                    </StackPanel>
+                                    <TextBlock Text="When enabled, your currently played game will be synced with the Discord Presence. This means that all your discord friends can see what you are currently playing" FontSize="15"/>
+                                    <mah:ToggleSwitch Header="Sync" Margin="0,10,0,0" IsOn="{Binding SyncDiscordPresence}"/>
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="10,20,0,0">
+                                <Rectangle Fill="{StaticResource MahApps.Brushes.Accent}" Width="2"/>
+                                <StackPanel Margin="10,0,0,0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource IconGameSettingsPlaynite}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" VerticalAlignment="Center" RenderTransformOrigin="1,1">
+                                            <Path.RenderTransform>
+                                                <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
+                                            </Path.RenderTransform>
+                                        </Path>
+                                        <TextBlock Text="Playnite" FontSize="20" FontWeight="Bold" Margin="5,0,0,0"/>
+                                    </StackPanel>
+                                    <TextBlock Text="GameVault+ integrates seamlessly with Playnite using our Playnite Library Extension" FontSize="15"/>
+                                    <TextBlock FontSize="15">
+                                        <Hyperlink NavigateUri="https://playnite.link/addons.html#GameVault_fab8be77-18ab-4e6c-ad3d-89097b492d74" RequestNavigate="Hyperlink_RequestNavigate">Download Playnite Extension</Hyperlink>
+                                    </TextBlock>
+                                    <TextBlock FontSize="15">
+                                        <Hyperlink NavigateUri="https://gamevau.lt/docs/gamevault-plus/integrations/playnite/" RequestNavigate="Hyperlink_RequestNavigate">Setup Guide</Hyperlink>
+                                    </TextBlock>
+                                </StackPanel>
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>

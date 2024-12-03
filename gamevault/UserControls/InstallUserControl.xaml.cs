@@ -419,12 +419,12 @@ namespace gamevault.UserControls
             catch { }
         }
 
-        private void Collection_Updated(object sender, RoutedPropertyChangedEventArgs<double?> e)
+        private async void Collection_Updated(object sender, RoutedPropertyChangedEventArgs<double?> e)
         {
             Rows_ValueChanged(null, null);
             if (e.OldValue != null && e.OldValue != e.NewValue && SettingsViewModel.Instance.SyncSteamShortcuts)//Make sure that a game has really been added or removed
             {
-                SteamHelper.SyncGamesWithSteamShortcuts(InstallViewModel.Instance.InstalledGames.ToDictionary(pair => pair.Key, pair => pair.Value));
+                await SteamHelper.SyncGamesWithSteamShortcuts(InstallViewModel.Instance.InstalledGames.ToDictionary(pair => pair.Key, pair => pair.Value));
             }
         }
     }

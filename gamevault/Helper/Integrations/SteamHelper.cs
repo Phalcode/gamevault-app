@@ -228,65 +228,69 @@ namespace gamevault.Helper
         }
         #endregion
 
-        internal static void SyncGamesWithSteamShortcuts(Dictionary<Game, string> games)
+        internal static async Task SyncGamesWithSteamShortcuts(Dictionary<Game, string> games)
         {
-            try
+            await Task.Run(async () =>
             {
-                if (!SettingsViewModel.Instance.License.IsActive())
-                    return;
-
-                string shortcutsDirectory = GetMostRecentUserUserDirectory();
-                if (!Directory.Exists(shortcutsDirectory))
-                    return;
-
-                EnsureBackup(shortcutsDirectory);//In case something went wrong.
-                VdfMap shortcutFileMap = null;
-                string shortcutFile = Path.Combine(shortcutsDirectory, "shortcuts.vdf");
-                List<string> steamGridImageIDsToRemove = null;
-                if (File.Exists(shortcutFile))
+                try
                 {
-                    try
+                    if (!SettingsViewModel.Instance.License.IsActive())
+                        return;
+
+                    string shortcutsDirectory = GetMostRecentUserUserDirectory();
+                    if (!Directory.Exists(shortcutsDirectory))
+                        return;
+
+                    EnsureBackup(shortcutsDirectory);//In case something went wrong.
+                    VdfMap shortcutFileMap = null;
+                    string shortcutFile = Path.Combine(shortcutsDirectory, "shortcuts.vdf");
+                    List<string> steamGridImageIDsToRemove = null;
+                    if (File.Exists(shortcutFile))
                     {
-                        //Try catch here, because if something goes wrong, the file is corrupted and will be overwritten in a clean way by the new games
-                        shortcutFileMap = VdfUtilities.ReadVdf(File.ReadAllBytes(Path.Combine(shortcutsDirectory, "shortcuts.vdf")));
-                        shortcutFileMap = TrimFirstOffsetEntry(shortcutFileMap);//Making sure to have a clean game list
-                        shortcutFileMap = RemoveUninstalledGames(shortcutFileMap, games, out steamGridImageIDsToRemove);//Checks for gamevault games and compares them to the current installed game list. Extracts also the steam grid image ids for clean removal later on
-                        games = TrimExistingGames(games, shortcutFileMap);//No need for double entries. So they will be removed
+                        try
+                        {
+                            //Try catch here, because if something goes wrong, the file is corrupted and will be overwritten in a clean way by the new games
+                            shortcutFileMap = VdfUtilities.ReadVdf(File.ReadAllBytes(Path.Combine(shortcutsDirectory, "shortcuts.vdf")));
+                            shortcutFileMap = TrimFirstOffsetEntry(shortcutFileMap);//Making sure to have a clean game list
+                            shortcutFileMap = RemoveUninstalledGames(shortcutFileMap, games, out steamGridImageIDsToRemove);//Checks for gamevault games and compares them to the current installed game list. Extracts also the steam grid image ids for clean removal later on
+                            games = TrimExistingGames(games, shortcutFileMap);//No need for double entries. So they will be removed
+                        }
+                        catch { }
                     }
-                    catch { }
-                }
-                else
-                {
-                    File.Create(shortcutFile).Close();
-                }
-                shortcutFileMap = AddGamesToShortcuts(shortcutFileMap, games);
-
-                VdfMap root = new VdfMap();
-                root.Add("shortcuts", shortcutFileMap);//Adds back the first offset entry a vdf file needs to work
-
-                File.WriteAllBytes(shortcutFile, VdfUtilities.WriteVdf(root));
-                //The steam grid image is only processed after it has been written.Because if it did not work to manipulate the VDF file, there is no point in changing anything in the images
-                string steamGridDirectory = Path.Combine(shortcutsDirectory, "grid");
-                if (!Directory.Exists(steamGridDirectory))
-                {
-                    Directory.CreateDirectory(steamGridDirectory);
-                }
-                if (steamGridImageIDsToRemove?.Count > 0)
-                {
-                    foreach (string steamGridImageToRemove in steamGridImageIDsToRemove)
+                    else
                     {
-                        RemoveSteamGridImages(steamGridDirectory, steamGridImageToRemove);
+                        File.Create(shortcutFile).Close();
+                    }
+                    shortcutFileMap = AddGamesToShortcuts(shortcutFileMap, games);
+
+                    VdfMap root = new VdfMap();
+                    root.Add("shortcuts", shortcutFileMap);//Adds back the first offset entry a vdf file needs to work
+
+                    File.WriteAllBytes(shortcutFile, VdfUtilities.WriteVdf(root));
+                    //The steam grid image is only processed after it has been written.Because if it did not work to manipulate the VDF file, there is no point in changing anything in the images
+                    string steamGridDirectory = Path.Combine(shortcutsDirectory, "grid");
+                    if (!Directory.Exists(steamGridDirectory))
+                    {
+                        Directory.CreateDirectory(steamGridDirectory);
+                    }
+                    if (steamGridImageIDsToRemove?.Count > 0)
+                    {
+                        foreach (string steamGridImageToRemove in steamGridImageIDsToRemove)
+                        {
+                            RemoveSteamGridImages(steamGridDirectory, steamGridImageToRemove);
+                        }
+                    }
+                    foreach (KeyValuePair<Game, string> steamGridGame in games)
+                    {
+                        uint steamGridID = (uint)((VdfMap)shortcutFileMap.First(x => ((VdfMap)x.Value).ElementAt(1).Value.ToString() == steamGridGame.Key.Title).Value).ElementAt(0).Value;
+                        await CacheHelper.EnsureImageCacheForGame(steamGridGame.Key);
+                        SetSteamGridImages(steamGridDirectory, steamGridGame.Key, steamGridID);
                     }
                 }
-                foreach (KeyValuePair<Game, string> steamGridGame in games)
+                catch (Exception e)
                 {
-                    uint steamGridID = (uint)((VdfMap)shortcutFileMap.First(x => ((VdfMap)x.Value).ElementAt(1).Value.ToString() == steamGridGame.Key.Title).Value).ElementAt(0).Value;
-                    SetSteamGridImages(steamGridDirectory, steamGridGame.Key, steamGridID);
                 }
-            }
-            catch (Exception e)
-            {
-            }
+            });
         }
         internal static void RemoveGameVaultGamesFromSteamShortcuts()
         {

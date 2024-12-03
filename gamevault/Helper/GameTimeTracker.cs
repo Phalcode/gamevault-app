@@ -29,8 +29,8 @@ namespace gamevault.Helper
         private void TimerCallback(object sender, ElapsedEventArgs e)
         {
             Task.Run(() =>
-            {               
-                string installationPath = Path.Combine(SettingsViewModel.Instance.RootPath, "GameVault\\Installations");             
+            {
+                string installationPath = Path.Combine(SettingsViewModel.Instance.RootPath, "GameVault\\Installations");
 
                 if (!Directory.Exists(installationPath))
                     return;
@@ -93,6 +93,7 @@ namespace gamevault.Helper
                         {
                             WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{gameid}/increment", string.Empty);
                         }
+                        DiscordHelper.Instance.SyncGameWithDiscordPresence(gamesToCountUp, foundGames);
                     }
                     catch (Exception ex)
                     {
@@ -165,7 +166,7 @@ namespace gamevault.Helper
                 return keys.ToArray();
             }
             return new string[0];
-        }        
+        }
         private bool ContainsValueFromIgnoreList(string value)
         {
             return SettingsViewModel.Instance.IgnoreList.Any(x => x.Contains(value, StringComparison.OrdinalIgnoreCase));

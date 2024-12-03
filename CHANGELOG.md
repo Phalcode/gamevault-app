@@ -1,9 +1,10 @@
 # GameVault App Changelog
 
-## 1.13.2
-Recommended Gamevault Server Version: `v13.1.0`
+## 1.14.0
+Recommended Gamevault Server Version: `v13.1.2`
 ### Changes
 
+- Sync the currently played game with the discord Presence API (+)
 - Sync installed Gamevault games with Steam shortcuts (+)
 - Bug fix: Media slider video was sometimes rendered on top of a popup
 - Bug fix: Crash on Media Slider navigation

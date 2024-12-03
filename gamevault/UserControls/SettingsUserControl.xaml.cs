@@ -369,14 +369,14 @@ namespace gamevault.UserControls
             catch { }
         }
 
-        private void SyncSteamShortcuts_Toggled(object sender, RoutedEventArgs e)
+        private async void SyncSteamShortcuts_Toggled(object sender, RoutedEventArgs e)
         {
             if (!this.loaded)//Make sure the toggle came from the ui
                 return;
 
             if (((ToggleSwitch)sender).IsOn)
             {
-                SteamHelper.SyncGamesWithSteamShortcuts(InstallViewModel.Instance.InstalledGames.ToDictionary(pair => pair.Key, pair => pair.Value));
+                await SteamHelper.SyncGamesWithSteamShortcuts(InstallViewModel.Instance.InstalledGames.ToDictionary(pair => pair.Key, pair => pair.Value));
             }
             else
             {
@@ -384,9 +384,13 @@ namespace gamevault.UserControls
             }
         }
 
-        private void RestoreSteamShortcutBackup_Click(object sender, RoutedEventArgs e)
+        private async void RestoreSteamShortcutBackup_Click(object sender, RoutedEventArgs e)
         {
-            SteamHelper.RestoreBackup();
+            MessageDialogResult result = await((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to restore the backup? Your current shortcuts will be reset to the state when the backup was created. This can lead to some shortcuts being lost.", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+            if (result == MessageDialogResult.Affirmative)
+            {
+                SteamHelper.RestoreBackup();
+            }
         }
     }
 }

@@ -52,6 +52,7 @@ namespace gamevault.ViewModels
         private List<ThemeItem> themes { get; set; }
         private bool showMappedTitle { get; set; }
         private bool syncSteamShortcuts { get; set; }
+        private bool syncDiscordPresence { get; set; }
 
         #endregion
 
@@ -73,6 +74,7 @@ namespace gamevault.ViewModels
             sendAnonymousAnalytics = (analyticsPreference == "" || analyticsPreference == "1"); OnPropertyChanged(nameof(SendAnonymousAnalytics));
            
             syncSteamShortcuts = Preferences.Get(AppConfigKey.SyncSteamShortcuts, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(SyncSteamShortcuts));
+            syncDiscordPresence = Preferences.Get(AppConfigKey.SyncDiscordPresence, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(SyncDiscordPresence));
 
             string autoInstallPortableStr = Preferences.Get(AppConfigKey.AutoInstallPortable, AppFilePath.UserFile);
             if (string.IsNullOrWhiteSpace(autoInstallPortableStr) || autoInstallPortableStr == "1")
@@ -297,7 +299,15 @@ namespace gamevault.ViewModels
             {
                 return syncSteamShortcuts;
             }
-            set { syncSteamShortcuts = value; Preferences.Set(AppConfigKey.SyncSteamShortcuts, SyncSteamShortcuts ? "1" : "0", AppFilePath.UserFile); OnPropertyChanged(); }
+            set { syncSteamShortcuts = value; Preferences.Set(AppConfigKey.SyncSteamShortcuts, syncSteamShortcuts ? "1" : "0", AppFilePath.UserFile); OnPropertyChanged(); }
+        }
+        public bool SyncDiscordPresence
+        {
+            get
+            {
+                return syncDiscordPresence;
+            }
+            set { syncDiscordPresence = value; Preferences.Set(AppConfigKey.SyncDiscordPresence, syncDiscordPresence ? "1" : "0", AppFilePath.UserFile); OnPropertyChanged(); }
         }
         public User RegistrationUser
         {
