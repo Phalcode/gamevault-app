@@ -11,6 +11,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Management;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
@@ -30,6 +31,13 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace gamevault.Helper
 {
+    internal static class CustomAnalyticsEventKeys
+    {
+        internal static string APP_INITIALIZED => "APP_INITIALIZED";
+        internal static string EASTER_EGG => "EASTER_EGG";
+        internal static string SERVER_USER_COUNT => "SERVER_USER_COUNT";
+        internal static string USER_SETTINGS => "USER_SETTINGS";
+    }
     internal class AnalyticsHelper
     {
         #region Singleton
@@ -210,7 +218,9 @@ namespace gamevault.Helper
                 try
                 {
                     var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { Event = eventName, Metadata = meta, Timezone = timeZone, Language = language }), Encoding.UTF8, "application/json");
+                    /*HttpResponseMessage res =*/
                     await client.PostAsync(AnalyticsTargets.CU, jsonContent);
+                    //string responseMessage = await res.Content.ReadAsStringAsync();
                 }
                 catch { }
             });
@@ -272,6 +282,22 @@ namespace gamevault.Helper
             {
                 return new { app_version = SettingsViewModel.Instance.Version, hardware_os = $"The system information could not be loaded due to an {ex.GetType().Name}" };
             }
+        }
+        public string PrepareSettingsForAnalytics()
+        {
+            try
+            {
+                var propertiesToExclude = new[] { "Instance", "UserName", "RootPath", "ServerUrl", "License", "RegistrationUser", "SendAnonymousAnalytics" };
+                var trimmedObject = SettingsViewModel.Instance.GetType()
+            .GetProperties()
+            .Where(prop => !propertiesToExclude.Contains(prop.Name))
+            .ToDictionary(prop => prop.Name, prop => prop.GetValue(SettingsViewModel.Instance));
+
+                trimmedObject.Add("HasLicence", SettingsViewModel.Instance.License?.IsActive() == true);
+                return JsonSerializer.Serialize(trimmedObject);
+            }
+            catch { }
+            return "Something went wrong";
         }
         private bool IsWineRunning()
         {

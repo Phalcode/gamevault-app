@@ -341,7 +341,7 @@ namespace gamevault.UserControls
         {
             ((FrameworkElement)sender).IsEnabled = false;
             imgAwesome.Data = "https://phalco.de/images/gamevault/eastereggs/awesome.gif";
-            AnalyticsHelper.Instance.SendCustomEvent("EASTER_EGG", new { name = "awesome" });
+            AnalyticsHelper.Instance.SendCustomEvent(CustomAnalyticsEventKeys.EASTER_EGG, new { name = "awesome" });
         }
 
         private void ExtractionPasswordSave_Click(object sender, RoutedEventArgs e)
@@ -386,7 +386,7 @@ namespace gamevault.UserControls
 
         private async void RestoreSteamShortcutBackup_Click(object sender, RoutedEventArgs e)
         {
-            MessageDialogResult result = await((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to restore the backup? Your current shortcuts will be reset to the state when the backup was created. This can lead to some shortcuts being lost.", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+            MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to restore the backup? Your current shortcuts will be reset to the state when the backup was created. This can lead to some shortcuts being lost.", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
             if (result == MessageDialogResult.Affirmative)
             {
                 SteamHelper.RestoreBackup();

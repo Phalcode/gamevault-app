@@ -31,6 +31,7 @@ namespace gamevault.UserControls
         private GameSizeConverter gameSizeConverter { get; set; }
         private InputTimer downloadRetryTimer { get; set; }
         private bool isGameTypeForced = false;
+        private double downloadRetryTimerTickValue = 10;
 
         public GameDownloadUserControl(Game game, bool download)
         {
@@ -203,15 +204,19 @@ namespace gamevault.UserControls
                     if (!App.Instance.IsWindowActiveAndControlInFocus(MainControl.Downloads))
                         ToastMessageHelper.CreateToastMessage("Download Failed", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.Metadata.Cover?.ID}");
                 }
-                downloadRetryTimer.Start();
-
+                StartRetryTimer();
                 MainWindowViewModel.Instance.UpdateTaskbarProgress();
             }
+        }
+        private void StartRetryTimer()
+        {
+            downloadRetryTimer.Interval = TimeSpan.FromSeconds(downloadRetryTimerTickValue);
+            downloadRetryTimerTickValue *= 2;
+            downloadRetryTimer.Start();
         }
         private void InitRetryTimer()
         {
             downloadRetryTimer = new InputTimer();
-            downloadRetryTimer.Interval = TimeSpan.FromSeconds(10);
             downloadRetryTimer.Tick += AutoRetryDownload_Tick;
         }
         private void AutoRetryDownload_Tick(object sender, EventArgs e)

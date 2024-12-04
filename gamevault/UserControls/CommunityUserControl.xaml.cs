@@ -51,6 +51,11 @@ namespace gamevault.UserControls
             string result = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users");
             var users = JsonSerializer.Deserialize<User[]>(result);
             users = BringCurrentUserToTop(users);
+            //Log server user count only on the first time its set
+            if (ViewModel.Users == null)
+            {
+                AnalyticsHelper.Instance.SendCustomEvent(CustomAnalyticsEventKeys.SERVER_USER_COUNT, new { usercount = users?.Length.ToString() });
+            }
             ViewModel.Users = users;
             if (uiSelectUser.SelectedIndex == -1 && ViewModel.CurrentShownUser == null)
             {

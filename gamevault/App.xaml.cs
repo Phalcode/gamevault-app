@@ -58,7 +58,7 @@ namespace gamevault
             base.OnStartup(e);
             AnalyticsHelper.Instance.InitHeartBeat();
             AnalyticsHelper.Instance.RegisterGlobalEvents();
-            AnalyticsHelper.Instance.SendCustomEvent("APP_INITIALIZED", AnalyticsHelper.Instance.GetSysInfo());
+            AnalyticsHelper.Instance.SendCustomEvent(CustomAnalyticsEventKeys.APP_INITIALIZED, AnalyticsHelper.Instance.GetSysInfo());          
         }
 
         private async void Application_Startup(object sender, StartupEventArgs e)
@@ -85,6 +85,9 @@ namespace gamevault
 #endif
             await LoginManager.Instance.StartupLogin();
             await LoginManager.Instance.PhalcodeLogin(true);
+
+            AnalyticsHelper.Instance.SendCustomEvent(CustomAnalyticsEventKeys.USER_SETTINGS, AnalyticsHelper.Instance.PrepareSettingsForAnalytics());
+
             m_gameTimeTracker = new GameTimeTracker();
             await m_gameTimeTracker.Start();
 

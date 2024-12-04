@@ -349,7 +349,7 @@ namespace gamevault.UserControls
                     timer.Interval = TimeSpan.FromMilliseconds(6000);
                     timer.Tick += (s, e) => { timer.Stop(); uiImgRandom.Source = null; uiImgRandom.Visibility = Visibility.Collapsed; Process.Start(new ProcessStartInfo("https://www.ncpgambling.org/help-treatment/") { UseShellExecute = true }); };
                     timer.Start();
-                    AnalyticsHelper.Instance.SendCustomEvent("EASTER_EGG", new { name = "777" });
+                    AnalyticsHelper.Instance.SendCustomEvent(CustomAnalyticsEventKeys.EASTER_EGG, new { name = "777" });
                 }
                 catch { }
             }
