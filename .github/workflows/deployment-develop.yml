@@ -26,15 +26,6 @@ jobs:
       run: |
         dotnet build gamevault.sln --configuration Release
         7z a GameVault.zip gamevault/bin
-
-    - name: Get release information
-      id: release
-      run: |
-        REPO="Phalcode/gamevault-app"
-        TAG="unstable"
-        RELEASE=$(curl -s "https://api.github.com/repos/$REPO/releases/tags/$TAG")
-        echo "Release URL: $(echo $RELEASE | jq -r .upload_url)" # Ensure jq is installed on your runner
-        echo "upload_url=$(echo $RELEASE | jq -r .upload_url | sed 's/{?name,label}//')" >> $GITHUB_ENV
     
     - name: Upload Release Artifact
       id: upload
@@ -43,6 +34,6 @@ jobs:
         asset_path: GameVault.zip
         asset_name: GameVault.zip
         asset_content_type: application/zip
-        upload_url: ${{ env.upload_url }}
+        upload_url: "https://api.github.com/repos/Phalcode/gamevault-app/releases/tags/unstable"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
