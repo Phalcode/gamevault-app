@@ -7,6 +7,9 @@ jobs:
   deploy:
     permissions: write-all
     runs-on: windows-latest
+    outputs:
+      version: ${{ steps.release.outputs.version }}
+    
     steps:
     - name: Checkout repository
       id: checkout
@@ -18,32 +21,28 @@ jobs:
       with:
         dotnet-version: '6.x'
         
-    - name: Build .NET Solution
+    - name: Build .NET solution
       id: build
-      run: dotnet build gamevault.sln --configuration Release
-
-    - name: Create .zip from the build output
-      id: zip
       run: |
-        mkdir build_output
-        cp -r path\to\your\build\output\* build_output/
-        zip -r GameVault.zip build_output/
+        dotnet build gamevault.sln --configuration Release
+        7z a GameVault.zip gamevault/bin
 
-    - name: Get release ID for unstable release
+    - name: Get release information
       id: release
       run: |
-        RELEASE_URL="https://api.github.com/repos/Phalcode/gamevault-app/releases/tags/unstable"
-        RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" $RELEASE_URL)
-        echo "Release details: $RESPONSE"
-        echo "::set-output name=upload_url::$(echo $RESPONSE | jq -r .upload_url)"
+        REPO="Phalcode/gamevault-app"
+        TAG="unstable"
+        RELEASE=$(curl -s "https://api.github.com/repos/$REPO/releases/tags/$TAG")
+        echo "Release URL: $(echo $RELEASE | jq -r .upload_url)" # Ensure jq is installed on your runner
+        echo "upload_url=$(echo $RELEASE | jq -r .upload_url | sed 's/{?name,label}//')" >> $GITHUB_ENV
     
-    - name: Upload and replace the .exe in the release
+    - name: Upload Release Artifact
       id: upload
       uses: actions/upload-release-asset@v1
       with:
         asset_path: GameVault.zip
         asset_name: GameVault.zip
         asset_content_type: application/zip
-        upload_url: ${{ steps.release.outputs.upload_url }}
+        upload_url: ${{ env.upload_url }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
