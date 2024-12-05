@@ -27,25 +27,12 @@ jobs:
         dotnet build gamevault.sln --configuration Release
         7z a GameVault.zip gamevault/bin
 
-    - name: Get release information
-      id: release
-      run: |
-        $repo = "Phalcode/gamevault-app"
-        $tag = "unstable"
-        $releaseApiUrl = "https://api.github.com/repos/$repo/releases/tags/$tag"
-        $release = Invoke-RestMethod -Uri $releaseApiUrl -Headers @{ Authorization = "Bearer $env:GITHUB_TOKEN" }
-        $uploadUrl = $release.upload_url -replace "{\?name,label}", ""
-        Write-Host "upload_url=$uploadUrl" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Upload Release Artifact
-      id: upload
-      uses: actions/upload-release-asset@v1
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
       with:
-        asset_path: GameVault.zip
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: GameVault.zip
         asset_name: GameVault.zip
-        asset_content_type: application/zip
-        upload_url: ${{ env.upload_url }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        tag: unstable
+        overwrite: true
+        prerelease: true
