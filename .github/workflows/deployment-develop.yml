@@ -21,3 +21,29 @@ jobs:
     - name: Build .NET Solution
       id: build
       run: dotnet build gamevault.sln --configuration Release
+
+    - name: Create .zip from the build output
+      id: zip
+      run: |
+        mkdir build_output
+        cp -r path\to\your\build\output\* build_output/
+        zip -r GameVault.zip build_output/
+
+    - name: Get release ID for unstable release
+      id: release
+      run: |
+        RELEASE_URL="https://api.github.com/repos/Phalcode/gamevault-app/releases/tags/unstable"
+        RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" $RELEASE_URL)
+        echo "Release details: $RESPONSE"
+        echo "::set-output name=upload_url::$(echo $RESPONSE | jq -r .upload_url)"
+    
+    - name: Upload and replace the .exe in the release
+      id: upload
+      uses: actions/upload-release-asset@v1
+      with:
+        asset_path: GameVault.zip
+        asset_name: GameVault.zip
+        asset_content_type: application/zip
+        upload_url: ${{ steps.release.outputs.upload_url }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
