@@ -26,7 +26,18 @@ jobs:
       run: |
         dotnet build gamevault.sln --configuration Release
         7z a GameVault.zip gamevault/bin
-    
+
+    - name: Get release information
+      id: release
+      run: |
+        $repo = "Phalcode/gamevault-app"
+        $tag = "unstable"
+        $releaseApiUrl = "https://api.github.com/repos/$repo/releases/tags/$tag"
+        $release = Invoke-RestMethod -Uri $releaseApiUrl
+        $uploadUrl = $release.upload_url -replace "{?name,label}", ""
+        Write-Host "Release URL: $uploadUrl"
+        echo "upload_url=$uploadUrl" >> $env:GITHUB_ENV
+
     - name: Upload Release Artifact
       id: upload
       uses: actions/upload-release-asset@v1
@@ -34,6 +45,6 @@ jobs:
         asset_path: GameVault.zip
         asset_name: GameVault.zip
         asset_content_type: application/zip
-        upload_url: "https://api.github.com/repos/Phalcode/gamevault-app/releases/tags/unstable"
+        upload_url: ${{ env.upload_url }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
