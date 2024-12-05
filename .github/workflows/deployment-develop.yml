@@ -19,7 +19,7 @@ jobs:
       id: setup
       uses: actions/setup-dotnet@v3.2.0
       with:
-        dotnet-version: '6.x'
+        dotnet-version: '8.x'
         
     - name: Build .NET solution
       id: build
@@ -33,10 +33,11 @@ jobs:
         $repo = "Phalcode/gamevault-app"
         $tag = "unstable"
         $releaseApiUrl = "https://api.github.com/repos/$repo/releases/tags/$tag"
-        $release = Invoke-RestMethod -Uri $releaseApiUrl
-        $uploadUrl = $release.upload_url -replace "{?name,label}", ""
-        Write-Host "Release URL: $uploadUrl"
-        echo "upload_url=$uploadUrl" >> $env:GITHUB_ENV
+        $release = Invoke-RestMethod -Uri $releaseApiUrl -Headers @{ Authorization = "Bearer $env:GITHUB_TOKEN" }
+        $uploadUrl = $release.upload_url -replace "{\?name,label}", ""
+        Write-Host "upload_url=$uploadUrl" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload Release Artifact
       id: upload
