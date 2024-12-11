@@ -175,7 +175,7 @@
                         TitleVisibility="Collapsed">
             <Grid>
                 <TextBlock VerticalAlignment="Center" Text="{Binding AppBarText}" FontSize="25" Margin="10,0,35,0"/>
-                <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Copy Message" Click="CopyMessage_Click">
+                <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Center" HorizontalAlignment="Right" Focusable="False" Cursor="Hand" Width="25" Height="25" Margin="0,0,5,0" ToolTip="Copy Message" Click="CopyMessage_Click">
                     <Grid Style="{DynamicResource HoverEffect}"  Background="Transparent">
                         <Path Data="{StaticResource IconCopy}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
                             <Path.RenderTransform>

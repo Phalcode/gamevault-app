@@ -10,6 +10,7 @@ Recommended Gamevault Server Version: `v13.1.2`
 - Bug fix: Media slider video was sometimes rendered on top of a popup
 - Bug fix: Crash on Media Slider navigation
 - Bug fix: Crash on create shortcut after installation
+- Bug fix: Prevent the message copy button from taking focus away from the current control
 
 ## 1.13.1
 Recommended Gamevault Server Version: `v13.1.0`
