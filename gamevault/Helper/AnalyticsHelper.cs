@@ -204,7 +204,7 @@ namespace gamevault.Helper
             {
                 try
                 {
-                    var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { ExceptionType = ex.GetType().ToString(), ExceptionMessage = $"Message:{ex.Message} | InnerException:{ex.InnerException?.Message} | StackTrace:{ex.StackTrace?.Substring(0, Math.Min(2000, ex.StackTrace.Length))} | Is Windows Package: {(App.IsWindowsPackage == true ? "True" : "False")}", Timezone = timeZone, Language = language }), Encoding.UTF8, "application/json");
+                    var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { ExceptionType = ex.GetType().ToString(), ExceptionMessage = $"Message:{ex.Message} | InnerException:{ex.InnerException?.Message} | StackTrace:{ex.StackTrace?.Substring(0, Math.Min(2000, ex.StackTrace.Length))} | Is Windows Package: {(App.IsWindowsPackage == true ? "True" : "False")} | Version: {SettingsViewModel.Instance.Version}", Timezone = timeZone, Language = language }), Encoding.UTF8, "application/json");
                     await client.PostAsync(AnalyticsTargets.ER, jsonContent);
                 }
                 catch (Exception ex) { }
@@ -218,9 +218,9 @@ namespace gamevault.Helper
                 try
                 {
                     var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { Event = eventName, Metadata = meta, Timezone = timeZone, Language = language }), Encoding.UTF8, "application/json");
-                    /*HttpResponseMessage res =*/
+                    HttpResponseMessage res =
                     await client.PostAsync(AnalyticsTargets.CU, jsonContent);
-                    //string responseMessage = await res.Content.ReadAsStringAsync();
+                    string responseMessage = await res.Content.ReadAsStringAsync();
                 }
                 catch { }
             });
@@ -287,13 +287,13 @@ namespace gamevault.Helper
         {
             try
             {
-                var propertiesToExclude = new[] { "Instance", "UserName", "RootPath", "ServerUrl", "License", "RegistrationUser", "SendAnonymousAnalytics" };
+                var propertiesToExclude = new[] { "Instance", "UserName", "RootPath", "ServerUrl", "License", "RegistrationUser", "SendAnonymousAnalytics", "IgnoreList", "Themes" };
                 var trimmedObject = SettingsViewModel.Instance.GetType()
             .GetProperties()
             .Where(prop => !propertiesToExclude.Contains(prop.Name))
-            .ToDictionary(prop => prop.Name, prop => prop.GetValue(SettingsViewModel.Instance));
+            .ToDictionary(prop => prop.Name, prop => prop.GetValue(SettingsViewModel.Instance).ToString());
 
-                trimmedObject.Add("HasLicence", SettingsViewModel.Instance.License?.IsActive() == true);
+                trimmedObject.Add("HasLicence", (SettingsViewModel.Instance.License?.IsActive() == true).ToString());
                 return JsonSerializer.Serialize(trimmedObject);
             }
             catch { }

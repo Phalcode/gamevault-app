@@ -317,11 +317,11 @@ namespace gamevault
             {
                 try
                 {
-#if DEBUG
-                    string url = "https://test.phalco.de/products/gamevault-plus/checkout?hit_paywall=true";
-#else
                     string url = "https://phalco.de/products/gamevault-plus/checkout?hit_paywall=true";
-#endif
+                    if (SettingsViewModel.Instance.DevTargetPhalcodeTestBackend)
+                    {
+                        url = "https://test.phalco.de/products/gamevault-plus/checkout?hit_paywall=true";
+                    }
                     Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
                     return null;
                 }
@@ -619,10 +619,10 @@ namespace gamevault
         private async Task ExecuteJumpListCommand(int id)
         {
             // Ensure we're on the UI thread
-            await Dispatch(async() =>
+            await Dispatch(async () =>
             {
                 switch (id)
-                {                   
+                {
                     case 15:
                         {
                             await App.Instance.ExitApp();

@@ -216,12 +216,11 @@ namespace gamevault.UserControls
         }
         private void ManageBilling_Click(object sender, RoutedEventArgs e)
         {
-#if DEBUG
-            string url = "https://test.phalco.de/account";
-#else
             string url = "https://phalco.de/account";
-#endif
-
+            if (SettingsViewModel.Instance.DevTargetPhalcodeTestBackend)
+            {
+                url = "https://test.phalco.de/account";
+            }
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
         }
         private void ManagePhalcodeUser_Click(object sender, RoutedEventArgs e)
@@ -230,12 +229,11 @@ namespace gamevault.UserControls
         }
         private void SubscribeGVPlus_Click(object sender, RoutedEventArgs e)
         {
-#if DEBUG
-            string url = "https://test.phalco.de/products/gamevault-plus/checkout";
-#else
             string url = "https://phalco.de/products/gamevault-plus/checkout";
-#endif
-
+            if (SettingsViewModel.Instance.DevTargetPhalcodeTestBackend)
+            {
+                url = "https://test.phalco.de/products/gamevault-plus/checkout";
+            }
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
         }
         private void Themes_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -390,6 +388,15 @@ namespace gamevault.UserControls
             if (result == MessageDialogResult.Affirmative)
             {
                 SteamHelper.RestoreBackup();
+            }
+        }
+        private int devModeCount = 0;
+        private void DevMode_Click(object sender, MouseButtonEventArgs e)
+        {
+            devModeCount++;
+            if (devModeCount == 5)
+            {
+                ViewModel.DevModeEnabled = true;
             }
         }
     }

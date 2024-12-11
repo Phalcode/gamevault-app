@@ -216,11 +216,11 @@ namespace gamevault.Helper
                 {
                     HttpClient client = new HttpClient();
 
-#if DEBUG
-                    var getRequest = new HttpRequestMessage(HttpMethod.Get, $"https://customer-backend-test.platform.phalco.de/api/v1/customers/me/subscriptions/prod_PuyurQTh7H5uZe");
-#else
                     var getRequest = new HttpRequestMessage(HttpMethod.Get, $"https://customer-backend.platform.phalco.de/api/v1/customers/me/subscriptions/prod_PEZqFd8bFRNg6R");
-#endif
+                    if (SettingsViewModel.Instance.DevTargetPhalcodeTestBackend)
+                    {
+                        getRequest = new HttpRequestMessage(HttpMethod.Get, $"https://customer-backend-test.platform.phalco.de/api/v1/customers/me/subscriptions/prod_PuyurQTh7H5uZe");
+                    }
                     getRequest.Headers.Add("Authorization", $"Bearer {token}");
                     var licenseResponse = await client.SendAsync(getRequest);
                     licenseResponse.EnsureSuccessStatusCode();
@@ -232,7 +232,7 @@ namespace gamevault.Helper
                     }
                     licenseData[0].UserName = username;
                     SettingsViewModel.Instance.License = licenseData[0];
-                    Preferences.Set(AppConfigKey.Phalcode2, JsonSerializer.Serialize(SettingsViewModel.Instance.License), AppFilePath.UserFile, true);               
+                    Preferences.Set(AppConfigKey.Phalcode2, JsonSerializer.Serialize(SettingsViewModel.Instance.License), AppFilePath.UserFile, true);
                 }
             }
             catch (Exception ex)
@@ -266,7 +266,7 @@ namespace gamevault.Helper
             Preferences.DeleteKey(AppConfigKey.Theme, AppFilePath.UserFile);
             try
             {
-                Directory.Delete(AppFilePath.WebConfigDir,true);
+                Directory.Delete(AppFilePath.WebConfigDir, true);
                 //wpfEmbeddedBrowser.ClearAllCookies();
             }
             catch (Exception ex) { }

@@ -43,7 +43,11 @@ namespace gamevault.Models
         LastCommunitySortBy,
         ForcedInstallationType,
         SyncSteamShortcuts,
-        SyncDiscordPresence
+        SyncDiscordPresence,
+        //DevMode
+        DevModeEnabled,
+        DevTargetPhalcodeTestBackend
+        //
     }
     public static class AppFilePath
     {
