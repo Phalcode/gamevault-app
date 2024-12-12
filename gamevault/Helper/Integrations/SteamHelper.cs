@@ -253,7 +253,6 @@ namespace gamevault.Helper
                             shortcutFileMap = VdfUtilities.ReadVdf(File.ReadAllBytes(Path.Combine(shortcutsDirectory, "shortcuts.vdf")));
                             shortcutFileMap = TrimFirstOffsetEntry(shortcutFileMap);//Making sure to have a clean game list
                             shortcutFileMap = RemoveUninstalledGames(shortcutFileMap, games, out steamGridImageIDsToRemove);//Checks for gamevault games and compares them to the current installed game list. Extracts also the steam grid image ids for clean removal later on
-                            shortcutFileMap = EnsureAssemblyPath(shortcutFileMap);//Checks if paths are up to date. Can change because of a manual move or a MC Store update
                             games = TrimExistingGames(games, shortcutFileMap);//No need for double entries. So they will be removed
                         }
                         catch { }
@@ -268,7 +267,7 @@ namespace gamevault.Helper
                     root.Add("shortcuts", shortcutFileMap);//Adds back the first offset entry a vdf file needs to work
 
                     File.WriteAllBytes(shortcutFile, VdfUtilities.WriteVdf(root));
-                    //The steam grid image is only processed after it has been written.Because if it did not work to manipulate the VDF file, there is no point in changing anything in the images
+                    //The steam grid image is only processed after it has been written. Because if it did not work to manipulate the VDF file, there is no point in changing anything in the images
                     string steamGridDirectory = Path.Combine(shortcutsDirectory, "grid");
                     if (!Directory.Exists(steamGridDirectory))
                     {
@@ -306,13 +305,12 @@ namespace gamevault.Helper
                 VdfMap shortcutFileMap = VdfUtilities.ReadVdf(File.ReadAllBytes(shortcutFile));
                 shortcutFileMap = TrimFirstOffsetEntry(shortcutFileMap);//Making sure to have a clean game list
                 List<string> steamGridImageIDsToRemove = new List<string>();
-                //string exeFullPath = Process.GetCurrentProcess().MainModule.FileName;
                 for (int count = 0; count < shortcutFileMap.Count; count++)
                 {
                     string currentGameExe = ((VdfMap)shortcutFileMap.Values.ElementAt(count)).ElementAt(2).Value.ToString();
                     string currentGameTitle = ((VdfMap)shortcutFileMap.Values.ElementAt(count)).ElementAt(1).Value.ToString();
-                    //Check for gamevault exe instead of the path because MC store changes app directory on updates
-                    if (currentGameExe.Contains("gamevault.exe", StringComparison.OrdinalIgnoreCase))
+                    //Check for gamevault protocol
+                    if (currentGameExe.Contains("gamevault://", StringComparison.OrdinalIgnoreCase))
                     {
                         steamGridImageIDsToRemove.Add(((VdfMap)shortcutFileMap.Values.ElementAt(count)).ElementAt(0).Value.ToString());
                         shortcutFileMap.Remove(shortcutFileMap.ElementAt(count).Key);
@@ -358,31 +356,6 @@ namespace gamevault.Helper
                 File.Copy(imageCache["gbg"], Path.Combine(steamGridDirectory, $"{steamGridID}_hero.png"));
             }
         }
-        private static VdfMap EnsureAssemblyPath(VdfMap shortcutFileMap)
-        {
-            string exeFullPath = Process.GetCurrentProcess().MainModule.FileName;
-            for (int count = 0; count < shortcutFileMap.Count; count++)
-            {
-                string currentGameExe = ((VdfMap)shortcutFileMap.Values.ElementAt(count)).ElementAt(2).Value.ToString();
-                //string currentGameStartDir = ((VdfMap)shortcutFileMap.Values.ElementAt(count)).ElementAt(3).Value.ToString();
-                if (currentGameExe.Contains("gamevault.exe", StringComparison.OrdinalIgnoreCase) && currentGameExe != exeFullPath)
-                {
-                    string workingDirectory = AppDomain.CurrentDomain.BaseDirectory;
-
-                    //Set updated exe
-                    var exeOuterKey = shortcutFileMap.Keys.ElementAt(count);
-                    VdfMap exeInnerDictionary = (VdfMap)shortcutFileMap[exeOuterKey];
-                    var exeInnerKey = exeInnerDictionary.Keys.ElementAt(2);
-                    exeInnerDictionary[exeInnerKey] = exeFullPath;
-                    //Set updated working dir
-                    var workDirOuterKey = shortcutFileMap.Keys.ElementAt(count);
-                    VdfMap workDirInnerDictionary = (VdfMap)shortcutFileMap[workDirOuterKey];
-                    var workDirInnerKey = workDirInnerDictionary.Keys.ElementAt(3);
-                    workDirInnerDictionary[workDirInnerKey] = workingDirectory;
-                }
-            }
-            return shortcutFileMap;
-        }
         private static VdfMap RemoveUninstalledGames(VdfMap shortcutFileMap, Dictionary<Game, string> games, out List<string> steamGridImagesToRemove)
         {
             steamGridImagesToRemove = new List<string>();
@@ -390,8 +363,8 @@ namespace gamevault.Helper
             {
                 string currentGameExe = ((VdfMap)shortcutFileMap.Values.ElementAt(count)).ElementAt(2).Value.ToString();
                 string currentGameTitle = ((VdfMap)shortcutFileMap.Values.ElementAt(count)).ElementAt(1).Value.ToString();
-                //Check for gamevault exe instead of the path because MC store changes app directory on updates
-                if (currentGameExe.Contains("gamevault.exe", StringComparison.OrdinalIgnoreCase) && !games.Keys.Any(g => g?.Title == currentGameTitle))
+                //Check for gamevault protocol
+                if (currentGameExe.Contains("gamevault://", StringComparison.OrdinalIgnoreCase) && !games.Keys.Any(g => g?.Title == currentGameTitle))
                 {
                     steamGridImagesToRemove.Add(((VdfMap)shortcutFileMap.Values.ElementAt(count)).ElementAt(0).Value.ToString());
                     shortcutFileMap.Remove(shortcutFileMap.ElementAt(count).Key);
@@ -420,18 +393,16 @@ namespace gamevault.Helper
             string idInput = game.Title + game.ID;
             uint steamGridId = VdfUtilities.GenerateSteamGridID(idInput);
             string steamGridIconPath = Path.Combine(shortcutDir, "grid", $"{steamGridId}p.png");
-            string exeFullPath = Process.GetCurrentProcess().MainModule.FileName;//Let GameVault handle the game startup
-            string workingDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string launchOptions = $"start --gameid={game.ID}";
+            string launchUrl = $"gamevault://start?gameid={game.ID}";
             var newGame = new VdfMap
 {
     { "appid", steamGridId },
     { "AppName", game.Title },
-    { "Exe", exeFullPath },
-    { "StartDir", workingDirectory },
+    { "Exe", launchUrl },
+    { "StartDir","" },
     { "icon", steamGridIconPath },
     { "ShortcutPath", "" },
-    { "LaunchOptions", launchOptions },
+    { "LaunchOptions", "" },
     { "IsHidden", 0 },
     { "AllowDesktopConfig", 1 },
     { "AllowOverlay", 1 },
