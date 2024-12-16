@@ -11,6 +11,7 @@ Recommended Gamevault Server Version: `v13.1.2`
 - Bug fix: Crash on Media Slider navigation
 - Bug fix: Crash on create shortcut after installation
 - Bug fix: Prevent the message copy button from taking focus away from the current control
+- Bug fix: Animated profile pictures were still displayed when switching to a profile without a set profile picture
 
 ## 1.13.1
 Recommended Gamevault Server Version: `v13.1.0`

@@ -245,6 +245,7 @@ namespace gamevault.Helper
                     VdfMap shortcutFileMap = null;
                     string shortcutFile = Path.Combine(shortcutsDirectory, "shortcuts.vdf");
                     List<string> steamGridImageIDsToRemove = null;
+                    Dictionary<Game, uint> steamGridGamesToAdd = new Dictionary<Game, uint>();
                     if (File.Exists(shortcutFile))
                     {
                         try
@@ -261,7 +262,7 @@ namespace gamevault.Helper
                     {
                         File.Create(shortcutFile).Close();
                     }
-                    shortcutFileMap = AddGamesToShortcuts(shortcutFileMap, games, shortcutsDirectory);
+                    shortcutFileMap = AddGamesToShortcuts(shortcutFileMap, games, shortcutsDirectory, steamGridGamesToAdd);
 
                     VdfMap root = new VdfMap();
                     root.Add("shortcuts", shortcutFileMap);//Adds back the first offset entry a vdf file needs to work
@@ -280,9 +281,9 @@ namespace gamevault.Helper
                             RemoveSteamGridImages(steamGridDirectory, steamGridImageToRemove);
                         }
                     }
-                    foreach (KeyValuePair<Game, string> steamGridGame in games)
+                    foreach (KeyValuePair<Game, uint> steamGridGame in steamGridGamesToAdd)
                     {
-                        uint steamGridID = (uint)((VdfMap)shortcutFileMap.First(x => ((VdfMap)x.Value).ElementAt(1).Value.ToString() == steamGridGame.Key.Title).Value).ElementAt(0).Value;
+                        uint steamGridID = steamGridGame.Value;
                         await CacheHelper.EnsureImageCacheForGame(steamGridGame.Key);
                         SetSteamGridImages(steamGridDirectory, steamGridGame.Key, steamGridID);
                     }
@@ -364,7 +365,7 @@ namespace gamevault.Helper
                 string currentGameExe = ((VdfMap)shortcutFileMap.Values.ElementAt(count)).ElementAt(2).Value.ToString();
                 string currentGameTitle = ((VdfMap)shortcutFileMap.Values.ElementAt(count)).ElementAt(1).Value.ToString();
                 //Check for gamevault protocol
-                if (currentGameExe.Contains("gamevault://", StringComparison.OrdinalIgnoreCase) && !games.Keys.Any(g => g?.Title == currentGameTitle))
+                if (currentGameExe!.Contains("gamevault://", StringComparison.OrdinalIgnoreCase) && !games.Keys.Any(g => g?.Title == currentGameTitle))
                 {
                     steamGridImagesToRemove.Add(((VdfMap)shortcutFileMap.Values.ElementAt(count)).ElementAt(0).Value.ToString());
                     shortcutFileMap.Remove(shortcutFileMap.ElementAt(count).Key);
@@ -373,7 +374,7 @@ namespace gamevault.Helper
             }
             return shortcutFileMap;
         }
-        private static VdfMap AddGamesToShortcuts(VdfMap shortcutFileMap, Dictionary<Game, string> games, string shortcutDir)
+        private static VdfMap AddGamesToShortcuts(VdfMap shortcutFileMap, Dictionary<Game, string> games, string shortcutDir, Dictionary<Game, uint> steamGridGamesToAdd)
         {
             if (shortcutFileMap == null)
             {
@@ -382,16 +383,17 @@ namespace gamevault.Helper
             int indexCount = shortcutFileMap.Count;
             foreach (KeyValuePair<Game, string> game in games)
             {
-                VdfMap newGameMap = GenerateVdfShortcutEntryFromGame(game.Key, shortcutDir);
+                VdfMap newGameMap = GenerateVdfShortcutEntryFromGame(game.Key, shortcutDir, steamGridGamesToAdd);
                 shortcutFileMap.Add(indexCount.ToString(), newGameMap);
                 indexCount++;
             }
             return shortcutFileMap;
         }
-        private static VdfMap GenerateVdfShortcutEntryFromGame(Game game, string shortcutDir)
+        private static VdfMap GenerateVdfShortcutEntryFromGame(Game game, string shortcutDir, Dictionary<Game, uint> steamGridGamesToAdd)
         {
             string idInput = game.Title + game.ID;
             uint steamGridId = VdfUtilities.GenerateSteamGridID(idInput);
+            steamGridGamesToAdd.Add(game, steamGridId);
             string steamGridIconPath = Path.Combine(shortcutDir, "grid", $"{steamGridId}p.png");
             string launchUrl = $"gamevault://start?gameid={game.ID}";
             var newGame = new VdfMap
@@ -428,11 +430,15 @@ namespace gamevault.Helper
         {
             for (int count = 0; count < shortcutFileMap.Values.Count; count++)
             {
-                string shortcutAppName = ((VdfMap)shortcutFileMap.Values.ElementAt(count)).ElementAt(1).Value as string;
-                KeyValuePair<Game, string> foundGame = games.Where(g => g.Key.Title == shortcutAppName).FirstOrDefault();
-                if (foundGame.Key != null)
+                string currentGameExe = ((VdfMap)shortcutFileMap.Values.ElementAt(count)).ElementAt(2).Value.ToString();
+                if (currentGameExe!.Contains("gamevault://", StringComparison.OrdinalIgnoreCase))
                 {
-                    games.Remove(foundGame.Key);
+                    string shortcutAppName = ((VdfMap)shortcutFileMap.Values.ElementAt(count)).ElementAt(1).Value as string;
+                    KeyValuePair<Game, string> foundGame = games.Where(g => g.Key.Title == shortcutAppName).FirstOrDefault();
+                    if (foundGame.Key != null)
+                    {
+                        games.Remove(foundGame.Key);
+                    }
                 }
             }
             return games;

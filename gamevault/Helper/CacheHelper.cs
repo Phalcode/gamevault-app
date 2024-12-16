@@ -108,6 +108,7 @@ namespace gamevault.Helper
                     }
                 }
                 catch { }
+                img.BeginAnimation(System.Windows.Controls.Image.SourceProperty, null);//Make sure all animations are removed, so a non animated image can be set to the source
                 img.Source = GetReplacementImage(cacheType);
             }
         }
