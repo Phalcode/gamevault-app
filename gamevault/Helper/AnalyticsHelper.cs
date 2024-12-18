@@ -175,8 +175,7 @@ namespace gamevault.Helper
             try
             {
                 var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData()), Encoding.UTF8, "application/json");
-                await client.PostAsync(url, jsonContent);
-                //string responseBody = await response.Content.ReadAsStringAsync();
+                await client.PostAsync(url, jsonContent);              
             }
             catch (Exception e) { }
 
@@ -219,8 +218,7 @@ namespace gamevault.Helper
                 {
                     var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { Event = eventName, Metadata = meta, Timezone = timeZone, Language = language }), Encoding.UTF8, "application/json");
                     HttpResponseMessage res =
-                    await client.PostAsync(AnalyticsTargets.CU, jsonContent);
-                    string responseMessage = await res.Content.ReadAsStringAsync();
+                    await client.PostAsync(AnalyticsTargets.CU, jsonContent);                   
                 }
                 catch { }
             });
@@ -283,7 +281,7 @@ namespace gamevault.Helper
                 return new { app_version = SettingsViewModel.Instance.Version, hardware_os = $"The system information could not be loaded due to an {ex.GetType().Name}" };
             }
         }
-        public string PrepareSettingsForAnalytics()
+        public Dictionary<string, string> PrepareSettingsForAnalytics()
         {
             try
             {
@@ -294,10 +292,10 @@ namespace gamevault.Helper
             .ToDictionary(prop => prop.Name, prop => prop.GetValue(SettingsViewModel.Instance).ToString());
 
                 trimmedObject.Add("HasLicence", (SettingsViewModel.Instance.License?.IsActive() == true).ToString());
-                return JsonSerializer.Serialize(trimmedObject);
+                return trimmedObject;
             }
             catch { }
-            return "Something went wrong";
+            return null;
         }
         private bool IsWineRunning()
         {
