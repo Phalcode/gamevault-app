@@ -188,13 +188,13 @@ namespace gamevault.Helper
                             {
                                 if (GifHelper.IsGif(file))
                                 {
-                                    int maxGifHeightWidth = 400;
+                                    uint maxGifHeightWidth = 400;
                                     GifHelper.OptimizeGIF(file, maxGifHeightWidth);
                                     image.Refresh();
                                     continue;
                                 }
                             }
-                            ResizeImage(file, Convert.ToInt32(maxHeight));
+                            ResizeImage(file, Convert.ToUInt32(maxHeight));
                             image.Refresh();
                         }
                         else
@@ -231,7 +231,7 @@ namespace gamevault.Helper
             imageCache.Add("gbg", background);
             return imageCache;
         }
-        private static void ResizeImage(string path, int maxHeight)
+        private static void ResizeImage(string path, uint maxHeight)
         {
             using (var imageMagick = new MagickImage(path))
             {
@@ -245,7 +245,7 @@ namespace gamevault.Helper
                 }
                 else if (imageMagick.Height > SystemParameters.FullPrimaryScreenHeight)
                 {
-                    var size = new MagickGeometry((int)SystemParameters.FullPrimaryScreenWidth, (int)SystemParameters.FullPrimaryScreenHeight);
+                    var size = new MagickGeometry((uint)SystemParameters.FullPrimaryScreenWidth, (uint)SystemParameters.FullPrimaryScreenHeight);
                     size.IgnoreAspectRatio = false;
                     imageMagick.Resize(size);
                     imageMagick.Write(path);

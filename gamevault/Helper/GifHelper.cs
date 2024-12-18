@@ -158,7 +158,7 @@ namespace gamevault.Helper
                 }
             });
         }
-        internal static void OptimizeGIF(string path, int maxHeightWidth)
+        internal static void OptimizeGIF(string path, uint maxHeightWidth)
         {
             Tuple<int, int>? dimensions = GetGifDimensions(path);
             if (dimensions != null && (dimensions.Item1 > maxHeightWidth || dimensions.Item2 > maxHeightWidth))
