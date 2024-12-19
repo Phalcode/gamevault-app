@@ -15,11 +15,9 @@ namespace gamevault.Helper
     {
         private static void LoadNormalGIF(MagickImageCollection collection, System.Windows.Controls.Image img)
         {
-            var animation = new ObjectAnimationUsingKeyFrames();
-            var frameDelay = collection[0].AnimationDelay * 0.01;
-            if (frameDelay == 0)
-                frameDelay = 0.1;
-            animation.Duration = TimeSpan.FromSeconds(collection.Count * frameDelay);
+            List<double> animationDelays = GetAnimationDelays(collection);
+            var animation = new ObjectAnimationUsingKeyFrames();          
+            animation.Duration = TimeSpan.FromSeconds(animationDelays.Sum());
             animation.RepeatBehavior = RepeatBehavior.Forever;
             int frameCount = 0;
             foreach (MagickImage image in collection)
@@ -28,7 +26,8 @@ namespace gamevault.Helper
                 bitmapImage.BeginInit();
                 bitmapImage.StreamSource = new MemoryStream(image.ToByteArray());//MagickFormat.Png
                 bitmapImage.EndInit();
-                var keyFrame = new DiscreteObjectKeyFrame(bitmapImage, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(frameCount * frameDelay)));
+                double currentKeyTime = animationDelays.Take(frameCount).Sum();
+                var keyFrame = new DiscreteObjectKeyFrame(bitmapImage, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(currentKeyTime)));
                 frameCount++;
                 animation.KeyFrames.Add(keyFrame);
             }
@@ -41,10 +40,9 @@ namespace gamevault.Helper
         private static void LoadDisposalGIF(MagickImageCollection images, System.Windows.Controls.Image img)
         {
             var animation = new ObjectAnimationUsingKeyFrames();
-            var frameDelay = images[0].AnimationDelay * 0.01;
-            if (frameDelay == 0)
-                frameDelay = 0.1;
-            animation.Duration = TimeSpan.FromSeconds(images.Count * frameDelay);
+
+            List<double> animationDelays = GetAnimationDelays(images);
+            animation.Duration = TimeSpan.FromSeconds(animationDelays.Sum());
             animation.RepeatBehavior = RepeatBehavior.Forever;
             int frameCount = 0;
             MagickImage frameImage = null;
@@ -64,8 +62,9 @@ namespace gamevault.Helper
                 bitmapImage.BeginInit();
                 bitmapImage.StreamSource = new MemoryStream(frameImage.ToByteArray(MagickFormat.Png));//MagickFormat.Png
                 bitmapImage.EndInit();
-                //bitmapImage.Freeze();
-                var keyFrame = new DiscreteObjectKeyFrame(bitmapImage, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(frameCount * frameDelay)));
+
+                double currentKeyTime = animationDelays.Take(frameCount).Sum();
+                var keyFrame = new DiscreteObjectKeyFrame(bitmapImage, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(currentKeyTime)));
                 frameCount++;
                 animation.KeyFrames.Add(keyFrame);
             }
@@ -74,6 +73,19 @@ namespace gamevault.Helper
             {
                 img.BeginAnimation(System.Windows.Controls.Image.SourceProperty, animation);
             });
+        }
+        private static List<double> GetAnimationDelays(MagickImageCollection frames)
+        {
+            List<double> animationDelays = new List<double>();
+            foreach (var frame in frames)
+            {
+                var frameDelay = frame.AnimationDelay * 0.01;
+                if (frameDelay == 0)
+                    frameDelay = 0.1;
+
+                animationDelays.Add(frameDelay);
+            }
+            return animationDelays;
         }
         private static bool IsDisposableGif(MagickImageCollection frames)
         {

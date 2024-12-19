@@ -6,12 +6,14 @@ Recommended Gamevault Server Version: `v13.1.2`
 
 - Sync the currently played game with the discord Presence API (+)
 - Sync installed Gamevault games with Steam shortcuts (+)
+- The popup window now also closes when you have uninstalled a setup game
 - Bug fix: Added increasing tick rate to download retry timer to avoid continuous spam
 - Bug fix: Media slider video was sometimes rendered on top of a popup
 - Bug fix: Crash on Media Slider navigation
 - Bug fix: Crash on create shortcut after installation
 - Bug fix: Prevent the message copy button from taking focus away from the current control
 - Bug fix: Animated profile pictures were still displayed when switching to a profile without a set profile picture
+- Bug fix: Improved Gif decoder
 
 ## 1.13.1
 Recommended Gamevault Server Version: `v13.1.0`

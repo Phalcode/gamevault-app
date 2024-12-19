@@ -251,6 +251,7 @@ namespace gamevault.UserControls
 
                                     InstallViewModel.Instance.InstalledGames.Remove(InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).First());
                                     DesktopHelper.RemoveShotcut(ViewModel.Game);
+                                    MainWindowViewModel.Instance.ClosePopup();
                                 }
                                 catch { }
                             }
