@@ -189,7 +189,7 @@ namespace gamevault.UserControls
             {
                 MainWindowViewModel.Instance.OpenPopup(new UserSettingsUserControl(LoginManager.Instance.GetCurrentUser()) { Width = 1200, Height = 800, Margin = new Thickness(50) });
             }
-            else { MainWindowViewModel.Instance.AppBarText = "You are not logged in"; }
+            else { MainWindowViewModel.Instance.AppBarText = "You are not logged in or offline"; }
         }
         private async void PhalcodeLoginLogout_Click(object sender, RoutedEventArgs e)
         {

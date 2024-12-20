@@ -98,7 +98,7 @@ namespace gamevault.UserControls
         {
             if (!LoginManager.Instance.IsLoggedIn())
             {
-                MainWindowViewModel.Instance.AppBarText = "You are not logged in";
+                MainWindowViewModel.Instance.AppBarText = "You are not logged in or offline";
                 return;
             }
             if (!uiExpanderGameCards.IsExpanded)

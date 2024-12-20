@@ -14,6 +14,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows.Documents;
 using System.Windows.Threading;
 using Windows.Media.Protection.PlayReady;
@@ -52,6 +53,7 @@ namespace gamevault.Helper
         private User? m_User { get; set; }
         private LoginState m_LoginState { get; set; }
         private string m_LoginMessage { get; set; }
+        private Timer onlineTimer { get; set; }
         public User? GetCurrentUser()
         {
             return m_User;
@@ -97,6 +99,7 @@ namespace gamevault.Helper
             });
             m_User = user;
             m_LoginState = state;
+            InitOnlineTimer();
         }
         public async Task<LoginState> ManualLogin(string username, string password)
         {
@@ -285,6 +288,35 @@ namespace gamevault.Helper
                     }
             }
             return LoginState.Error;
+        }
+        private void InitOnlineTimer()
+        {
+            if (onlineTimer == null)
+            {
+                onlineTimer = new Timer(30000);//30 Seconds
+                onlineTimer.AutoReset = true;
+                onlineTimer.Elapsed += CheckOnlineStatus;
+                onlineTimer.Start();
+            }
+        }
+        private async void CheckOnlineStatus(object sender, EventArgs e)
+        {
+            try
+            {
+                string serverResonse = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/health");
+                if (!IsLoggedIn())
+                {
+                    await StartupLogin();
+                    if (IsLoggedIn())
+                    {
+                        MainWindowViewModel.Instance.OnlineState = System.Windows.Visibility.Collapsed;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                SwitchToOfflineMode();
+            }
         }
     }
 }

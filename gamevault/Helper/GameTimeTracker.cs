@@ -17,7 +17,7 @@ namespace gamevault.Helper
         private Timer? m_Timer { get; set; }
         public async Task Start()
         {
-            await SendOfflineProcess();
+            await SendOfflineProgess();
             await SettingsViewModel.Instance.InitIgnoreList();
 
             m_Timer = new Timer();
@@ -28,7 +28,7 @@ namespace gamevault.Helper
         }
         private void TimerCallback(object sender, ElapsedEventArgs e)
         {
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 string installationPath = Path.Combine(SettingsViewModel.Instance.RootPath, "GameVault\\Installations");
 
@@ -85,10 +85,14 @@ namespace gamevault.Helper
                         }
                     }
                 }
-                if (true == LoginManager.Instance.IsLoggedIn())
+                if (LoginManager.Instance.IsLoggedIn())
                 {
                     try
                     {
+                        if(AnyOfflineProgressToSend())
+                        {
+                            await SendOfflineProgess();
+                        }
                         foreach (int gameid in gamesToCountUp)
                         {
                             WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{gameid}/increment", string.Empty);
@@ -97,30 +101,45 @@ namespace gamevault.Helper
                     }
                     catch (Exception ex)
                     {
-                        LoginManager.Instance.SwitchToOfflineMode();
+                        SaveToOfflineProgress(gamesToCountUp);
                     }
                 }
                 else
                 {
-                    foreach (int gameid in gamesToCountUp)
-                    {
-                        try
-                        {
-                            string timeString = Preferences.Get(gameid.ToString(), AppFilePath.OfflineProgress, true);
-                            int result = int.TryParse(timeString, out result) ? result : 0;
-                            result++;
-                            Preferences.Set(gameid.ToString(), result, AppFilePath.OfflineProgress, true);
-                        }
-                        catch { }
-                    }
+                    SaveToOfflineProgress(gamesToCountUp);
                 }
             });
         }
-        private async Task SendOfflineProcess()
+        private bool AnyOfflineProgressToSend()
+        {
+            try
+            {
+                return new FileInfo(AppFilePath.OfflineProgress).Length > 0;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        private void SaveToOfflineProgress(List<int> progress)
+        {
+            foreach (int gameid in progress)
+            {
+                try
+                {
+                    string timeString = Preferences.Get(gameid.ToString(), AppFilePath.OfflineProgress, true);
+                    int result = int.TryParse(timeString, out result) ? result : 0;
+                    result++;
+                    Preferences.Set(gameid.ToString(), result, AppFilePath.OfflineProgress, true);
+                }
+                catch { }
+            }
+        }
+        private async Task SendOfflineProgess()
         {
             await Task.Run(() =>
              {
-                 if (true == LoginManager.Instance.IsLoggedIn())
+                 if (LoginManager.Instance.IsLoggedIn())
                  {
                      foreach (string key in GetAllOfflineCacheKeys())
                      {
