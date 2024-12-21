@@ -8,6 +8,7 @@ Recommended Gamevault Server Version: `v13.1.2`
 - Sync installed Gamevault games with Steam shortcuts (+)
 - The popup window now also closes when you have uninstalled a setup game
 - Enhanced offline handling
+- Added a new Christmas theme (+).
 - Bug fix: Added increasing tick rate to download retry timer to avoid continuous spam
 - Bug fix: Media slider video was sometimes rendered on top of a popup
 - Bug fix: Crash on Media Slider navigation
