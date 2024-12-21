@@ -289,7 +289,8 @@ namespace gamevault.UserControls
                 res.Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeHalloweenDark.xaml");
                 ViewModel.Themes.Add(new ThemeItem() { DisplayName = (string)res["Theme.DisplayName"], Description = (string)res["Theme.Description"], Author = (string)res["Theme.Author"], IsPlus = true, Path = res.Source.OriginalString });
 
-
+                res.Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeChristmasDark.xaml");
+                ViewModel.Themes.Add(new ThemeItem() { DisplayName = (string)res["Theme.DisplayName"], Description = (string)res["Theme.Description"], Author = (string)res["Theme.Author"], IsPlus = true, Path = res.Source.OriginalString });
 
                 if (Directory.Exists(AppFilePath.ThemesLoadDir))
                 {
