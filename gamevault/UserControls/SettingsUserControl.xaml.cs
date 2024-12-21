@@ -14,6 +14,9 @@ using MahApps.Metro.Controls;
 using System.Text.Json;
 using System.Security.Policy;
 using AngleSharp.Io;
+using AngleSharp.Common;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace gamevault.UserControls
 {
@@ -186,7 +189,7 @@ namespace gamevault.UserControls
             {
                 MainWindowViewModel.Instance.OpenPopup(new UserSettingsUserControl(LoginManager.Instance.GetCurrentUser()) { Width = 1200, Height = 800, Margin = new Thickness(50) });
             }
-            else { MainWindowViewModel.Instance.AppBarText = "You are not logged in"; }
+            else { MainWindowViewModel.Instance.AppBarText = "You are not logged in or offline"; }
         }
         private async void PhalcodeLoginLogout_Click(object sender, RoutedEventArgs e)
         {
@@ -213,12 +216,11 @@ namespace gamevault.UserControls
         }
         private void ManageBilling_Click(object sender, RoutedEventArgs e)
         {
-#if DEBUG
-            string url = "https://test.phalco.de/account";
-#else
             string url = "https://phalco.de/account";
-#endif
-
+            if (SettingsViewModel.Instance.DevTargetPhalcodeTestBackend)
+            {
+                url = "https://test.phalco.de/account";
+            }
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
         }
         private void ManagePhalcodeUser_Click(object sender, RoutedEventArgs e)
@@ -227,12 +229,11 @@ namespace gamevault.UserControls
         }
         private void SubscribeGVPlus_Click(object sender, RoutedEventArgs e)
         {
-#if DEBUG
-            string url = "https://test.phalco.de/products/gamevault-plus/checkout";
-#else
             string url = "https://phalco.de/products/gamevault-plus/checkout";
-#endif
-
+            if (SettingsViewModel.Instance.DevTargetPhalcodeTestBackend)
+            {
+                url = "https://test.phalco.de/products/gamevault-plus/checkout";
+            }
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
         }
         private void Themes_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -288,7 +289,8 @@ namespace gamevault.UserControls
                 res.Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeHalloweenDark.xaml");
                 ViewModel.Themes.Add(new ThemeItem() { DisplayName = (string)res["Theme.DisplayName"], Description = (string)res["Theme.Description"], Author = (string)res["Theme.Author"], IsPlus = true, Path = res.Source.OriginalString });
 
-
+                res.Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeChristmasDark.xaml");
+                ViewModel.Themes.Add(new ThemeItem() { DisplayName = (string)res["Theme.DisplayName"], Description = (string)res["Theme.Description"], Author = (string)res["Theme.Author"], IsPlus = true, Path = res.Source.OriginalString });
 
                 if (Directory.Exists(AppFilePath.ThemesLoadDir))
                 {
@@ -338,7 +340,7 @@ namespace gamevault.UserControls
         {
             ((FrameworkElement)sender).IsEnabled = false;
             imgAwesome.Data = "https://phalco.de/images/gamevault/eastereggs/awesome.gif";
-            AnalyticsHelper.Instance.SendCustomEvent("EASTER_EGG", new { name = "awesome" });
+            AnalyticsHelper.Instance.SendCustomEvent(CustomAnalyticsEventKeys.EASTER_EGG, new { name = "awesome" });
         }
 
         private void ExtractionPasswordSave_Click(object sender, RoutedEventArgs e)
@@ -364,6 +366,39 @@ namespace gamevault.UserControls
                 Preferences.Set("IL", SettingsViewModel.Instance.IgnoreList, AppFilePath.IgnoreList);
             }
             catch { }
+        }
+
+        private async void SyncSteamShortcuts_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!this.loaded)//Make sure the toggle came from the ui
+                return;
+
+            if (((ToggleSwitch)sender).IsOn)
+            {
+                await SteamHelper.SyncGamesWithSteamShortcuts(InstallViewModel.Instance.InstalledGames.ToDictionary(pair => pair.Key, pair => pair.Value));
+            }
+            else
+            {
+                SteamHelper.RemoveGameVaultGamesFromSteamShortcuts();
+            }
+        }
+
+        private async void RestoreSteamShortcutBackup_Click(object sender, RoutedEventArgs e)
+        {
+            MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to restore the backup? Your current shortcuts will be reset to the state when the backup was created. This can lead to some shortcuts being lost.", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+            if (result == MessageDialogResult.Affirmative)
+            {
+                SteamHelper.RestoreBackup();
+            }
+        }
+        private int devModeCount = 0;
+        private void DevMode_Click(object sender, MouseButtonEventArgs e)
+        {
+            devModeCount++;
+            if (devModeCount == 5)
+            {
+                ViewModel.DevModeEnabled = true;
+            }
         }
     }
 }

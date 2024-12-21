@@ -219,8 +219,11 @@ namespace gamevault.UserControls
             {
                 uiWebView.Visibility = Visibility.Visible;
             }
-            uiWebView.CoreWebView2.Navigate(url);
-
+            try
+            {
+                uiWebView.CoreWebView2.Navigate(url);
+            }
+            catch { }
         }
         private void ToggleFullscreen()
         {

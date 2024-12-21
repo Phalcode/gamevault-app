@@ -7,6 +7,9 @@ jobs:
   deploy:
     permissions: write-all
     runs-on: windows-latest
+    outputs:
+      version: ${{ steps.release.outputs.version }}
+    
     steps:
     - name: Checkout repository
       id: checkout
@@ -16,8 +19,20 @@ jobs:
       id: setup
       uses: actions/setup-dotnet@v3.2.0
       with:
-        dotnet-version: '6.x'
+        dotnet-version: '8.x'
         
-    - name: Build .NET Solution
+    - name: Build .NET solution
       id: build
-      run: dotnet build gamevault.sln --configuration Release
+      run: |
+        dotnet build gamevault.sln --configuration Release
+        7z a GameVault.zip gamevault/bin
+
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: GameVault.zip
+        asset_name: GameVault.zip
+        tag: unstable
+        overwrite: true
+        prerelease: true

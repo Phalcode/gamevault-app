@@ -11,6 +11,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Management;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
@@ -30,6 +31,13 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace gamevault.Helper
 {
+    internal static class CustomAnalyticsEventKeys
+    {
+        internal static string APP_INITIALIZED => "APP_INITIALIZED";
+        internal static string EASTER_EGG => "EASTER_EGG";
+        internal static string SERVER_USER_COUNT => "SERVER_USER_COUNT";
+        internal static string USER_SETTINGS => "USER_SETTINGS";
+    }
     internal class AnalyticsHelper
     {
         #region Singleton
@@ -167,8 +175,7 @@ namespace gamevault.Helper
             try
             {
                 var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData()), Encoding.UTF8, "application/json");
-                await client.PostAsync(url, jsonContent);
-                //string responseBody = await response.Content.ReadAsStringAsync();
+                await client.PostAsync(url, jsonContent);              
             }
             catch (Exception e) { }
 
@@ -196,7 +203,7 @@ namespace gamevault.Helper
             {
                 try
                 {
-                    var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { ExceptionType = ex.GetType().ToString(), ExceptionMessage = $"Message:{ex.Message} | InnerException:{ex.InnerException?.Message} | StackTrace:{ex.StackTrace?.Substring(0, Math.Min(2000, ex.StackTrace.Length))} | Is Windows Package: {(App.IsWindowsPackage == true ? "True" : "False")}", Timezone = timeZone, Language = language }), Encoding.UTF8, "application/json");
+                    var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { ExceptionType = ex.GetType().ToString(), ExceptionMessage = $"Message:{ex.Message} | InnerException:{ex.InnerException?.Message} | StackTrace:{ex.StackTrace?.Substring(0, Math.Min(2000, ex.StackTrace.Length))} | Is Windows Package: {(App.IsWindowsPackage == true ? "True" : "False")} | Version: {SettingsViewModel.Instance.Version}", Timezone = timeZone, Language = language }), Encoding.UTF8, "application/json");
                     await client.PostAsync(AnalyticsTargets.ER, jsonContent);
                 }
                 catch (Exception ex) { }
@@ -210,7 +217,8 @@ namespace gamevault.Helper
                 try
                 {
                     var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { Event = eventName, Metadata = meta, Timezone = timeZone, Language = language }), Encoding.UTF8, "application/json");
-                    await client.PostAsync(AnalyticsTargets.CU, jsonContent);
+                    HttpResponseMessage res =
+                    await client.PostAsync(AnalyticsTargets.CU, jsonContent);                   
                 }
                 catch { }
             });
@@ -272,6 +280,22 @@ namespace gamevault.Helper
             {
                 return new { app_version = SettingsViewModel.Instance.Version, hardware_os = $"The system information could not be loaded due to an {ex.GetType().Name}" };
             }
+        }
+        public Dictionary<string, string> PrepareSettingsForAnalytics()
+        {
+            try
+            {
+                var propertiesToExclude = new[] { "Instance", "UserName", "RootPath", "ServerUrl", "License", "RegistrationUser", "SendAnonymousAnalytics", "IgnoreList", "Themes" };
+                var trimmedObject = SettingsViewModel.Instance.GetType()
+            .GetProperties()
+            .Where(prop => !propertiesToExclude.Contains(prop.Name))
+            .ToDictionary(prop => prop.Name, prop => prop.GetValue(SettingsViewModel.Instance).ToString());
+
+                trimmedObject.Add("HasLicence", (SettingsViewModel.Instance.License?.IsActive() == true).ToString());
+                return trimmedObject;
+            }
+            catch { }
+            return null;
         }
         private bool IsWineRunning()
         {

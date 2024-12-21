@@ -41,7 +41,13 @@ namespace gamevault.Models
         LastLibraryOrderBy,
         SendAnonymousAnalytics,
         LastCommunitySortBy,
-        ForcedInstallationType
+        ForcedInstallationType,
+        SyncSteamShortcuts,
+        SyncDiscordPresence,
+        //DevMode
+        DevModeEnabled,
+        DevTargetPhalcodeTestBackend
+        //
     }
     public static class AppFilePath
     {

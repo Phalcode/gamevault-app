@@ -212,11 +212,7 @@ namespace gamevault.Windows
         }
 
         private void News_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            if (MainWindowViewModel.Instance.ActiveControl.GetType() == typeof(GameViewUserControl))//Else the news popup would be rendered below the media slider because of the airspace problem
-            {
-                ((GameViewUserControl)MainWindowViewModel.Instance.ActiveControl).uiMediaSlider.UnloadMediaSlider();
-            }
+        {          
             MainWindowViewModel.Instance.OpenPopup(new NewsPopup());
             try
             {

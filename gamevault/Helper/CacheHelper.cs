@@ -29,7 +29,7 @@ namespace gamevault.Helper
             catch { }
         }
 
-        internal static async Task HandleImageCacheAsync(int identifier, int imageId, string cachePath, ImageCache cacheType, System.Windows.Controls.Image img)
+        internal static async Task LoadImageCacheToUIAsync(int identifier, int imageId, string cachePath, ImageCache cacheType, System.Windows.Controls.Image img)
         {
             string cacheFile = $"{cachePath}/{identifier}.{imageId}";
             try
@@ -108,8 +108,48 @@ namespace gamevault.Helper
                     }
                 }
                 catch { }
+                img.BeginAnimation(System.Windows.Controls.Image.SourceProperty, null);//Make sure all animations are removed, so a non animated image can be set to the source
                 img.Source = GetReplacementImage(cacheType);
             }
+        }
+        internal static async Task EnsureImageCacheForGame(Game game)
+        {
+            try
+            {
+                if (LoginManager.Instance.IsLoggedIn())
+                {
+                    if (TaskQueue.Instance.IsAlreadyInProcess(game.Metadata.Background.ID))
+                    {
+                        await TaskQueue.Instance.WaitForProcessToFinish(game.Metadata.Background.ID);
+                    }
+                    if (TaskQueue.Instance.IsAlreadyInProcess(game.Metadata.Cover.ID))
+                    {
+                        await TaskQueue.Instance.WaitForProcessToFinish(game.Metadata.Cover.ID);
+                    }
+
+                    string backGroundCacheFile = $"{AppFilePath.ImageCache}/gbg/{game.ID}.{game.Metadata.Background.ID}";
+                    string boxArtCacheFile = $"{AppFilePath.ImageCache}/gbox/{game.ID}.{game.Metadata.Cover.ID}";
+                    if (!Directory.Exists($"{AppFilePath.ImageCache}/gbg"))
+                    {
+                        Directory.CreateDirectory($"{AppFilePath.ImageCache}/gbg");
+                    }
+                    if (!Directory.Exists($"{AppFilePath.ImageCache}/gbox"))
+                    {
+                        Directory.CreateDirectory($"{AppFilePath.ImageCache}/gbox");
+                    }
+
+                    if (!File.Exists(backGroundCacheFile))
+                    {
+                        //Not in que because its not loading images for the UI
+                        await WebHelper.DownloadImageFromUrlAsync($"{SettingsViewModel.Instance.ServerUrl}/api/media/{game.Metadata.Background.ID}", backGroundCacheFile);
+                    }
+                    if (!File.Exists(boxArtCacheFile))
+                    {
+                        await WebHelper.DownloadImageFromUrlAsync($"{SettingsViewModel.Instance.ServerUrl}/api/media/{game.Metadata.Cover.ID}", boxArtCacheFile);
+                    }
+                }
+            }
+            catch { }
         }
         internal static BitmapImage GetReplacementImage(ImageCache cacheType)
         {
@@ -148,13 +188,13 @@ namespace gamevault.Helper
                             {
                                 if (GifHelper.IsGif(file))
                                 {
-                                    int maxGifHeightWidth = 400;
+                                    uint maxGifHeightWidth = 400;
                                     GifHelper.OptimizeGIF(file, maxGifHeightWidth);
                                     image.Refresh();
                                     continue;
                                 }
                             }
-                            ResizeImage(file, Convert.ToInt32(maxHeight));
+                            ResizeImage(file, Convert.ToUInt32(maxHeight));
                             image.Refresh();
                         }
                         else
@@ -181,7 +221,17 @@ namespace gamevault.Helper
                 return hash;
             }
         }
-        private static void ResizeImage(string path, int maxHeight)
+        internal static Dictionary<string, string> GetImageCacheForGame(Game game)
+        {
+            Dictionary<string, string> imageCache = new Dictionary<string, string>();
+            string cachePath = AppFilePath.ImageCache;
+            var boxArt = Directory.GetFiles(Path.Combine(cachePath, "gbox").Replace("/", "\\"), $"{game.ID}.*").FirstOrDefault();
+            var background = Directory.GetFiles(Path.Combine(cachePath, "gbg").Replace("/", "\\"), $"{game.ID}.*").FirstOrDefault();
+            imageCache.Add("gbox", boxArt);
+            imageCache.Add("gbg", background);
+            return imageCache;
+        }
+        private static void ResizeImage(string path, uint maxHeight)
         {
             using (var imageMagick = new MagickImage(path))
             {
@@ -195,7 +245,7 @@ namespace gamevault.Helper
                 }
                 else if (imageMagick.Height > SystemParameters.FullPrimaryScreenHeight)
                 {
-                    var size = new MagickGeometry((int)SystemParameters.FullPrimaryScreenWidth, (int)SystemParameters.FullPrimaryScreenHeight);
+                    var size = new MagickGeometry((uint)SystemParameters.FullPrimaryScreenWidth, (uint)SystemParameters.FullPrimaryScreenHeight);
                     size.IgnoreAspectRatio = false;
                     imageMagick.Resize(size);
                     imageMagick.Write(path);

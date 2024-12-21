@@ -21,11 +21,8 @@ using gamevault.Converter;
 using System.Windows.Media;
 using LiveChartsCore.SkiaSharpView.Painting;
 using gamevault.Models.Mapping;
-using Windows.Gaming.Input;
-using System.Runtime.Serialization.Formatters.Binary;
 using IO.Swagger.Model;
-using gamevault.Windows;
-using Microsoft.Extensions.Primitives;
+
 
 namespace gamevault.UserControls
 {
@@ -254,6 +251,7 @@ namespace gamevault.UserControls
 
                                     InstallViewModel.Instance.InstalledGames.Remove(InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).First());
                                     DesktopHelper.RemoveShotcut(ViewModel.Game);
+                                    MainWindowViewModel.Instance.ClosePopup();
                                 }
                                 catch { }
                             }

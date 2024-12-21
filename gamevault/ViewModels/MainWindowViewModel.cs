@@ -144,6 +144,10 @@ namespace gamevault.ViewModels
         }
         public void OpenPopup(FrameworkElement userControl)
         {
+            if (MainWindowViewModel.Instance.ActiveControl?.GetType() == typeof(GameViewUserControl) && userControl?.GetType() != typeof(MediaSlider))//Else the popup would be rendered below the media slider because of the airspace problem
+            {
+                ((GameViewUserControl)MainWindowViewModel.Instance.ActiveControl).uiMediaSlider.UnloadMediaSlider();
+            }
             Popup = userControl;
         }
         public void ClosePopup()

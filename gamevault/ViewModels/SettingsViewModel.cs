@@ -51,6 +51,12 @@ namespace gamevault.ViewModels
         private PhalcodeProduct license { get; set; }
         private List<ThemeItem> themes { get; set; }
         private bool showMappedTitle { get; set; }
+        private bool syncSteamShortcuts { get; set; }
+        private bool syncDiscordPresence { get; set; }
+        //DevMode
+        private bool devModeEnabled { get; set; }
+        private bool devTargetPhalcodeTestBackend { get; set; }
+        //
 
         #endregion
 
@@ -62,7 +68,7 @@ namespace gamevault.ViewModels
 
             string showMappedTitleString = Preferences.Get(AppConfigKey.ShowMappedTitle, AppFilePath.UserFile);
             showMappedTitle = showMappedTitleString == "1" || showMappedTitleString == "";
-
+            //Setting the private members to avoid writing to the user config file over and over again
             m_BackgroundStart = (Preferences.Get(AppConfigKey.BackgroundStart, AppFilePath.UserFile) == "1"); OnPropertyChanged(nameof(BackgroundStart));
             m_AutoExtract = (Preferences.Get(AppConfigKey.AutoExtract, AppFilePath.UserFile) == "1"); OnPropertyChanged(nameof(AutoExtract));
             autoDeletePortableGameFiles = Preferences.Get(AppConfigKey.AutoDeletePortable, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(AutoDeletePortableGameFiles));
@@ -70,6 +76,9 @@ namespace gamevault.ViewModels
 
             string analyticsPreference = Preferences.Get(AppConfigKey.SendAnonymousAnalytics, AppFilePath.UserFile);
             sendAnonymousAnalytics = (analyticsPreference == "" || analyticsPreference == "1"); OnPropertyChanged(nameof(SendAnonymousAnalytics));
+
+            syncSteamShortcuts = Preferences.Get(AppConfigKey.SyncSteamShortcuts, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(SyncSteamShortcuts));
+            syncDiscordPresence = Preferences.Get(AppConfigKey.SyncDiscordPresence, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(SyncDiscordPresence));
 
             string autoInstallPortableStr = Preferences.Get(AppConfigKey.AutoInstallPortable, AppFilePath.UserFile);
             if (string.IsNullOrWhiteSpace(autoInstallPortableStr) || autoInstallPortableStr == "1")
@@ -96,6 +105,11 @@ namespace gamevault.ViewModels
                 DownloadLimit = 0;
                 DownloadLimitUIValue = 0;
             }
+
+            //DevMode
+            devModeEnabled = Preferences.Get(AppConfigKey.DevModeEnabled, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(DevModeEnabled));
+            devTargetPhalcodeTestBackend = Preferences.Get(AppConfigKey.DevTargetPhalcodeTestBackend, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(DevTargetPhalcodeTestBackend));
+            //
         }
         public async Task InitIgnoreList()
         {
@@ -288,6 +302,22 @@ namespace gamevault.ViewModels
             }
             set { showMappedTitle = value; Preferences.Set(AppConfigKey.ShowMappedTitle, showMappedTitle ? "1" : "0", AppFilePath.UserFile); OnPropertyChanged(); }
         }
+        public bool SyncSteamShortcuts
+        {
+            get
+            {
+                return syncSteamShortcuts;
+            }
+            set { syncSteamShortcuts = value; Preferences.Set(AppConfigKey.SyncSteamShortcuts, syncSteamShortcuts ? "1" : "0", AppFilePath.UserFile); OnPropertyChanged(); }
+        }
+        public bool SyncDiscordPresence
+        {
+            get
+            {
+                return syncDiscordPresence;
+            }
+            set { syncDiscordPresence = value; Preferences.Set(AppConfigKey.SyncDiscordPresence, syncDiscordPresence ? "1" : "0", AppFilePath.UserFile); OnPropertyChanged(); }
+        }
         public User RegistrationUser
         {
             get { return m_RegistrationUser; }
@@ -339,10 +369,27 @@ namespace gamevault.ViewModels
         {
             get
             {
-                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                return Assembly.GetExecutingAssembly().GetName().Version.ToString();// + " EA";
             }
         }
-
+        //DevMode
+        public bool DevModeEnabled
+        {
+            get
+            {
+                return devModeEnabled;
+            }
+            set { devModeEnabled = value; Preferences.Set(AppConfigKey.DevModeEnabled, devModeEnabled ? "1" : "0", AppFilePath.UserFile); OnPropertyChanged(); }
+        }
+        public bool DevTargetPhalcodeTestBackend
+        {
+            get
+            {
+                return devTargetPhalcodeTestBackend;
+            }
+            set { devTargetPhalcodeTestBackend = value; Preferences.Set(AppConfigKey.DevTargetPhalcodeTestBackend, devTargetPhalcodeTestBackend ? "1" : "0", AppFilePath.UserFile); OnPropertyChanged(); }
+        }
+        //
     }
     public class ThemeItem
     {
