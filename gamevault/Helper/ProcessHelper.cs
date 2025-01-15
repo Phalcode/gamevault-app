@@ -19,8 +19,7 @@ namespace gamevault.Helper
             }
             app.FileName = fileName;
             app.WorkingDirectory = Path.GetDirectoryName(fileName);
-            app.UseShellExecute = true;
-            app.Verb = "-PassThru";
+            app.UseShellExecute = true;           
             if (asAdmin)
             {
                 app.Verb = "runas";

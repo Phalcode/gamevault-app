@@ -519,6 +519,11 @@ namespace gamevault
                 var gameViewUserControl = new UserControls.GameViewUserControl(game, LoginManager.Instance.IsLoggedIn());
                 // Set the correct UI regardless of if it's visible to let the user manage it
                 MainWindowViewModel.Instance.SetActiveControl(gameViewUserControl);
+                if(App.Instance.MainWindow != null)
+                {
+                    App.Instance.MainWindow.Topmost = true;
+                    App.Instance.MainWindow.Topmost = false;
+                }
                 InstallUserControl.PlayGame(game.ID);
             });
         }
