@@ -19,7 +19,8 @@ namespace gamevault.Helper
             }
             app.FileName = fileName;
             app.WorkingDirectory = Path.GetDirectoryName(fileName);
-            app.UseShellExecute = false;
+            app.UseShellExecute = true;
+            app.WindowStyle = ProcessWindowStyle.Maximized;
             if (asAdmin)
             {
                 app.Verb = "runas";
