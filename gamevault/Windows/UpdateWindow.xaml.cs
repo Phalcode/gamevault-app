@@ -35,9 +35,6 @@ namespace gamevault.Windows
         {
             try
             {
-                this.Topmost = true;
-                this.Topmost = false;                
-
                 m_StoreHelper = new StoreHelper();
                 if (true == await m_StoreHelper.UpdatesAvailable())
                 {
