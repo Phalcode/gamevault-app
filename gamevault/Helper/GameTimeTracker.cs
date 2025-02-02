@@ -1,4 +1,5 @@
-﻿using gamevault.Models;
+﻿using gamevault.Helper.Integrations;
+using gamevault.Models;
 using gamevault.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace gamevault.Helper
 
             m_Timer = new Timer();
             m_Timer.AutoReset = true;
-            m_Timer.Interval = 60000;
+            m_Timer.Interval = 3000;
             m_Timer.Elapsed += TimerCallback;
             m_Timer.Start();
         }
@@ -89,7 +90,7 @@ namespace gamevault.Helper
                 {
                     try
                     {
-                        if(AnyOfflineProgressToSend())
+                        if (AnyOfflineProgressToSend())
                         {
                             await SendOfflineProgess();
                         }
@@ -98,6 +99,7 @@ namespace gamevault.Helper
                             WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{gameid}/increment", string.Empty);
                         }
                         DiscordHelper.Instance.SyncGameWithDiscordPresence(gamesToCountUp, foundGames);
+                        await SaveGameHelper.Instance.BackupSaveGames(gamesToCountUp);
                     }
                     catch (Exception ex)
                     {

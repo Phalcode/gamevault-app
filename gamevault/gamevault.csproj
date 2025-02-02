@@ -100,4 +100,10 @@
 		</None>		
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Update="Lib\savegame\ludusavi.exe">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
 </Project>
