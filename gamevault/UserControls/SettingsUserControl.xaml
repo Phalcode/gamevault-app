@@ -407,6 +407,24 @@
                                         <mah:ToggleSwitch Header="Sync" Margin="0,10,0,0" IsOn="{Binding SyncDiscordPresence}"/>
                                     </StackPanel>
                                 </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="10,20,0,0">
+                                    <Rectangle Fill="{StaticResource MahApps.Brushes.Accent}" Width="2"/>
+                                    <StackPanel Margin="10,0,0,0">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Path Data="{StaticResource IconCloudSave}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" VerticalAlignment="Center" RenderTransformOrigin="0.3,0.0">
+                                                <Path.RenderTransform>
+                                                    <ScaleTransform ScaleX="0.9" ScaleY="0.9"/>
+                                                </Path.RenderTransform>
+                                            </Path>
+                                            <TextBlock FontSize="20" FontWeight="Bold" Margin="5,0,0,0">
+                                                 <Hyperlink NavigateUri="http://gamevau.lt/docs/gamevault-plus/cloud-saves" RequestNavigate="Hyperlink_RequestNavigate" TextDecorations="None">Cloud Saves</Hyperlink>
+                                            </TextBlock>
+                                        </StackPanel>
+                                        <TextBlock Text="Automatically backs up and restores your latest savefiles via your GameVault Server, ensuring seamless transitions between installations and devices. " FontSize="15"/>
+                                        <TextBlock Text="Requires GameVault Server with savefiles feature enabled." FontSize="12" FontStyle="Italic"/>
+                                        <mah:ToggleSwitch Margin="0,5,0,0" IsOn="{Binding CloudSaves}"/>
+                                    </StackPanel>
+                                </StackPanel>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="10,20,0,0">
                                 <Rectangle Fill="{StaticResource MahApps.Brushes.Accent}" Width="2"/>

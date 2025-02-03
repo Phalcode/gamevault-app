@@ -18,9 +18,10 @@ namespace gamevault.ViewModels
         private Progress[]? userProgresses { get; set; }
         private Dictionary<string, string> gameStates { get; set; }
         private bool isInstalled { get; set; }
-        private bool? isDownloaded { get; set; }       
+        private bool? isDownloaded { get; set; }
         private string? descriptionMarkdown { get; set; }
         private string? notesMarkdown { get; set; }
+        private bool supportsCloudSave { get; set; }
         #endregion
         public Game? Game
         {
@@ -56,7 +57,7 @@ namespace gamevault.ViewModels
         {
             get { return isDownloaded; }
             set { isDownloaded = value; OnPropertyChanged(); }
-        }       
+        }
         public string? DescriptionMarkdown
         {
             get { return descriptionMarkdown; }
@@ -66,6 +67,11 @@ namespace gamevault.ViewModels
         {
             get { return notesMarkdown; }
             set { notesMarkdown = value; OnPropertyChanged(); }
+        }
+        public bool SupportsCloudSave
+        {
+            get { return supportsCloudSave; }
+            set { supportsCloudSave = value; OnPropertyChanged(); }
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
@@ -37,21 +38,27 @@ namespace gamevault.Helper
         }
         internal static string GetServerStatusCode(Exception ex)
         {
-            if (ex is not WebException webex)
-                return "";
-
-            string errMessage = string.Empty;
-            try
+            if (ex is WebException webex)
             {
-                if (webex.Response == null)
-                    return string.Empty;
 
-                var resp = new StreamReader(webex.Response.GetResponseStream()).ReadToEnd();
-                JsonObject obj = JsonNode.Parse(resp).AsObject();
-                errMessage = obj["statusCode"].ToString().Replace("\n", " ").Replace("\r", "");
+                string errMessage = string.Empty;
+                try
+                {
+                    if (webex.Response == null)
+                        return string.Empty;
+
+                    var resp = new StreamReader(webex.Response.GetResponseStream()).ReadToEnd();
+                    JsonObject obj = JsonNode.Parse(resp).AsObject();
+                    errMessage = obj["statusCode"].ToString().Replace("\n", " ").Replace("\r", "");
+                }
+                catch { }
+                return errMessage;
             }
-            catch { }
-            return errMessage;
+            else if (ex is HttpRequestException httpEx && httpEx.StatusCode.HasValue)
+            {
+                return ((int)httpEx.StatusCode.Value).ToString();
+            }
+            return string.Empty;
         }
     }
 }

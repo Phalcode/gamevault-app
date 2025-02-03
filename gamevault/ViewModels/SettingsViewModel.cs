@@ -53,6 +53,7 @@ namespace gamevault.ViewModels
         private bool showMappedTitle { get; set; }
         private bool syncSteamShortcuts { get; set; }
         private bool syncDiscordPresence { get; set; }
+        private bool cloudSaves { get; set; }
         //DevMode
         private bool devModeEnabled { get; set; }
         private bool devTargetPhalcodeTestBackend { get; set; }
@@ -79,6 +80,7 @@ namespace gamevault.ViewModels
 
             syncSteamShortcuts = Preferences.Get(AppConfigKey.SyncSteamShortcuts, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(SyncSteamShortcuts));
             syncDiscordPresence = Preferences.Get(AppConfigKey.SyncDiscordPresence, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(SyncDiscordPresence));
+            cloudSaves = Preferences.Get(AppConfigKey.CloudSaves, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(CloudSaves));
 
             string autoInstallPortableStr = Preferences.Get(AppConfigKey.AutoInstallPortable, AppFilePath.UserFile);
             if (string.IsNullOrWhiteSpace(autoInstallPortableStr) || autoInstallPortableStr == "1")
@@ -317,6 +319,14 @@ namespace gamevault.ViewModels
                 return syncDiscordPresence;
             }
             set { syncDiscordPresence = value; Preferences.Set(AppConfigKey.SyncDiscordPresence, syncDiscordPresence ? "1" : "0", AppFilePath.UserFile); OnPropertyChanged(); }
+        }
+        public bool CloudSaves
+        {
+            get
+            {
+                return cloudSaves;
+            }
+            set { cloudSaves = value; Preferences.Set(AppConfigKey.CloudSaves, cloudSaves ? "1" : "0", AppFilePath.UserFile); OnPropertyChanged(); }
         }
         public User RegistrationUser
         {

@@ -44,10 +44,12 @@ namespace gamevault.Models
         ForcedInstallationType,
         SyncSteamShortcuts,
         SyncDiscordPresence,
+        CloudSaves,
         //DevMode
         DevModeEnabled,
-        DevTargetPhalcodeTestBackend
+        DevTargetPhalcodeTestBackend,
         //
+        DeviceId
     }
     public static class AppFilePath
     {

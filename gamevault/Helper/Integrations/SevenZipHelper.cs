@@ -157,6 +157,29 @@ namespace gamevault.Helper
                 return exitCode;
             }
         }
+        internal async Task PackArchive(string directoryToPack, string archiveName)
+        {
+            await Task.Run(() =>
+            {
+                process = new Process();
+                ProcessShepherd.Instance.AddProcess(process);
+                process.StartInfo = CreateProcessHeader();
+                process.StartInfo.Arguments = $"a \"{archiveName}\" \"{directoryToPack}\"";
+                process.ErrorDataReceived += (sender, e) =>
+                {
+                    Debug.WriteLine("ERROR" + e.Data);
+                };
+                process.OutputDataReceived += (sender, e) =>
+                {
+                    Debug.WriteLine(e.Data);
+                };
+                process.Start();
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
+                process.WaitForExit();
+                ProcessShepherd.Instance.RemoveProcess(process);
+            });
+        }
         internal void Cancel()
         {
             if (process != null)

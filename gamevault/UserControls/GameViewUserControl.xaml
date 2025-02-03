@@ -335,7 +335,34 @@
                             </Grid>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                            <StackPanel  Margin="0,64,0,0" Background="Transparent" Height="68">
+                            <StackPanel Orientation="Horizontal" Height="20" Margin="0,40,0,0">
+                                <StackPanel.Style>
+                                    <Style TargetType="StackPanel">
+                                        <Setter Property="Visibility" Value="Hidden"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding SupportsCloudSave}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
+                                <Button Style="{StaticResource ButtonWrapper}" Click="ManualBackupSaveGame_Click" Cursor="Hand" ToolTip="Sync Manually">
+                                    <Grid Style="{StaticResource HoverEffect}" Background="#02000000">
+                                        <Path Data="{StaticResource IconCloudSave}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+                                        <Grid.RenderTransform>
+                                            <ScaleTransform/>
+                                        </Grid.RenderTransform>
+                                    </Grid>
+                                </Button>
+                                <TextBlock FontWeight="Bold" Margin="5,4,0,0">
+                                    <Hyperlink TextDecorations="None" NavigateUri="http://gamevau.lt/docs/gamevault-plus/cloud-saves" RequestNavigate="Website_Navigate">
+                                         <Hyperlink.Inlines>
+                                            <Run Text="Cloud Saves"/>      
+                                         </Hyperlink.Inlines>
+                                    </Hyperlink>
+                                </TextBlock>
+                            </StackPanel>
+                            <StackPanel  Margin="0,4,0,0" Background="Transparent" Height="68">
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,0">
                                     <StackPanel>
                                         <TextBlock Text="PLAYTIME" FontWeight="Bold" FontSize="13" />

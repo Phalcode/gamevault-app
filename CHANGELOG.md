@@ -1,5 +1,12 @@
 # GameVault App Changelog
 
+## 1.15.0
+Recommended Gamevault Server Version: `v14.0.0`
+### Changes
+
+- Cloud Saves (+)
+- Bug fix: Game window sometimes started in the background when launched via gamevault uri
+
 ## 1.14.0
 Recommended Gamevault Server Version: `v13.1.2`
 ### Changes
