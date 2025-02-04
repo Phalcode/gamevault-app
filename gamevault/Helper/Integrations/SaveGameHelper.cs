@@ -155,6 +155,11 @@ namespace gamevault.Helper.Integrations
                 string title = await SearchForLudusaviGameTitle(gameMetadataTitle);
                 string tempFolder = await CreateBackup(title);
                 string archive = Path.Combine(tempFolder, "backup.zip");
+                if (Directory.GetFiles(tempFolder, "mapping.yaml", SearchOption.AllDirectories).Length == 0)
+                {
+                    Directory.Delete(tempFolder, true);
+                    return;
+                }
                 await zipHelper.PackArchive(tempFolder, archive);
 
                 bool success = await UploadSavegame(archive, gameId);
@@ -177,7 +182,7 @@ namespace gamevault.Helper.Integrations
                 Process process = new Process();
                 ProcessShepherd.Instance.AddProcess(process);
                 process.StartInfo = CreateProcessHeader();
-                process.StartInfo.Arguments = $"find \"{title}\" --normalized --fuzzy --api";
+                process.StartInfo.Arguments = $"find \"{title}\" --fuzzy --api";//--normalized
                 process.EnableRaisingEvents = true;
 
                 List<string> output = new List<string>();

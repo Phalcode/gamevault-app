@@ -383,8 +383,10 @@ namespace gamevault.UserControls
                     MainWindowViewModel.Instance.Settings.SetTabIndex(4);
                     return;
                 }
+                MainWindowViewModel.Instance.AppBarText = "Uploading Savegame to the Server...";
                 ((FrameworkElement)sender).IsEnabled = false;
                 await SaveGameHelper.Instance.BackupSaveGame(ViewModel!.Game!.ID);
+                MainWindowViewModel.Instance.AppBarText = "Successfully synchronized the cloud saves";
             }
             catch
             {
