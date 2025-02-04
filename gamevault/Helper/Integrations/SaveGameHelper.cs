@@ -181,7 +181,7 @@ namespace gamevault.Helper.Integrations
             {
                 Process process = new Process();
                 ProcessShepherd.Instance.AddProcess(process);
-                process.StartInfo = CreateProcessHeader();
+                process.StartInfo = CreateProcessHeader(true);
                 process.StartInfo.Arguments = $"find \"{title}\" --fuzzy --api";//--normalized
                 process.EnableRaisingEvents = true;
 
@@ -220,8 +220,7 @@ namespace gamevault.Helper.Integrations
                 Process process = new Process();
                 ProcessShepherd.Instance.AddProcess(process);
                 process.StartInfo = CreateProcessHeader();
-                process.StartInfo.Arguments = $"backup --force --format \"zip\" --path \"{tempFolder}\" \"{lunusaviTitle}\"";
-                process.StartInfo.RedirectStandardInput = true;
+                process.StartInfo.Arguments = $"backup --force --format \"zip\" --path \"{tempFolder}\" \"{lunusaviTitle}\"";                             
                 process.Start();
                 process.WaitForExit();
                 ProcessShepherd.Instance.RemoveProcess(process);
@@ -257,12 +256,12 @@ namespace gamevault.Helper.Integrations
             memoryStream.Position = 0; // Reset position to beginning
             return memoryStream;
         }
-        private ProcessStartInfo CreateProcessHeader()
+        private ProcessStartInfo CreateProcessHeader(bool redirectConsole = false)
         {
             ProcessStartInfo info = new ProcessStartInfo();
             info.CreateNoWindow = true;
-            info.RedirectStandardOutput = true;
-            info.RedirectStandardError = true;
+            info.RedirectStandardOutput = redirectConsole;
+            info.RedirectStandardError = redirectConsole;
             info.UseShellExecute = false;
             info.FileName = $"{AppDomain.CurrentDomain.BaseDirectory}Lib\\savegame\\ludusavi.exe";
             return info;
