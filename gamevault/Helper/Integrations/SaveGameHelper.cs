@@ -82,11 +82,16 @@ namespace gamevault.Helper.Integrations
                             }
 
                             await zipHelper.ExtractArchive(archive, tempFolder);
+                            var mappingFile = Directory.GetFiles(tempFolder, "mapping.yaml", SearchOption.AllDirectories);
+                            string extractFolder = "";
+                            if (mappingFile.Length < 1)
+                                throw new Exception("no savegame extracted");
 
+                            extractFolder = Path.GetDirectoryName(Path.GetDirectoryName(mappingFile[0]));
                             Process process = new Process();
                             ProcessShepherd.Instance.AddProcess(process);
                             process.StartInfo = CreateProcessHeader();
-                            process.StartInfo.Arguments = $"restore --force --path \"{tempFolder}\"";
+                            process.StartInfo.Arguments = $"restore --force --path \"{extractFolder}\"";
                             process.Start();
                             process.WaitForExit();
                             ProcessShepherd.Instance.RemoveProcess(process);
@@ -220,7 +225,7 @@ namespace gamevault.Helper.Integrations
                 Process process = new Process();
                 ProcessShepherd.Instance.AddProcess(process);
                 process.StartInfo = CreateProcessHeader();
-                process.StartInfo.Arguments = $"backup --force --format \"zip\" --path \"{tempFolder}\" \"{lunusaviTitle}\"";                             
+                process.StartInfo.Arguments = $"backup --force --format \"zip\" --path \"{tempFolder}\" \"{lunusaviTitle}\"";
                 process.Start();
                 process.WaitForExit();
                 ProcessShepherd.Instance.RemoveProcess(process);
