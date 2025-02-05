@@ -159,12 +159,19 @@ namespace gamevault.UserControls
                 ViewModel.IsInstalled = IsGameInstalled(ViewModel.Game);
                 ViewModel.IsDownloaded = IsGameDownloaded(ViewModel.Game);
                 PrepareMarkdownElements();
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        ViewModel.SupportsCloudSave = !string.IsNullOrWhiteSpace(await SaveGameHelper.Instance.SearchForLudusaviGameTitle(ViewModel?.Game?.Metadata?.Title));
+                    }
+                    catch { }
+                });
                 //MediaSlider
                 try
                 {
                     await uiMediaSlider.InitVideoPlayer();
                     await PrepareMetadataMedia(ViewModel?.Game?.Metadata);
-                    ViewModel.SupportsCloudSave = !string.IsNullOrWhiteSpace(await SaveGameHelper.Instance.SearchForLudusaviGameTitle(ViewModel?.Game?.Metadata?.Title));
                 }
                 catch { }
                 //###########              

@@ -71,8 +71,8 @@
                         <StackPanel Grid.Column="0" Width="546">
                             <Grid Background="Transparent" Height="100">
                                 <local:CacheImage Data="{Binding Game}" ImageCacheType="GameCover" Stretch="Fill" CornerRadius="5" HorizontalAlignment="Left" Height="100" Width="75" Margin="0,0,0,0"/>
-                                <StackPanel Orientation="Horizontal" Margin="90,0,-300,0" VerticalAlignment="Center" HorizontalAlignment="Left" Cursor="Hand" MouseLeftButtonUp="GameTitle_Click">
-                                    <TextBlock FontSize="25" FontWeight="Bold">
+                                <Grid Margin="90,0,-300,30" VerticalAlignment="Center" HorizontalAlignment="Left" Cursor="Hand" MouseLeftButtonUp="GameTitle_Click" Height="60" Width="455">
+                                    <TextBlock FontSize="25" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Bottom">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Style.Triggers>
@@ -97,7 +97,7 @@
                                             </Style>
                                         </TextBlock.Style>
                                     </TextBlock>
-                                    <TextBlock FontSize="25" FontWeight="Bold">
+                                    <TextBlock FontSize="25" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Bottom">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Style.Triggers>
@@ -111,7 +111,7 @@
                                             </Style>
                                         </TextBlock.Style>
                                     </TextBlock>
-                                </StackPanel>
+                                </Grid>
                                 <StackPanel Margin="90,0,0,0" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Bottom" Orientation="Horizontal">
                                     <StackPanel.Style>
                                         <Style TargetType="StackPanel">
