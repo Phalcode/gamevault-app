@@ -163,7 +163,7 @@ namespace gamevault.UserControls
                 {
                     try
                     {
-                        ViewModel.SupportsCloudSave = !string.IsNullOrWhiteSpace(await SaveGameHelper.Instance.SearchForLudusaviGameTitle(ViewModel?.Game?.Metadata?.Title));
+                        ViewModel.CloudSaveMatchTitle = await SaveGameHelper.Instance.SearchForLudusaviGameTitle(ViewModel?.Game?.Metadata?.Title);
                     }
                     catch { }
                 });

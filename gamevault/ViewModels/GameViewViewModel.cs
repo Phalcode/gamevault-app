@@ -21,7 +21,7 @@ namespace gamevault.ViewModels
         private bool? isDownloaded { get; set; }
         private string? descriptionMarkdown { get; set; }
         private string? notesMarkdown { get; set; }
-        private bool supportsCloudSave { get; set; }
+        private string cloudSaveMatchTitle { get; set; }
         #endregion
         public Game? Game
         {
@@ -68,10 +68,10 @@ namespace gamevault.ViewModels
             get { return notesMarkdown; }
             set { notesMarkdown = value; OnPropertyChanged(); }
         }
-        public bool SupportsCloudSave
+        public string CloudSaveMatchTitle
         {
-            get { return supportsCloudSave; }
-            set { supportsCloudSave = value; OnPropertyChanged(); }
+            get { return cloudSaveMatchTitle; }
+            set { cloudSaveMatchTitle = value; OnPropertyChanged(); }
         }
     }
 }

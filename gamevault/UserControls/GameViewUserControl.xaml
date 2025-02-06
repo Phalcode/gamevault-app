@@ -22,6 +22,7 @@
         <conv:StringToColorConverter x:Key="colorConv"/>
         <conv:GameViewSettingsPermissionRoleToVisibilityConverter x:Key="settingsPermRoleVisConv"/>
         <conv:ContainsCurrentUserConverter x:Key="containsCurrentUserConv"/>
+        <conv:InverseEmptyStringConverter x:Key="emptyStringConv"/>
     </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Key="Esc">
@@ -340,13 +341,16 @@
                                     <Style TargetType="StackPanel">
                                         <Setter Property="Visibility" Value="Hidden"/>
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding SupportsCloudSave}" Value="True">
+                                            <DataTrigger Binding="{Binding CloudSaveMatchTitle,Converter={StaticResource emptyStringConv}}" Value="False">
                                                 <Setter Property="Visibility" Value="Visible"/>
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
                                 </StackPanel.Style>
-                                <Button Style="{StaticResource ButtonWrapper}" Click="ManualBackupSaveGame_Click" Cursor="Hand" ToolTip="Sync Manually">
+                                <Button Style="{StaticResource ButtonWrapper}" Click="ManualBackupSaveGame_Click" Cursor="Hand">
+                                    <Button.ToolTip>
+                                        <TextBlock Text="{Binding CloudSaveMatchTitle,StringFormat='{}Sync manually for {0}'}"/>
+                                    </Button.ToolTip>
                                     <Grid Style="{StaticResource HoverEffect}" Background="#02000000">
                                         <Path Data="{StaticResource IconCloudSave}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
                                         <Grid.RenderTransform>
