@@ -49,7 +49,7 @@ namespace gamevault.Models
         DevModeEnabled,
         DevTargetPhalcodeTestBackend,
         //
-        DeviceId
+        InstallationId
     }
     public static class AppFilePath
     {

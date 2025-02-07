@@ -52,17 +52,17 @@ namespace gamevault.Helper.Integrations
         {
             zipHelper = new SevenZipHelper();
         }
-        internal async Task RestoreBackup(int gameId)
+        internal async Task<bool> RestoreBackup(int gameId, string installationDir)
         {
             if (!LoginManager.Instance.IsLoggedIn() || !SettingsViewModel.Instance.CloudSaves || !SettingsViewModel.Instance.License.IsActive())
-                return;
+                return false;
 
             using (HttpClient client = new HttpClient())
             {
                 try
                 {
                     client.Timeout = TimeSpan.FromSeconds(15);
-                    string deviceId = GetDeviceId();
+                    string installationId = GetGameInstallationId(installationDir);
                     string[] auth = WebHelper.GetCredentials();
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{auth[0]}:{auth[1]}")));
                     client.DefaultRequestHeaders.Add("User-Agent", $"GameVault/{SettingsViewModel.Instance.Version}");
@@ -71,7 +71,7 @@ namespace gamevault.Helper.Integrations
                     {
                         response.EnsureSuccessStatusCode();
                         string fileName = response.Content.Headers.ContentDisposition.FileName.Split('_')[1].Split('.')[0];
-                        if (fileName != deviceId)
+                        if (fileName != installationId)
                         {
                             string tempFolder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
                             Directory.CreateDirectory(tempFolder);
@@ -96,6 +96,7 @@ namespace gamevault.Helper.Integrations
                             process.WaitForExit();
                             ProcessShepherd.Instance.RemoveProcess(process);
                             Directory.Delete(tempFolder, true);
+                            return true;
                         }
                     }
                 }
@@ -112,16 +113,18 @@ namespace gamevault.Helper.Integrations
                     }
                 }
             }
+            return false;
         }
-        private string GetDeviceId()
+        private string GetGameInstallationId(string installationDir)
         {
-            string deviceId = Preferences.Get(AppConfigKey.DeviceId, AppFilePath.UserFile);
-            if (string.IsNullOrWhiteSpace(deviceId))
+            string metadataFile = Path.Combine(installationDir, "gamevault-exec");
+            string installationId = Preferences.Get(AppConfigKey.InstallationId, metadataFile);
+            if (string.IsNullOrWhiteSpace(installationId))
             {
-                deviceId = Guid.NewGuid().ToString();
-                Preferences.Set(AppConfigKey.DeviceId, deviceId, AppFilePath.UserFile);
+                installationId = Guid.NewGuid().ToString();
+                Preferences.Set(AppConfigKey.InstallationId, installationId, metadataFile);
             }
-            return deviceId;
+            return installationId;
         }
         internal async Task BackupSaveGamesFromIds(List<int> gameIds)
         {
@@ -135,7 +138,16 @@ namespace gamevault.Helper.Integrations
                 }
                 try
                 {
-                    await BackupSaveGame(removedId);
+                    MainWindowViewModel.Instance.AppBarText = "Uploading Savegame to the Server...";
+                    bool success = await BackupSaveGame(removedId);
+                    if (success)
+                    {
+                        MainWindowViewModel.Instance.AppBarText = "Successfully synchronized the cloud saves";
+                    }
+                    else
+                    {
+                        MainWindowViewModel.Instance.AppBarText = "Failed to upload your Savegame to the Server";
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -149,13 +161,15 @@ namespace gamevault.Helper.Integrations
             // Remove IDs that are no longer in the new list
             runningGameIds = runningGameIds.Intersect(gameIds).ToList();
         }
-        internal async Task BackupSaveGame(int gameId)
+        internal async Task<bool> BackupSaveGame(int gameId)
         {
             if (!SettingsViewModel.Instance.License.IsActive())
-                return;
+                return false;
 
-            string gameMetadataTitle = FindGameTitleFromInstalledGames(gameId);
-            if (gameMetadataTitle != "")
+            var installedGame = InstallViewModel.Instance?.InstalledGames?.FirstOrDefault(g => g.Key?.ID == gameId);
+            string gameMetadataTitle = installedGame?.Key?.Metadata?.Title ?? "";
+            string installationDir = installedGame?.Value ?? "";
+            if (gameMetadataTitle != "" && installationDir != "")
             {
                 string title = await SearchForLudusaviGameTitle(gameMetadataTitle);
                 string tempFolder = await CreateBackup(title);
@@ -163,22 +177,15 @@ namespace gamevault.Helper.Integrations
                 if (Directory.GetFiles(tempFolder, "mapping.yaml", SearchOption.AllDirectories).Length == 0)
                 {
                     Directory.Delete(tempFolder, true);
-                    return;
+                    return false;
                 }
                 await zipHelper.PackArchive(tempFolder, archive);
 
-                bool success = await UploadSavegame(archive, gameId);
+                bool success = await UploadSavegame(archive, gameId, installationDir);
                 Directory.Delete(tempFolder, true);
-                if (!success)
-                {
-                    MainWindowViewModel.Instance.AppBarText = "Failed to sync your savegame to the cloud.";
-                }
+                return success;
             }
-        }
-        private string FindGameTitleFromInstalledGames(int gameId)
-        {
-            string gameMetadataTitle = InstallViewModel.Instance?.InstalledGames?.FirstOrDefault(g => g.Key?.ID == gameId).Key?.Metadata?.Title ?? "";
-            return gameMetadataTitle;
+            return false;
         }
         internal async Task<string> SearchForLudusaviGameTitle(string title)
         {
@@ -232,14 +239,14 @@ namespace gamevault.Helper.Integrations
                 return tempFolder;
             });
         }
-        private async Task<bool> UploadSavegame(string saveFilePath, int gameId)
+        private async Task<bool> UploadSavegame(string saveFilePath, int gameId, string installationDir)
         {
             try
             {
-                string devideId = GetDeviceId();
+                string installationId = GetGameInstallationId(installationDir);
                 using (MemoryStream memoryStream = await FileToMemoryStreamAsync(saveFilePath))
                 {
-                    await WebHelper.UploadFileAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/savefiles/user/{LoginManager.Instance.GetCurrentUser()!.ID}/game/{gameId}", memoryStream, "x.zip", new KeyValuePair<string, string>("X-Device-Id", devideId));
+                    await WebHelper.UploadFileAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/savefiles/user/{LoginManager.Instance.GetCurrentUser()!.ID}/game/{gameId}", memoryStream, "x.zip", new KeyValuePair<string, string>("X-Installation-Id", installationId));
                 }
             }
             catch

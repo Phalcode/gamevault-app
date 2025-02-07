@@ -297,9 +297,12 @@ namespace gamevault.UserControls
 
         public static async Task PlayGame(int gameId)
         {
-            await SaveGameHelper.Instance.RestoreBackup(gameId);
+
             string path = "";
             KeyValuePair<Game, string> result = InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == gameId).FirstOrDefault();
+            MainWindowViewModel.Instance.AppBarText = $"Syncing cloud save...";
+            await SaveGameHelper.Instance.RestoreBackup(gameId, result.Value);
+
             if (!result.Equals(default(KeyValuePair<Game, string>)))
             {
                 path = result.Value;

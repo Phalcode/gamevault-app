@@ -380,7 +380,7 @@ namespace gamevault.UserControls
             }
             catch { }
         }
-        private async void ManualBackupSaveGame_Click(object sender, RoutedEventArgs e)
+        private async void BackupCloudSaves_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -392,12 +392,44 @@ namespace gamevault.UserControls
                 }
                 MainWindowViewModel.Instance.AppBarText = "Uploading Savegame to the Server...";
                 ((FrameworkElement)sender).IsEnabled = false;
-                await SaveGameHelper.Instance.BackupSaveGame(ViewModel!.Game!.ID);
-                MainWindowViewModel.Instance.AppBarText = "Successfully synchronized the cloud saves";
+                bool success = await SaveGameHelper.Instance.BackupSaveGame(ViewModel!.Game!.ID);
+                if (success)
+                {
+                    MainWindowViewModel.Instance.AppBarText = "Successfully synchronized the cloud saves";
+                }
+                else
+                {
+                    MainWindowViewModel.Instance.AppBarText = "Failed to upload your Savegame to the Server";
+                }
             }
             catch
             {
                 MainWindowViewModel.Instance.AppBarText = "Failed to Upload your Savegame to the Server";
+            }
+            ((FrameworkElement)sender).IsEnabled = true;
+        }
+        private async void RestoreCloudSaves_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (!SettingsViewModel.Instance.License.IsActive())
+                {
+                    MainWindowViewModel.Instance.SetActiveControl(MainControl.Settings);
+                    MainWindowViewModel.Instance.Settings.SetTabIndex(4);
+                    return;
+                }
+                MainWindowViewModel.Instance.AppBarText = $"Syncing cloud save...";
+                ((FrameworkElement)sender).IsEnabled = false;
+                string installationDir = InstallViewModel.Instance.InstalledGames.First(g => g.Key.ID == ViewModel!.Game!.ID).Value;
+                bool success = await SaveGameHelper.Instance.RestoreBackup(ViewModel!.Game!.ID, installationDir);
+                if (success)
+                {
+                    MainWindowViewModel.Instance.AppBarText = "Successfully synchronized the cloud save";
+                }              
+            }
+            catch
+            {
+                MainWindowViewModel.Instance.AppBarText = "Failed to restore the Savegame";
             }
             ((FrameworkElement)sender).IsEnabled = true;
         }
