@@ -30,7 +30,7 @@
         </Border>
         <TextBlock Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Text="{Binding Version,StringFormat='{}V {0}'}" Margin="20,0,0,5" Panel.ZIndex="1" MouseLeftButtonDown="DevMode_Click"/>
         <ScrollViewer Grid.Row="1" Margin="10" VerticalScrollBarVisibility="Auto">
-            <TabControl x:Name="uiTabControl" TabStripPlacement="Left" SelectionChanged="TabControl_SelectionChanged" FocusVisualStyle="{x:Null}">
+            <TabControl x:Name="uiTabControl" TabStripPlacement="Left" SelectionChanged="TabControl_SelectionChanged" >
                 <TabItem Header="Application">
                     <StackPanel Margin="30,0,0,0">
                         <StackPanel Margin="0,0,0,0">

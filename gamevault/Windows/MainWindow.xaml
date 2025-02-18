@@ -60,7 +60,7 @@
                 </mah:HamburgerMenuItemCollection>
             </mah:HamburgerMenu.ItemsSource>
             <mah:HamburgerMenu.Content>
-                <mah:TransitioningContentControl RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding ActiveControl}" FocusVisualStyle="{x:Null}"/>
+                <mah:TransitioningContentControl RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding ActiveControl}" />
             </mah:HamburgerMenu.Content>
         </mah:HamburgerMenu>
         <StackPanel  HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,300,0,0">
@@ -156,7 +156,7 @@
 
         <Grid Panel.ZIndex="1">
             <Viewbox>
-                <uc:TransitioningContentControlEx RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding Popup}" FocusVisualStyle="{x:Null}"/>
+                <uc:TransitioningContentControlEx RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding Popup}" />
             </Viewbox>
             <Grid.Style>
                 <Style TargetType="Grid">

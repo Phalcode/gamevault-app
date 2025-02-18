@@ -9,6 +9,7 @@ Recommended Gamevault Server Version: `v14.0.0`
 - Bug fix: Youtube url not loading in gameview
 - Bug fix: Game window sometimes started in the background when launched via gamevault uri
 - Bug fix: Crash on saving user details
+- Bug fix: Removed all dotted keyboard focus lines
 
 ## 1.14.0
 Recommended Gamevault Server Version: `v13.1.2`

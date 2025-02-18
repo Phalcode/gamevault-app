@@ -9,7 +9,7 @@
              xmlns:vm="clr-namespace:gamevault.ViewModels"       
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" KeyDown="ReloadLibrary_Click" Focusable="True" FocusVisualStyle="{x:Null}" IsVisibleChanged="UserControl_IsVisibleChanged">
+             d:DesignHeight="450" d:DesignWidth="800" KeyDown="ReloadLibrary_Click" Focusable="True"  IsVisibleChanged="UserControl_IsVisibleChanged">
     <UserControl.Resources>
         <conv:GameSizeConverter x:Key="sizeConv"/>
         <conv:LibraryPermissionRoleToVisibilityConverter x:Key="libCardsPermVisConv"/>
@@ -24,7 +24,7 @@
         <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Grid.Row="0">
             <TextBlock Text="Library" FontSize="35" Margin="20,0,0,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
         </Border>
-        <ScrollViewer x:Name="uiMainScrollBar" Grid.Row="1" VerticalScrollBarVisibility="Auto" FocusVisualStyle="{x:Null}" RequestBringIntoView="uiMainScrollBar_RequestBringIntoView" ScrollChanged="uiMainScrollBar_ScrollChanged">
+        <ScrollViewer x:Name="uiMainScrollBar" Grid.Row="1" VerticalScrollBarVisibility="Auto"  RequestBringIntoView="uiMainScrollBar_RequestBringIntoView" ScrollChanged="uiMainScrollBar_ScrollChanged">
             <StackPanel>
                 <Viewbox>
                     <local:InstallUserControl x:Name="uiGameInstalls" Width="2000"/>
@@ -457,7 +457,7 @@
                                         <ItemsControl.Template>
                                             <ControlTemplate TargetType="vwp:VirtualizingItemsControl">
                                                 <Grid>
-                                                    <ScrollViewer Name="PART_ItemsScroll" Style="{DynamicResource SecondaryScrollView}" CanContentScroll="True" Padding="{TemplateBinding Padding}" FocusVisualStyle="{x:Null}" ScrollChanged="Library_ScrollChanged" PreviewMouseWheel="Library_PreviewMouseWheel">
+                                                    <ScrollViewer Name="PART_ItemsScroll" Style="{DynamicResource SecondaryScrollView}" CanContentScroll="True" Padding="{TemplateBinding Padding}"  ScrollChanged="Library_ScrollChanged" PreviewMouseWheel="Library_PreviewMouseWheel">
                                                         <ItemsPresenter Margin="5,0,5,0"/>
                                                     </ScrollViewer>
                                                     <Border Style="{DynamicResource HoverEffect}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Visibility="{Binding ScrollToTopVisibility}" Background="{DynamicResource MahApps.Brushes.Accent2}" CornerRadius="5" Cursor="Hand" Width="50" Height="50" Margin="1800,0,15,15" Padding="18,20,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="ScrollToTop_Click">

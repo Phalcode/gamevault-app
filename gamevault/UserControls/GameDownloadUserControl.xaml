@@ -289,7 +289,7 @@
                             </Style.Triggers>
                         </Style>
                     </Grid.Style>
-                    <mah:ToggleSwitch Header="Create Shortcut" RenderTransformOrigin="0,0" Margin="1,0,-80,-40" IsOn="{Binding CreateShortcut,Mode=TwoWay}" FocusVisualStyle="{x:Null}">
+                    <mah:ToggleSwitch Header="Create Shortcut" RenderTransformOrigin="0,0" Margin="1,0,-80,-40" IsOn="{Binding CreateShortcut,Mode=TwoWay}" >
                         <mah:ToggleSwitch.RenderTransform>
                             <ScaleTransform ScaleX="0.2" ScaleY="0.2"/>
                         </mah:ToggleSwitch.RenderTransform>

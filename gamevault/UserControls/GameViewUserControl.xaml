@@ -10,7 +10,7 @@
              xmlns:vm="clr-namespace:gamevault.ViewModels"           
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded" KeyDown="ReloadGameView_Click" Focusable="True" FocusVisualStyle="{x:Null}">
+             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded" KeyDown="ReloadGameView_Click" Focusable="True" >
     <UserControl.Resources>
         <conv:GameSizeConverter x:Key="sizeConv"/>
         <conv:GameTimeConverter x:Key="timeConv"/>
@@ -196,14 +196,14 @@
                                             </Style.Triggers>
                                         </Style>
                                     </StackPanel.Style>
-                                    <ToggleButton Width="35" Height="35" Cursor="Hand" Margin="0,0,0,0" Validation.ErrorTemplate="{x:Null}" IsChecked="{Binding Path=Game.BookmarkedUsers,Converter={StaticResource containsCurrentUserConv}}" Click="Bookmark_Click">
+                                    <ToggleButton Width="35" Height="35" Cursor="Hand" Margin="0,0,0,0" Validation.ErrorTemplate="{x:Null}" IsChecked="{Binding Path=Game.BookmarkedUsers,Converter={StaticResource containsCurrentUserConv}}" FocusVisualStyle="{x:Null}" Click="Bookmark_Click">
                                         <ToggleButton.Style>
                                             <Style TargetType="ToggleButton">
                                                 <Style.Setters>
                                                     <Setter Property="Template">
                                                         <Setter.Value>
                                                             <ControlTemplate TargetType="ToggleButton">
-                                                                <Grid Style="{DynamicResource HoverEffect}"  Width="{TemplateBinding Width}" Background="#02000000">
+                                                                <Grid Style="{DynamicResource HoverEffect}" Width="{TemplateBinding Width}" Background="#02000000">
                                                                     <Path Name="PART_Icon" Data="{StaticResource IconBookmark}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.1,0.05">
                                                                         <Path.RenderTransform>
                                                                             <ScaleTransform ScaleX="1.6" ScaleY="1.6"/>
