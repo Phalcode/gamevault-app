@@ -5,8 +5,10 @@ Recommended Gamevault Server Version: `v14.0.0`
 ### Changes
 
 - Cloud Saves (+)
+- Added Community Themes link to the settings
 - Bug fix: Youtube url not loading in gameview
 - Bug fix: Game window sometimes started in the background when launched via gamevault uri
+- Bug fix: Crash on saving user details
 
 ## 1.14.0
 Recommended Gamevault Server Version: `v13.1.2`

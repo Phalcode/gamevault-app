@@ -53,11 +53,8 @@ namespace gamevault.UserControls
         {
             try
             {
-                ViewModel.Users = await Task<User[]>.Run(() =>
-                {
-                    string userList = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/users");
-                    return JsonSerializer.Deserialize<User[]>(userList);
-                });
+                string userList = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users");
+                ViewModel.Users = JsonSerializer.Deserialize<User[]>(userList);
             }
             catch (Exception ex)
             {

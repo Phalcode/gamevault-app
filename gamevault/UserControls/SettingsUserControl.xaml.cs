@@ -321,10 +321,28 @@ namespace gamevault.UserControls
 
         private void OpenThemeFolder_Click(object sender, RoutedEventArgs e)
         {
-            if (Directory.Exists(AppFilePath.ThemesLoadDir))
+            try
             {
-                Process.Start("explorer.exe", AppFilePath.ThemesLoadDir);
+                if (Directory.Exists(AppFilePath.ThemesLoadDir))
+                {
+                    Directory.CreateDirectory(AppFilePath.ThemesLoadDir);
+                }
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "explorer.exe",
+                    Arguments = $"\"{AppFilePath.ThemesLoadDir}\"",
+                    UseShellExecute = true
+                });
             }
+            catch { }
+        }
+        private void OpenCommunityPage_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo("https://github.com/Phalcode/gamevault-community-themes") { UseShellExecute = true });
+            }
+            catch { }
         }
 
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
@@ -400,5 +418,6 @@ namespace gamevault.UserControls
                 ViewModel.DevModeEnabled = true;
             }
         }
+
     }
 }

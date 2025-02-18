@@ -386,9 +386,17 @@ namespace gamevault.UserControls
                 }
             });
             if (!error)
-            {
-                ViewModel.OriginUser.Password = newPassword;
-                await HandleChangesOnCurrentUser(ViewModel.OriginUser);
+            {               
+                try
+                {
+                    ViewModel.OriginUser.Password = newPassword;
+                    await HandleChangesOnCurrentUser(ViewModel.OriginUser);
+                }
+                catch (Exception ex)
+                {
+                    string msg = WebExceptionHelper.TryGetServerMessage(ex);
+                    MainWindowViewModel.Instance.AppBarText = msg;
+                }
             }
             this.IsEnabled = true;
         }

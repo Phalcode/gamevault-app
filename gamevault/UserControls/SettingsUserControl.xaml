@@ -78,6 +78,7 @@
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
                                 <local:IconButton Text="Open Theme Folder" FontSize="15" Icon="{StaticResource IconGameSettingsFolder}" IconMargin="0,0,5,2" Width="175" Margin="10,0,0,0" Click="OpenThemeFolder_Click"/>
+                                <local:IconButton Text="Community Themes" FontSize="15" Icon="{StaticResource IconGameSettingsColorPalette}" IconMargin="-225,-300,-215,-300" IconScale="0.04" Width="180" Margin="10,0,0,0" Click="OpenCommunityPage_Click"/>
                             </StackPanel>
                         </StackPanel>
                         <StackPanel Margin="0,15,0,0">
