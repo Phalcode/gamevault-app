@@ -10,6 +10,7 @@ Recommended Gamevault Server Version: `v14.0.0`
 - Bug fix: Game window sometimes started in the background when launched via gamevault uri
 - Bug fix: Crash on saving user details
 - Bug fix: Removed all dotted keyboard focus lines
+- Bug fix: App protocol of the microsoft version won't start a install if a instance of gamevault is already running
 
 ## 1.14.0
 Recommended Gamevault Server Version: `v13.1.2`
