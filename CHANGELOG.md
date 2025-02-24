@@ -11,6 +11,7 @@ Recommended Gamevault Server Version: `v14.0.0`
 - Bug fix: Crash on saving user details
 - Bug fix: Removed all dotted keyboard focus lines
 - Bug fix: App protocol of the microsoft version won't start a install if a instance of gamevault is already running
+- Bug fix: The game executable selection was always empty if the ignore list had an empty string as an entry
 
 ## 1.14.0
 Recommended Gamevault Server Version: `v13.1.2`

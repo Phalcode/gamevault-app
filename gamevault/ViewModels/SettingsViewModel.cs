@@ -3,6 +3,7 @@ using gamevault.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -121,9 +122,13 @@ namespace gamevault.ViewModels
                 {
                     if (!File.Exists(AppFilePath.IgnoreList))
                     {
-                        string response = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/ignorefile");
-                        IgnoreList = JsonSerializer.Deserialize<string[]>(response);
-                        Preferences.Set("IL", response.Replace("\n", ""), AppFilePath.IgnoreList);
+                        string response = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/ignorefile");                       
+                        string[] ignoreList = JsonSerializer.Deserialize<string[]>(response);
+                        if (ignoreList != null || ignoreList?.Length > 0)
+                        {
+                            IgnoreList = ignoreList.Where(s => !string.IsNullOrEmpty(s)).ToArray(); //Make sure server ignore list don't contain empty strings, because this will exclude any file which is compared to the ignore list
+                            Preferences.Set("IL", response.Replace("\n", ""), AppFilePath.IgnoreList);
+                        }
                     }
                     else
                     {
