@@ -1,4 +1,5 @@
-﻿using gamevault.Models;
+﻿using gamevault.Helper.Integrations;
+using gamevault.Models;
 using gamevault.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -89,7 +90,7 @@ namespace gamevault.Helper
                 {
                     try
                     {
-                        if(AnyOfflineProgressToSend())
+                        if (AnyOfflineProgressToSend())
                         {
                             await SendOfflineProgess();
                         }
@@ -98,6 +99,7 @@ namespace gamevault.Helper
                             WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{gameid}/increment", string.Empty);
                         }
                         DiscordHelper.Instance.SyncGameWithDiscordPresence(gamesToCountUp, foundGames);
+                        await SaveGameHelper.Instance.BackupSaveGamesFromIds(gamesToCountUp);
                     }
                     catch (Exception ex)
                     {

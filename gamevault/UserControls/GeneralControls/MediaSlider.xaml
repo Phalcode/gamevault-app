@@ -71,7 +71,7 @@
                 </Grid.RenderTransform>
             </Grid>
         </Button>
-        <Slider x:Name="uiVolumeSlider" Minimum="0" Maximum="1" Style="{DynamicResource MahApps.Styles.Slider.Flat}" Thumb.DragCompleted="VolumeSlider_DragCompleted" PreviewMouseDown="DisableNonThumbInteraction" FocusVisualStyle="{x:Null}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,6,35" Orientation="Vertical" Height="70">
+        <Slider x:Name="uiVolumeSlider" Minimum="0" Maximum="1" Style="{DynamicResource MahApps.Styles.Slider.Flat}" Thumb.DragCompleted="VolumeSlider_DragCompleted" PreviewMouseDown="DisableNonThumbInteraction"  VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,6,35" Orientation="Vertical" Height="70">
             <Slider.RenderTransform>
                 <ScaleTransform ScaleX="0.5" ScaleY="1"/>
             </Slider.RenderTransform>

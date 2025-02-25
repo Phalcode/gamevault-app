@@ -285,7 +285,7 @@ namespace gamevault.Helper
         {
             try
             {
-                var propertiesToExclude = new[] { "Instance", "UserName", "RootPath", "ServerUrl", "License", "RegistrationUser", "SendAnonymousAnalytics", "IgnoreList", "Themes" };
+                var propertiesToExclude = new[] { "Instance", "UserName", "RootPath", "ServerUrl", "License", "RegistrationUser", "SendAnonymousAnalytics", "IgnoreList", "Themes", "CommunityThemes" };
                 var trimmedObject = SettingsViewModel.Instance.GetType()
             .GetProperties()
             .Where(prop => !propertiesToExclude.Contains(prop.Name))

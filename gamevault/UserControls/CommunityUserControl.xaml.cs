@@ -254,7 +254,7 @@ namespace gamevault.UserControls
                     "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
                 if (result == MessageDialogResult.Affirmative)
                 {
-                    WebHelper.Delete(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/{dataContext.ID}");
+                    WebHelper.Delete(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{ViewModel?.CurrentShownUser?.ID}/game/{dataContext?.Game.ID}");
                     //ToDo: Dirty but i dont want to use ObservableCollection only for this one action
                     List<Progress> copy = ViewModel.UserProgresses;
                     copy.Remove(dataContext);

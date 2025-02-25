@@ -8,7 +8,7 @@
              xmlns:helper="clr-namespace:gamevault.Helper"
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" Height="800" Width="600" Focusable="True" Loaded="UserControl_Loaded" FocusVisualStyle="{x:Null}" Margin="0,30,0,0">
+             d:DesignHeight="450" d:DesignWidth="800" Height="800" Width="600" Focusable="True" Loaded="UserControl_Loaded"  Margin="0,30,0,0">
     <UserControl.InputBindings>
         <KeyBinding Key="Esc">
             <KeyBinding.Command>

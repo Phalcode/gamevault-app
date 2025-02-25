@@ -49,7 +49,7 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Viewbox Grid.Column="1">
-                        <ItemsControl ItemsSource="{Binding DownloadedGames}" FocusVisualStyle="{x:Null}">
+                        <ItemsControl ItemsSource="{Binding DownloadedGames}" >
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <StackPanel Orientation="Vertical"/>

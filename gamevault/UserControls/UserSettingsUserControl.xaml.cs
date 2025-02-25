@@ -375,7 +375,7 @@ namespace gamevault.UserControls
                     }
                     string result = WebHelper.Put(url, JsonSerializer.Serialize(selectedUser), true);
                     ViewModel.OriginUser = JsonSerializer.Deserialize<User>(result);
-                    MainWindowViewModel.Instance.AppBarText = "Sucessfully saved user changes";
+                    MainWindowViewModel.Instance.AppBarText = "Successfully saved user changes";
                 }
                 catch (Exception ex)
                 {
@@ -386,9 +386,17 @@ namespace gamevault.UserControls
                 }
             });
             if (!error)
-            {
-                ViewModel.OriginUser.Password = newPassword;
-                await HandleChangesOnCurrentUser(ViewModel.OriginUser);
+            {               
+                try
+                {
+                    ViewModel.OriginUser.Password = newPassword;
+                    await HandleChangesOnCurrentUser(ViewModel.OriginUser);
+                }
+                catch (Exception ex)
+                {
+                    string msg = WebExceptionHelper.TryGetServerMessage(ex);
+                    MainWindowViewModel.Instance.AppBarText = msg;
+                }
             }
             this.IsEnabled = true;
         }

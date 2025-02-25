@@ -16,8 +16,8 @@
                     <TextBlock Text="{Binding Path=InstalledGames.Count,StringFormat='{}Installed Games ({0})'}" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" FontWeight="Bold" HorizontalAlignment="Left" FontSize="20" VerticalAlignment="Center"/>
                     <TextBox HorizontalAlignment="Center" Width="376" Margin="0,4,44,4" Style="{DynamicResource SearchTextBox}" TextChanged="Search_TextChanged"/>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,0,0">
-                        <TextBlock Text="Rows" VerticalAlignment="Center" FontSize="15" Margin="0,0,10,0"/>
-                        <mah:NumericUpDown x:Name="uiRowsUpDown" ButtonsAlignment="Opposite" Minimum="1" ValueChanged="Rows_ValueChanged" SwitchUpDownButtons="True"/>
+                        <TextBlock Text="Rows" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" VerticalAlignment="Center" FontSize="15" Margin="0,0,10,0"/>
+                        <mah:NumericUpDown x:Name="uiRowsUpDown" ButtonsAlignment="Opposite" Minimum="1" ValueChanged="Rows_ValueChanged" SwitchUpDownButtons="True" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}"/>
                         <mah:NumericUpDown Value="{Binding Path=InstalledGames.Count,Mode=OneWay}" ValueChanged="Collection_Updated" Visibility="Collapsed"/>
                     </StackPanel>
                 </Grid>

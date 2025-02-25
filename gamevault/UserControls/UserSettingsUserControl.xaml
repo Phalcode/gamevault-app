@@ -9,7 +9,7 @@
              xmlns:local="clr-namespace:gamevault.UserControls"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" Focusable="True" Loaded="UserControl_Loaded" FocusVisualStyle="{x:Null}">
+             d:DesignHeight="450" d:DesignWidth="800" Focusable="True" Loaded="UserControl_Loaded" >
     <UserControl.Resources>
         <Style x:Key="TabItemHeaderPath" TargetType="Path">
             <Style.Triggers>
@@ -144,7 +144,7 @@
                                         <Border.Style>
                                             <Style TargetType="Border">
                                                 <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Button.Border}"/>
-                                                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                                
                                                 <Style.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
                                                         <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}" />
@@ -200,7 +200,7 @@
                                         <Border.Style>
                                             <Style TargetType="Border">
                                                 <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Button.Border}"/>
-                                                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                                
                                                 <Style.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
                                                         <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}" />

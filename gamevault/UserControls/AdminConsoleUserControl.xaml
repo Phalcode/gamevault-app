@@ -97,7 +97,7 @@
                         <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Margin="0,0.5,0,0"  CornerRadius="1">
                             <Grid>
                                 <TextBlock Text="Users" FontSize="1.5" FontWeight="Bold" VerticalAlignment="Top" Margin="1,0,0,0"/>
-                                <ItemsControl ItemsSource="{Binding Path=Users}" Margin="0,1.4,0,1" FocusVisualStyle="{x:Null}">
+                                <ItemsControl ItemsSource="{Binding Path=Users}" Margin="0,1.4,0,1" >
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <StackPanel/>

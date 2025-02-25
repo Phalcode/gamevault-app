@@ -2,6 +2,11 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                      xmlns:local="clr-namespace:gamevault.UserControls">
+    <Style x:Key="{x:Static SystemParameters.FocusVisualStyleKey}">
+        <Setter Property="Control.Template" Value="{x:Null}"/>
+    </Style>
+    
+
     <DataTemplate DataType="{x:Type mah:HamburgerMenuGlyphItem}">
         <Grid x:Name="IconPart" HorizontalAlignment="Left"
               Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type mah:HamburgerMenu}}, Path=CompactPaneLength}">
@@ -114,16 +119,8 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-
-    <!--<Style TargetType="{x:Type Button}" BasedOn="{StaticResource MahApps.Styles.Button}">
-        <Style.Setters>
-            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Accent}"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Focusable" Value="False"/>
-        </Style.Setters>
-    </Style>-->
     <Style TargetType="Button" x:Key="ButtonWrapper">
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -134,7 +131,6 @@
     </Style>
     <Style TargetType="{x:Type local:IconButton}">
         <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.IdealForeground}" />
-        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="SnapsToDevicePixels" Value="True"/>
         <Setter Property="CornerRadius" Value="5"/>
         <Setter Property="Cursor" Value="Hand"/>
@@ -268,7 +264,7 @@
         <Setter Property="FontSize" Value="13" />
         <Setter Property="MinWidth" Value="150"/>
         <Setter Property="MinHeight" Value="35"/>
-        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ComboBox">
@@ -600,7 +596,7 @@
         <Setter Property="BorderBrush" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="ContextMenu" Value="{DynamicResource MahApps.TextBox.ContextMenu}"/>
-        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        
         <Setter Property="FontFamily" Value="{DynamicResource MahApps.Fonts.Family.Control}"/>
         <Setter Property="FontSize" Value="{DynamicResource MahApps.Font.Size.Content}"/>
         <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.Text}"/>
@@ -622,12 +618,12 @@
                                 <ColumnDefinition x:Name="PART_MiddleColumn" Width="Auto"/>
                                 <ColumnDefinition x:Name="PART_RightColumn" Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBox x:Name="PART_TextBox" Background="{x:Null}" BorderThickness="0" ContextMenu="{TemplateBinding ContextMenu}" Grid.Column="0" Foreground="{TemplateBinding Foreground}" FocusVisualStyle="{x:Null}" FontFamily="{TemplateBinding FontFamily}" Focusable="{TemplateBinding Focusable}" FontSize="{TemplateBinding FontSize}" HorizontalScrollBarVisibility="Hidden" HorizontalAlignment="Stretch" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" IsReadOnly="True" IsHitTestVisible="False" IsTabStop="{TemplateBinding IsTabStop}" Margin="0" MinWidth="20" MinHeight="0" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" TabIndex="{TemplateBinding TabIndex}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" VerticalScrollBarVisibility="Hidden"/>
+                            <TextBox x:Name="PART_TextBox" Background="{x:Null}" BorderThickness="0" ContextMenu="{TemplateBinding ContextMenu}" Grid.Column="0" Foreground="{TemplateBinding Foreground}"  FontFamily="{TemplateBinding FontFamily}" Focusable="{TemplateBinding Focusable}" FontSize="{TemplateBinding FontSize}" HorizontalScrollBarVisibility="Hidden" HorizontalAlignment="Stretch" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" IsReadOnly="True" IsHitTestVisible="False" IsTabStop="{TemplateBinding IsTabStop}" Margin="0" MinWidth="20" MinHeight="0" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" TabIndex="{TemplateBinding TabIndex}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" VerticalScrollBarVisibility="Hidden"/>
                             <RepeatButton x:Name="PART_NumericUp" Grid.Column="1" Cursor="Hand" Delay="{TemplateBinding Delay}" Foreground="{TemplateBinding Foreground}" Focusable="{TemplateBinding UpDownButtonsFocusable}" IsTabStop="False" Margin="0" Style="{DynamicResource MahApps.Styles.Button.Chromeless}" Width="{TemplateBinding UpDownButtonsWidth}">
-                                <Path x:Name="PolygonUp" Data="F1 M 35,19 L 41,19 41,35 57,35 57,41 41,41 41,57 35,57 35,41 19,41 19,35 35,35 35,19 Z" Fill="{DynamicResource MahApps.Brushes.Gray1}" Height="14" Stretch="Fill" Width="14"/>
+                                <Path x:Name="PolygonUp" Data="F1 M 35,19 L 41,19 41,35 57,35 57,41 41,41 41,57 35,57 35,41 19,41 19,35 35,35 35,19 Z" Fill="{TemplateBinding Foreground}" Height="14" Stretch="Fill" Width="14"/>
                             </RepeatButton>
                             <RepeatButton x:Name="PART_NumericDown" Grid.Column="2" Cursor="Hand" Delay="{TemplateBinding Delay}" Foreground="{TemplateBinding Foreground}" Focusable="{TemplateBinding UpDownButtonsFocusable}" IsTabStop="False" Margin="0" Style="{DynamicResource MahApps.Styles.Button.Chromeless}" VerticalContentAlignment="Center" Width="{TemplateBinding UpDownButtonsWidth}">
-                                <Path x:Name="PolygonDown" Data="F1 M 19,38 L 57,38 57,44 19,44 19,38 Z" Fill="{DynamicResource MahApps.Brushes.Gray1}" Height="3" Stretch="Fill" Width="14"/>
+                                <Path x:Name="PolygonDown" Data="F1 M 19,38 L 57,38 57,44 19,44 19,38 Z" Fill="{TemplateBinding Foreground}" Height="3" Stretch="Fill" Width="14"/>
                             </RepeatButton>
                         </Grid>
                         <Border x:Name="DisabledVisualElement" Background="{DynamicResource GameVault.Brushes.Button.Disabled}" BorderBrush="{DynamicResource MahApps.Brushes.Control.Disabled}" BorderThickness="{TemplateBinding BorderThickness}" IsHitTestVisible="False" Opacity="0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Visibility="{Binding (mah:ControlsHelper.DisabledVisualElementVisibility), Mode=OneWay, RelativeSource={RelativeSource Mode=TemplatedParent}}" CornerRadius="5"/>

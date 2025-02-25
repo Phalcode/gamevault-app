@@ -53,11 +53,8 @@ namespace gamevault.UserControls
         {
             try
             {
-                ViewModel.Users = await Task<User[]>.Run(() =>
-                {
-                    string userList = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/users");
-                    return JsonSerializer.Deserialize<User[]>(userList);
-                });
+                string userList = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users");
+                ViewModel.Users = JsonSerializer.Deserialize<User[]>(userList);
             }
             catch (Exception ex)
             {
@@ -180,7 +177,7 @@ namespace gamevault.UserControls
                 try
                 {
                     WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/{selectedUser.ID}", JsonSerializer.Serialize(selectedUser));
-                    MainWindowViewModel.Instance.AppBarText = "Sucessfully saved user changes";
+                    MainWindowViewModel.Instance.AppBarText = "Successfully saved user changes";
                 }
                 catch (Exception ex)
                 {
@@ -220,7 +217,7 @@ namespace gamevault.UserControls
                 try
                 {
                     WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/reindex", string.Empty);
-                    MainWindowViewModel.Instance.AppBarText = "Sucessfully reindexed games";
+                    MainWindowViewModel.Instance.AppBarText = "Successfully reindexed games";
                 }
                 catch (Exception ex)
                 {

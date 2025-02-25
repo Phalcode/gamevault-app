@@ -123,7 +123,7 @@ namespace gamevault
 
         private void AppDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            ProcessShepherd.KillAllChildProcesses();
+            ProcessShepherd.Instance.KillAllChildProcesses();
 #if DEBUG
             e.Handled = false;
 #else
@@ -280,7 +280,7 @@ namespace gamevault
         private void ShutdownApp()
         {
             ShowToastMessage = false;
-            ProcessShepherd.KillAllChildProcesses();
+            ProcessShepherd.Instance.KillAllChildProcesses();
             if (m_Icon != null)
             {
                 m_Icon.Icon.Dispose();

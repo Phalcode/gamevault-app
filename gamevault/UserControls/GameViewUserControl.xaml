@@ -10,7 +10,7 @@
              xmlns:vm="clr-namespace:gamevault.ViewModels"           
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded" KeyDown="ReloadGameView_Click" Focusable="True" FocusVisualStyle="{x:Null}">
+             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded" KeyDown="ReloadGameView_Click" Focusable="True" >
     <UserControl.Resources>
         <conv:GameSizeConverter x:Key="sizeConv"/>
         <conv:GameTimeConverter x:Key="timeConv"/>
@@ -22,6 +22,7 @@
         <conv:StringToColorConverter x:Key="colorConv"/>
         <conv:GameViewSettingsPermissionRoleToVisibilityConverter x:Key="settingsPermRoleVisConv"/>
         <conv:ContainsCurrentUserConverter x:Key="containsCurrentUserConv"/>
+        <conv:InverseEmptyStringConverter x:Key="emptyStringConv"/>
     </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Key="Esc">
@@ -71,8 +72,8 @@
                         <StackPanel Grid.Column="0" Width="546">
                             <Grid Background="Transparent" Height="100">
                                 <local:CacheImage Data="{Binding Game}" ImageCacheType="GameCover" Stretch="Fill" CornerRadius="5" HorizontalAlignment="Left" Height="100" Width="75" Margin="0,0,0,0"/>
-                                <StackPanel Orientation="Horizontal" Margin="90,0,-300,0" VerticalAlignment="Center" HorizontalAlignment="Left" Cursor="Hand" MouseLeftButtonUp="GameTitle_Click">
-                                    <TextBlock FontSize="25" FontWeight="Bold">
+                                <Grid Margin="90,0,-300,30" VerticalAlignment="Center" HorizontalAlignment="Left" Cursor="Hand" MouseLeftButtonUp="GameTitle_Click" Height="60" Width="455">
+                                    <TextBlock FontSize="25" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Bottom">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Style.Triggers>
@@ -97,7 +98,7 @@
                                             </Style>
                                         </TextBlock.Style>
                                     </TextBlock>
-                                    <TextBlock FontSize="25" FontWeight="Bold">
+                                    <TextBlock FontSize="25" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Bottom">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Style.Triggers>
@@ -111,7 +112,7 @@
                                             </Style>
                                         </TextBlock.Style>
                                     </TextBlock>
-                                </StackPanel>
+                                </Grid>
                                 <StackPanel Margin="90,0,0,0" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Bottom" Orientation="Horizontal">
                                     <StackPanel.Style>
                                         <Style TargetType="StackPanel">
@@ -195,14 +196,14 @@
                                             </Style.Triggers>
                                         </Style>
                                     </StackPanel.Style>
-                                    <ToggleButton Width="35" Height="35" Cursor="Hand" Margin="0,0,0,0" Validation.ErrorTemplate="{x:Null}" IsChecked="{Binding Path=Game.BookmarkedUsers,Converter={StaticResource containsCurrentUserConv}}" Click="Bookmark_Click">
+                                    <ToggleButton Width="35" Height="35" Cursor="Hand" Margin="0,0,0,0" Validation.ErrorTemplate="{x:Null}" IsChecked="{Binding Path=Game.BookmarkedUsers,Converter={StaticResource containsCurrentUserConv}}" FocusVisualStyle="{x:Null}" Click="Bookmark_Click">
                                         <ToggleButton.Style>
                                             <Style TargetType="ToggleButton">
                                                 <Style.Setters>
                                                     <Setter Property="Template">
                                                         <Setter.Value>
                                                             <ControlTemplate TargetType="ToggleButton">
-                                                                <Grid Style="{DynamicResource HoverEffect}"  Width="{TemplateBinding Width}" Background="#02000000">
+                                                                <Grid Style="{DynamicResource HoverEffect}" Width="{TemplateBinding Width}" Background="#02000000">
                                                                     <Path Name="PART_Icon" Data="{StaticResource IconBookmark}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.1,0.05">
                                                                         <Path.RenderTransform>
                                                                             <ScaleTransform ScaleX="1.6" ScaleY="1.6"/>
@@ -335,7 +336,60 @@
                             </Grid>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                            <StackPanel  Margin="0,64,0,0" Background="Transparent" Height="68">
+                            <StackPanel Orientation="Horizontal" Height="20" Margin="0,40,0,0">
+                                <StackPanel.Style>
+                                    <Style TargetType="StackPanel">
+                                        <Setter Property="Visibility" Value="Hidden"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CloudSaveMatchTitle,Converter={StaticResource emptyStringConv}}" Value="False">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
+                                <Path Data="{StaticResource IconCloudSave}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+                                <TextBlock FontWeight="Bold" Margin="5,4,150,0">
+                                    <Hyperlink TextDecorations="None" NavigateUri="http://gamevau.lt/docs/gamevault-plus/cloud-saves" RequestNavigate="Website_Navigate">
+                                         <Hyperlink.Inlines>
+                                            <Run Text="Cloud Saves"/>      
+                                         </Hyperlink.Inlines>
+                                    </Hyperlink>
+                                </TextBlock>
+                                <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" Click="RestoreCloudSaves_Click">
+                                    <Button.ToolTip>
+                                        <TextBlock Text="{Binding CloudSaveMatchTitle,StringFormat='{}Download Savefiles for {0}'}"/>
+                                    </Button.ToolTip>
+                                    <Grid Style="{StaticResource HoverEffect}" Background="#02000000">
+                                        <Path Data="{StaticResource IconCloudSaveUpload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5" Margin="0,-1,0,-1">
+                                            <Path.RenderTransform>
+                                                <TransformGroup>
+                                                    <ScaleTransform ScaleX="0.8" ScaleY="0.8"/>
+                                                    <RotateTransform Angle="180"/>
+                                                </TransformGroup>
+                                            </Path.RenderTransform>
+                                        </Path>
+                                        <Grid.RenderTransform>
+                                            <ScaleTransform/>
+                                        </Grid.RenderTransform>
+                                    </Grid>
+                                </Button>
+                                <Button Style="{StaticResource ButtonWrapper}" Cursor="Hand" Click="BackupCloudSaves_Click">
+                                    <Button.ToolTip>
+                                        <TextBlock Text="{Binding CloudSaveMatchTitle,StringFormat='{}Upload Savefiles for {0}'}"/>
+                                    </Button.ToolTip>
+                                    <Grid Style="{StaticResource HoverEffect}" Background="#02000000">
+                                        <Path Data="{StaticResource IconCloudSaveUpload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.4,0.2" Margin="0,-1,0,-1">
+                                            <Path.RenderTransform>
+                                                <ScaleTransform ScaleX="0.8" ScaleY="0.8"/>
+                                            </Path.RenderTransform>
+                                        </Path>
+                                        <Grid.RenderTransform>
+                                            <ScaleTransform/>
+                                        </Grid.RenderTransform>
+                                    </Grid>
+                                </Button>
+                            </StackPanel>
+                            <StackPanel  Margin="0,4,0,0" Background="Transparent" Height="68">
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,0">
                                     <StackPanel>
                                         <TextBlock Text="PLAYTIME" FontWeight="Bold" FontSize="13" />

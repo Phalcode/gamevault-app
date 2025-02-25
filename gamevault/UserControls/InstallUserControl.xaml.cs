@@ -1,4 +1,5 @@
 ﻿using gamevault.Helper;
+using gamevault.Helper.Integrations;
 using gamevault.Models;
 using gamevault.ViewModels;
 using MahApps.Metro.Controls;
@@ -286,16 +287,22 @@ namespace gamevault.UserControls
             };
         }
 
-        private void Play_Click(object sender, RoutedEventArgs e)
+        private async void Play_Click(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            PlayGame(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key.ID);
+            ((FrameworkElement)sender).IsEnabled = false;
+            await PlayGame(((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key.ID);
+            ((FrameworkElement)sender).IsEnabled = true;
         }
 
-        public static void PlayGame(int gameId)
+        public static async Task PlayGame(int gameId)
         {
+
             string path = "";
             KeyValuePair<Game, string> result = InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == gameId).FirstOrDefault();
+            MainWindowViewModel.Instance.AppBarText = $"Syncing cloud save...";
+            await SaveGameHelper.Instance.RestoreBackup(gameId, result.Value);
+
             if (!result.Equals(default(KeyValuePair<Game, string>)))
             {
                 path = result.Value;

@@ -2,7 +2,9 @@
 using gamevault.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -49,10 +51,12 @@ namespace gamevault.ViewModels
         private string[] ignoreList { get; set; }
         private User m_RegistrationUser = new User() { Avatar = new Media(), Background = new Media() };
         private PhalcodeProduct license { get; set; }
-        private List<ThemeItem> themes { get; set; }
+        private ObservableCollection<ThemeItem> themes { get; set; }
+        private ObservableCollection<ThemeItem> communityThemes { get; set; }
         private bool showMappedTitle { get; set; }
         private bool syncSteamShortcuts { get; set; }
         private bool syncDiscordPresence { get; set; }
+        private bool cloudSaves { get; set; }
         //DevMode
         private bool devModeEnabled { get; set; }
         private bool devTargetPhalcodeTestBackend { get; set; }
@@ -79,6 +83,7 @@ namespace gamevault.ViewModels
 
             syncSteamShortcuts = Preferences.Get(AppConfigKey.SyncSteamShortcuts, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(SyncSteamShortcuts));
             syncDiscordPresence = Preferences.Get(AppConfigKey.SyncDiscordPresence, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(SyncDiscordPresence));
+            cloudSaves = Preferences.Get(AppConfigKey.CloudSaves, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(CloudSaves));
 
             string autoInstallPortableStr = Preferences.Get(AppConfigKey.AutoInstallPortable, AppFilePath.UserFile);
             if (string.IsNullOrWhiteSpace(autoInstallPortableStr) || autoInstallPortableStr == "1")
@@ -119,9 +124,13 @@ namespace gamevault.ViewModels
                 {
                     if (!File.Exists(AppFilePath.IgnoreList))
                     {
-                        string response = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/ignorefile");
-                        IgnoreList = JsonSerializer.Deserialize<string[]>(response);
-                        Preferences.Set("IL", response.Replace("\n", ""), AppFilePath.IgnoreList);
+                        string response = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/ignorefile");                       
+                        string[] ignoreList = JsonSerializer.Deserialize<string[]>(response);
+                        if (ignoreList != null || ignoreList?.Length > 0)
+                        {
+                            IgnoreList = ignoreList.Where(s => !string.IsNullOrEmpty(s)).ToArray(); //Make sure server ignore list don't contain empty strings, because this will exclude any file which is compared to the ignore list
+                            Preferences.Set("IL", response.Replace("\n", ""), AppFilePath.IgnoreList);
+                        }
                     }
                     else
                     {
@@ -318,15 +327,28 @@ namespace gamevault.ViewModels
             }
             set { syncDiscordPresence = value; Preferences.Set(AppConfigKey.SyncDiscordPresence, syncDiscordPresence ? "1" : "0", AppFilePath.UserFile); OnPropertyChanged(); }
         }
+        public bool CloudSaves
+        {
+            get
+            {
+                return cloudSaves;
+            }
+            set { cloudSaves = value; Preferences.Set(AppConfigKey.CloudSaves, cloudSaves ? "1" : "0", AppFilePath.UserFile); OnPropertyChanged(); }
+        }
         public User RegistrationUser
         {
             get { return m_RegistrationUser; }
             set { m_RegistrationUser = value; OnPropertyChanged(); }
         }
-        public List<ThemeItem> Themes
+        public ObservableCollection<ThemeItem> Themes
         {
             get { return themes; }
             set { themes = value; OnPropertyChanged(); }
+        }
+        public ObservableCollection<ThemeItem> CommunityThemes
+        {
+            get { return communityThemes; }
+            set { communityThemes = value; OnPropertyChanged(); }
         }
         public PhalcodeProduct License
         {
@@ -369,7 +391,7 @@ namespace gamevault.ViewModels
         {
             get
             {
-                return Assembly.GetExecutingAssembly().GetName().Version.ToString();// + " EA";
+                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
             }
         }
         //DevMode

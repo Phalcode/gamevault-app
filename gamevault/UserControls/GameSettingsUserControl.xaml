@@ -9,7 +9,7 @@
              xmlns:helper="clr-namespace:gamevault.Helper"
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" Focusable="True" Loaded="GameSettings_Loaded" FocusVisualStyle="{x:Null}">
+             d:DesignHeight="450" d:DesignWidth="800" Focusable="True" Loaded="GameSettings_Loaded" >
     <UserControl.Resources>
         <Style x:Key="TabItemHeaderPath" TargetType="Path">
             <Style.Triggers>
@@ -209,7 +209,6 @@
                                         <Border.Style>
                                             <Style TargetType="Border">
                                                 <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Button.Border}"/>
-                                                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
                                                 <Style.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
                                                         <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}" />
@@ -266,7 +265,7 @@
                                         <Border.Style>
                                             <Style TargetType="Border">
                                                 <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Button.Border}"/>
-                                                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+
                                                 <Style.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
                                                         <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}" />
@@ -453,7 +452,7 @@
                                             </Grid>
                                             <StackPanel Margin="5,0,0,0">
                                                 <TextBlock Text="Title" FontSize="15" FontWeight="Bold"/>
-                                                <TextBlock FontSize="15">
+                                                <TextBlock FontSize="15" Width="200" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" ToolTip="{Binding Path=CurrentShownMappedGame.Title}">
                                                     <TextBlock.Style>
                                                         <Style TargetType="TextBlock">
                                                             <Setter Property="Text" Value="{Binding Path=CurrentShownMappedGame.Title}"/>
@@ -512,7 +511,7 @@
                                         </Style>
                                     </StackPanel.Style>
                                     <StackPanel>
-                                        <mah:NumericUpDown x:Name="uiProviderPriority" Value="1" ButtonsAlignment="Opposite" TextAlignment="Center" BorderThickness="0"/>
+                                        <mah:NumericUpDown x:Name="uiProviderPriority" Value="1" ButtonsAlignment="Opposite" SwitchUpDownButtons="True" TextAlignment="Center" BorderThickness="0"/>
                                         <local:IconButton Text="Save Priority" FontSize="12" Icon="{DynamicResource IconGameSettingsSave}" IconScale="0.7" IconMargin="0,0,1,0" Height="23" Margin="0,0,0,0" Click="SavePriority_Click"/>
                                     </StackPanel>
                                     <local:IconButton Text="Unmap" FontSize="15" Icon="{DynamicResource IconGameSettingsUnlinked}" IconMargin="0,0,5,2" Width="140" Height="33" Margin="0,15,0,15" Click="Unmap_Click"/>
@@ -538,12 +537,18 @@
                                     </ItemsControl.Template>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Border CornerRadius="5" Height="60"  Margin="0,5,0,0" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}">
+                                            <Border CornerRadius="5" Height="119"  Margin="0,5,0,0" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}">
                                                 <Grid Margin="5">
-                                                    <Image Source="{Binding Path=CoverUrl}" Stretch="UniformToFill" Width="100" HorizontalAlignment="Left"/>
-                                                    <TextBlock Text="{Binding Path=Title}" Width="200" FontSize="13" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="105,0,0,0"/>
-                                                    <TextBlock Text="{Binding Path=ReleaseDate,StringFormat='{}{0:MM/dd/yyyy}'}" Width="160" FontSize="13" TextWrapping="Wrap" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="105,0,0,0"/>
-                                                    <local:IconButton Text="Remap" VerticalAlignment="Center" HorizontalAlignment="Right" Width="52" Height="23" FontSize="12" Click="GameRemap_Click"/>
+                                                    <Border CornerRadius="5" BorderThickness="0" Width="82" HorizontalAlignment="Left">
+                                                        <Border.Background>
+                                                            <ImageBrush ImageSource="{Binding Path=CoverUrl}" Stretch="UniformToFill"/>
+                                                        </Border.Background>
+                                                    </Border>
+                                                    <TextBlock Text="{Binding Path=Title}" FontWeight="Bold" Width="640" FontSize="13" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="90,0,0,0"/>
+                                                    <TextBlock Text="{Binding Path=ReleaseDate,StringFormat='{}{0:MM/dd/yyyy}'}" Width="160" FontSize="13" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="90,20,0,0"/>
+                                                    <TextBlock Text="{Binding Path=Description}" Width="640" Height="70" FontSize="10" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="90,40,0,0"/>
+                                                    <TextBlock Text="{Binding Path=ProviderDataId,StringFormat='{}ID: {0}'}" FontSize="13" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,0,5,0"/>
+                                                    <local:IconButton Text="Remap" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="55" Height="25" FontSize="12" Margin="0,0,0,2" Click="GameRemap_Click"/>
                                                 </Grid>
                                             </Border>
                                         </DataTemplate>

@@ -1,5 +1,19 @@
 # GameVault App Changelog
 
+## 1.15.0
+Recommended Gamevault Server Version: `v14.0.0`
+### Changes
+
+- Cloud Saves (+)
+- Added retrieval and installation of community themes
+- Added Community Themes Repository link to the settings 
+- Bug fix: Youtube url not loading in gameview
+- Bug fix: Game window sometimes started in the background when launched via gamevault uri
+- Bug fix: Crash on saving user details
+- Bug fix: Removed all dotted keyboard focus lines
+- Bug fix: App protocol of the microsoft version won't start a install if a instance of gamevault is already running
+- Bug fix: The game executable selection was always empty if the ignore list had an empty string as an entry
+
 ## 1.14.0
 Recommended Gamevault Server Version: `v13.1.2`
 ### Changes
