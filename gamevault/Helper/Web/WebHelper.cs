@@ -247,17 +247,11 @@ namespace gamevault.Helper
         {
             using (HttpClient client = new HttpClient())
             {
-                try
-                {
-                    HttpResponseMessage response = await client.GetAsync(url);
-                    response.EnsureSuccessStatusCode();
-                    string content = await response.Content.ReadAsStringAsync();
-                    return content;
-                }
-                catch (Exception ex)
-                {
-                    return null;
-                }
+                client.DefaultRequestHeaders.Add("User-Agent", "C# App");
+                HttpResponseMessage response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+                string content = await response.Content.ReadAsStringAsync();
+                return content;
             }
         }
     }

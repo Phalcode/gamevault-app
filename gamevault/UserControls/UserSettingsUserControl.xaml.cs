@@ -375,7 +375,7 @@ namespace gamevault.UserControls
                     }
                     string result = WebHelper.Put(url, JsonSerializer.Serialize(selectedUser), true);
                     ViewModel.OriginUser = JsonSerializer.Deserialize<User>(result);
-                    MainWindowViewModel.Instance.AppBarText = "Sucessfully saved user changes";
+                    MainWindowViewModel.Instance.AppBarText = "Successfully saved user changes";
                 }
                 catch (Exception ex)
                 {

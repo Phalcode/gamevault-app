@@ -2,6 +2,7 @@
 using gamevault.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -50,7 +51,8 @@ namespace gamevault.ViewModels
         private string[] ignoreList { get; set; }
         private User m_RegistrationUser = new User() { Avatar = new Media(), Background = new Media() };
         private PhalcodeProduct license { get; set; }
-        private List<ThemeItem> themes { get; set; }
+        private ObservableCollection<ThemeItem> themes { get; set; }
+        private ObservableCollection<ThemeItem> communityThemes { get; set; }
         private bool showMappedTitle { get; set; }
         private bool syncSteamShortcuts { get; set; }
         private bool syncDiscordPresence { get; set; }
@@ -338,10 +340,15 @@ namespace gamevault.ViewModels
             get { return m_RegistrationUser; }
             set { m_RegistrationUser = value; OnPropertyChanged(); }
         }
-        public List<ThemeItem> Themes
+        public ObservableCollection<ThemeItem> Themes
         {
             get { return themes; }
             set { themes = value; OnPropertyChanged(); }
+        }
+        public ObservableCollection<ThemeItem> CommunityThemes
+        {
+            get { return communityThemes; }
+            set { communityThemes = value; OnPropertyChanged(); }
         }
         public PhalcodeProduct License
         {

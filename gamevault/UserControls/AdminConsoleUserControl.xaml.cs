@@ -177,7 +177,7 @@ namespace gamevault.UserControls
                 try
                 {
                     WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/{selectedUser.ID}", JsonSerializer.Serialize(selectedUser));
-                    MainWindowViewModel.Instance.AppBarText = "Sucessfully saved user changes";
+                    MainWindowViewModel.Instance.AppBarText = "Successfully saved user changes";
                 }
                 catch (Exception ex)
                 {
@@ -217,7 +217,7 @@ namespace gamevault.UserControls
                 try
                 {
                     WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/reindex", string.Empty);
-                    MainWindowViewModel.Instance.AppBarText = "Sucessfully reindexed games";
+                    MainWindowViewModel.Instance.AppBarText = "Successfully reindexed games";
                 }
                 catch (Exception ex)
                 {

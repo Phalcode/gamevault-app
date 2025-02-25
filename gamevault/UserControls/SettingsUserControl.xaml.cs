@@ -12,11 +12,11 @@ using System.Diagnostics;
 using MahApps.Metro.Controls.Dialogs;
 using MahApps.Metro.Controls;
 using System.Text.Json;
-using System.Security.Policy;
-using AngleSharp.Io;
 using AngleSharp.Common;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Collections.Generic;
+using System.Windows.Markup;
 
 namespace gamevault.UserControls
 {
@@ -90,7 +90,7 @@ namespace gamevault.UserControls
                 uiAutostartToggle.IsOn = AutostartHelper.RegistryAutoStartKeyExists();
             }
             uiAutostartToggle.Toggled += AppAutostart_Toggled;
-            await LoadThemes();
+            LoadThemes();
             uiPwExtraction.Password = Preferences.Get(AppConfigKey.ExtractionPassword, AppFilePath.UserFile, true);
         }
         private async void AppAutostart_Toggled(object sender, RoutedEventArgs e)
@@ -236,11 +236,16 @@ namespace gamevault.UserControls
             }
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
         }
+        #region THEMES
         private void Themes_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ThemeItem selectedTheme = (ThemeItem)((ComboBox)sender).SelectedValue;
             if (((ComboBox)sender).SelectionBoxItem == string.Empty)
                 return;
+
+            if (selectedTheme == null)
+                return;
+
             if (((ThemeItem)((ComboBox)sender).SelectionBoxItem).Path == selectedTheme.Path)
                 return;
             if (selectedTheme.IsPlus == true && ViewModel.License.IsActive() == false)
@@ -264,11 +269,18 @@ namespace gamevault.UserControls
             }
             catch (Exception ex) { MainWindowViewModel.Instance.AppBarText = ex.Message; }
         }
-        private async Task LoadThemes()
+        private void LoadThemes()
         {
             try
             {
-                ViewModel.Themes = new System.Collections.Generic.List<ThemeItem>();
+                if (ViewModel.Themes == null)
+                {
+                    ViewModel.Themes = new ObservableCollection<ThemeItem>();
+                }
+                else
+                {
+                    ViewModel.Themes.Clear();
+                }
                 //Load embedded Themes
                 ResourceDictionary res = new ResourceDictionary();
                 res.Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeDefaultDark.xaml");
@@ -306,7 +318,7 @@ namespace gamevault.UserControls
                 }
                 string currentThemeString = Preferences.Get(AppConfigKey.Theme, AppFilePath.UserFile, true);
                 ThemeItem currentTheme = JsonSerializer.Deserialize<ThemeItem>(currentThemeString);
-                int themeIndex = ViewModel.Themes.FindIndex(i => i.Path == currentTheme.Path);
+                int themeIndex = ViewModel.Themes.ToList().FindIndex(i => i.Path == currentTheme.Path);
                 if (themeIndex != -1 && (ViewModel.Themes[themeIndex].IsPlus == true ? ViewModel.License.IsActive() : true))
                 {
                     uiCbTheme.SelectedIndex = themeIndex;
@@ -336,7 +348,7 @@ namespace gamevault.UserControls
             }
             catch { }
         }
-        private void OpenCommunityPage_Click(object sender, RoutedEventArgs e)
+        private void OpenCommunityThemeRepository_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -344,7 +356,100 @@ namespace gamevault.UserControls
             }
             catch { }
         }
-
+        private async void ReloadThemeList_Click(object sender, RoutedEventArgs e)
+        {
+            ((FrameworkElement)sender).IsEnabled = false;
+            LoadThemes();
+            await Task.Delay(500);
+            ((FrameworkElement)sender).IsEnabled = true;
+        }
+        private async Task<List<JsonElement>> LoadCommunityThemesHeader()
+        {
+            string jsonResponse = await WebHelper.DownloadFileContentAsync("https://api.github.com/repos/phalcode/gamevault-community-themes/contents/v1");
+            return JsonSerializer.Deserialize<List<JsonElement>>(jsonResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        }
+        private async Task<ThemeItem> LoadThemeItemFromUrl(string url)
+        {
+            try
+            {
+                string result = await WebHelper.DownloadFileContentAsync(url);
+                ResourceDictionary res = (ResourceDictionary)XamlReader.Parse(result);
+                return new ThemeItem() { DisplayName = (string)res["Theme.DisplayName"], Description = (string)res["Theme.Description"], Author = (string)res["Theme.Author"], Path = url };
+            }
+            catch { return null; }
+        }
+        private async Task LoadCommunityThemes()
+        {
+            try
+            {
+                List<JsonElement> fetchedList = await LoadCommunityThemesHeader();
+                foreach (var entry in fetchedList)
+                {
+                    if (entry.TryGetProperty("name", out JsonElement nameElement) && nameElement.GetString()?.First() != '_' && entry.TryGetProperty("download_url", out JsonElement downloadUrlElement))
+                    {
+                        ThemeItem theme = await LoadThemeItemFromUrl(downloadUrlElement.GetString()!);
+                        if (theme != null)
+                        {
+                            ViewModel.CommunityThemes.Add(theme);
+                        }
+                    }
+                }
+            }
+            catch { }
+        }
+        private async void CommunityThemes_DropDownOpened(object sender, EventArgs e)
+        {
+            if (ViewModel.CommunityThemes == null)
+            {
+                ViewModel.CommunityThemes = new ObservableCollection<ThemeItem>();
+                await LoadCommunityThemes();
+            }
+        }
+        private async void ReloadCommunityThemeList_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.CommunityThemes == null)
+            {
+                ViewModel.CommunityThemes = new ObservableCollection<ThemeItem>();
+            }
+            else
+            {
+                ViewModel.CommunityThemes.Clear();
+            }
+            ((FrameworkElement)sender).IsEnabled = false;
+            await LoadCommunityThemes();
+            ((FrameworkElement)sender).IsEnabled = true;
+        }
+        private async void InstallCommunityTheme_Click(object sender, RoutedEventArgs e)
+        {
+            if (uiCBCommunityThemes.SelectedItem == null)
+            {
+                MainWindowViewModel.Instance.AppBarText = "No Theme selected";
+                return;
+            }
+            ((FrameworkElement)sender).IsEnabled = false;
+            try
+            {
+                ThemeItem theme = (ThemeItem)uiCBCommunityThemes.SelectedItem;
+                string installationPath = Path.Combine(AppFilePath.ThemesLoadDir, theme.DisplayName + ".xaml");
+                if(File.Exists(installationPath))
+                {
+                    MainWindowViewModel.Instance.AppBarText = $"{theme.DisplayName} is already installed";
+                    ((FrameworkElement)sender).IsEnabled = true;
+                    return;
+                }
+                string result = await WebHelper.DownloadFileContentAsync(theme.Path);               
+                File.WriteAllText(installationPath, result);
+                LoadThemes();
+                MainWindowViewModel.Instance.AppBarText = $"Successfully installed {theme.DisplayName}";
+            }
+            catch (Exception ex)
+            {
+                MainWindowViewModel.Instance.AppBarText = ex.Message;
+                ((FrameworkElement)sender).IsEnabled = true;
+            }
+            ((FrameworkElement)sender).IsEnabled = true;
+        }
+        #endregion
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
             try
@@ -418,6 +523,7 @@ namespace gamevault.UserControls
                 ViewModel.DevModeEnabled = true;
             }
         }
+
 
     }
 }
