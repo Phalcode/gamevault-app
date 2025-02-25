@@ -431,15 +431,15 @@ namespace gamevault.UserControls
             {
                 ThemeItem theme = (ThemeItem)uiCBCommunityThemes.SelectedItem;
                 string installationPath = Path.Combine(AppFilePath.ThemesLoadDir, theme.DisplayName + ".xaml");
-                if(File.Exists(installationPath))
-                {
-                    MainWindowViewModel.Instance.AppBarText = $"{theme.DisplayName} is already installed";
-                    ((FrameworkElement)sender).IsEnabled = true;
-                    return;
-                }
-                string result = await WebHelper.DownloadFileContentAsync(theme.Path);               
+                string result = await WebHelper.DownloadFileContentAsync(theme.Path);
                 File.WriteAllText(installationPath, result);
                 LoadThemes();
+                try
+                {
+                    int installedThemeIndex = ViewModel.Themes.IndexOf(ViewModel.Themes.First(t => t.DisplayName == theme.DisplayName));
+                    uiCbTheme.SelectedIndex = installedThemeIndex;
+                }
+                catch { }
                 MainWindowViewModel.Instance.AppBarText = $"Successfully installed {theme.DisplayName}";
             }
             catch (Exception ex)
@@ -523,7 +523,6 @@ namespace gamevault.UserControls
                 ViewModel.DevModeEnabled = true;
             }
         }
-
 
     }
 }

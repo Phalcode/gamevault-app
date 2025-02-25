@@ -57,5 +57,8 @@ namespace gamevault.Models
 
         [JsonPropertyName("cover_url")]
         public string CoverUrl { get; set; }
+
+        [JsonPropertyName("description")]
+        public string Description { get; set; }
     }
 }

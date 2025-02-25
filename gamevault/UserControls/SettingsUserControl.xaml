@@ -80,7 +80,7 @@
                                 </ComboBox>
                                 <Button Style="{StaticResource ButtonWrapper}" Height="25" Width="25" Margin="20,0,10,0" Cursor="Hand" ToolTip="Reload Theme List" Click="ReloadThemeList_Click">
                                     <Grid  Style="{DynamicResource HoverEffect}" Background="Transparent">
-                                        <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.IdealForeground}" Margin="0,0.6,0,0" RenderTransformOrigin="0.5,0.5">
+                                        <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Margin="0,0.6,0,0" RenderTransformOrigin="0.5,0.5">
                                             <Path.RenderTransform>
                                                 <ScaleTransform ScaleX="1.51" ScaleY="1.51"/>
                                             </Path.RenderTransform>
@@ -140,7 +140,7 @@
                                 </Grid>
                                 <Button Style="{StaticResource ButtonWrapper}" Height="25" Width="25" Margin="20,0,10,0" Cursor="Hand" ToolTip="Reload Theme List" Click="ReloadCommunityThemeList_Click">
                                     <Grid  Style="{DynamicResource HoverEffect}" Background="Transparent">
-                                        <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.IdealForeground}" Margin="0,0.6,0,0" RenderTransformOrigin="0.5,0.5">
+                                        <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Margin="0,0.6,0,0" RenderTransformOrigin="0.5,0.5">
                                             <Path.RenderTransform>
                                                 <ScaleTransform ScaleX="1.51" ScaleY="1.51"/>
                                             </Path.RenderTransform>
@@ -444,7 +444,7 @@
                                 <StackPanel Margin="0,30,0,0">
                                     <TextBlock Text="Features" FontSize="20" FontWeight="Bold"/>
                                     <StackPanel Orientation="Horizontal" Margin="10,10,0,0">
-                                        <Rectangle Fill="{StaticResource MahApps.Brushes.Accent}" Width="2"/>
+                                        <Rectangle Fill="{DynamicResource MahApps.Brushes.Accent}" Width="2"/>
                                         <StackPanel Margin="10,0,0,0">
                                             <StackPanel Orientation="Horizontal">
                                                 <Path Data="{StaticResource IconGameSettingsSteam}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
@@ -465,7 +465,7 @@
                                     </StackPanel>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="10,20,0,0">
-                                    <Rectangle Fill="{StaticResource MahApps.Brushes.Accent}" Width="2"/>
+                                    <Rectangle Fill="{DynamicResource MahApps.Brushes.Accent}" Width="2"/>
                                     <StackPanel Margin="10,0,0,0">
                                         <StackPanel Orientation="Horizontal">
                                             <Path Data="{StaticResource IconGameSettingsDiscord}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
@@ -482,7 +482,7 @@
                                     </StackPanel>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="10,20,0,0">
-                                    <Rectangle Fill="{StaticResource MahApps.Brushes.Accent}" Width="2"/>
+                                    <Rectangle Fill="{DynamicResource MahApps.Brushes.Accent}" Width="2"/>
                                     <StackPanel Margin="10,0,0,0">
                                         <StackPanel Orientation="Horizontal">
                                             <Path Data="{StaticResource IconCloudSave}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" VerticalAlignment="Center" RenderTransformOrigin="0.3,0.0">
@@ -501,7 +501,7 @@
                                 </StackPanel>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="10,20,0,0">
-                                <Rectangle Fill="{StaticResource MahApps.Brushes.Accent}" Width="2"/>
+                                <Rectangle Fill="{DynamicResource MahApps.Brushes.Accent}" Width="2"/>
                                 <StackPanel Margin="10,0,0,0">
                                     <StackPanel Orientation="Horizontal">
                                         <Path Data="{StaticResource IconGameSettingsPlaynite}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" VerticalAlignment="Center" RenderTransformOrigin="1,1">
