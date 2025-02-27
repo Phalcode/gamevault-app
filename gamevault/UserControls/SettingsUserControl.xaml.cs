@@ -248,6 +248,8 @@ namespace gamevault.UserControls
 
             if (((ThemeItem)((ComboBox)sender).SelectionBoxItem).Path == selectedTheme.Path)
                 return;
+
+            ViewModel.IsCommunityThemeSelected = File.Exists(selectedTheme?.Path);
             if (selectedTheme.IsPlus == true && ViewModel.License.IsActive() == false)
             {
                 ((ComboBox)sender).SelectedItem = (ThemeItem)((ComboBox)sender).SelectionBoxItem;
@@ -327,6 +329,7 @@ namespace gamevault.UserControls
                 {
                     uiCbTheme.SelectedIndex = 0;
                 }
+                ViewModel.IsCommunityThemeSelected = File.Exists(((ThemeItem)uiCbTheme.SelectedItem)?.Path);
             }
             catch { uiCbTheme.SelectedIndex = 0; }
         }
@@ -449,6 +452,19 @@ namespace gamevault.UserControls
             }
             ((FrameworkElement)sender).IsEnabled = true;
         }
+        private void UninstallTheme_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (File.Exists(((ThemeItem)uiCbTheme.SelectedItem)?.Path))
+                {
+                    File.Delete(((ThemeItem)uiCbTheme.SelectedItem).Path);                   
+                    uiCbTheme.SelectedIndex = 0;
+                    LoadThemes();
+                }
+            }
+            catch { }
+        }
         #endregion
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
@@ -523,6 +539,7 @@ namespace gamevault.UserControls
                 ViewModel.DevModeEnabled = true;
             }
         }
+
 
     }
 }

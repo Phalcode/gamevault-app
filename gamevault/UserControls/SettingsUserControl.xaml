@@ -90,6 +90,7 @@
                                         </Grid.RenderTransform>
                                     </Grid>
                                 </Button>
+                                <local:IconButton Text="Uninstall Theme" Kind="Danger" IsEnabled="{Binding IsCommunityThemeSelected}" FontSize="15" Icon="{StaticResource IconTrash}" IconMargin="0,0,5,2" Width="175" Margin="10,0,0,0" Click="UninstallTheme_Click"/>
                                 <local:IconButton Text="Open Theme Folder" FontSize="15" Icon="{StaticResource IconGameSettingsFolder}" IconMargin="0,0,5,2" Width="175" Margin="10,0,0,0" Click="OpenThemeFolder_Click"/>
                             </StackPanel>
                             <TextBlock Text="Community Themes" Margin="10,10,0,0" FontSize="14"/>

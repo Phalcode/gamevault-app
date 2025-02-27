@@ -57,6 +57,7 @@ namespace gamevault.ViewModels
         private bool syncSteamShortcuts { get; set; }
         private bool syncDiscordPresence { get; set; }
         private bool cloudSaves { get; set; }
+        private bool isCommunityThemeSelected { get; set; }
         //DevMode
         private bool devModeEnabled { get; set; }
         private bool devTargetPhalcodeTestBackend { get; set; }
@@ -124,7 +125,7 @@ namespace gamevault.ViewModels
                 {
                     if (!File.Exists(AppFilePath.IgnoreList))
                     {
-                        string response = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/ignorefile");                       
+                        string response = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/ignorefile");
                         string[] ignoreList = JsonSerializer.Deserialize<string[]>(response);
                         if (ignoreList != null || ignoreList?.Length > 0)
                         {
@@ -334,6 +335,14 @@ namespace gamevault.ViewModels
                 return cloudSaves;
             }
             set { cloudSaves = value; Preferences.Set(AppConfigKey.CloudSaves, cloudSaves ? "1" : "0", AppFilePath.UserFile); OnPropertyChanged(); }
+        }
+        public bool IsCommunityThemeSelected
+        {
+            get
+            {
+                return isCommunityThemeSelected;
+            }
+            set { isCommunityThemeSelected = value; OnPropertyChanged(); }
         }
         public User RegistrationUser
         {

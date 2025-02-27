@@ -35,12 +35,14 @@ namespace gamevault.Helper
             Preferences.Set(AppConfigKey.Username, m_UserName, AppFilePath.UserFile);
             Preferences.Set(AppConfigKey.Password, m_Password, AppFilePath.UserFile, true);
         }
-        internal static string GetRequest(string uri)
+        internal static string GetRequest(string uri, int timeout = 0)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-#if DEBUG
-            //request.Timeout = 3000;
-#endif
+            if (timeout != 0)
+            {
+                request.Timeout = 5000;
+            }
+
             request.UserAgent = $"GameVault/{SettingsViewModel.Instance.Version}";
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             var authenticationString = $"{m_UserName}:{m_Password}";
