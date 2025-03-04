@@ -302,6 +302,10 @@ namespace gamevault
             {
                 Directory.CreateDirectory(AppFilePath.ThemesLoadDir);
             }
+            if (!Directory.Exists(AppFilePath.CloudSaveConfigDir))
+            {
+                Directory.CreateDirectory(AppFilePath.CloudSaveConfigDir);
+            }
         }
         public bool IsWindowActiveAndControlInFocus(MainControl control)
         {

@@ -16,6 +16,8 @@ using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using Windows.Gaming.Input;
 using Windows.Gaming.Preview.GamesEnumeration;
+using YamlDotNet.Serialization.NamingConventions;
+using YamlDotNet.Serialization;
 
 namespace gamevault.Helper.Integrations
 {
@@ -88,10 +90,11 @@ namespace gamevault.Helper.Integrations
                                 throw new Exception("no savegame extracted");
 
                             extractFolder = Path.GetDirectoryName(Path.GetDirectoryName(mappingFile[0]));
+                            PrepareConfigFile(installationDir, Path.Combine(AppFilePath.CloudSaveConfigDir, "config.yaml"));
                             Process process = new Process();
                             ProcessShepherd.Instance.AddProcess(process);
                             process.StartInfo = CreateProcessHeader();
-                            process.StartInfo.Arguments = $"restore --force --path \"{extractFolder}\"";
+                            process.StartInfo.Arguments = $"--config {AppFilePath.CloudSaveConfigDir} restore --force --path \"{extractFolder}\"";
                             process.Start();
                             process.WaitForExit();
                             ProcessShepherd.Instance.RemoveProcess(process);
@@ -172,7 +175,12 @@ namespace gamevault.Helper.Integrations
             if (gameMetadataTitle != "" && installationDir != "")
             {
                 string title = await SearchForLudusaviGameTitle(gameMetadataTitle);
-                string tempFolder = await CreateBackup(title);
+                if (string.IsNullOrEmpty(title))
+                    return false;
+                string tempFolder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+                Directory.CreateDirectory(tempFolder);
+                PrepareConfigFile(installedGame?.Value!, Path.Combine(AppFilePath.CloudSaveConfigDir, "config.yaml"));
+                await CreateBackup(title, tempFolder);
                 string archive = Path.Combine(tempFolder, "backup.zip");
                 if (Directory.GetFiles(tempFolder, "mapping.yaml", SearchOption.AllDirectories).Length == 0)
                 {
@@ -187,6 +195,25 @@ namespace gamevault.Helper.Integrations
             }
             return false;
         }
+        public void PrepareConfigFile(string installationPath, string yamlPath)
+        {
+            string userFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            var redirects = new
+            {
+                redirects = new List<object>
+            {
+                new { kind = "bidirectional", source = userFolder, target = "G:\\gamevault\\currentuser" },
+                new { kind = "bidirectional", source = installationPath, target = "G:\\gamevault\\installation" }
+            }
+            };
+
+            var serializer = new SerializerBuilder()
+                .WithNamingConvention(UnderscoredNamingConvention.Instance)
+                .Build();
+
+            string result = serializer.Serialize(redirects);
+            File.WriteAllText(yamlPath, result);
+        }       
         internal async Task<string> SearchForLudusaviGameTitle(string title)
         {
             return await Task.Run<string>(() =>
@@ -223,21 +250,19 @@ namespace gamevault.Helper.Integrations
                 return "";
             });
         }
-        private async Task<string> CreateBackup(string lunusaviTitle)
+        private async Task CreateBackup(string lunusaviTitle, string tempFolder)
         {
-            return await Task.Run<string>(() =>
-            {
-                string tempFolder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            await Task.Run(() =>
+           {
+               Process process = new Process();
+               ProcessShepherd.Instance.AddProcess(process);
+               process.StartInfo = CreateProcessHeader();
+               process.StartInfo.Arguments = $"--config {AppFilePath.CloudSaveConfigDir} backup --force --format \"zip\" --path \"{tempFolder}\" \"{lunusaviTitle}\"";
+               process.Start();
+               process.WaitForExit();
+               ProcessShepherd.Instance.RemoveProcess(process);
 
-                Process process = new Process();
-                ProcessShepherd.Instance.AddProcess(process);
-                process.StartInfo = CreateProcessHeader();
-                process.StartInfo.Arguments = $"backup --force --format \"zip\" --path \"{tempFolder}\" \"{lunusaviTitle}\"";
-                process.Start();
-                process.WaitForExit();
-                ProcessShepherd.Instance.RemoveProcess(process);
-                return tempFolder;
-            });
+           });
         }
         private async Task<bool> UploadSavegame(string saveFilePath, int gameId, string installationDir)
         {
