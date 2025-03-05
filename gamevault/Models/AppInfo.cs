@@ -50,7 +50,8 @@ namespace gamevault.Models
         DevModeEnabled,
         DevTargetPhalcodeTestBackend,
         //
-        InstallationId
+        InstallationId,
+        CustomLudusaviManifests
     }
     public static class AppFilePath
     {
@@ -63,7 +64,7 @@ namespace gamevault.Models
         internal static string UserFile = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/config/user";
         internal static string IgnoreList = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/cache/ignorelist";
         internal static string ErrorLog = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/errorlog";
-        internal static string CloudSaveConfigDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GameVault", "config", "cloudsave", "config.yaml");
+        internal static string CloudSaveConfigDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GameVault", "config", "cloudsave");
 
 
         internal static void InitDebugPaths()

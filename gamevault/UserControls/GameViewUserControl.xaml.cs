@@ -360,6 +360,28 @@ namespace gamevault.UserControls
             }
             catch { }
         }
+        private void Developer_Clicked(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                DeveloperMetadata data = (DeveloperMetadata)((FrameworkElement)sender).DataContext;
+                MainWindowViewModel.Instance.Library.ClearAllFilters();
+                MainWindowViewModel.Instance.Library.uiFilterDeveloperSelector.SetEntries(new Pill[] { new Pill() { ID = (int)data.ID!, Name = data.Name, ProviderDataId = data.ProviderDataId } });
+                MainWindowViewModel.Instance.SetActiveControl(MainControl.Library);
+            }
+            catch { }
+        }
+        private void Publisher_Clicked(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                PublisherMetadata data = (PublisherMetadata)((FrameworkElement)sender).DataContext;
+                MainWindowViewModel.Instance.Library.ClearAllFilters();
+                MainWindowViewModel.Instance.Library.uiFilterPublisherSelector.SetEntries(new Pill[] { new Pill() { ID = (int)data.ID!, Name = data.Name, ProviderDataId = data.ProviderDataId } });
+                MainWindowViewModel.Instance.SetActiveControl(MainControl.Library);
+            }
+            catch { }
+        }
         private void GameType_Clicked(object sender, RoutedEventArgs e)
         {
             try
@@ -466,6 +488,6 @@ namespace gamevault.UserControls
         }
 
         #endregion
-
+        
     }
 }

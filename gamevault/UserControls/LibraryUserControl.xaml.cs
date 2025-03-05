@@ -306,6 +306,16 @@ namespace gamevault.UserControls
             {
                 filter += $"&filter.metadata.tags.name=$in:{tags}";
             }
+            string developers = uiFilterDeveloperSelector.GetSelectedEntries();
+            if (developers != string.Empty)
+            {
+                filter += $"&filter.metadata.developers.name=$in:{developers}";
+            }
+            string publishers = uiFilterPublisherSelector.GetSelectedEntries();
+            if (publishers != string.Empty)
+            {
+                filter += $"&filter.metadata.publishers.name=$in:{publishers}";
+            }
             string gameStates = uiFilterGameStateSelector.GetSelectedEntries();
             if (gameStates != string.Empty)
             {
@@ -446,6 +456,8 @@ namespace gamevault.UserControls
             filterCount += uiFilterGameTypeSelector.HasEntries() ? 1 : 0;
             filterCount += uiFilterGenreSelector.HasEntries() ? 1 : 0;
             filterCount += uiFilterTagSelector.HasEntries() ? 1 : 0;
+            filterCount += uiFilterDeveloperSelector.HasEntries() ? 1 : 0;
+            filterCount += uiFilterPublisherSelector.HasEntries() ? 1 : 0;
             filterCount += uiFilterGameStateSelector.HasEntries() ? 1 : 0;
             filterCount += (bool)uiFilterEarlyAccess.IsChecked ? 1 : 0;
             filterCount += (bool)uiFilterBookmarks.IsChecked ? 1 : 0;

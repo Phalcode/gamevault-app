@@ -17,6 +17,8 @@ namespace gamevault.UserControls
     {
         Tags,
         Genres,
+        Developers,
+        Publishers,
         GameType,
         GameState
 
@@ -57,6 +59,8 @@ namespace gamevault.UserControls
             {
                 Selection.Tags => "Tags",
                 Selection.Genres => "Genres",
+                Selection.Developers => "Developers",
+                Selection.Publishers => "Publishers",
                 Selection.GameType => "Game Type",
                 Selection.GameState => "Game State",
                 _ => uiTxtHeader.Text
@@ -141,7 +145,9 @@ namespace gamevault.UserControls
                 url = SelectionType switch
                 {
                     Selection.Tags => $"{SettingsViewModel.Instance.ServerUrl}/api/tags?search={debounceTimer.Data}&limit=25",
-                    Selection.Genres => $"{SettingsViewModel.Instance.ServerUrl}/api/genres?search={debounceTimer.Data}&limit=25"
+                    Selection.Genres => $"{SettingsViewModel.Instance.ServerUrl}/api/genres?search={debounceTimer.Data}&limit=25",
+                    Selection.Developers => $"{SettingsViewModel.Instance.ServerUrl}/api/developers?search={debounceTimer.Data}&limit=25",
+                    Selection.Publishers => $"{SettingsViewModel.Instance.ServerUrl}/api/publishers?search={debounceTimer.Data}&limit=25"
                 };
 
                 Selection selection = SelectionType;
@@ -153,7 +159,9 @@ namespace gamevault.UserControls
                         data = selection switch
                         {
                             Selection.Tags => JsonSerializer.Deserialize<PaginatedData<Pill>>(result).Data,
-                            Selection.Genres => JsonSerializer.Deserialize<PaginatedData<Pill>>(result).Data//.Where(x => x.Name.Contains(debounceTimer.Data, StringComparison.OrdinalIgnoreCase)).ToArray()
+                            Selection.Genres => JsonSerializer.Deserialize<PaginatedData<Pill>>(result).Data,
+                            Selection.Developers => JsonSerializer.Deserialize<PaginatedData<Pill>>(result).Data,
+                            Selection.Publishers => JsonSerializer.Deserialize<PaginatedData<Pill>>(result).Data
                         };
                     }
                     catch (Exception ex)
@@ -170,6 +178,8 @@ namespace gamevault.UserControls
             {
                 Selection.Tags => "Add Tags",
                 Selection.Genres => "Add Genres",
+                Selection.Developers => "Add Developers",
+                Selection.Publishers => "Add Publishers",
                 Selection.GameType => "Add Game Type",
                 _ => uiTxtHeader.Text
             };

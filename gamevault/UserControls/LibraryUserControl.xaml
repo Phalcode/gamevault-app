@@ -118,6 +118,8 @@
                                     <local:PillSelector x:Name="uiFilterGameTypeSelector" SelectionType="GameType" Margin="12,0,24,0" Width="175" EntriesUpdated="FilterUpdated"/>
                                     <local:PillSelector x:Name="uiFilterTagSelector" SelectionType="Tags" Margin="0,0,24,0" Width="175" EntriesUpdated="FilterUpdated"/>
                                     <local:PillSelector x:Name="uiFilterGenreSelector" SelectionType="Genres" Margin="0,0,24,0" Width="175" EntriesUpdated="FilterUpdated"/>
+                                    <local:PillSelector x:Name="uiFilterDeveloperSelector" SelectionType="Developers" Margin="0,0,24,0" Width="175" EntriesUpdated="FilterUpdated"/>
+                                    <local:PillSelector x:Name="uiFilterPublisherSelector" SelectionType="Publishers" Margin="0,0,24,0" Width="175" EntriesUpdated="FilterUpdated"/>
                                     <local:PillSelector x:Name="uiFilterGameStateSelector" SelectionType="GameState" IsMultiSelection="False" Margin="0,0,23,0" Width="175" EntriesUpdated="FilterUpdated"/>
                                     <StackPanel Margin="0,0,97,0">
                                         <TextBlock Text="Release Year" FontSize="15"/>

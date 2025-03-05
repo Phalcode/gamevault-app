@@ -1,5 +1,14 @@
 # GameVault App Changelog
 
+## 1.16.0
+Recommended Gamevault Server Version: `v14.0.0`
+### Changes
+
+- Added auto Cloud Save Redirects
+- Added support for custom Cloud Save Manifests
+- Library can now filter for Developers and Publishers
+- You can now uninstall community themes from the settings
+
 ## 1.15.0
 Recommended Gamevault Server Version: `v14.0.0`
 ### Changes

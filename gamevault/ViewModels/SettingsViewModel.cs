@@ -1,5 +1,7 @@
 ﻿using gamevault.Helper;
+using gamevault.Helper.Integrations;
 using gamevault.Models;
+using gamevault.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -58,6 +60,7 @@ namespace gamevault.ViewModels
         private bool syncDiscordPresence { get; set; }
         private bool cloudSaves { get; set; }
         private bool isCommunityThemeSelected { get; set; }
+        private ObservableCollection<LudusaviManifestEntry> customCloudSaveManifests;
         //DevMode
         private bool devModeEnabled { get; set; }
         private bool devTargetPhalcodeTestBackend { get; set; }
@@ -112,10 +115,13 @@ namespace gamevault.ViewModels
                 DownloadLimitUIValue = 0;
             }
 
+            string customCloudSaveManifestsString = Preferences.Get(AppConfigKey.CustomLudusaviManifests, AppFilePath.UserFile);
+            customCloudSaveManifests = string.IsNullOrWhiteSpace(customCloudSaveManifestsString) ? null! : new ObservableCollection<LudusaviManifestEntry>(customCloudSaveManifestsString.Split(';').Select(part => new LudusaviManifestEntry { Uri = part }).ToList());
+
             //DevMode
             devModeEnabled = Preferences.Get(AppConfigKey.DevModeEnabled, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(DevModeEnabled));
             devTargetPhalcodeTestBackend = Preferences.Get(AppConfigKey.DevTargetPhalcodeTestBackend, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(DevTargetPhalcodeTestBackend));
-            //
+            //            
         }
         public async Task InitIgnoreList()
         {
@@ -367,6 +373,20 @@ namespace gamevault.ViewModels
                 return license;
             }
             set { license = value; OnPropertyChanged(); }
+        }
+
+
+        public ObservableCollection<LudusaviManifestEntry> CustomCloudSaveManifests
+        {
+            get
+            {
+                if (customCloudSaveManifests == null)
+                {
+                    customCloudSaveManifests = new ObservableCollection<LudusaviManifestEntry>();
+                }
+                return customCloudSaveManifests;
+            }
+            set { customCloudSaveManifests = value; OnPropertyChanged(); }
         }
         public System.Windows.Forms.DialogResult SelectDownloadPath()
         {
