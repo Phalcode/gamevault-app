@@ -50,7 +50,10 @@ namespace gamevault.Models
         DevModeEnabled,
         DevTargetPhalcodeTestBackend,
         //
-        InstallationId
+        InstallationId,
+        CustomCloudSaveManifests,
+        UsePrimaryCloudSaveManifest
+
     }
     public static class AppFilePath
     {
@@ -63,6 +66,7 @@ namespace gamevault.Models
         internal static string UserFile = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/config/user";
         internal static string IgnoreList = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/cache/ignorelist";
         internal static string ErrorLog = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/errorlog";
+        internal static string CloudSaveConfigDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GameVault", "config", "cloudsave");
 
 
         internal static void InitDebugPaths()
@@ -76,6 +80,7 @@ namespace gamevault.Models
             UserFile = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/debug/config/user";
             IgnoreList = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/debug/cache/ignorelist";
             ErrorLog = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/debug/errorlog";
+            CloudSaveConfigDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GameVault", "debug", "config", "cloudsave");
         }
     }
     public static class Globals

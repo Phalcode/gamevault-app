@@ -84,7 +84,7 @@ namespace gamevault.Helper
                 try
                 {
                     WebHelper.SetCredentials(Preferences.Get(AppConfigKey.Username, AppFilePath.UserFile), Preferences.Get(AppConfigKey.Password, AppFilePath.UserFile, true));
-                    string result = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me");
+                    string result = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me", 5000);
                     return JsonSerializer.Deserialize<User>(result);
                 }
                 catch (Exception ex)

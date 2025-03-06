@@ -90,6 +90,7 @@
                                         </Grid.RenderTransform>
                                     </Grid>
                                 </Button>
+                                <local:IconButton Text="Uninstall Theme" Kind="Danger" IsEnabled="{Binding IsCommunityThemeSelected}" FontSize="15" Icon="{StaticResource IconTrash}" IconMargin="0,0,5,2" Width="175" Margin="10,0,0,0" Click="UninstallTheme_Click"/>
                                 <local:IconButton Text="Open Theme Folder" FontSize="15" Icon="{StaticResource IconGameSettingsFolder}" IconMargin="0,0,5,2" Width="175" Margin="10,0,0,0" Click="OpenThemeFolder_Click"/>
                             </StackPanel>
                             <TextBlock Text="Community Themes" Margin="10,10,0,0" FontSize="14"/>
@@ -497,6 +498,42 @@
                                         <TextBlock Text="Automatically backs up and restores your latest savefiles via your GameVault Server, ensuring seamless transitions between installations and devices. " FontSize="15"/>
                                         <TextBlock Text="Requires GameVault Server with savefiles feature enabled." FontSize="12" FontStyle="Italic"/>
                                         <mah:ToggleSwitch Margin="0,5,0,0" IsOn="{Binding CloudSaves}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Custom Ludusavi Manifests" Margin="0,2,0,2" FontSize="15"/>
+                                            <CheckBox Content="Use Primary Manifest" IsChecked="{Binding UsePrimaryCloudSaveManifest}" Margin="15,0,0,0" ToolTip="Disable primary Ludusavi manifest to only use the custom ones"/>
+                                        </StackPanel>
+                                        <ScrollViewer MaxHeight="100" VerticalScrollBarVisibility="Auto" Width="550" HorizontalAlignment="Left">
+                                            <ItemsControl ItemsSource="{Binding CustomCloudSaveManifests}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBox Text="{Binding Path=.Uri, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="File path or URL" mah:ControlsHelper.CornerRadius="5" Width="500" Height="20"/>
+                                                            <Button Style="{StaticResource ButtonWrapper}" Height="30" Width="30" Cursor="Hand" Click="RemoveCustomCloudSaveManifest_Click">
+                                                                <Grid Style="{DynamicResource HoverEffect}"  Background="Transparent"  RenderTransformOrigin="0.5,0.5">
+                                                                    <Path Data="m11.25 4.75l-6.5 6.5m0-6.5l6.5 6.5" Stroke="IndianRed" StrokeThickness="2">
+                                                                        <Path.RenderTransform>
+                                                                            <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                                                        </Path.RenderTransform>
+                                                                    </Path>
+                                                                    <Grid.RenderTransform>
+                                                                        <ScaleTransform/>
+                                                                    </Grid.RenderTransform>
+                                                                </Grid>
+                                                            </Button>
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </ScrollViewer>
+                                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                            <local:IconButton Icon="{StaticResource IconAddTag}" Text="Add" FontSize="15" IconMargin="0,0,5,2" Width="100" Height="30" Margin="0,0,10,0" Click="AddCustomCloudSaveManifest_Click"/>
+                                            <local:IconButton Icon="{StaticResource IconGameSettingsSave}" Text="Save" FontSize="15" IconMargin="0,0,5,2" Width="100" Height="30" Click="SaveCustomCloudSaveManifests_Click"/>
+                                        </StackPanel>
                                     </StackPanel>
                                 </StackPanel>
                             </StackPanel>

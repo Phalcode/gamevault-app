@@ -16,6 +16,9 @@ using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using Windows.Gaming.Input;
 using Windows.Gaming.Preview.GamesEnumeration;
+using YamlDotNet.Serialization.NamingConventions;
+using YamlDotNet.Serialization;
+using ImageMagick.Drawing;
 
 namespace gamevault.Helper.Integrations
 {
@@ -88,10 +91,11 @@ namespace gamevault.Helper.Integrations
                                 throw new Exception("no savegame extracted");
 
                             extractFolder = Path.GetDirectoryName(Path.GetDirectoryName(mappingFile[0]));
+                            PrepareConfigFile(installationDir, Path.Combine(AppFilePath.CloudSaveConfigDir, "config.yaml"));
                             Process process = new Process();
                             ProcessShepherd.Instance.AddProcess(process);
                             process.StartInfo = CreateProcessHeader();
-                            process.StartInfo.Arguments = $"restore --force --path \"{extractFolder}\"";
+                            process.StartInfo.Arguments = $"--config {AppFilePath.CloudSaveConfigDir} restore --force --path \"{extractFolder}\"";
                             process.Start();
                             process.WaitForExit();
                             ProcessShepherd.Instance.RemoveProcess(process);
@@ -172,7 +176,12 @@ namespace gamevault.Helper.Integrations
             if (gameMetadataTitle != "" && installationDir != "")
             {
                 string title = await SearchForLudusaviGameTitle(gameMetadataTitle);
-                string tempFolder = await CreateBackup(title);
+                if (string.IsNullOrEmpty(title))
+                    return false;
+                string tempFolder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+                Directory.CreateDirectory(tempFolder);
+                PrepareConfigFile(installedGame?.Value!, Path.Combine(AppFilePath.CloudSaveConfigDir, "config.yaml"));
+                await CreateBackup(title, tempFolder);
                 string archive = Path.Combine(tempFolder, "backup.zip");
                 if (Directory.GetFiles(tempFolder, "mapping.yaml", SearchOption.AllDirectories).Length == 0)
                 {
@@ -186,6 +195,69 @@ namespace gamevault.Helper.Integrations
                 return success;
             }
             return false;
+        }
+        public void PrepareConfigFile(string installationPath, string yamlPath)
+        {
+            string userFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            var redirects = new Dictionary<string, object>
+        {
+            { "redirects", new List<Dictionary<string, object>>
+                {
+                    new Dictionary<string, object>
+                    {
+                        { "kind", "bidirectional" },
+                        { "source", userFolder },
+                        { "target", "G:\\gamevault\\currentuser" }
+                    },
+                    new Dictionary<string, object>
+                    {
+                        { "kind", "bidirectional" },
+                        { "source", installationPath },
+                        { "target", "G:\\gamevault\\installation" }
+                    }
+                }
+            }
+        };
+
+            // Simulating SettingsViewModel.Instance.CustomCloudSaveManifests
+            var customLudusaviManifests = SettingsViewModel.Instance.CustomCloudSaveManifests.Where(m => !string.IsNullOrWhiteSpace(m.Uri));
+
+            Dictionary<string, object> yamlData;
+
+            if (customLudusaviManifests.Any()) // If manifests exist, merge with redirects
+            {
+                var manifest = new Dictionary<string, object>
+            {
+                { "enable", SettingsViewModel.Instance.UsePrimaryCloudSaveManifest },
+                { "secondary", new List<Dictionary<string, object>>() }
+            };
+
+                foreach (LudusaviManifestEntry entry in customLudusaviManifests)
+                {
+                    ((List<Dictionary<string, object>>)manifest["secondary"]).Add(new Dictionary<string, object>
+                {
+                    { Uri.IsWellFormedUriString(entry.Uri, UriKind.Absolute) ? "url" : "path", entry.Uri },
+                    { "enable", true }
+                });
+                }
+
+                yamlData = new Dictionary<string, object>
+            {
+                { "manifest", manifest },
+                { "redirects", redirects["redirects"] } // Merge redirects
+            };
+            }
+            else
+            {
+                yamlData = redirects; // Only redirects if no manifests
+            }
+
+            var serializer = new SerializerBuilder()
+                .WithNamingConvention(UnderscoredNamingConvention.Instance)
+                .Build();
+
+            string result = serializer.Serialize(yamlData);
+            File.WriteAllText(yamlPath, result);
         }
         internal async Task<string> SearchForLudusaviGameTitle(string title)
         {
@@ -223,21 +295,19 @@ namespace gamevault.Helper.Integrations
                 return "";
             });
         }
-        private async Task<string> CreateBackup(string lunusaviTitle)
+        private async Task CreateBackup(string lunusaviTitle, string tempFolder)
         {
-            return await Task.Run<string>(() =>
-            {
-                string tempFolder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            await Task.Run(() =>
+           {
+               Process process = new Process();
+               ProcessShepherd.Instance.AddProcess(process);
+               process.StartInfo = CreateProcessHeader();
+               process.StartInfo.Arguments = $"--config {AppFilePath.CloudSaveConfigDir} backup --force --format \"zip\" --path \"{tempFolder}\" \"{lunusaviTitle}\"";
+               process.Start();
+               process.WaitForExit();
+               ProcessShepherd.Instance.RemoveProcess(process);
 
-                Process process = new Process();
-                ProcessShepherd.Instance.AddProcess(process);
-                process.StartInfo = CreateProcessHeader();
-                process.StartInfo.Arguments = $"backup --force --format \"zip\" --path \"{tempFolder}\" \"{lunusaviTitle}\"";
-                process.Start();
-                process.WaitForExit();
-                ProcessShepherd.Instance.RemoveProcess(process);
-                return tempFolder;
-            });
+           });
         }
         private async Task<bool> UploadSavegame(string saveFilePath, int gameId, string installationDir)
         {
@@ -278,5 +348,9 @@ namespace gamevault.Helper.Integrations
             info.FileName = $"{AppDomain.CurrentDomain.BaseDirectory}Lib\\savegame\\ludusavi.exe";
             return info;
         }
+    }
+    public class LudusaviManifestEntry
+    {
+        public string Uri { get; set; }
     }
 }

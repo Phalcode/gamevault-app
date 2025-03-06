@@ -1,5 +1,7 @@
 ﻿using gamevault.Helper;
+using gamevault.Helper.Integrations;
 using gamevault.Models;
+using gamevault.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -57,6 +59,9 @@ namespace gamevault.ViewModels
         private bool syncSteamShortcuts { get; set; }
         private bool syncDiscordPresence { get; set; }
         private bool cloudSaves { get; set; }
+        private bool isCommunityThemeSelected { get; set; }
+        private bool usePrimaryCloudSaveManifest { get; set; }
+        private ObservableCollection<LudusaviManifestEntry> customCloudSaveManifests;
         //DevMode
         private bool devModeEnabled { get; set; }
         private bool devTargetPhalcodeTestBackend { get; set; }
@@ -110,11 +115,16 @@ namespace gamevault.ViewModels
                 DownloadLimit = 0;
                 DownloadLimitUIValue = 0;
             }
+            string usePrimaryCloudSaveManifestString = Preferences.Get(AppConfigKey.UsePrimaryCloudSaveManifest, AppFilePath.UserFile);
+            usePrimaryCloudSaveManifest = usePrimaryCloudSaveManifestString == "1" || usePrimaryCloudSaveManifestString == "";
+
+            string customCloudSaveManifestsString = Preferences.Get(AppConfigKey.CustomCloudSaveManifests, AppFilePath.UserFile);
+            customCloudSaveManifests = string.IsNullOrWhiteSpace(customCloudSaveManifestsString) ? null! : new ObservableCollection<LudusaviManifestEntry>(customCloudSaveManifestsString.Split(';').Select(part => new LudusaviManifestEntry { Uri = part }).ToList());
 
             //DevMode
             devModeEnabled = Preferences.Get(AppConfigKey.DevModeEnabled, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(DevModeEnabled));
             devTargetPhalcodeTestBackend = Preferences.Get(AppConfigKey.DevTargetPhalcodeTestBackend, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(DevTargetPhalcodeTestBackend));
-            //
+            //            
         }
         public async Task InitIgnoreList()
         {
@@ -124,7 +134,7 @@ namespace gamevault.ViewModels
                 {
                     if (!File.Exists(AppFilePath.IgnoreList))
                     {
-                        string response = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/ignorefile");                       
+                        string response = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/ignorefile");
                         string[] ignoreList = JsonSerializer.Deserialize<string[]>(response);
                         if (ignoreList != null || ignoreList?.Length > 0)
                         {
@@ -335,6 +345,14 @@ namespace gamevault.ViewModels
             }
             set { cloudSaves = value; Preferences.Set(AppConfigKey.CloudSaves, cloudSaves ? "1" : "0", AppFilePath.UserFile); OnPropertyChanged(); }
         }
+        public bool IsCommunityThemeSelected
+        {
+            get
+            {
+                return isCommunityThemeSelected;
+            }
+            set { isCommunityThemeSelected = value; OnPropertyChanged(); }
+        }
         public User RegistrationUser
         {
             get { return m_RegistrationUser; }
@@ -358,6 +376,27 @@ namespace gamevault.ViewModels
                 return license;
             }
             set { license = value; OnPropertyChanged(); }
+        }
+
+        public bool UsePrimaryCloudSaveManifest
+        {
+            get
+            {
+                return usePrimaryCloudSaveManifest;
+            }
+            set { usePrimaryCloudSaveManifest = value; Preferences.Set(AppConfigKey.UsePrimaryCloudSaveManifest, usePrimaryCloudSaveManifest ? "1" : "0", AppFilePath.UserFile); OnPropertyChanged(); }
+        }
+        public ObservableCollection<LudusaviManifestEntry> CustomCloudSaveManifests
+        {
+            get
+            {
+                if (customCloudSaveManifests == null)
+                {
+                    customCloudSaveManifests = new ObservableCollection<LudusaviManifestEntry>();
+                }
+                return customCloudSaveManifests;
+            }
+            set { customCloudSaveManifests = value; OnPropertyChanged(); }
         }
         public System.Windows.Forms.DialogResult SelectDownloadPath()
         {

@@ -187,24 +187,28 @@ namespace gamevault
         }
         public void SetJumpListGames()
         {
-            var lastGames = InstallViewModel.Instance.InstalledGames.Take(5).ToArray();
-            foreach (var game in lastGames)
+            try
             {
-                if (!jumpList.JumpItems.OfType<JumpTask>().Any(jt => jt.Title == game.Key.Title))
+                var lastGames = InstallViewModel.Instance.InstalledGames.Take(5).ToArray();
+                foreach (var game in lastGames)
                 {
-                    JumpTask gameTask = new JumpTask()
+                    if (!jumpList.JumpItems.OfType<JumpTask>().Any(jt => jt.Title == game.Key.Title))
                     {
-                        Title = game.Key.Title,
-                        CustomCategory = "Last Played",
-                        ApplicationPath = Process.GetCurrentProcess().MainModule.FileName,
-                        IconResourcePath = Preferences.Get(AppConfigKey.Executable, $"{game.Value}\\gamevault-exec"),
-                        Arguments = $"start --gameid={game.Key.ID}"
-                    };
-                    jumpList.JumpItems.Add(gameTask);
+                        JumpTask gameTask = new JumpTask()
+                        {
+                            Title = game.Key.Title,
+                            CustomCategory = "Last Played",
+                            ApplicationPath = Process.GetCurrentProcess()?.MainModule?.FileName,
+                            IconResourcePath = Preferences.Get(AppConfigKey.Executable, $"{game.Value}\\gamevault-exec"),
+                            Arguments = $"start --gameid={game.Key.ID}"
+                        };
+                        jumpList.JumpItems.Add(gameTask);
+                    }
                 }
-            }
 
-            jumpList.Apply();
+                jumpList.Apply();
+            }
+            catch { }
         }
         private void RestoreTheme()
         {
@@ -213,7 +217,7 @@ namespace gamevault
                 string currentThemeString = Preferences.Get(AppConfigKey.Theme, AppFilePath.UserFile, true);
                 if (currentThemeString != string.Empty)
                 {
-                    ThemeItem currentTheme = JsonSerializer.Deserialize<ThemeItem>(currentThemeString);
+                    ThemeItem currentTheme = JsonSerializer.Deserialize<ThemeItem>(currentThemeString)!;
 
                     if (App.Current.Resources.MergedDictionaries[0].Source.OriginalString != currentTheme.Path)
                     {
@@ -301,6 +305,10 @@ namespace gamevault
             if (!Directory.Exists(AppFilePath.ThemesLoadDir))
             {
                 Directory.CreateDirectory(AppFilePath.ThemesLoadDir);
+            }
+            if (!Directory.Exists(AppFilePath.CloudSaveConfigDir))
+            {
+                Directory.CreateDirectory(AppFilePath.CloudSaveConfigDir);
             }
         }
         public bool IsWindowActiveAndControlInFocus(MainControl control)
