@@ -498,7 +498,10 @@
                                         <TextBlock Text="Automatically backs up and restores your latest savefiles via your GameVault Server, ensuring seamless transitions between installations and devices. " FontSize="15"/>
                                         <TextBlock Text="Requires GameVault Server with savefiles feature enabled." FontSize="12" FontStyle="Italic"/>
                                         <mah:ToggleSwitch Margin="0,5,0,0" IsOn="{Binding CloudSaves}"/>
-                                        <TextBlock Text="Custom Ludusavi Manifests" Margin="0,2,0,1" FontSize="15"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Custom Ludusavi Manifests" Margin="0,2,0,2" FontSize="15"/>
+                                            <CheckBox Content="Use Primary Manifest" IsChecked="{Binding UsePrimaryCloudSaveManifest}" Margin="15,0,0,0" ToolTip="Disable primary Ludusavi manifest to only use the custom ones"/>
+                                        </StackPanel>
                                         <ScrollViewer MaxHeight="100" VerticalScrollBarVisibility="Auto" Width="550" HorizontalAlignment="Left">
                                             <ItemsControl ItemsSource="{Binding CustomCloudSaveManifests}">
                                                 <ItemsControl.ItemsPanel>

@@ -559,7 +559,7 @@ namespace gamevault.UserControls
             try
             {
                 string result = string.Join(";", ViewModel.CustomCloudSaveManifests.Where(entry => !string.IsNullOrWhiteSpace(entry.Uri)).Select(entry => entry.Uri));
-                Preferences.Set(AppConfigKey.CustomLudusaviManifests, result, AppFilePath.UserFile);
+                Preferences.Set(AppConfigKey.CustomCloudSaveManifests, result, AppFilePath.UserFile);
             }
             catch { }
             MainWindowViewModel.Instance.AppBarText = "Successfully saved custom Ludusavi Manifests";

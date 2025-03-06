@@ -51,7 +51,9 @@ namespace gamevault.Models
         DevTargetPhalcodeTestBackend,
         //
         InstallationId,
-        CustomLudusaviManifests
+        CustomCloudSaveManifests,
+        UsePrimaryCloudSaveManifest
+
     }
     public static class AppFilePath
     {

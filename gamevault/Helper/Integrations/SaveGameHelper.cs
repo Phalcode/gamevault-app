@@ -228,7 +228,7 @@ namespace gamevault.Helper.Integrations
             {
                 var manifest = new Dictionary<string, object>
             {
-                { "enable", true },
+                { "enable", SettingsViewModel.Instance.UsePrimaryCloudSaveManifest },
                 { "secondary", new List<Dictionary<string, object>>() }
             };
 

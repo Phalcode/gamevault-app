@@ -60,6 +60,7 @@ namespace gamevault.ViewModels
         private bool syncDiscordPresence { get; set; }
         private bool cloudSaves { get; set; }
         private bool isCommunityThemeSelected { get; set; }
+        private bool usePrimaryCloudSaveManifest { get; set; }
         private ObservableCollection<LudusaviManifestEntry> customCloudSaveManifests;
         //DevMode
         private bool devModeEnabled { get; set; }
@@ -114,8 +115,10 @@ namespace gamevault.ViewModels
                 DownloadLimit = 0;
                 DownloadLimitUIValue = 0;
             }
+            string usePrimaryCloudSaveManifestString = Preferences.Get(AppConfigKey.UsePrimaryCloudSaveManifest, AppFilePath.UserFile);
+            usePrimaryCloudSaveManifest = usePrimaryCloudSaveManifestString == "1" || usePrimaryCloudSaveManifestString == "";
 
-            string customCloudSaveManifestsString = Preferences.Get(AppConfigKey.CustomLudusaviManifests, AppFilePath.UserFile);
+            string customCloudSaveManifestsString = Preferences.Get(AppConfigKey.CustomCloudSaveManifests, AppFilePath.UserFile);
             customCloudSaveManifests = string.IsNullOrWhiteSpace(customCloudSaveManifestsString) ? null! : new ObservableCollection<LudusaviManifestEntry>(customCloudSaveManifestsString.Split(';').Select(part => new LudusaviManifestEntry { Uri = part }).ToList());
 
             //DevMode
@@ -375,7 +378,14 @@ namespace gamevault.ViewModels
             set { license = value; OnPropertyChanged(); }
         }
 
-
+        public bool UsePrimaryCloudSaveManifest
+        {
+            get
+            {
+                return usePrimaryCloudSaveManifest;
+            }
+            set { usePrimaryCloudSaveManifest = value; Preferences.Set(AppConfigKey.UsePrimaryCloudSaveManifest, usePrimaryCloudSaveManifest ? "1" : "0", AppFilePath.UserFile); OnPropertyChanged(); }
+        }
         public ObservableCollection<LudusaviManifestEntry> CustomCloudSaveManifests
         {
             get
