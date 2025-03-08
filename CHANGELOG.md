@@ -1,5 +1,12 @@
 # GameVault App Changelog
 
+## 1.16.1
+Recommended Gamevault Server Version: `v14.1.0`
+### Changes
+
+- Bug fix: Custom Cloud Save config is not applied to 'find' action
+- Bug fix: Cloud Save Backup/Restore not working on windows username with space in it
+
 ## 1.16.0
 Recommended Gamevault Server Version: `v14.1.0`
 ### Changes
