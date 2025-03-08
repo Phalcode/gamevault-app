@@ -55,10 +55,13 @@ namespace gamevault.Helper.Integrations
         {
             zipHelper = new SevenZipHelper();
         }
-        internal async Task<bool> RestoreBackup(int gameId, string installationDir)
+        internal async Task<CloudSaveStatus> RestoreBackup(int gameId, string installationDir)
         {
-            if (!LoginManager.Instance.IsLoggedIn() || !SettingsViewModel.Instance.CloudSaves || !SettingsViewModel.Instance.License.IsActive())
-                return false;
+            if (!LoginManager.Instance.IsLoggedIn() || !SettingsViewModel.Instance.License.IsActive())
+                return CloudSaveStatus.Failed;
+
+            if (!SettingsViewModel.Instance.CloudSaves)
+                return CloudSaveStatus.SettingDisabled;
 
             using (HttpClient client = new HttpClient())
             {
@@ -106,7 +109,11 @@ namespace gamevault.Helper.Integrations
                             process.WaitForExit();
                             ProcessShepherd.Instance.RemoveProcess(process);
                             Directory.Delete(tempFolder, true);
-                            return true;
+                            return CloudSaveStatus.Success;
+                        }
+                        else
+                        {
+                            return CloudSaveStatus.UpToDate;
                         }
                     }
                 }
@@ -123,7 +130,7 @@ namespace gamevault.Helper.Integrations
                     }
                 }
             }
-            return false;
+            return CloudSaveStatus.Failed;
         }
         private string GetGameInstallationId(string installationDir)
         {
@@ -141,22 +148,42 @@ namespace gamevault.Helper.Integrations
             var removedIds = runningGameIds.Except(gameIds).ToList();
 
             foreach (var removedId in removedIds)
-            {
-                if (!LoginManager.Instance.IsLoggedIn() || !SettingsViewModel.Instance.CloudSaves)
+            {               
+                if (!SettingsViewModel.Instance.CloudSaves || !SettingsViewModel.Instance.License.IsActive())
                 {
+                    break;
+                }
+                if (!LoginManager.Instance.IsLoggedIn())
+                {
+                    MainWindowViewModel.Instance.AppBarText = "Can not synchronize the cloud saves, because you are offline";
                     break;
                 }
                 try
                 {
                     MainWindowViewModel.Instance.AppBarText = "Uploading Savegame to the Server...";
-                    bool success = await BackupSaveGame(removedId);
-                    if (success)
+                    CloudSaveStatus status = await BackupSaveGame(removedId);
+                    switch (status)
                     {
-                        MainWindowViewModel.Instance.AppBarText = "Successfully synchronized the cloud saves";
-                    }
-                    else
-                    {
-                        MainWindowViewModel.Instance.AppBarText = "Failed to upload your Savegame to the Server";
+                        case CloudSaveStatus.Success:
+                            {
+                                MainWindowViewModel.Instance.AppBarText = "Successfully synchronized the cloud saves";
+                                break;
+                            }
+                        case CloudSaveStatus.BackupCreationFailed:
+                            {
+                                MainWindowViewModel.Instance.AppBarText = "Failed to create a copy of your Savegame";
+                                break;
+                            }
+                        case CloudSaveStatus.BackupUploadFailed:
+                            {
+                                MainWindowViewModel.Instance.AppBarText = "Failed to upload your Savegame to the Server";
+                                break;
+                            }
+                        case CloudSaveStatus.Failed:
+                            {
+                                MainWindowViewModel.Instance.AppBarText = "Something went wrong during the Backup";
+                                break;
+                            }
                     }
                 }
                 catch (Exception ex)
@@ -171,10 +198,13 @@ namespace gamevault.Helper.Integrations
             // Remove IDs that are no longer in the new list
             runningGameIds = runningGameIds.Intersect(gameIds).ToList();
         }
-        internal async Task<bool> BackupSaveGame(int gameId)
+        internal async Task<CloudSaveStatus> BackupSaveGame(int gameId)
         {
-            if (!SettingsViewModel.Instance.CloudSaves || !SettingsViewModel.Instance.License.IsActive())
-                return false;
+            if (!SettingsViewModel.Instance.CloudSaves)
+                return CloudSaveStatus.SettingDisabled;
+
+            if (!SettingsViewModel.Instance.License.IsActive())
+                return CloudSaveStatus.Failed;
 
             var installedGame = InstallViewModel.Instance?.InstalledGames?.FirstOrDefault(g => g.Key?.ID == gameId);
             string gameMetadataTitle = installedGame?.Key?.Metadata?.Title ?? "";
@@ -184,7 +214,8 @@ namespace gamevault.Helper.Integrations
                 PrepareConfigFile(installedGame?.Value!, Path.Combine(AppFilePath.CloudSaveConfigDir, "config.yaml"));
                 string title = await SearchForLudusaviGameTitle(gameMetadataTitle);
                 if (string.IsNullOrEmpty(title))
-                    return false;
+                    return CloudSaveStatus.Failed;
+
                 string tempFolder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
                 Directory.CreateDirectory(tempFolder);
                 await CreateBackup(title, tempFolder);
@@ -192,15 +223,15 @@ namespace gamevault.Helper.Integrations
                 if (Directory.GetFiles(tempFolder, "mapping.yaml", SearchOption.AllDirectories).Length == 0)
                 {
                     Directory.Delete(tempFolder, true);
-                    return false;
+                    return CloudSaveStatus.BackupCreationFailed;
                 }
                 await zipHelper.PackArchive(tempFolder, archive);
 
                 bool success = await UploadSavegame(archive, gameId, installationDir);
                 Directory.Delete(tempFolder, true);
-                return success;
+                return success ? CloudSaveStatus.Success : CloudSaveStatus.BackupUploadFailed;
             }
-            return false;
+            return CloudSaveStatus.Failed;
         }
         public void PrepareConfigFile(string installationPath, string yamlPath)
         {
@@ -370,6 +401,15 @@ namespace gamevault.Helper.Integrations
             info.FileName = $"{AppDomain.CurrentDomain.BaseDirectory}Lib\\savegame\\ludusavi.exe";
             return info;
         }
+    }
+    public enum CloudSaveStatus
+    {
+        Success,
+        Failed,
+        UpToDate,
+        SettingDisabled,
+        BackupCreationFailed,
+        BackupUploadFailed
     }
     public class LudusaviManifestEntry
     {

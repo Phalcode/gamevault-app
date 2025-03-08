@@ -407,23 +407,48 @@ namespace gamevault.UserControls
         private async void BackupCloudSaves_Click(object sender, RoutedEventArgs e)
         {
             try
-            {
+            {             
                 if (!SettingsViewModel.Instance.License.IsActive())
                 {
                     MainWindowViewModel.Instance.SetActiveControl(MainControl.Settings);
                     MainWindowViewModel.Instance.Settings.SetTabIndex(4);
                     return;
                 }
+                if (!LoginManager.Instance.IsLoggedIn())
+                {
+                    MainWindowViewModel.Instance.AppBarText = "Can not synchronize the cloud saves, because you are offline";
+                    return;
+                }
                 MainWindowViewModel.Instance.AppBarText = "Uploading Savegame to the Server...";
                 ((FrameworkElement)sender).IsEnabled = false;
-                bool success = await SaveGameHelper.Instance.BackupSaveGame(ViewModel!.Game!.ID);
-                if (success)
+                CloudSaveStatus status = await SaveGameHelper.Instance.BackupSaveGame(ViewModel!.Game!.ID);
+                switch (status)
                 {
-                    MainWindowViewModel.Instance.AppBarText = "Successfully synchronized the cloud saves";
-                }
-                else
-                {
-                    MainWindowViewModel.Instance.AppBarText = "Failed to upload your Savegame to the Server";
+                    case CloudSaveStatus.Success:
+                        {
+                            MainWindowViewModel.Instance.AppBarText = "Successfully synchronized the cloud saves";
+                            break;
+                        }
+                    case CloudSaveStatus.BackupCreationFailed:
+                        {
+                            MainWindowViewModel.Instance.AppBarText = "Failed to get your Savegame";
+                            break;
+                        }
+                    case CloudSaveStatus.BackupUploadFailed:
+                        {
+                            MainWindowViewModel.Instance.AppBarText = "Failed to upload your Savegame to the Server";
+                            break;
+                        }
+                    case CloudSaveStatus.SettingDisabled:
+                        {
+                            MainWindowViewModel.Instance.AppBarText = "Activate Cloud Saves under Settings -> GameVault+ -> Cloud Saves";
+                            break;
+                        }
+                    case CloudSaveStatus.Failed:
+                        {
+                            MainWindowViewModel.Instance.AppBarText = "Something went wrong during the backup";
+                            break;
+                        }
                 }
             }
             catch
@@ -445,10 +470,29 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.AppBarText = $"Syncing cloud save...";
                 ((FrameworkElement)sender).IsEnabled = false;
                 string installationDir = InstallViewModel.Instance.InstalledGames.First(g => g.Key.ID == ViewModel!.Game!.ID).Value;
-                bool success = await SaveGameHelper.Instance.RestoreBackup(ViewModel!.Game!.ID, installationDir);
-                if (success)
+                CloudSaveStatus status = await SaveGameHelper.Instance.RestoreBackup(ViewModel!.Game!.ID, installationDir);
+                switch (status)
                 {
-                    MainWindowViewModel.Instance.AppBarText = "Successfully synchronized the cloud save";
+                    case CloudSaveStatus.Success:
+                        {
+                            MainWindowViewModel.Instance.AppBarText = "Successfully synchronized the cloud save";
+                            break;
+                        }
+                    case CloudSaveStatus.UpToDate:
+                        {
+                            MainWindowViewModel.Instance.AppBarText = "Your Savegame is up to date";
+                            break;
+                        }
+                    case CloudSaveStatus.SettingDisabled:
+                        {
+                            MainWindowViewModel.Instance.AppBarText = "Activate Cloud Saves under Settings -> GameVault+ -> Cloud Saves";
+                            break;
+                        }
+                    case CloudSaveStatus.Failed:
+                        {
+                            MainWindowViewModel.Instance.AppBarText = "Failed to restore the Savegame";
+                            break;
+                        }
                 }
             }
             catch
