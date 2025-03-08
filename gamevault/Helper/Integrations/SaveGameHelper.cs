@@ -95,7 +95,13 @@ namespace gamevault.Helper.Integrations
                             Process process = new Process();
                             ProcessShepherd.Instance.AddProcess(process);
                             process.StartInfo = CreateProcessHeader();
-                            process.StartInfo.Arguments = $"--config {AppFilePath.CloudSaveConfigDir} restore --force --path \"{extractFolder}\"";
+                            //process.StartInfo.Arguments = $"--config {AppFilePath.CloudSaveConfigDir} restore --force --path \"{extractFolder}\"";
+                            process.StartInfo.ArgumentList.Add("--config");
+                            process.StartInfo.ArgumentList.Add(AppFilePath.CloudSaveConfigDir);
+                            process.StartInfo.ArgumentList.Add("restore");
+                            process.StartInfo.ArgumentList.Add("--force");
+                            process.StartInfo.ArgumentList.Add("--path");
+                            process.StartInfo.ArgumentList.Add(extractFolder);
                             process.Start();
                             process.WaitForExit();
                             ProcessShepherd.Instance.RemoveProcess(process);
@@ -167,7 +173,7 @@ namespace gamevault.Helper.Integrations
         }
         internal async Task<bool> BackupSaveGame(int gameId)
         {
-            if (!SettingsViewModel.Instance.License.IsActive())
+            if (!SettingsViewModel.Instance.CloudSaves || !SettingsViewModel.Instance.License.IsActive())
                 return false;
 
             var installedGame = InstallViewModel.Instance?.InstalledGames?.FirstOrDefault(g => g.Key?.ID == gameId);
@@ -175,12 +181,12 @@ namespace gamevault.Helper.Integrations
             string installationDir = installedGame?.Value ?? "";
             if (gameMetadataTitle != "" && installationDir != "")
             {
+                PrepareConfigFile(installedGame?.Value!, Path.Combine(AppFilePath.CloudSaveConfigDir, "config.yaml"));
                 string title = await SearchForLudusaviGameTitle(gameMetadataTitle);
                 if (string.IsNullOrEmpty(title))
                     return false;
                 string tempFolder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
                 Directory.CreateDirectory(tempFolder);
-                PrepareConfigFile(installedGame?.Value!, Path.Combine(AppFilePath.CloudSaveConfigDir, "config.yaml"));
                 await CreateBackup(title, tempFolder);
                 string archive = Path.Combine(tempFolder, "backup.zip");
                 if (Directory.GetFiles(tempFolder, "mapping.yaml", SearchOption.AllDirectories).Length == 0)
@@ -266,7 +272,13 @@ namespace gamevault.Helper.Integrations
                 Process process = new Process();
                 ProcessShepherd.Instance.AddProcess(process);
                 process.StartInfo = CreateProcessHeader(true);
-                process.StartInfo.Arguments = $"find \"{title}\" --fuzzy --api";//--normalized
+                //process.StartInfo.Arguments = $"find \"{title}\" --fuzzy --api";//--normalized
+                process.StartInfo.ArgumentList.Add("--config");
+                process.StartInfo.ArgumentList.Add(AppFilePath.CloudSaveConfigDir);
+                process.StartInfo.ArgumentList.Add("find");
+                process.StartInfo.ArgumentList.Add(title);
+                process.StartInfo.ArgumentList.Add("--fuzzy");
+                process.StartInfo.ArgumentList.Add("--api");
                 process.EnableRaisingEvents = true;
 
                 List<string> output = new List<string>();
@@ -302,7 +314,17 @@ namespace gamevault.Helper.Integrations
                Process process = new Process();
                ProcessShepherd.Instance.AddProcess(process);
                process.StartInfo = CreateProcessHeader();
-               process.StartInfo.Arguments = $"--config {AppFilePath.CloudSaveConfigDir} backup --force --format \"zip\" --path \"{tempFolder}\" \"{lunusaviTitle}\"";
+               //process.StartInfo.Arguments = $"--config {AppFilePath.CloudSaveConfigDir} backup --force --format \"zip\" --path \"{tempFolder}\" \"{lunusaviTitle}\"";
+               process.StartInfo.ArgumentList.Add("--config");
+               process.StartInfo.ArgumentList.Add(AppFilePath.CloudSaveConfigDir);
+               process.StartInfo.ArgumentList.Add("backup");
+               process.StartInfo.ArgumentList.Add("--force");
+               process.StartInfo.ArgumentList.Add("--format");
+               process.StartInfo.ArgumentList.Add("zip");
+               process.StartInfo.ArgumentList.Add("--path");
+               process.StartInfo.ArgumentList.Add(tempFolder);
+               process.StartInfo.ArgumentList.Add(lunusaviTitle);
+
                process.Start();
                process.WaitForExit();
                ProcessShepherd.Instance.RemoveProcess(process);

@@ -24,6 +24,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Navigation;
+using Windows.Gaming.Input;
 using YoutubeExplode;
 using YoutubeExplode.Videos.Streams;
 
@@ -163,6 +164,7 @@ namespace gamevault.UserControls
                 {
                     try
                     {
+                        SaveGameHelper.Instance.PrepareConfigFile("", Path.Combine(AppFilePath.CloudSaveConfigDir, "config.yaml"));
                         ViewModel.CloudSaveMatchTitle = await SaveGameHelper.Instance.SearchForLudusaviGameTitle(ViewModel?.Game?.Metadata?.Title);
                     }
                     catch { }
@@ -447,7 +449,7 @@ namespace gamevault.UserControls
                 if (success)
                 {
                     MainWindowViewModel.Instance.AppBarText = "Successfully synchronized the cloud save";
-                }              
+                }
             }
             catch
             {
@@ -488,6 +490,6 @@ namespace gamevault.UserControls
         }
 
         #endregion
-        
+
     }
 }
