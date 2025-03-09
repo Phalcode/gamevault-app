@@ -62,6 +62,7 @@ namespace gamevault.ViewModels
         private bool isCommunityThemeSelected { get; set; }
         private bool usePrimaryCloudSaveManifest { get; set; }
         private ObservableCollection<LudusaviManifestEntry> customCloudSaveManifests;
+        private bool mountIso { get; set; }
         //DevMode
         private bool devModeEnabled { get; set; }
         private bool devTargetPhalcodeTestBackend { get; set; }
@@ -120,6 +121,9 @@ namespace gamevault.ViewModels
 
             string customCloudSaveManifestsString = Preferences.Get(AppConfigKey.CustomCloudSaveManifests, AppFilePath.UserFile);
             customCloudSaveManifests = string.IsNullOrWhiteSpace(customCloudSaveManifestsString) ? null! : new ObservableCollection<LudusaviManifestEntry>(customCloudSaveManifestsString.Split(';').Select(part => new LudusaviManifestEntry { Uri = part }).ToList());
+
+            string mountIsoString = Preferences.Get(AppConfigKey.MountIso, AppFilePath.UserFile);
+            mountIso = mountIsoString == "1";
 
             //DevMode
             devModeEnabled = Preferences.Get(AppConfigKey.DevModeEnabled, AppFilePath.UserFile) == "1"; OnPropertyChanged(nameof(DevModeEnabled));
@@ -397,6 +401,14 @@ namespace gamevault.ViewModels
                 return customCloudSaveManifests;
             }
             set { customCloudSaveManifests = value; OnPropertyChanged(); }
+        }
+        public bool MountIso
+        {
+            get
+            {
+                return mountIso;
+            }
+            set { mountIso = value; Preferences.Set(AppConfigKey.MountIso, mountIso ? "1" : "0", AppFilePath.UserFile); OnPropertyChanged(); }
         }
         public System.Windows.Forms.DialogResult SelectDownloadPath()
         {

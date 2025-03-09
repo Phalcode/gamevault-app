@@ -32,7 +32,7 @@ namespace gamevault.UserControls
         private InputTimer downloadRetryTimer { get; set; }
         private bool isGameTypeForced = false;
         private double downloadRetryTimerTickValue = 10;
-
+        private string mountedDrive = "";
         public GameDownloadUserControl(Game game, bool download)
         {
             InitializeComponent();
@@ -435,6 +435,31 @@ namespace gamevault.UserControls
         {
             await Extract();
         }
+        private async Task<string> MountISO(string ISOPath)
+        {
+            ProcessStartInfo psi = new ProcessStartInfo
+            {
+                FileName = "powershell.exe",
+                Arguments = $"-ExecutionPolicy Bypass -NoProfile -Command \"$diskImage = Mount-DiskImage -ImagePath '{ISOPath}' -PassThru; ($diskImage | Get-Volume).DriveLetter\"",
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            try
+            {
+                using (Process process = Process.Start(psi))
+                {
+                    await process.WaitForExitAsync();
+                    string output = process.StandardOutput.ReadToEnd().Trim();
+                    return string.IsNullOrEmpty(output) ? string.Empty : output + @":\";
+                }
+            }
+            catch (Exception ex)
+            {
+                return string.Empty;
+            }
+        }     
         private async Task Extract()
         {
             if (!Directory.Exists(m_DownloadPath))
@@ -451,6 +476,26 @@ namespace gamevault.UserControls
                 return;
             }
             uiBtnInstall.IsEnabled = false;
+
+            //Mount ISO if possible
+            if (SettingsViewModel.Instance.MountIso && Path.GetExtension(Path.Combine(m_DownloadPath, files[0].Name)).Equals(".iso", StringComparison.OrdinalIgnoreCase))
+            {
+                uiBtnExtract.IsEnabled = false;
+                mountedDrive = await MountISO(Path.Combine(m_DownloadPath, files[0].Name));
+                if (Directory.Exists(mountedDrive))
+                {
+                    ViewModel.State = $"ISO mounted at {mountedDrive}";
+                    ViewModel.InstallationStepperProgress = 1;
+                    uiBtnExtract.IsEnabled = true;
+                    uiBtnInstall.IsEnabled = true;
+                    return;
+                }
+                ViewModel.State = "Failed to Mount ISO";
+                uiBtnExtract.IsEnabled = true;
+                return;
+            }
+            //
+
             ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
             ViewModel.State = "Extracting...";
             ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Visible;
@@ -548,12 +593,13 @@ namespace gamevault.UserControls
         }
         private void LoadSetupExecutables()
         {
-            if (Directory.Exists($"{m_DownloadPath}\\Extract"))
+            string targedDir = (SettingsViewModel.Instance.MountIso && Directory.Exists(mountedDrive)) ? mountedDrive : $"{m_DownloadPath}\\Extract";
+            if (Directory.Exists(targedDir))
             {
                 Dictionary<string, string> allExecutables = new Dictionary<string, string>();
                 foreach (string fileType in Globals.SupportedExecutables)
                 {
-                    foreach (string entry in Directory.GetFiles(m_DownloadPath, $"*.{fileType}", SearchOption.AllDirectories))
+                    foreach (string entry in Directory.GetFiles(targedDir, $"*.{fileType}", SearchOption.AllDirectories))
                     {
                         string keyToAdd = Path.GetFileName(entry);
                         if (!allExecutables.ContainsKey(keyToAdd))
@@ -562,7 +608,7 @@ namespace gamevault.UserControls
                         }
                         else
                         {
-                            allExecutables.Add(entry.Replace($"{m_DownloadPath}\\Extract", ""), entry); ;
+                            allExecutables.Add(entry.Replace(targedDir, ""), entry); ;
                         }
                     }
                 }

@@ -4,6 +4,7 @@
 Recommended Gamevault Server Version: `v14.1.0`
 ### Changes
 
+- Added a setting to mount ISO instead of extracting
 - Bug fix: Custom Cloud Save config is not applied to 'find' action
 - Bug fix: Cloud Save Backup/Restore not working on windows username with space in it
 
