@@ -298,6 +298,9 @@ namespace gamevault.UserControls
 
         private void DownloadCompleted()
         {
+            if (client == null)
+                return;
+
             UpdateDataSizeUI();
             ViewModel.DownloadUIVisibility = System.Windows.Visibility.Hidden;
             client.Dispose();
