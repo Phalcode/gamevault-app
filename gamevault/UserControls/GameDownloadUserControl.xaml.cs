@@ -638,6 +638,8 @@ namespace gamevault.UserControls
         }
         private async Task Install()
         {
+            string targedDir = (SettingsViewModel.Instance.MountIso && Directory.Exists(mountedDrive)) ? mountedDrive : $"{m_DownloadPath}\\Extract";
+
             uiBtnInstallPortable.IsEnabled = false;
             uiBtnInstallSetup.IsEnabled = false;
             uiBtnExtract.IsEnabled = false;
@@ -666,7 +668,7 @@ namespace gamevault.UserControls
                         {
                             Directory.Delete($"{ViewModel.InstallPath}\\Files", true);
                         }
-                        Directory.Move($"{m_DownloadPath}\\Extract", $"{ViewModel.InstallPath}\\Files");
+                        Directory.Move(targedDir, $"{ViewModel.InstallPath}\\Files");
                     }
                     catch { error = true; }
                 });
@@ -698,7 +700,7 @@ namespace gamevault.UserControls
             else if (ViewModel.Game.Type == GameType.WINDOWS_SETUP)
             {
                 string setupEexecutable = string.Empty;
-                if (!Directory.Exists($"{m_DownloadPath}\\Extract"))
+                if (!Directory.Exists(targedDir))
                     return;
                 uiProgressRingInstall.IsActive = true;
                 setupEexecutable = ((KeyValuePair<string, string>)uiCbSetupExecutable.SelectedValue).Value;
