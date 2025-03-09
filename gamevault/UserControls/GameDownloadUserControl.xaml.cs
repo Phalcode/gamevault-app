@@ -668,7 +668,14 @@ namespace gamevault.UserControls
                         {
                             Directory.Delete($"{ViewModel.InstallPath}\\Files", true);
                         }
-                        Directory.Move(targedDir, $"{ViewModel.InstallPath}\\Files");
+                        if (Path.GetPathRoot(targedDir) == targedDir)
+                        {
+                            MoveFromRootPath(targedDir, $"{ViewModel.InstallPath}\\Files");
+                        }
+                        else
+                        {
+                            Directory.Move(targedDir, $"{ViewModel.InstallPath}\\Files");
+                        }
                     }
                     catch { error = true; }
                 });
@@ -795,7 +802,30 @@ namespace gamevault.UserControls
                 await DesktopHelper.CreateShortcut(game.Key, Preferences.Get(AppConfigKey.Executable, $"{game.Value}\\gamevault-exec"), false);
             }
         }
+        public void MoveFromRootPath(string sourceDir, string destinationDir)
+        {
+            // Create the destination directory if it doesn't exist.
+            Directory.CreateDirectory(destinationDir);
 
+            // Copy all files.
+            foreach (string filePath in Directory.GetFiles(sourceDir))
+            {
+                string fileName = Path.GetFileName(filePath);
+                string destFilePath = Path.Combine(destinationDir, fileName);
+                // You can use overwrite option if necessary
+                File.Copy(filePath, destFilePath, overwrite: true);
+            }
+
+            // Recursively copy subdirectories.
+            foreach (string dirPath in Directory.GetDirectories(sourceDir))
+            {
+                string dirName = Path.GetFileName(dirPath);
+                string destSubDir = Path.Combine(destinationDir, dirName);
+                MoveFromRootPath(dirPath, destSubDir);
+            }
+
+            // Do not attempt to delete source since it is on a read-only ISO.
+        }
         private void CopyInstallPathToClipboard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             try
