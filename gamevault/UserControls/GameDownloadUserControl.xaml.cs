@@ -32,7 +32,7 @@ namespace gamevault.UserControls
         private InputTimer downloadRetryTimer { get; set; }
         private bool isGameTypeForced = false;
         private double downloadRetryTimerTickValue = 10;
-
+        private string mountedDrive = "";
         public GameDownloadUserControl(Game game, bool download)
         {
             InitializeComponent();
@@ -298,6 +298,9 @@ namespace gamevault.UserControls
 
         private void DownloadCompleted()
         {
+            if (client == null)
+                return;
+
             UpdateDataSizeUI();
             ViewModel.DownloadUIVisibility = System.Windows.Visibility.Hidden;
             client.Dispose();
@@ -435,6 +438,31 @@ namespace gamevault.UserControls
         {
             await Extract();
         }
+        private async Task<string> MountISO(string ISOPath)
+        {
+            ProcessStartInfo psi = new ProcessStartInfo
+            {
+                FileName = "powershell.exe",
+                Arguments = $"-ExecutionPolicy Bypass -NoProfile -Command \"$diskImage = Mount-DiskImage -ImagePath '{ISOPath}' -PassThru; ($diskImage | Get-Volume).DriveLetter\"",
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            try
+            {
+                using (Process process = Process.Start(psi))
+                {
+                    await process.WaitForExitAsync();
+                    string output = process.StandardOutput.ReadToEnd().Trim();
+                    return string.IsNullOrEmpty(output) ? string.Empty : output + @":\";
+                }
+            }
+            catch (Exception ex)
+            {
+                return string.Empty;
+            }
+        }     
         private async Task Extract()
         {
             if (!Directory.Exists(m_DownloadPath))
@@ -451,6 +479,26 @@ namespace gamevault.UserControls
                 return;
             }
             uiBtnInstall.IsEnabled = false;
+
+            //Mount ISO if possible
+            if (SettingsViewModel.Instance.MountIso && Path.GetExtension(Path.Combine(m_DownloadPath, files[0].Name)).Equals(".iso", StringComparison.OrdinalIgnoreCase))
+            {
+                uiBtnExtract.IsEnabled = false;
+                mountedDrive = await MountISO(Path.Combine(m_DownloadPath, files[0].Name));
+                if (Directory.Exists(mountedDrive))
+                {
+                    ViewModel.State = $"ISO mounted at {mountedDrive}";
+                    ViewModel.InstallationStepperProgress = 1;
+                    uiBtnExtract.IsEnabled = true;
+                    uiBtnInstall.IsEnabled = true;
+                    return;
+                }
+                ViewModel.State = "Failed to Mount ISO";
+                uiBtnExtract.IsEnabled = true;
+                return;
+            }
+            //
+
             ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
             ViewModel.State = "Extracting...";
             ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Visible;
@@ -548,12 +596,13 @@ namespace gamevault.UserControls
         }
         private void LoadSetupExecutables()
         {
-            if (Directory.Exists($"{m_DownloadPath}\\Extract"))
+            string targedDir = (SettingsViewModel.Instance.MountIso && Directory.Exists(mountedDrive)) ? mountedDrive : $"{m_DownloadPath}\\Extract";
+            if (Directory.Exists(targedDir))
             {
                 Dictionary<string, string> allExecutables = new Dictionary<string, string>();
                 foreach (string fileType in Globals.SupportedExecutables)
                 {
-                    foreach (string entry in Directory.GetFiles(m_DownloadPath, $"*.{fileType}", SearchOption.AllDirectories))
+                    foreach (string entry in Directory.GetFiles(targedDir, $"*.{fileType}", SearchOption.AllDirectories))
                     {
                         string keyToAdd = Path.GetFileName(entry);
                         if (!allExecutables.ContainsKey(keyToAdd))
@@ -562,7 +611,7 @@ namespace gamevault.UserControls
                         }
                         else
                         {
-                            allExecutables.Add(entry.Replace($"{m_DownloadPath}\\Extract", ""), entry); ;
+                            allExecutables.Add(entry.Replace(targedDir, ""), entry); ;
                         }
                     }
                 }
@@ -589,6 +638,8 @@ namespace gamevault.UserControls
         }
         private async Task Install()
         {
+            string targedDir = (SettingsViewModel.Instance.MountIso && Directory.Exists(mountedDrive)) ? mountedDrive : $"{m_DownloadPath}\\Extract";
+
             uiBtnInstallPortable.IsEnabled = false;
             uiBtnInstallSetup.IsEnabled = false;
             uiBtnExtract.IsEnabled = false;
@@ -617,7 +668,14 @@ namespace gamevault.UserControls
                         {
                             Directory.Delete($"{ViewModel.InstallPath}\\Files", true);
                         }
-                        Directory.Move($"{m_DownloadPath}\\Extract", $"{ViewModel.InstallPath}\\Files");
+                        if (Path.GetPathRoot(targedDir) == targedDir)
+                        {
+                            MoveFromRootPath(targedDir, $"{ViewModel.InstallPath}\\Files");
+                        }
+                        else
+                        {
+                            Directory.Move(targedDir, $"{ViewModel.InstallPath}\\Files");
+                        }
                     }
                     catch { error = true; }
                 });
@@ -649,7 +707,7 @@ namespace gamevault.UserControls
             else if (ViewModel.Game.Type == GameType.WINDOWS_SETUP)
             {
                 string setupEexecutable = string.Empty;
-                if (!Directory.Exists($"{m_DownloadPath}\\Extract"))
+                if (!Directory.Exists(targedDir))
                     return;
                 uiProgressRingInstall.IsActive = true;
                 setupEexecutable = ((KeyValuePair<string, string>)uiCbSetupExecutable.SelectedValue).Value;
@@ -744,7 +802,30 @@ namespace gamevault.UserControls
                 await DesktopHelper.CreateShortcut(game.Key, Preferences.Get(AppConfigKey.Executable, $"{game.Value}\\gamevault-exec"), false);
             }
         }
+        public void MoveFromRootPath(string sourceDir, string destinationDir)
+        {
+            // Create the destination directory if it doesn't exist.
+            Directory.CreateDirectory(destinationDir);
 
+            // Copy all files.
+            foreach (string filePath in Directory.GetFiles(sourceDir))
+            {
+                string fileName = Path.GetFileName(filePath);
+                string destFilePath = Path.Combine(destinationDir, fileName);
+                // You can use overwrite option if necessary
+                File.Copy(filePath, destFilePath, overwrite: true);
+            }
+
+            // Recursively copy subdirectories.
+            foreach (string dirPath in Directory.GetDirectories(sourceDir))
+            {
+                string dirName = Path.GetFileName(dirPath);
+                string destSubDir = Path.Combine(destinationDir, dirName);
+                MoveFromRootPath(dirPath, destSubDir);
+            }
+
+            // Do not attempt to delete source since it is on a read-only ISO.
+        }
         private void CopyInstallPathToClipboard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             try

@@ -52,7 +52,8 @@ namespace gamevault.Models
         //
         InstallationId,
         CustomCloudSaveManifests,
-        UsePrimaryCloudSaveManifest
+        UsePrimaryCloudSaveManifest,
+        MountIso
 
     }
     public static class AppFilePath
