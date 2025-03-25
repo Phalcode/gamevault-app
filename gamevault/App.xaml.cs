@@ -82,7 +82,7 @@ namespace gamevault
                 LogUnhandledException(ex);
                 //m_StoreHelper.NoInternetException();              
             }
-#endif
+#endif           
             await LoginManager.Instance.StartupLogin();
             await LoginManager.Instance.PhalcodeLogin(true);
 

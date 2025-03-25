@@ -43,7 +43,7 @@ namespace gamevault.UserControls
         public async Task RestoreInstalledGames()
         {
             Dictionary<int, string> foundGames = new Dictionary<int, string>();
-            Game[]? games = await Task<Game[]>.Run(() =>
+            Game[]? games = await Task<Game[]>.Run(async () =>
             {
                 string installationPath = Path.Combine(SettingsViewModel.Instance.RootPath, "GameVault\\Installations");
                 if (SettingsViewModel.Instance.RootPath != string.Empty && Directory.Exists(installationPath))
@@ -84,7 +84,7 @@ namespace gamevault.UserControls
                             }
                             if (LoginManager.Instance.IsLoggedIn())
                             {
-                                string gameList = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/games?filter.id=$in:{gameIds}");
+                                string gameList = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games?filter.id=$in:{gameIds}");
                                 return JsonSerializer.Deserialize<PaginatedData<Game>>(gameList).Data;
                             }
                             else
@@ -135,7 +135,7 @@ namespace gamevault.UserControls
                             {
                                 if (!Preferences.Exists(game.ID.ToString(), AppFilePath.OfflineCache))
                                 {
-                                    string gameToSave = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{game.ID}");
+                                    string gameToSave = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{game.ID}");
                                     await CacheHelper.CreateOfflineCacheAsync(JsonSerializer.Deserialize<Game>(gameToSave));
                                 }
                             }
@@ -198,7 +198,7 @@ namespace gamevault.UserControls
             //watcher.IncludeSubdirectories = true;
             m_FileWatcherList.Add(watcher);
         }
-        private void OnCreated(object sender, FileSystemEventArgs e)
+        private async void OnCreated(object sender, FileSystemEventArgs e)
         {
             string dir = ((FileSystemWatcher)sender).Path;
             ((FileSystemWatcher)sender).Created -= new FileSystemEventHandler(OnCreated);
@@ -215,7 +215,7 @@ namespace gamevault.UserControls
                 Game? game = null;
                 if (LoginManager.Instance.IsLoggedIn())
                 {
-                    string result = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{id}");
+                    string result = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{id}");
                     game = JsonSerializer.Deserialize<Game>(result);
                 }
                 else
@@ -360,7 +360,7 @@ namespace gamevault.UserControls
             try
             {
                 int ID = ((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key.ID;
-                string result = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{ID}");
+                string result = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{ID}");
                 Game resultGame = JsonSerializer.Deserialize<Game>(result);
                 MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(resultGame) { Width = 1200, Height = 800, Margin = new Thickness(50) });
             }

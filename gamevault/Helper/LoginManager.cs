@@ -77,55 +77,60 @@ namespace gamevault.Helper
         }
         public async Task StartupLogin()
         {
-            LoginState state = LoginState.Success;
             if (IsLoggedIn()) return;
-            User? user = await Task<User>.Run(() =>
-            {
-                try
-                {
-                    WebHelper.SetCredentials(Preferences.Get(AppConfigKey.Username, AppFilePath.UserFile), Preferences.Get(AppConfigKey.Password, AppFilePath.UserFile, true));
-                    string result = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me", 5000);
-                    return JsonSerializer.Deserialize<User>(result);
-                }
-                catch (Exception ex)
-                {
-                    string code = WebExceptionHelper.GetServerStatusCode(ex);
-                    state = DetermineLoginState(code);
-                    if (state == LoginState.Error)
-                        m_LoginMessage = WebExceptionHelper.TryGetServerMessage(ex);
 
-                    return null;
+            LoginState state = LoginState.Success;
+
+            try
+            {
+                WebHelper.SetCredentials(
+                    Preferences.Get(AppConfigKey.Username, AppFilePath.UserFile),
+                    Preferences.Get(AppConfigKey.Password, AppFilePath.UserFile, true)
+                );
+                string result = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me");
+                m_User = JsonSerializer.Deserialize<User>(result);
+
+                if (m_User == null)
+                {
+                    state = LoginState.Error;
                 }
-            });
-            m_User = user;
+            }
+            catch (Exception ex)
+            {
+                string code = WebExceptionHelper.GetServerStatusCode(ex);
+                state = DetermineLoginState(code);
+                if (state == LoginState.Error)
+                {
+                    m_LoginMessage = WebExceptionHelper.TryGetServerMessage(ex);
+                }
+            }
+
             m_LoginState = state;
             InitOnlineTimer();
         }
+
         public async Task<LoginState> ManualLogin(string username, string password)
         {
             LoginState state = LoginState.Success;
-            User? user = await Task<User>.Run(() =>
+            try
             {
-                try
+                WebHelper.OverrideCredentials(username, password);
+                string result = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me");
+                m_User = JsonSerializer.Deserialize<User>(result);
+            }
+            catch (Exception ex)
+            {
+                string code = WebExceptionHelper.GetServerStatusCode(ex);
+                state = DetermineLoginState(code);
+                if (state == LoginState.Error)
                 {
-                    WebHelper.OverrideCredentials(username, password);
-                    string result = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me");
-                    return JsonSerializer.Deserialize<User>(result);
+                    m_LoginMessage = WebExceptionHelper.TryGetServerMessage(ex);
                 }
-                catch (Exception ex)
-                {
-                    string code = WebExceptionHelper.GetServerStatusCode(ex);
-                    state = DetermineLoginState(code);
-                    if (state == LoginState.Error)
-                        m_LoginMessage = WebExceptionHelper.TryGetServerMessage(ex);
-
-                    return null;
-                }
-            });
-            m_User = user;
+            }
             m_LoginState = state;
             return state;
         }
+
         public void Logout()
         {
             m_User = null;
@@ -303,14 +308,18 @@ namespace gamevault.Helper
         {
             try
             {
-                string serverResonse = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/health");
+                string serverResonse = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/health");
                 if (!IsLoggedIn())
                 {
                     await StartupLogin();
                     if (IsLoggedIn())
                     {
                         MainWindowViewModel.Instance.OnlineState = System.Windows.Visibility.Collapsed;
-                    }
+                    }                 
+                }
+                else
+                {
+                    MainWindowViewModel.Instance.OnlineState = System.Windows.Visibility.Collapsed;
                 }
             }
             catch (Exception ex)

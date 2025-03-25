@@ -128,7 +128,7 @@ namespace gamevault.UserControls.SettingsComponents
             this.IsEnabled = false;
             try
             {
-                await WebHelper.UploadFileAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/admin/database/restore", File.OpenRead(uiRestoreFile.Tag.ToString()), uiRestoreFile.Text, new KeyValuePair<string, string>("X-Database-Password", uiRestoreDatabasePassword.Password));
+                await WebHelper.UploadFileAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/admin/database/restore", File.OpenRead(uiRestoreFile.Tag.ToString()), uiRestoreFile.Text, new Dictionary<string, string> { { "X-Database-Password", uiRestoreDatabasePassword.Password } });
                 MainWindowViewModel.Instance.AppBarText = "Successfully uploaded database file";
             }
             catch (HttpRequestException httpEx)

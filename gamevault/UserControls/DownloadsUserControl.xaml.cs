@@ -27,7 +27,7 @@ namespace gamevault.UserControls
         }
         public async Task RestoreDownloadedGames()
         {
-            Game[]? games = await Task<Game[]>.Run(() =>
+            Game[]? games = await Task<Game[]>.Run(async () =>
              {
                  string downloadPath = $"{SettingsViewModel.Instance.RootPath}\\GameVault\\Downloads";
                  if (SettingsViewModel.Instance.RootPath == string.Empty || !Directory.Exists(downloadPath))
@@ -55,7 +55,7 @@ namespace gamevault.UserControls
                  {
                      if (LoginManager.Instance.IsLoggedIn())
                      {
-                         string gameList = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/games?filter.id=$in:{string.Join(',', allIds)}");
+                         string gameList = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games?filter.id=$in:{string.Join(',', allIds)}");
                          return JsonSerializer.Deserialize<PaginatedData<Game>>(gameList)?.Data;
                      }
                      List<Game> offlineCacheGames = new List<Game>();

@@ -370,14 +370,14 @@ namespace gamevault.UserControls
         }
         private async Task<List<JsonElement>> LoadCommunityThemesHeader()
         {
-            string jsonResponse = await WebHelper.DownloadFileContentAsync("https://api.github.com/repos/phalcode/gamevault-community-themes/contents/v1");
+            string jsonResponse = await WebHelper.GetAsync("https://api.github.com/repos/phalcode/gamevault-community-themes/contents/v1");
             return JsonSerializer.Deserialize<List<JsonElement>>(jsonResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
         private async Task<ThemeItem> LoadThemeItemFromUrl(string url)
         {
             try
             {
-                string result = await WebHelper.DownloadFileContentAsync(url);
+                string result = await WebHelper.GetAsync(url);
                 ResourceDictionary res = (ResourceDictionary)XamlReader.Parse(result);
                 return new ThemeItem() { DisplayName = (string)res["Theme.DisplayName"], Description = (string)res["Theme.Description"], Author = (string)res["Theme.Author"], Path = url };
             }
@@ -436,7 +436,7 @@ namespace gamevault.UserControls
             {
                 ThemeItem theme = (ThemeItem)uiCBCommunityThemes.SelectedItem;
                 string installationPath = Path.Combine(AppFilePath.ThemesLoadDir, theme.DisplayName + ".xaml");
-                string result = await WebHelper.DownloadFileContentAsync(theme.Path);
+                string result = await WebHelper.GetAsync(theme.Path);
                 File.WriteAllText(installationPath, result);
                 LoadThemes();
                 try

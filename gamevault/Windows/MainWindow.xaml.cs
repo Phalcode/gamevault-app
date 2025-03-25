@@ -136,7 +136,7 @@ namespace gamevault.Windows
                 {
 
                     httpClient.DefaultRequestHeaders.Add("User-Agent", "Other");
-                    string serverResonse = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/health");
+                    string serverResonse = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/health");
                     string currentServerVersion = System.Text.Json.JsonSerializer.Deserialize<ServerInfo>(serverResonse).Version;
                     if (currentServerVersion == null || currentServerVersion == "")
                     {
@@ -184,8 +184,8 @@ namespace gamevault.Windows
                 {
                     return true;
                 }
-                string gameVaultNews = await WebHelper.DownloadFileContentAsync("https://gamevau.lt/news.md");
-                string serverNews = await WebHelper.GetRequestAsync($"{SettingsViewModel.Instance.ServerUrl}/api/config/news");
+                string gameVaultNews = await WebHelper.GetAsync("https://gamevau.lt/news.md");
+                string serverNews = await WebHelper.GetAsync($"{SettingsViewModel.Instance.ServerUrl}/api/config/news");
 
                 string hash = await CacheHelper.CreateHashAsync(gameVaultNews + serverNews);
                 if (Preferences.Get(AppConfigKey.NewsHash, AppFilePath.UserFile) != hash)

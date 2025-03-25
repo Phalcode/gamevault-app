@@ -54,40 +54,34 @@ namespace gamevault.UserControls.SettingsComponents
         private async Task Register()
         {
             uiBtnRegister.IsEnabled = false;
-            await Task.Run(async () =>
+            try
             {
-                try
+                string message = string.Empty;
+                if (!HasEmptyFields())
                 {
-                    string message = string.Empty;
-                    if (!HasEmptyFields())
+                    if (SettingsViewModel.Instance.RegistrationUser.Password != SettingsViewModel.Instance.RegistrationUser.RepeatPassword)
                     {
-                        if (SettingsViewModel.Instance.RegistrationUser.Password != SettingsViewModel.Instance.RegistrationUser.RepeatPassword)
-                        {
-                            MainWindowViewModel.Instance.AppBarText = "Password must be equal";
-                            return;
-                        }
-                        string jsonObject = JsonSerializer.Serialize(SettingsViewModel.Instance.RegistrationUser);
-                        WebHelper.Post($"{SettingsViewModel.Instance.ServerUrl}/api/users/register", jsonObject);
-                        message = "Successfully registered";
-                        SettingsViewModel.Instance.RegistrationUser = new User();
-                        App.Current.Dispatcher.Invoke((Action)delegate
-                        {
-                            uiPwReg.Password = string.Empty;
-                            uiPwRegRepeat.Password = string.Empty;
-                        });
+                        MainWindowViewModel.Instance.AppBarText = "Password must be equal";
+                        return;
                     }
-                    else
-                    {
-                        message = "All mandatory fields must be filled";
-                    }
-                    MainWindowViewModel.Instance.AppBarText = message;
+                    string jsonObject = JsonSerializer.Serialize(SettingsViewModel.Instance.RegistrationUser);
+                    await WebHelper.PostAsync($"{SettingsViewModel.Instance.ServerUrl}/api/users/register", jsonObject);
+                    message = "Successfully registered";
+                    SettingsViewModel.Instance.RegistrationUser = new User();
+                    uiPwReg.Password = string.Empty;
+                    uiPwRegRepeat.Password = string.Empty;
                 }
-                catch (Exception ex)
+                else
                 {
-                    string errMessage = WebExceptionHelper.TryGetServerMessage(ex);
-                    MainWindowViewModel.Instance.AppBarText = errMessage;
+                    message = "All mandatory fields must be filled";
                 }
-            });
+                MainWindowViewModel.Instance.AppBarText = message;
+            }
+            catch (Exception ex)
+            {
+                string errMessage = WebExceptionHelper.TryGetServerMessage(ex);
+                MainWindowViewModel.Instance.AppBarText = errMessage;
+            }
             uiBtnRegister.IsEnabled = true;
         }
     }

@@ -7,254 +7,100 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using Windows.Media.Protection.PlayReady;
+using YoutubeExplode.Channels;
 
 namespace gamevault.Helper
 {
     internal class WebHelper
     {
-
-        private static string m_UserName { get; set; }
-        private static string m_Password { get; set; }
+        private static readonly OAuthHttpClient HttpClient = new OAuthHttpClient();
+        static WebHelper() { }
         internal static void SetCredentials(string username, string password)
         {
-            m_UserName = username;
-            m_Password = password;
+            HttpClient.UserName = username;
+            HttpClient.Password = password;
         }
-        internal static string[] GetCredentials()
-        {
-            return new string[] { m_UserName, m_Password };
-        }
+        internal static string[] GetCredentials() => new[] { HttpClient.UserName, HttpClient.Password };
         internal static void OverrideCredentials(string username, string password)
         {
-            m_UserName = username;
-            m_Password = password;
-            Preferences.Set(AppConfigKey.Username, m_UserName, AppFilePath.UserFile);
-            Preferences.Set(AppConfigKey.Password, m_Password, AppFilePath.UserFile, true);
+            HttpClient.UserName = username;
+            HttpClient.Password = password;
+            Preferences.Set(AppConfigKey.Username, HttpClient.UserName, AppFilePath.UserFile);
+            Preferences.Set(AppConfigKey.Password, HttpClient.Password, AppFilePath.UserFile, true);
         }
-        internal static string GetRequest(string uri, int timeout = 0)
+        internal static async Task<string> GetAsync(string url)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-            if (timeout != 0)
-            {
-                request.Timeout = 5000;
-            }
+            var response = await HttpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
+        }
+        internal static async Task<string> PostAsync(string url, string payload)
+        {
+            var content = new StringContent(payload, Encoding.UTF8, "application/json");
+            var response = await HttpClient.PostAsync(url, content);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
+        }
 
-            request.UserAgent = $"GameVault/{SettingsViewModel.Instance.Version}";
-            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-            var authenticationString = $"{m_UserName}:{m_Password}";
-            var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(authenticationString));
-            request.Headers.Add("Authorization", "Basic " + base64EncodedAuthenticationString);
-            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-            using (Stream stream = response.GetResponseStream())
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                return reader.ReadToEnd();
-            }
-        }
-        internal static async Task<string> GetRequestAsync(string uri)
+        internal static async Task<string> PutAsync(string url, string payload)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-#if DEBUG
-            //request.Timeout = 3000;
-#endif
-            request.UserAgent = $"GameVault/{SettingsViewModel.Instance.Version}";
-            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-            var authenticationString = $"{m_UserName}:{m_Password}";
-            var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(authenticationString));
-            request.Headers.Add("Authorization", "Basic " + base64EncodedAuthenticationString);
-            using (HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync())
-            using (Stream stream = response.GetResponseStream())
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                return await reader.ReadToEndAsync();
-            }
+            var content = new StringContent(payload, Encoding.UTF8, "application/json");
+            var response = await HttpClient.PutAsync(url, content);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
         }
-        internal static string Put(string uri, string payload, bool returnBody = false)
+
+        internal static async Task<string> DeleteAsync(string url)
         {
-            var request = (HttpWebRequest)WebRequest.Create(uri);
-            request.UserAgent = $"GameVault/{SettingsViewModel.Instance.Version}";
-            request.Method = "PUT";
-            request.ContentType = "application/json";
-            if (payload != null)
-            {
-                var authenticationString = $"{m_UserName}:{m_Password}";
-                var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(authenticationString));
-                request.Headers.Add("Authorization", "Basic " + base64EncodedAuthenticationString);
-                request.ContentLength = System.Text.UTF8Encoding.UTF8.GetByteCount(payload);
-                Stream dataStream = request.GetRequestStream();
-                using (StreamWriter sr = new StreamWriter(dataStream))
-                {
-                    sr.Write(payload);
-                }
-                dataStream.Close();
-            }
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            if (returnBody)
-            {
-                using (StreamReader responseStreamReader = new StreamReader(response.GetResponseStream()))
-                {
-                    return responseStreamReader.ReadToEnd();
-                }
-            }
-            else
-            {
-                return response.StatusCode.ToString();
-            }
-        }
-        internal static void Post(string uri, string payload)
-        {
-            var request = (HttpWebRequest)WebRequest.Create(uri);
-            request.UserAgent = $"GameVault/{SettingsViewModel.Instance.Version}";
-            request.Method = "POST";
-            request.ContentType = "application/json";
-            if (payload != null)
-            {
-                var authenticationString = $"{m_UserName}:{m_Password}";
-                var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(authenticationString));
-                request.Headers.Add("Authorization", "Basic " + base64EncodedAuthenticationString);
-                request.ContentLength = System.Text.UTF8Encoding.UTF8.GetByteCount(payload);
-                Stream dataStream = request.GetRequestStream();
-                using (StreamWriter sr = new StreamWriter(dataStream))
-                {
-                    sr.Write(payload);
-                }
-                dataStream.Close();
-            }
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            string returnString = response.StatusCode.ToString();
-        }
-        internal static async Task<string> PostAsync(string uri, string payload = "")
-        {
-            var request = (HttpWebRequest)WebRequest.Create(uri);
-            request.UserAgent = $"GameVault/{SettingsViewModel.Instance.Version}";
-            request.Method = "POST";
-            request.ContentType = "application/json";
-            if (payload != null)
-            {
-                var authenticationString = $"{m_UserName}:{m_Password}";
-                var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(authenticationString));
-                request.Headers.Add("Authorization", "Basic " + base64EncodedAuthenticationString);
-                request.ContentLength = System.Text.UTF8Encoding.UTF8.GetByteCount(payload);
-                Stream dataStream = request.GetRequestStream();
-                using (StreamWriter sr = new StreamWriter(dataStream))
-                {
-                    await sr.WriteAsync(payload);
-                }
-                dataStream.Close();
-            }
-            var response = await request.GetResponseAsync();
-            using (StreamReader reader = new StreamReader(response.GetResponseStream()))
-            {
-                return await reader.ReadToEndAsync();
-            }
-        }
-        internal static string Delete(string uri)
-        {
-            var request = (HttpWebRequest)WebRequest.Create(uri);
-            request.UserAgent = $"GameVault/{SettingsViewModel.Instance.Version}";
-            request.Method = "DELETE";
-            var authenticationString = $"{m_UserName}:{m_Password}";
-            var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(authenticationString));
-            request.Headers.Add("Authorization", "Basic " + base64EncodedAuthenticationString);
-            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-            using (Stream stream = response.GetResponseStream())
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                return reader.ReadToEnd();
-            }
-        }
-        internal static async Task<string> DeleteAsync(string uri)
-        {
-            var request = (HttpWebRequest)WebRequest.Create(uri);
-            request.UserAgent = $"GameVault/{SettingsViewModel.Instance.Version}";
-            request.Method = "DELETE";
-            var authenticationString = $"{m_UserName}:{m_Password}";
-            var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(authenticationString));
-            request.Headers.Add("Authorization", "Basic " + base64EncodedAuthenticationString);
-            using (var response = await request.GetResponseAsync())
-            using (Stream stream = ((HttpWebResponse)response).GetResponseStream())
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                return await reader.ReadToEndAsync();
-            }
+            var response = await HttpClient.DeleteAsync(url);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
         }
         public static async Task DownloadImageFromUrlAsync(string imageUrl, string cacheFile)
         {
-            using (WebClient client = new WebClient())
-            {
-                client.Headers.Add(HttpRequestHeader.Authorization, "Basic " + Convert.ToBase64String(System.Text.UTF8Encoding.UTF8.GetBytes($"{m_UserName}:{m_Password}")));
-                client.Headers.Add($"User-Agent: GameVault/{SettingsViewModel.Instance.Version}");
-                await client.DownloadFileTaskAsync(new Uri(imageUrl), cacheFile);
-            }
+            var response = await HttpClient.GetAsync(imageUrl);
+            response.EnsureSuccessStatusCode();
+            var imageBytes = await response.Content.ReadAsByteArrayAsync();
+            await File.WriteAllBytesAsync(cacheFile, imageBytes);
         }
         public static async Task<BitmapImage> DownloadImageFromUrlAsync(string imageUrl)
         {
-            using (WebClient client = new WebClient())
+            var response = await HttpClient.GetAsync(imageUrl);
+            response.EnsureSuccessStatusCode();
+            var imageData = await response.Content.ReadAsByteArrayAsync();
+            using (var memoryStream = new MemoryStream(imageData))
             {
-                client.Headers.Add(HttpRequestHeader.Authorization, "Basic " + Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"{m_UserName}:{m_Password}")));
-                client.Headers.Add($"User-Agent: GameVault/{SettingsViewModel.Instance.Version}");
-
-                byte[] imageData = await client.DownloadDataTaskAsync(new Uri(imageUrl));
-
-                using (MemoryStream memoryStream = new MemoryStream(imageData))
-                {
-                    BitmapImage bitmap = new BitmapImage();
-                    bitmap.BeginInit();
-                    bitmap.StreamSource = memoryStream;
-                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                    bitmap.EndInit();
-                    bitmap.Freeze(); // Freeze to make it cross-thread accessible
-                    return bitmap;
-                }
+                BitmapImage bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.StreamSource = memoryStream;
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.EndInit();
+                bitmap.Freeze();
+                return bitmap;
             }
         }
-        public static async Task<string> UploadFileAsync(string apiUrl, Stream imageStream, string fileName, KeyValuePair<string, string>? additionalHeader)
+        public static async Task<string> UploadFileAsync(string apiUrl, Stream imageStream, string fileName, Dictionary<string, string>? additionalHeaders = null)
         {
-            using (var httpClient = new HttpClient())
+            using (var formData = new MultipartFormDataContent())
             {
-                var authenticationString = $"{m_UserName}:{m_Password}";
-                var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(authenticationString));
-                httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + base64EncodedAuthenticationString);
-                if (additionalHeader != null)
-                {
-                    httpClient.DefaultRequestHeaders.Add(additionalHeader.Value.Key, additionalHeader.Value.Value);
-                }
-                httpClient.DefaultRequestHeaders.UserAgent.ParseAdd($"GameVault/{SettingsViewModel.Instance.Version}");
-                using (var formData = new MultipartFormDataContent())
-                {
-                    var imageContent = new StreamContent(imageStream);
-                    string mimeType = MimeTypeHelper.GetMimeType(fileName);
-                    imageContent.Headers.ContentType = new MediaTypeHeaderValue(mimeType);
-                    formData.Add(imageContent, "file", fileName);
-                    var response = await httpClient.PostAsync(apiUrl, formData);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var responseContent = await response.Content.ReadAsStringAsync();
-                        return responseContent;
-                    }
-                    else
-                    {
-                        string responseContent = await response.Content.ReadAsStringAsync();
-                        dynamic obj = JsonNode.Parse(responseContent);
-                        throw new HttpRequestException($"{response.StatusCode}: {obj["message"]}");
-                    }
-                }
-            }
-        }
-        public static async Task<string> DownloadFileContentAsync(string url)
-        {
-            using (HttpClient client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Add("User-Agent", "C# App");
-                HttpResponseMessage response = await client.GetAsync(url);
+                var imageContent = new StreamContent(imageStream);
+                string mimeType = MimeTypeHelper.GetMimeType(fileName);
+                imageContent.Headers.ContentType = new MediaTypeHeaderValue(mimeType);
+                formData.Add(imageContent, "file", fileName);
+                var response = await HttpClient.PostAsync(apiUrl, formData, additionalHeaders);
                 response.EnsureSuccessStatusCode();
-                string content = await response.Content.ReadAsStringAsync();
-                return content;
+                var responseContent = await response.Content.ReadAsStringAsync();
+                return responseContent;
             }
         }
     }
 }
+
+

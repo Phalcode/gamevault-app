@@ -587,30 +587,29 @@ namespace gamevault.UserControls
                 BitmapSource bitmapSource = tag == "box" ? (BitmapSource)ViewModel.GameCoverImageSource : (BitmapSource)ViewModel.BackgroundImageSource;
                 string resp = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/media", BitmapHelper.BitmapSourceToMemoryStream(bitmapSource), "x.jpg", null);
                 Media? newImage = JsonSerializer.Deserialize<Media>(resp);
-                await Task.Run(() =>
-                {
-                    try
-                    {
-                        UpdateGameDto updateGame = new UpdateGameDto() { UserMetadata = new UpdateGameUserMetadataDto() };
-                        if (tag == "box")
-                        {
-                            updateGame.UserMetadata.Cover = newImage;
-                        }
-                        else
-                        {
-                            updateGame.UserMetadata.Background = newImage;
-                        }
 
-                        string changedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}", JsonSerializer.Serialize(updateGame), true);
-                        ViewModel.Game = JsonSerializer.Deserialize<Game>(changedGame);
-                        success = true;
-                        MainWindowViewModel.Instance.AppBarText = "Successfully updated image";
-                    }
-                    catch (Exception ex)
+                try
+                {
+                    UpdateGameDto updateGame = new UpdateGameDto() { UserMetadata = new UpdateGameUserMetadataDto() };
+                    if (tag == "box")
                     {
-                        MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
+                        updateGame.UserMetadata.Cover = newImage;
                     }
-                });
+                    else
+                    {
+                        updateGame.UserMetadata.Background = newImage;
+                    }
+
+                    string changedGame = await WebHelper.PutAsync($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}", JsonSerializer.Serialize(updateGame));
+                    ViewModel.Game = JsonSerializer.Deserialize<Game>(changedGame);
+                    success = true;
+                    MainWindowViewModel.Instance.AppBarText = "Successfully updated image";
+                }
+                catch (Exception ex)
+                {
+                    MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
+                }
+
                 //Update Data Context for Library. So that the images are also refreshed there directly
                 if (success)
                 {
@@ -759,7 +758,7 @@ namespace gamevault.UserControls
             this.Cursor = Cursors.Wait;
             try
             {
-                string currentShownUser = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/metadata/providers/{ViewModel.MetadataProviders?[ViewModel.SelectedMetadataProviderIndex]?.Slug}/search?query={GameMetadataSearchTimer.Data}");
+                string currentShownUser = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/metadata/providers/{ViewModel.MetadataProviders?[ViewModel.SelectedMetadataProviderIndex]?.Slug}/search?query={GameMetadataSearchTimer.Data}");
                 ViewModel.RemapSearchResults = JsonSerializer.Deserialize<MinimalGame[]>(currentShownUser);
             }
             catch (Exception ex)
@@ -813,22 +812,19 @@ namespace gamevault.UserControls
         {
             bool success = false;
             this.IsEnabled = false;
-            await Task.Run(() =>
+            try
             {
-                try
-                {
-                    UpdateGameDto updateGame = new UpdateGameDto() { MappingRequests = new List<MapGameDto>() { new MapGameDto() { ProviderSlug = providerSlug, ProviderDataId = providerId, ProviderPriority = priority } } };
-                    string remappedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{gameId}", JsonSerializer.Serialize(updateGame), true);
-                    ViewModel.Game = JsonSerializer.Deserialize<Game>(remappedGame);
-                    success = true;
-                    MainWindowViewModel.Instance.AppBarText = $"Successfully re-mapped {ViewModel.Game.Title}";
-                }
-                catch (Exception ex)
-                {
-                    string errMessage = WebExceptionHelper.TryGetServerMessage(ex);
-                    MainWindowViewModel.Instance.AppBarText = errMessage;
-                }
-            });
+                UpdateGameDto updateGame = new UpdateGameDto() { MappingRequests = new List<MapGameDto>() { new MapGameDto() { ProviderSlug = providerSlug, ProviderDataId = providerId, ProviderPriority = priority } } };
+                string remappedGame = await WebHelper.PutAsync($"{SettingsViewModel.Instance.ServerUrl}/api/games/{gameId}", JsonSerializer.Serialize(updateGame));
+                ViewModel.Game = JsonSerializer.Deserialize<Game>(remappedGame);
+                success = true;
+                MainWindowViewModel.Instance.AppBarText = $"Successfully re-mapped {ViewModel.Game.Title}";
+            }
+            catch (Exception ex)
+            {
+                string errMessage = WebExceptionHelper.TryGetServerMessage(ex);
+                MainWindowViewModel.Instance.AppBarText = errMessage;
+            }
             InstallViewModel.Instance.RefreshGame(ViewModel.Game);
             MainWindowViewModel.Instance.Library.RefreshGame(ViewModel.Game);
             if (success)
@@ -847,7 +843,7 @@ namespace gamevault.UserControls
             try
             {
                 ViewModel.MetadataProvidersLoaded = false;
-                string result = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/metadata/providers");
+                string result = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/metadata/providers");
                 var providers = JsonSerializer.Deserialize<MetadataProviderDto[]?>(result);
                 foreach (GameMetadata gmd in ViewModel.Game.ProviderMetadata)
                 {
@@ -887,22 +883,20 @@ namespace gamevault.UserControls
         {
             this.IsEnabled = false;
             bool success = false;
-            await Task.Run(() =>
+
+            try
             {
-                try
-                {
-                    string remappedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}", JsonSerializer.Serialize(ViewModel.UpdateGame), true);
-                    ViewModel.Game = JsonSerializer.Deserialize<Game>(remappedGame);
-                    success = true;
-                    ViewModel.UpdateGame = new UpdateGameDto() { UserMetadata = new UpdateGameUserMetadataDto() };
-                    MainWindowViewModel.Instance.AppBarText = $"Successfully edited {ViewModel.Game.Title}";
-                }
-                catch (Exception ex)
-                {
-                    string errMessage = WebExceptionHelper.TryGetServerMessage(ex);
-                    MainWindowViewModel.Instance.AppBarText = errMessage;
-                }
-            });
+                string remappedGame = await WebHelper.PutAsync($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}", JsonSerializer.Serialize(ViewModel.UpdateGame));
+                ViewModel.Game = JsonSerializer.Deserialize<Game>(remappedGame);
+                success = true;
+                ViewModel.UpdateGame = new UpdateGameDto() { UserMetadata = new UpdateGameUserMetadataDto() };
+                MainWindowViewModel.Instance.AppBarText = $"Successfully edited {ViewModel.Game.Title}";
+            }
+            catch (Exception ex)
+            {
+                string errMessage = WebExceptionHelper.TryGetServerMessage(ex);
+                MainWindowViewModel.Instance.AppBarText = errMessage;
+            }
             if (success)
             {
                 if (MainWindowViewModel.Instance.ActiveControl.GetType() == typeof(GameViewUserControl))

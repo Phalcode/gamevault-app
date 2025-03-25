@@ -96,7 +96,7 @@ namespace gamevault.Helper
                         }
                         foreach (int gameid in gamesToCountUp)
                         {
-                            WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{gameid}/increment", string.Empty);
+                            await WebHelper.PutAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{gameid}/increment", string.Empty);
                         }
                         DiscordHelper.Instance.SyncGameWithDiscordPresence(gamesToCountUp, foundGames);
                         await SaveGameHelper.Instance.BackupSaveGamesFromIds(gamesToCountUp);
@@ -139,23 +139,20 @@ namespace gamevault.Helper
         }
         private async Task SendOfflineProgess()
         {
-            await Task.Run(() =>
-             {
-                 if (LoginManager.Instance.IsLoggedIn())
-                 {
-                     foreach (string key in GetAllOfflineCacheKeys())
-                     {
-                         try
-                         {
-                             string value = Preferences.Get(key, AppFilePath.OfflineProgress, true);
-                             int.Parse(value);
-                             WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{key}/increment/{value}", string.Empty);
-                             Preferences.DeleteKey(key, AppFilePath.OfflineProgress);
-                         }
-                         catch { }
-                     }
-                 }
-             });
+            if (LoginManager.Instance.IsLoggedIn())
+            {
+                foreach (string key in GetAllOfflineCacheKeys())
+                {
+                    try
+                    {
+                        string value = Preferences.Get(key, AppFilePath.OfflineProgress, true);
+                        int.Parse(value);
+                        await WebHelper.PutAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{key}/increment/{value}", string.Empty);
+                        Preferences.DeleteKey(key, AppFilePath.OfflineProgress);
+                    }
+                    catch { }
+                }
+            }
         }
         private int GetGameIdByDirectory(string dir)
         {

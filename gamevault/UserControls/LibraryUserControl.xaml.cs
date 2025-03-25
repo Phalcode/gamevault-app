@@ -154,19 +154,16 @@ namespace gamevault.UserControls
         }
         private async Task<PaginatedData<Game>?> GetGamesData(string url)
         {
-            return await Task.Run(() =>
+            try
             {
-                try
-                {
-                    string gameList = WebHelper.GetRequest(url);
-                    return JsonSerializer.Deserialize<PaginatedData<Game>>(gameList);
-                }
-                catch (Exception ex)
-                {
-                    MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
-                    return null;
-                }
-            });
+                string gameList = await WebHelper.GetAsync(url);
+                return JsonSerializer.Deserialize<PaginatedData<Game>>(gameList);
+            }
+            catch (Exception ex)
+            {
+                MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
+                return null;
+            }
         }
         private async Task ProcessGamesData(PaginatedData<Game> gameResult)
         {
@@ -365,19 +362,17 @@ namespace gamevault.UserControls
             }
             else
             {
-                Game? result = await Task<Game>.Run(() =>
+                Game? result = null;
+                try
                 {
-                    try
-                    {
-                        string randomGame = WebHelper.GetRequest($"{SettingsViewModel.Instance.ServerUrl}/api/games/random");
-                        return JsonSerializer.Deserialize<Game>(randomGame);
-                    }
-                    catch (Exception ex)
-                    {
-                        MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
-                        return null;
-                    }
-                });
+                    string randomGame = await WebHelper.GetAsync($"{SettingsViewModel.Instance.ServerUrl}/api/games/random");
+                    result = JsonSerializer.Deserialize<Game>(randomGame);
+                }
+                catch (Exception ex)
+                {
+                    MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
+                }
+
                 if (result != null)
                 {
                     MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(result, true));
@@ -397,7 +392,7 @@ namespace gamevault.UserControls
                 parent.Tag = "busy";
                 try
                 {
-                    string result = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{((Game)((FrameworkElement)sender).DataContext).ID}");
+                    string result = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{((Game)((FrameworkElement)sender).DataContext).ID}");
                     Game resultGame = JsonSerializer.Deserialize<Game>(result);
                     MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(resultGame) { Width = 1200, Height = 800, Margin = new Thickness(50) });
                 }
@@ -431,7 +426,7 @@ namespace gamevault.UserControls
                     }
                     else
                     {
-                        await WebHelper.PostAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me/bookmark/{currentGame.ID}");
+                        await WebHelper.PostAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me/bookmark/{currentGame.ID}", "");
                         currentGame.BookmarkedUsers = new List<User> { LoginManager.Instance.GetCurrentUser()! };
                     }
 

@@ -48,7 +48,7 @@ namespace gamevault.UserControls
         }
         public async Task InitUserList()
         {
-            string result = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users");
+            string result = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users");
             var users = JsonSerializer.Deserialize<User[]>(result);
             users = BringCurrentUserToTop(users);
             //Log server user count only on the first time its set
@@ -125,11 +125,8 @@ namespace gamevault.UserControls
                 {
                     selectedUserId = ((User)e.AddedItems[0]).ID;
                 }
-                ViewModel.CurrentShownUser = await Task<User>.Run(() =>
-                {
-                    string currentShownUser = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/{selectedUserId}");
-                    return JsonSerializer.Deserialize<User>(currentShownUser);
-                });
+                string currentShownUser = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/{selectedUserId}");
+                ViewModel.CurrentShownUser = JsonSerializer.Deserialize<User>(currentShownUser);
 
                 string lastSort = TryGetLastProgressSort();
                 if (uiSortBy.SelectedValue?.ToString()?.Replace("\"", "") == lastSort)
@@ -225,12 +222,8 @@ namespace gamevault.UserControls
             try
             {
                 int currentUserId = ViewModel.CurrentShownUser.ID;
-                ViewModel.CurrentShownUser = await Task<User>.Run(() =>
-                {
-                    string currentShownUser = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/{currentUserId}");
-                    return JsonSerializer.Deserialize<User>(currentShownUser);
-                });
-
+                string currentShownUser = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/{currentUserId}");
+                ViewModel.CurrentShownUser = JsonSerializer.Deserialize<User>(currentShownUser);
                 SortBy_SelectionChanged(null, new SelectionChangedEventArgs(System.Windows.Controls.Primitives.Selector.SelectionChangedEvent, new List<string>(), new List<string> { uiSortBy.SelectedValue.ToString() }));
 
             }
@@ -254,7 +247,7 @@ namespace gamevault.UserControls
                     "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
                 if (result == MessageDialogResult.Affirmative)
                 {
-                    WebHelper.Delete(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{ViewModel?.CurrentShownUser?.ID}/game/{dataContext?.Game.ID}");
+                    await WebHelper.DeleteAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{ViewModel?.CurrentShownUser?.ID}/game/{dataContext?.Game.ID}");
                     //ToDo: Dirty but i dont want to use ObservableCollection only for this one action
                     List<Progress> copy = ViewModel.UserProgresses;
                     copy.Remove(dataContext);

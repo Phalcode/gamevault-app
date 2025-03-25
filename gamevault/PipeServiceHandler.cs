@@ -479,7 +479,7 @@ namespace gamevault
             {
                 try
                 {
-                    string result = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{id}");
+                    string result = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{id}");
                     game = JsonSerializer.Deserialize<Game>(result);
                 }
                 catch (Exception)

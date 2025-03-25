@@ -132,36 +132,33 @@ namespace gamevault.ViewModels
         }
         public async Task InitIgnoreList()
         {
-            await Task.Run(() =>
+            try
+            {
+                if (!File.Exists(AppFilePath.IgnoreList))
+                {
+                    string response = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/ignorefile");
+                    string[] ignoreList = JsonSerializer.Deserialize<string[]>(response);
+                    if (ignoreList != null || ignoreList?.Length > 0)
+                    {
+                        IgnoreList = ignoreList.Where(s => !string.IsNullOrEmpty(s)).ToArray(); //Make sure server ignore list don't contain empty strings, because this will exclude any file which is compared to the ignore list
+                        Preferences.Set("IL", response.Replace("\n", ""), AppFilePath.IgnoreList);
+                    }
+                }
+                else
+                {
+                    string result = Preferences.Get("IL", AppFilePath.IgnoreList);
+                    IgnoreList = JsonSerializer.Deserialize<string[]>(result);
+                }
+            }
+            catch
             {
                 try
                 {
-                    if (!File.Exists(AppFilePath.IgnoreList))
-                    {
-                        string response = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/ignorefile");
-                        string[] ignoreList = JsonSerializer.Deserialize<string[]>(response);
-                        if (ignoreList != null || ignoreList?.Length > 0)
-                        {
-                            IgnoreList = ignoreList.Where(s => !string.IsNullOrEmpty(s)).ToArray(); //Make sure server ignore list don't contain empty strings, because this will exclude any file which is compared to the ignore list
-                            Preferences.Set("IL", response.Replace("\n", ""), AppFilePath.IgnoreList);
-                        }
-                    }
-                    else
-                    {
-                        string result = Preferences.Get("IL", AppFilePath.IgnoreList);
-                        IgnoreList = JsonSerializer.Deserialize<string[]>(result);
-                    }
+                    string result = Preferences.Get("IL", AppFilePath.IgnoreList);
+                    IgnoreList = JsonSerializer.Deserialize<string[]>(result);
                 }
-                catch
-                {
-                    try
-                    {
-                        string result = Preferences.Get("IL", AppFilePath.IgnoreList);
-                        IgnoreList = JsonSerializer.Deserialize<string[]>(result);
-                    }
-                    catch { }
-                }
-            });
+                catch { }
+            }
         }
 
         public string UserName
