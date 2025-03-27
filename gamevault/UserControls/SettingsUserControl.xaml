@@ -196,6 +196,7 @@
                         <StackPanel Margin="0,0,0,0">
                             <TextBlock Text="Account" FontSize="20" FontWeight="Bold"/>
                             <settingsComponents:LoginUserControl  Margin="10,10,0,0" HorizontalAlignment="Left"/>
+                            <Button Content="Yalla" Click="Button_Click"/>
                             <local:IconButton Text="Logout" Icon="{StaticResource IconLogout}" IconMargin="0,0,5,2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="30" Margin="10,10,0,0" Width="205" FontSize="15" Click="Logout_Click"/>
                             <settingsComponents:RegisterUserControl Margin="10,10,0,0" HorizontalAlignment="Left"/>
                             <local:IconButton Text="Edit your User" Icon="{StaticResource IconInstalledGamesSettings}" IconMargin="0,0,5,2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="30" Margin="10,10,0,0" Width="205" FontSize="15" Click="EditUser_Click"/>

@@ -19,6 +19,8 @@ using System.Collections.Generic;
 using System.Windows.Markup;
 using gamevault.Helper.Integrations;
 using AngleSharp.Dom;
+using Microsoft.Web.WebView2.Core;
+using Microsoft.Web.WebView2.Wpf;
 
 namespace gamevault.UserControls
 {
@@ -563,6 +565,42 @@ namespace gamevault.UserControls
             }
             catch { }
             MainWindowViewModel.Instance.AppBarText = "Successfully saved custom Ludusavi Manifests";
+        }
+
+        private async void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Window win = new Window() { Height = 600, Width = 800, WindowStartupLocation = WindowStartupLocation.CenterScreen };
+            WebView2 uiWebView = new WebView2();
+            win.Content = uiWebView;
+            win.Show();
+            var options = new CoreWebView2EnvironmentOptions
+            {
+                AdditionalBrowserArguments = "--disk-cache-size=1000000"
+            };
+            var env = await CoreWebView2Environment.CreateAsync(null, AppFilePath.WebConfigDir, options);
+            await uiWebView.EnsureCoreWebView2Async(env);
+            uiWebView.Source = new Uri($"{SettingsViewModel.Instance.ServerUrl}/api/auth/oauth2/login");
+            uiWebView.NavigationCompleted += async (s, e) =>
+            {
+                string content = await uiWebView.CoreWebView2.ExecuteScriptAsync("document.body.innerText");
+
+                try
+                {
+                    string result = System.Text.Json.JsonSerializer.Deserialize<string>(content);
+                    var authResponse = JsonSerializer.Deserialize<AuthResponse>(result);
+                    string accessToken = authResponse?.AccessToken;
+                    string refreshToken = authResponse?.RefreshToken;
+                    WebHelper.InjectTokens(accessToken, refreshToken);
+                    await LoginManager.Instance.ManualLogin("", "");
+                    MainWindowViewModel.Instance.UserAvatar = LoginManager.Instance.GetCurrentUser();
+                    win.Close();
+                    uiWebView.Dispose();
+                }
+                catch (Exception ex)
+                {
+
+                }
+            };
         }
     }
 }

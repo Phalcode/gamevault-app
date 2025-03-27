@@ -187,6 +187,10 @@ namespace gamevault.Helper.Integrations
 
             var installedGame = InstallViewModel.Instance?.InstalledGames?.FirstOrDefault(g => g.Key?.ID == gameId);
             string gameMetadataTitle = installedGame?.Key?.Metadata?.Title ?? "";
+            if (gameMetadataTitle == "")
+            {
+                gameMetadataTitle = installedGame?.Key?.Title ?? "";
+            }
             string installationDir = installedGame?.Value ?? "";
             if (gameMetadataTitle != "" && installationDir != "")
             {

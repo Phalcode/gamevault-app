@@ -165,7 +165,12 @@ namespace gamevault.UserControls
                     try
                     {
                         SaveGameHelper.Instance.PrepareConfigFile("", Path.Combine(AppFilePath.CloudSaveConfigDir, "config.yaml"));
-                        ViewModel.CloudSaveMatchTitle = await SaveGameHelper.Instance.SearchForLudusaviGameTitle(ViewModel?.Game?.Metadata?.Title);
+                        string gameMetadataTitle = ViewModel?.Game?.Metadata?.Title ?? "";
+                        if (gameMetadataTitle == "")
+                        {
+                            gameMetadataTitle = ViewModel?.Game?.Title ?? "";
+                        }
+                        ViewModel.CloudSaveMatchTitle = await SaveGameHelper.Instance.SearchForLudusaviGameTitle(gameMetadataTitle);
                     }
                     catch { }
                 });

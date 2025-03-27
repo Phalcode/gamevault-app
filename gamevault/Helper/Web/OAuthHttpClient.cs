@@ -25,7 +25,11 @@ namespace gamevault.Helper
             _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd($"GameVault/{SettingsViewModel.Instance.Version}");
         }
-
+        public void InjectTokens(string accessToken, string refreshToken)
+        {
+            _accessToken = accessToken;
+            _refreshToken = refreshToken;
+        }
         public async Task<bool> LoginBasicAuthAsync(string username, string password)
         {
             var authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));

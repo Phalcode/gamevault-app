@@ -35,6 +35,10 @@ namespace gamevault.Helper
             Preferences.Set(AppConfigKey.Username, HttpClient.UserName, AppFilePath.UserFile);
             Preferences.Set(AppConfigKey.Password, HttpClient.Password, AppFilePath.UserFile, true);
         }
+        internal static void InjectTokens(string accessToken, string refreshToken)
+        {
+            HttpClient.InjectTokens(accessToken, refreshToken);
+        }
         internal static async Task<string> GetAsync(string url)
         {
             var response = await HttpClient.GetAsync(url);
