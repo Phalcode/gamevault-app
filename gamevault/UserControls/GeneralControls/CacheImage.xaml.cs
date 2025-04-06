@@ -33,17 +33,6 @@ namespace gamevault.UserControls
             get { return (ImageCache)GetValue(ImageCacheTypeProperty); }
             set { SetValue(ImageCacheTypeProperty, value); }
         }
-        public static readonly DependencyProperty DataProperty = DependencyProperty.Register("Data", typeof(object), typeof(CacheImage), new PropertyMetadata(OnDataChangedCallBack));
-        //Add Data as DependencyProperty, because previous DataContext_Changed is called before ImageCacheType is set, when inside XAML DataTemplate. So there was a bug, where i could not choose ImageCacheType. 
-        public object Data
-        {
-            get { return (ImageCache)GetValue(DataProperty); }
-            set { SetValue(DataProperty, value); }
-        }
-        private static async void OnDataChangedCallBack(DependencyObject sender, DependencyPropertyChangedEventArgs e)
-        {
-            await ((CacheImage)sender).DataChanged(e.NewValue);
-        }
         public static readonly DependencyProperty UseUriSourceProperty = DependencyProperty.Register("UseUriSource", typeof(bool), typeof(CacheImage));
 
         public bool UseUriSource
@@ -51,6 +40,7 @@ namespace gamevault.UserControls
             get { return (bool)GetValue(UseUriSourceProperty); }
             set { SetValue(UseUriSourceProperty, value); }
         }
+         
         public static readonly DependencyProperty DoNotCacheProperty = DependencyProperty.Register("DoNotCache", typeof(bool), typeof(CacheImage));
 
         public bool DoNotCache
@@ -83,6 +73,17 @@ namespace gamevault.UserControls
         private static void OnCornerRadiusChangedCallBack(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             ((CacheImage)sender).uiBorder.CornerRadius = (CornerRadius)e.NewValue;
+        }
+        public static readonly DependencyProperty DataProperty = DependencyProperty.Register("Data", typeof(object), typeof(CacheImage), new PropertyMetadata(OnDataChangedCallBack));
+        //Add Data as DependencyProperty, because previous DataContext_Changed is called before ImageCacheType is set, when inside XAML DataTemplate. So there was a bug, where i could not choose ImageCacheType. 
+        public object Data
+        {
+            get { return (ImageCache)GetValue(DataProperty); }
+            set { SetValue(DataProperty, value); }
+        }
+        private static async void OnDataChangedCallBack(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            await ((CacheImage)sender).DataChanged(e.NewValue);
         }
         #endregion
 
@@ -184,14 +185,15 @@ namespace gamevault.UserControls
                     }
                     catch (Exception ex)
                     {
-                        MainWindowViewModel.Instance.AppBarText = ex.Message;
+                        uiImg.Source = CacheHelper.GetReplacementImage(ImageCacheType);
+                        //MainWindowViewModel.Instance.AppBarText = ex.Message;
                     }
                 }
                 return;
             }
 
             int imageId = -1;
-            string cachePath = AppFilePath.ImageCache;
+            string cachePath = LoginManager.Instance.GetUserProfile().ImageCacheDir;
 
             CacheImageMedia media = new CacheImageMedia();
             try

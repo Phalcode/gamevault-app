@@ -61,7 +61,7 @@ namespace gamevault.UserControls
                      List<Game> offlineCacheGames = new List<Game>();
                      foreach (string id in allIds)
                      {
-                         string objectFromFile = Preferences.Get(id, AppFilePath.OfflineCache);
+                         string objectFromFile = Preferences.Get(id, LoginManager.Instance.GetUserProfile().OfflineCache);
                          if (objectFromFile == string.Empty)
                              continue;
 

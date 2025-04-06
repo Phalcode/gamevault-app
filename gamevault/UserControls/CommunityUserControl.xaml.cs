@@ -143,7 +143,7 @@ namespace gamevault.UserControls
         }
         private string TryGetLastProgressSort()
         {
-            string result = Preferences.Get(AppConfigKey.LastCommunitySortBy, AppFilePath.UserFile);
+            string result = Preferences.Get(AppConfigKey.LastCommunitySortBy,LoginManager.Instance.GetUserProfile().UserConfigFile);
             try
             {
                 if (!string.IsNullOrWhiteSpace(result) && ViewModel.SortBy.Contains(result))
@@ -195,7 +195,7 @@ namespace gamevault.UserControls
             }
             if (sender != null)
             {
-                Preferences.Set(AppConfigKey.LastCommunitySortBy, uiSortBy.SelectedValue.ToString().Replace("\"", ""), AppFilePath.UserFile);
+                Preferences.Set(AppConfigKey.LastCommunitySortBy, uiSortBy.SelectedValue.ToString().Replace("\"", ""),LoginManager.Instance.GetUserProfile().UserConfigFile);
             }
         }
 

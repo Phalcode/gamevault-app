@@ -22,8 +22,9 @@ namespace gamevault.Helper
     {
         private static readonly OAuthHttpClient HttpClient = new OAuthHttpClient();
         static WebHelper() { }
-        internal static void SetCredentials(string username, string password)
+        internal static void SetCredentials(string serverUrl, string username, string password)
         {
+            HttpClient.ServerUrl = serverUrl;
             HttpClient.UserName = username;
             HttpClient.Password = password;
         }
@@ -32,8 +33,8 @@ namespace gamevault.Helper
         {
             HttpClient.UserName = username;
             HttpClient.Password = password;
-            Preferences.Set(AppConfigKey.Username, HttpClient.UserName, AppFilePath.UserFile);
-            Preferences.Set(AppConfigKey.Password, HttpClient.Password, AppFilePath.UserFile, true);
+            Preferences.Set(AppConfigKey.Username, HttpClient.UserName, LoginManager.Instance.GetUserProfile().UserConfigFile);
+            Preferences.Set(AppConfigKey.Password, HttpClient.Password, LoginManager.Instance.GetUserProfile().UserConfigFile, true);
         }
         internal static void InjectTokens(string accessToken, string refreshToken)
         {
@@ -44,6 +45,12 @@ namespace gamevault.Helper
             var response = await HttpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
+        }
+        internal static async Task<HttpResponseMessage> GetAsync(string url, HttpCompletionOption option = HttpCompletionOption.ResponseContentRead)
+        {
+            var response = await HttpClient.GetAsync(url, null, option);
+            response.EnsureSuccessStatusCode();
+            return response;
         }
         internal static async Task<string> PostAsync(string url, string payload)
         {

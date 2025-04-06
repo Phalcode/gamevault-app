@@ -3,6 +3,8 @@ using gamevault.ViewModels;
 using IdentityModel.Client;
 using IdentityModel.OidcClient;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Web.WebView2.Core;
+using Microsoft.Web.WebView2.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -15,6 +17,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Threading;
 using Windows.Media.Protection.PlayReady;
@@ -50,6 +53,7 @@ namespace gamevault.Helper
             }
         }
         #endregion
+        private UserProfile userProfile { get; set; }
         private User? m_User { get; set; }
         private LoginState m_LoginState { get; set; }
         private string m_LoginMessage { get; set; }
@@ -66,7 +70,7 @@ namespace gamevault.Helper
         {
             return m_LoginState;
         }
-        public string GetLoginMessage()
+        public string GetServerLoginResponseMessage()
         {
             return m_LoginMessage;
         }
@@ -74,6 +78,14 @@ namespace gamevault.Helper
         {
             MainWindowViewModel.Instance.OnlineState = System.Windows.Visibility.Visible;
             m_User = null;
+        }
+        public UserProfile GetUserProfile()
+        {
+            return userProfile;
+        }
+        public void SetUserProfile(UserProfile profile)
+        {
+            userProfile = profile;
         }
         public async Task StartupLogin()
         {
@@ -83,10 +95,10 @@ namespace gamevault.Helper
 
             try
             {
-                WebHelper.SetCredentials(
-                    Preferences.Get(AppConfigKey.Username, AppFilePath.UserFile),
-                    Preferences.Get(AppConfigKey.Password, AppFilePath.UserFile, true)
-                );
+                //WebHelper.SetCredentials(
+                //    Preferences.Get(AppConfigKey.Username,LoginManager.Instance.GetUserProfile().UserConfigFile),
+                //    Preferences.Get(AppConfigKey.Password,LoginManager.Instance.GetUserProfile().UserConfigFile, true)
+                //);
                 string result = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me");
                 m_User = JsonSerializer.Deserialize<User>(result);
 
@@ -108,7 +120,27 @@ namespace gamevault.Helper
             m_LoginState = state;
             InitOnlineTimer();
         }
-
+        public async Task<LoginState> Login(string serverUrl, string username, string password)
+        {
+            LoginState state = LoginState.Success;
+            try
+            {
+                WebHelper.SetCredentials(serverUrl, username, password);
+                string result = await WebHelper.GetAsync(@$"{serverUrl}/api/users/me");
+                m_User = JsonSerializer.Deserialize<User>(result);
+            }
+            catch (Exception ex)
+            {
+                string code = WebExceptionHelper.GetServerStatusCode(ex);
+                state = DetermineLoginState(code);
+                if (state == LoginState.Error)
+                {
+                    m_LoginMessage = WebExceptionHelper.TryGetServerMessage(ex);
+                }
+            }
+            m_LoginState = state;
+            return state;
+        }
         public async Task<LoginState> ManualLogin(string username, string password)
         {
             LoginState state = LoginState.Success;
@@ -130,7 +162,45 @@ namespace gamevault.Helper
             m_LoginState = state;
             return state;
         }
+        public async void OAuthLogin()
+        {
+            Window win = new Window() { Height = 600, Width = 800, WindowStartupLocation = WindowStartupLocation.CenterScreen };
+            WebView2 uiWebView = new WebView2();
+            win.Content = uiWebView;
+            win.Show();
+            var options = new CoreWebView2EnvironmentOptions
+            {
+                AdditionalBrowserArguments = "--disk-cache-size=1000000"
+            };
 
+            if (!Directory.Exists(ProfileManager.PhalcodeDir))
+                Directory.CreateDirectory(ProfileManager.PhalcodeDir);
+
+            var env = await CoreWebView2Environment.CreateAsync(null, ProfileManager.PhalcodeDir, options);
+            await uiWebView.EnsureCoreWebView2Async(env);
+            uiWebView.Source = new Uri($"{SettingsViewModel.Instance.ServerUrl}/api/auth/oauth2/login");
+            uiWebView.NavigationCompleted += async (s, e) =>
+            {
+                string content = await uiWebView.CoreWebView2.ExecuteScriptAsync("document.body.innerText");
+
+                try
+                {
+                    string result = System.Text.Json.JsonSerializer.Deserialize<string>(content);
+                    var authResponse = JsonSerializer.Deserialize<AuthResponse>(result);
+                    string accessToken = authResponse?.AccessToken;
+                    string refreshToken = authResponse?.RefreshToken;
+                    WebHelper.InjectTokens(accessToken, refreshToken);
+                    await LoginManager.Instance.ManualLogin("", "");
+                    MainWindowViewModel.Instance.UserAvatar = LoginManager.Instance.GetCurrentUser();
+                    win.Close();
+                    uiWebView.Dispose();
+                }
+                catch (Exception ex)
+                {
+
+                }
+            };
+        }
         public void Logout()
         {
             m_User = null;
@@ -139,12 +209,13 @@ namespace gamevault.Helper
             MainWindowViewModel.Instance.Community.Reset();
         }
         private WpfEmbeddedBrowser wpfEmbeddedBrowser = null;
-        public async Task PhalcodeLogin(bool startHidden = false)
+        public async Task<string> PhalcodeLogin(bool startHidden = false)
         {
-            string? provider = Preferences.Get(AppConfigKey.Phalcode1, AppFilePath.UserFile, true);
+            string returnMessage = "";
+            string? provider = Preferences.Get(AppConfigKey.Phalcode1, ProfileManager.ProfileConfigFile, true);
             if (startHidden && provider == "")
             {
-                return;
+                return "";
             }
             wpfEmbeddedBrowser = new WpfEmbeddedBrowser(startHidden);
             var options = new OidcClientOptions()
@@ -186,8 +257,7 @@ namespace gamevault.Helper
                 }
 
                 loginResult = await _oidcClient.LoginAsync(new LoginRequest() { FrontChannelExtraParameters = param });
-                timer.Stop();
-                //string token = loginResult.AccessToken;
+                timer.Stop();               
                 username = loginResult.User == null ? null : loginResult.User.Identity.Name;
                 SettingsViewModel.Instance.License = new PhalcodeProduct() { UserName = username };
 
@@ -198,21 +268,20 @@ namespace gamevault.Helper
                 {
                     provider = "phalcode";
                 }
-                Preferences.Set(AppConfigKey.Phalcode1, provider, AppFilePath.UserFile, true);
+                Preferences.Set(AppConfigKey.Phalcode1, provider, ProfileManager.ProfileConfigFile, true);
             }
             catch (System.Exception exception)
             {
                 timer.Stop();
-                MainWindowViewModel.Instance.AppBarText = exception.Message;
+                returnMessage = exception.Message;
             }
             if (loginResult != null && loginResult.IsError)
             {
                 if (loginResult.Error == "UserCancel")
                 {
-                    loginResult.Error = "Phalcode Sign-in aborted. You can choose to sign in later in the settings.";
-                    Preferences.DeleteKey(AppConfigKey.Phalcode1.ToString(), AppFilePath.UserFile);
-                }
-                MainWindowViewModel.Instance.AppBarText = loginResult.Error;
+                    returnMessage = "Phalcode Sign-in aborted. You can choose to sign in later in the settings.";
+                    Preferences.DeleteKey(AppConfigKey.Phalcode1.ToString(), ProfileManager.ProfileConfigFile);
+                }                
             }
 
             //#####GET LISENCE OBJECT#####
@@ -236,45 +305,45 @@ namespace gamevault.Helper
                     PhalcodeProduct[] licenseData = JsonSerializer.Deserialize<PhalcodeProduct[]>(licenseResult);
                     if (licenseData.Length == 0)
                     {
-                        return;
+                        return "";
                     }
                     licenseData[0].UserName = username;
                     SettingsViewModel.Instance.License = licenseData[0];
-                    Preferences.Set(AppConfigKey.Phalcode2, JsonSerializer.Serialize(SettingsViewModel.Instance.License), AppFilePath.UserFile, true);
+                    Preferences.Set(AppConfigKey.Phalcode2, JsonSerializer.Serialize(SettingsViewModel.Instance.License), ProfileManager.ProfileConfigFile, true);
                 }
             }
             catch (Exception ex)
             {
-                //MainWindowViewModel.Instance.AppBarText = ex.Message;
+                returnMessage = ex.Message;
                 try
                 {
-                    string data = Preferences.Get(AppConfigKey.Phalcode2, AppFilePath.UserFile, true);
+                    string data = Preferences.Get(AppConfigKey.Phalcode2, ProfileManager.ProfileConfigFile, true);
                     SettingsViewModel.Instance.License = JsonSerializer.Deserialize<PhalcodeProduct>(data);
                 }
                 catch
                 {
-                    return;
+                    return "";
                 }
             }
             try
             {
                 if (!SettingsViewModel.Instance.License.IsActive())
                 {
-                    Preferences.DeleteKey(AppConfigKey.Theme, AppFilePath.UserFile);
+                    Preferences.DeleteKey(AppConfigKey.Theme, ProfileManager.ProfileConfigFile);
                 }
             }
             catch { }
-            return;
+            return returnMessage;
         }
         public void PhalcodeLogout()
         {
             SettingsViewModel.Instance.License = new PhalcodeProduct();
-            Preferences.DeleteKey(AppConfigKey.Phalcode1.ToString(), AppFilePath.UserFile);
-            Preferences.DeleteKey(AppConfigKey.Phalcode2.ToString(), AppFilePath.UserFile);
-            Preferences.DeleteKey(AppConfigKey.Theme, AppFilePath.UserFile);
+            Preferences.DeleteKey(AppConfigKey.Phalcode1.ToString(), ProfileManager.ProfileConfigFile);
+            Preferences.DeleteKey(AppConfigKey.Phalcode2.ToString(), ProfileManager.ProfileConfigFile);
+            Preferences.DeleteKey(AppConfigKey.Theme, ProfileManager.ProfileConfigFile);
             try
             {
-                Directory.Delete(AppFilePath.WebConfigDir, true);
+                Directory.Delete(LoginManager.Instance.GetUserProfile().WebConfigDir, true);
                 //wpfEmbeddedBrowser.ClearAllCookies();
             }
             catch (Exception ex) { }
@@ -308,14 +377,14 @@ namespace gamevault.Helper
         {
             try
             {
-                string serverResonse = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/health");
+                string serverResonse = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/status");
                 if (!IsLoggedIn())
                 {
                     await StartupLogin();
                     if (IsLoggedIn())
                     {
                         MainWindowViewModel.Instance.OnlineState = System.Windows.Visibility.Collapsed;
-                    }                 
+                    }
                 }
                 else
                 {

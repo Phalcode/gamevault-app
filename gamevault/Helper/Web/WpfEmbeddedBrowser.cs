@@ -3,6 +3,7 @@ using IdentityModel.OidcClient.Browser;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.Wpf;
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -100,7 +101,12 @@ namespace gamevault.Helper
             {
                 AdditionalBrowserArguments = "--disk-cache-size=1000000"
             };
-            var env = await CoreWebView2Environment.CreateAsync(null, AppFilePath.WebConfigDir, startupOptions);
+           
+            if (!Directory.Exists(ProfileManager.PhalcodeDir))
+                Directory.CreateDirectory(ProfileManager.PhalcodeDir);
+
+            var env = await CoreWebView2Environment.CreateAsync(null, ProfileManager.PhalcodeDir, startupOptions);
+
             await webView.EnsureCoreWebView2Async(env);
 
             // Delete existing Cookies so previous logins won't remembered

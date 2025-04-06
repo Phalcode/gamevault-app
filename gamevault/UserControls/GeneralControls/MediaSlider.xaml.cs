@@ -1,4 +1,5 @@
-﻿using gamevault.Models;
+﻿using gamevault.Helper;
+using gamevault.Models;
 using gamevault.ViewModels;
 using Microsoft.Web.WebView2.Core;
 using System;
@@ -86,7 +87,7 @@ namespace gamevault.UserControls
         }
         public async Task RestoreLastMediaVolume()
         {
-            string result = Preferences.Get(AppConfigKey.MediaSliderVolume, AppFilePath.UserFile);
+            string result = Preferences.Get(AppConfigKey.MediaSliderVolume,LoginManager.Instance.GetUserProfile().UserConfigFile);
             string lastMediaVolume = string.IsNullOrWhiteSpace(result) ? "0.0" : result;
             if (double.TryParse(lastMediaVolume.Replace(".", ","), out double volume))
             {
@@ -107,7 +108,7 @@ namespace gamevault.UserControls
             try
             {
                 string result = uiVolumeSlider.Value.ToString().Replace(",", ".");
-                Preferences.Set(AppConfigKey.MediaSliderVolume, result, AppFilePath.UserFile);
+                Preferences.Set(AppConfigKey.MediaSliderVolume, result,LoginManager.Instance.GetUserProfile().UserConfigFile);
                 if (uiWebView == null || uiWebView.CoreWebView2 == null)
                     return;
 
@@ -153,7 +154,7 @@ namespace gamevault.UserControls
             {
                 AdditionalBrowserArguments = "--disk-cache-size=1000000"
             };
-            var env = await CoreWebView2Environment.CreateAsync(null, AppFilePath.WebConfigDir, options);
+            var env = await CoreWebView2Environment.CreateAsync(null, LoginManager.Instance.GetUserProfile().WebConfigDir, options);
             await uiWebView.EnsureCoreWebView2Async(env);
             uiWebView.NavigationCompleted += async (s, e) =>
             {

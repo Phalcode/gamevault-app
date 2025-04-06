@@ -46,8 +46,8 @@ namespace gamevault.UserControls
 
             try
             {
-                Directory.Delete(AppFilePath.ImageCache, true);
-                Directory.CreateDirectory(AppFilePath.ImageCache);
+                Directory.Delete(LoginManager.Instance.GetUserProfile().ImageCacheDir, true);
+                Directory.CreateDirectory(LoginManager.Instance.GetUserProfile().ImageCacheDir);
                 ViewModel.ImageCacheSize = 0;
                 MainWindowViewModel.Instance.AppBarText = "Image cache cleared";
             }
@@ -62,13 +62,13 @@ namespace gamevault.UserControls
 
             try
             {
-                if (File.Exists(AppFilePath.IgnoreList))
+                if (File.Exists(LoginManager.Instance.GetUserProfile().IgnoreList))
                 {
-                    File.Delete(AppFilePath.IgnoreList);
+                    File.Delete(LoginManager.Instance.GetUserProfile().IgnoreList);
                 }
-                if (File.Exists(AppFilePath.OfflineCache))
+                if (File.Exists(LoginManager.Instance.GetUserProfile().OfflineCache))
                 {
-                    File.Delete(AppFilePath.OfflineCache);
+                    File.Delete(LoginManager.Instance.GetUserProfile().OfflineCache);
                 }
                 ViewModel.OfflineCacheSize = 0;
                 MainWindowViewModel.Instance.AppBarText = "Offline cache cleared";
@@ -95,7 +95,7 @@ namespace gamevault.UserControls
             }
             uiAutostartToggle.Toggled += AppAutostart_Toggled;
             LoadThemes();
-            uiPwExtraction.Password = Preferences.Get(AppConfigKey.ExtractionPassword, AppFilePath.UserFile, true);
+            uiPwExtraction.Password = Preferences.Get(AppConfigKey.ExtractionPassword, LoginManager.Instance.GetUserProfile().UserConfigFile, true);
         }
         private async void AppAutostart_Toggled(object sender, RoutedEventArgs e)
         {
@@ -120,8 +120,8 @@ namespace gamevault.UserControls
         {
             if (((TabControl)sender).SelectedIndex == 3)
             {
-                ViewModel.ImageCacheSize = await CalculateDirectorySize(new DirectoryInfo(AppFilePath.ImageCache));
-                ViewModel.OfflineCacheSize = (File.Exists(AppFilePath.OfflineCache) ? new FileInfo(AppFilePath.OfflineCache).Length : 0);
+                ViewModel.ImageCacheSize = await CalculateDirectorySize(new DirectoryInfo(LoginManager.Instance.GetUserProfile().ImageCacheDir));
+                ViewModel.OfflineCacheSize = (File.Exists(LoginManager.Instance.GetUserProfile().OfflineCache) ? new FileInfo(LoginManager.Instance.GetUserProfile().OfflineCache).Length : 0);
             }
         }
         private async Task<long> CalculateDirectorySize(DirectoryInfo d)
@@ -149,6 +149,7 @@ namespace gamevault.UserControls
 
         private void Logout_Click(object sender, RoutedEventArgs e)
         {
+            return;
             LoginManager.Instance.Logout();
             MainWindowViewModel.Instance.UserAvatar = null;
             MainWindowViewModel.Instance.AppBarText = "Successfully logged out";
@@ -183,7 +184,7 @@ namespace gamevault.UserControls
                 }
             }
             ViewModel.DownloadLimit = ViewModel.DownloadLimitUIValue;
-            Preferences.Set(AppConfigKey.DownloadLimit, ViewModel.DownloadLimit, AppFilePath.UserFile);
+            Preferences.Set(AppConfigKey.DownloadLimit, ViewModel.DownloadLimit, LoginManager.Instance.GetUserProfile().UserConfigFile);
             MainWindowViewModel.Instance.AppBarText = "Successfully saved download limit";
         }
 
@@ -200,7 +201,9 @@ namespace gamevault.UserControls
             ((FrameworkElement)sender).IsEnabled = false;
             if (string.IsNullOrEmpty(SettingsViewModel.Instance.License.UserName))
             {
-                await LoginManager.Instance.PhalcodeLogin();
+                string phalcodeLoginMessage = await LoginManager.Instance.PhalcodeLogin();
+                if (phalcodeLoginMessage != string.Empty)
+                    MainWindowViewModel.Instance.AppBarText = phalcodeLoginMessage;
             }
             else
             {
@@ -271,7 +274,7 @@ namespace gamevault.UserControls
                 App.Current.Resources.MergedDictionaries[0] = new ResourceDictionary() { Source = new Uri(selectedTheme.Path) };
                 //Reload Base Styles to apply new colors
                 App.Current.Resources.MergedDictionaries[1] = new ResourceDictionary() { Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Base.xaml") };
-                Preferences.Set(AppConfigKey.Theme, JsonSerializer.Serialize(selectedTheme), AppFilePath.UserFile, true);
+                Preferences.Set(AppConfigKey.Theme, JsonSerializer.Serialize(selectedTheme), LoginManager.Instance.GetUserProfile().UserConfigFile, true);
             }
             catch (Exception ex) { MainWindowViewModel.Instance.AppBarText = ex.Message; }
         }
@@ -310,9 +313,9 @@ namespace gamevault.UserControls
                 res.Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeChristmasDark.xaml");
                 ViewModel.Themes.Add(new ThemeItem() { DisplayName = (string)res["Theme.DisplayName"], Description = (string)res["Theme.Description"], Author = (string)res["Theme.Author"], IsPlus = true, Path = res.Source.OriginalString });
 
-                if (Directory.Exists(AppFilePath.ThemesLoadDir))
+                if (Directory.Exists(LoginManager.Instance.GetUserProfile().ThemesLoadDir))
                 {
-                    foreach (var file in Directory.GetFiles(AppFilePath.ThemesLoadDir, "*.xaml", SearchOption.AllDirectories))
+                    foreach (var file in Directory.GetFiles(LoginManager.Instance.GetUserProfile().ThemesLoadDir, "*.xaml", SearchOption.AllDirectories))
                     {
                         try
                         {
@@ -322,7 +325,7 @@ namespace gamevault.UserControls
                         catch { }
                     }
                 }
-                string currentThemeString = Preferences.Get(AppConfigKey.Theme, AppFilePath.UserFile, true);
+                string currentThemeString = Preferences.Get(AppConfigKey.Theme, LoginManager.Instance.GetUserProfile().UserConfigFile, true);
                 ThemeItem currentTheme = JsonSerializer.Deserialize<ThemeItem>(currentThemeString);
                 int themeIndex = ViewModel.Themes.ToList().FindIndex(i => i.Path == currentTheme.Path);
                 if (themeIndex != -1 && (ViewModel.Themes[themeIndex].IsPlus == true ? ViewModel.License.IsActive() : true))
@@ -342,14 +345,14 @@ namespace gamevault.UserControls
         {
             try
             {
-                if (Directory.Exists(AppFilePath.ThemesLoadDir))
+                if (Directory.Exists(LoginManager.Instance.GetUserProfile().ThemesLoadDir))
                 {
-                    Directory.CreateDirectory(AppFilePath.ThemesLoadDir);
+                    Directory.CreateDirectory(LoginManager.Instance.GetUserProfile().ThemesLoadDir);
                 }
                 Process.Start(new ProcessStartInfo
                 {
                     FileName = "explorer.exe",
-                    Arguments = $"\"{AppFilePath.ThemesLoadDir}\"",
+                    Arguments = $"\"{LoginManager.Instance.GetUserProfile().ThemesLoadDir}\"",
                     UseShellExecute = true
                 });
             }
@@ -437,7 +440,7 @@ namespace gamevault.UserControls
             try
             {
                 ThemeItem theme = (ThemeItem)uiCBCommunityThemes.SelectedItem;
-                string installationPath = Path.Combine(AppFilePath.ThemesLoadDir, theme.DisplayName + ".xaml");
+                string installationPath = Path.Combine(LoginManager.Instance.GetUserProfile().ThemesLoadDir, theme.DisplayName + ".xaml");
                 string result = await WebHelper.GetAsync(theme.Path);
                 File.WriteAllText(installationPath, result);
                 LoadThemes();
@@ -488,15 +491,15 @@ namespace gamevault.UserControls
 
         private void ExtractionPasswordSave_Click(object sender, RoutedEventArgs e)
         {
-            Preferences.Set(AppConfigKey.ExtractionPassword, uiPwExtraction.Password, AppFilePath.UserFile, true);
+            Preferences.Set(AppConfigKey.ExtractionPassword, uiPwExtraction.Password, LoginManager.Instance.GetUserProfile().UserConfigFile, true);
             MainWindowViewModel.Instance.AppBarText = "Successfully saved extraction password";
         }
         private async void IgnoredExecutablesReset_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                if (File.Exists(AppFilePath.IgnoreList))
-                    File.Delete(AppFilePath.IgnoreList);
+                if (File.Exists(LoginManager.Instance.GetUserProfile().IgnoreList))
+                    File.Delete(LoginManager.Instance.GetUserProfile().IgnoreList);
 
                 await SettingsViewModel.Instance.InitIgnoreList();
             }
@@ -506,7 +509,7 @@ namespace gamevault.UserControls
         {
             try
             {
-                Preferences.Set("IL", SettingsViewModel.Instance.IgnoreList, AppFilePath.IgnoreList);
+                Preferences.Set("IL", SettingsViewModel.Instance.IgnoreList, LoginManager.Instance.GetUserProfile().IgnoreList);
             }
             catch { }
         }
@@ -561,46 +564,12 @@ namespace gamevault.UserControls
             try
             {
                 string result = string.Join(";", ViewModel.CustomCloudSaveManifests.Where(entry => !string.IsNullOrWhiteSpace(entry.Uri)).Select(entry => entry.Uri));
-                Preferences.Set(AppConfigKey.CustomCloudSaveManifests, result, AppFilePath.UserFile);
+                Preferences.Set(AppConfigKey.CustomCloudSaveManifests, result, LoginManager.Instance.GetUserProfile().UserConfigFile);
             }
             catch { }
             MainWindowViewModel.Instance.AppBarText = "Successfully saved custom Ludusavi Manifests";
         }
 
-        private async void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Window win = new Window() { Height = 600, Width = 800, WindowStartupLocation = WindowStartupLocation.CenterScreen };
-            WebView2 uiWebView = new WebView2();
-            win.Content = uiWebView;
-            win.Show();
-            var options = new CoreWebView2EnvironmentOptions
-            {
-                AdditionalBrowserArguments = "--disk-cache-size=1000000"
-            };
-            var env = await CoreWebView2Environment.CreateAsync(null, AppFilePath.WebConfigDir, options);
-            await uiWebView.EnsureCoreWebView2Async(env);
-            uiWebView.Source = new Uri($"{SettingsViewModel.Instance.ServerUrl}/api/auth/oauth2/login");
-            uiWebView.NavigationCompleted += async (s, e) =>
-            {
-                string content = await uiWebView.CoreWebView2.ExecuteScriptAsync("document.body.innerText");
 
-                try
-                {
-                    string result = System.Text.Json.JsonSerializer.Deserialize<string>(content);
-                    var authResponse = JsonSerializer.Deserialize<AuthResponse>(result);
-                    string accessToken = authResponse?.AccessToken;
-                    string refreshToken = authResponse?.RefreshToken;
-                    WebHelper.InjectTokens(accessToken, refreshToken);
-                    await LoginManager.Instance.ManualLogin("", "");
-                    MainWindowViewModel.Instance.UserAvatar = LoginManager.Instance.GetCurrentUser();
-                    win.Close();
-                    uiWebView.Dispose();
-                }
-                catch (Exception ex)
-                {
-
-                }
-            };
-        }
     }
 }

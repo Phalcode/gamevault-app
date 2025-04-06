@@ -116,7 +116,7 @@ namespace gamevault.Helper
         {
             try
             {
-                return new FileInfo(AppFilePath.OfflineProgress).Length > 0;
+                return new FileInfo(LoginManager.Instance.GetUserProfile().OfflineProgress).Length > 0;
             }
             catch
             {
@@ -129,10 +129,10 @@ namespace gamevault.Helper
             {
                 try
                 {
-                    string timeString = Preferences.Get(gameid.ToString(), AppFilePath.OfflineProgress, true);
+                    string timeString = Preferences.Get(gameid.ToString(), LoginManager.Instance.GetUserProfile().OfflineProgress, true);
                     int result = int.TryParse(timeString, out result) ? result : 0;
                     result++;
-                    Preferences.Set(gameid.ToString(), result, AppFilePath.OfflineProgress, true);
+                    Preferences.Set(gameid.ToString(), result, LoginManager.Instance.GetUserProfile().OfflineProgress, true);
                 }
                 catch { }
             }
@@ -145,10 +145,10 @@ namespace gamevault.Helper
                 {
                     try
                     {
-                        string value = Preferences.Get(key, AppFilePath.OfflineProgress, true);
+                        string value = Preferences.Get(key, LoginManager.Instance.GetUserProfile().OfflineProgress, true);
                         int.Parse(value);
                         await WebHelper.PutAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{key}/increment/{value}", string.Empty);
-                        Preferences.DeleteKey(key, AppFilePath.OfflineProgress);
+                        Preferences.DeleteKey(key, LoginManager.Instance.GetUserProfile().OfflineProgress);
                     }
                     catch { }
                 }
@@ -168,10 +168,10 @@ namespace gamevault.Helper
         }
         private string[] GetAllOfflineCacheKeys()
         {
-            if (File.Exists(AppFilePath.OfflineProgress))
+            if (File.Exists(LoginManager.Instance.GetUserProfile().OfflineProgress))
             {
                 List<string> keys = new List<string>();
-                foreach (string line in File.ReadAllLines(AppFilePath.OfflineProgress))
+                foreach (string line in File.ReadAllLines(LoginManager.Instance.GetUserProfile().OfflineProgress))
                 {
                     try
                     {

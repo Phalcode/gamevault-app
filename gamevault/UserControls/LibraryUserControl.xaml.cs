@@ -36,9 +36,9 @@ namespace gamevault.UserControls
             {
                 try
                 {
-                    uiFilterOrderBy.IsChecked = Preferences.Get(AppConfigKey.LastLibraryOrderBy, AppFilePath.UserFile) == "desc" ? true : false;
+                    uiFilterOrderBy.IsChecked = Preferences.Get(AppConfigKey.LastLibraryOrderBy,LoginManager.Instance.GetUserProfile().UserConfigFile) == "desc" ? true : false;
 
-                    string lastSortBy = Preferences.Get(AppConfigKey.LastLibrarySortBy, AppFilePath.UserFile);
+                    string lastSortBy = Preferences.Get(AppConfigKey.LastLibrarySortBy,LoginManager.Instance.GetUserProfile().UserConfigFile);
 
                     for (int i = 0; i < ViewModel.GameFilterSortByValues.Count; i++)
                     {
@@ -275,7 +275,7 @@ namespace gamevault.UserControls
 
         private async void OrderBy_Changed(object sender, RoutedEventArgs e)
         {
-            Preferences.Set(AppConfigKey.LastLibraryOrderBy, (bool)uiFilterOrderBy.IsChecked ? "desc" : "asc", AppFilePath.UserFile);
+            Preferences.Set(AppConfigKey.LastLibraryOrderBy, (bool)uiFilterOrderBy.IsChecked ? "desc" : "asc",LoginManager.Instance.GetUserProfile().UserConfigFile);
             await Search();
         }
         private string ApplyFilter(string filter)
@@ -333,7 +333,7 @@ namespace gamevault.UserControls
         {
             if (sender == uiFilterSortBy)
             {
-                Preferences.Set(AppConfigKey.LastLibrarySortBy, ViewModel.SelectedGameFilterSortBy.Value, AppFilePath.UserFile);
+                Preferences.Set(AppConfigKey.LastLibrarySortBy, ViewModel.SelectedGameFilterSortBy.Value,LoginManager.Instance.GetUserProfile().UserConfigFile);
             }
             OpenFilterIfClosed();
             RefreshFilterCounter();

@@ -492,7 +492,7 @@ namespace gamevault
             {
                 try
                 {
-                    string compressedStringObject = Preferences.Get(id.ToString(), AppFilePath.OfflineCache);
+                    string compressedStringObject = Preferences.Get(id.ToString(), LoginManager.Instance.GetUserProfile().OfflineCache);
                     if (!string.IsNullOrEmpty(compressedStringObject))
                     {
                         string decompressedObject = StringCompressor.DecompressString(compressedStringObject);

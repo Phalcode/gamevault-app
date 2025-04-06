@@ -17,6 +17,7 @@ namespace gamevault.Helper
         private string _accessToken;
         private string _refreshToken;
 
+        public string ServerUrl;
         public string UserName;
         public string Password;
 
@@ -35,7 +36,7 @@ namespace gamevault.Helper
             var authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authValue);
 
-            var response = await _httpClient.GetAsync($"{SettingsViewModel.Instance.ServerUrl}/api/auth/basic/login");
+            var response = await _httpClient.GetAsync($"{ServerUrl}/api/auth/basic/login");
             if (!response.IsSuccessStatusCode) return false;
 
             var responseContent = await response.Content.ReadAsStringAsync();
@@ -48,7 +49,7 @@ namespace gamevault.Helper
             return true;
         }
 
-        public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, Dictionary<string, string>? additionalHeaders = null)
+        private async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, Dictionary<string, string>? additionalHeaders = null, HttpCompletionOption option = HttpCompletionOption.ResponseContentRead)
         {
             if (string.IsNullOrEmpty(_accessToken))
             {
@@ -68,11 +69,11 @@ namespace gamevault.Helper
                 }
             }
 
-            return await _httpClient.SendAsync(request);
+            return await _httpClient.SendAsync(request, option);
         }
 
-        public Task<HttpResponseMessage> GetAsync(string url, Dictionary<string, string>? additionalHeaders = null) =>
-            SendAsync(new HttpRequestMessage(HttpMethod.Get, url), additionalHeaders);
+        public Task<HttpResponseMessage> GetAsync(string url, Dictionary<string, string>? additionalHeaders = null, HttpCompletionOption option = HttpCompletionOption.ResponseContentRead) =>
+            SendAsync(new HttpRequestMessage(HttpMethod.Get, url), additionalHeaders, option);
 
         public Task<HttpResponseMessage> PostAsync(string url, HttpContent content, Dictionary<string, string>? additionalHeaders = null) =>
             SendAsync(new HttpRequestMessage(HttpMethod.Post, url) { Content = content }, additionalHeaders);
@@ -88,7 +89,7 @@ namespace gamevault.Helper
             var content = new StringContent("", Encoding.UTF8, "application/json");
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _refreshToken);
 
-            var response = await _httpClient.PostAsync($"{SettingsViewModel.Instance.ServerUrl}/api/auth/refresh", content);
+            var response = await _httpClient.PostAsync($"{ServerUrl}/api/auth/refresh", content);
             if (!response.IsSuccessStatusCode) return false;
 
             var responseContent = await response.Content.ReadAsStringAsync();

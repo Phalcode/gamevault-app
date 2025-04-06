@@ -1,4 +1,5 @@
 ﻿using ABI.System;
+using gamevault.Helper;
 using gamevault.Models;
 using gamevault.ViewModels;
 using System;
@@ -43,7 +44,7 @@ namespace gamevault.UserControls.SettingsComponents
             {
                 SettingsViewModel.Instance.ServerUrl = $"{System.Uri.UriSchemeHttps}://{SettingsViewModel.Instance.ServerUrl}";
             }
-            Preferences.Set(AppConfigKey.ServerUrl, SettingsViewModel.Instance.ServerUrl, AppFilePath.UserFile, true);
+            Preferences.Set(AppConfigKey.ServerUrl, SettingsViewModel.Instance.ServerUrl,LoginManager.Instance.GetUserProfile().UserConfigFile, true);
             MainWindowViewModel.Instance.AppBarText = "Server URL saved";
         }
     }

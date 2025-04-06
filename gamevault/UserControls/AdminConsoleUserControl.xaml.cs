@@ -245,7 +245,7 @@ namespace gamevault.UserControls
                     var gitResponse = await httpClient.GetStringAsync("https://api.github.com/repos/Phalcode/gamevault-backend/releases");
                     dynamic gitObj = JsonNode.Parse(gitResponse);
                     string newestServerVersion = (string)gitObj[0]["tag_name"];
-                    string serverResponse = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/admin/health");
+                    string serverResponse = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/status");
                     string currentServerVersion = JsonSerializer.Deserialize<ServerInfo>(serverResponse).Version;
                     if (Convert.ToInt32(newestServerVersion.Replace(".", "")) > Convert.ToInt32(currentServerVersion.Replace(".", "")))
                     {

@@ -51,74 +51,79 @@ namespace gamevault
         private NotifyIcon m_Icon;
         private JumpList jumpList;
 
-        private GameTimeTracker m_gameTimeTracker;
+
 
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            AnalyticsHelper.Instance.InitHeartBeat();
-            AnalyticsHelper.Instance.RegisterGlobalEvents();
-            AnalyticsHelper.Instance.SendCustomEvent(CustomAnalyticsEventKeys.APP_INITIALIZED, AnalyticsHelper.Instance.GetSysInfo());          
+            //AnalyticsHelper.Instance.InitHeartBeat();
+            //AnalyticsHelper.Instance.RegisterGlobalEvents();
+            //AnalyticsHelper.Instance.SendCustomEvent(CustomAnalyticsEventKeys.APP_INITIALIZED, AnalyticsHelper.Instance.GetSysInfo());          
         }
 
         private async void Application_Startup(object sender, StartupEventArgs e)
         {
             Application.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(AppDispatcherUnhandledException);
-#if DEBUG
-            AppFilePath.InitDebugPaths();
-            CreateDirectories();
-            RestoreTheme();
-            await CacheHelper.OptimizeCache();
-#else
+            //#if DEBUG
+            //            AppFilePath.InitDebugPaths();
+            //            CreateDirectories();
+            //            RestoreTheme();
+            //            await CacheHelper.OptimizeCache();
+            //#else
+
             try
             {
-                CreateDirectories();
-                RestoreTheme();
-                UpdateWindow updateWindow = new UpdateWindow();
-                updateWindow.ShowDialog();
+                //RestoreTheme();
+                LoginWindow loginWindow = new LoginWindow();
+                bool? result = loginWindow.ShowDialog();
+                if (result == null || result == false)
+                    Shutdown();
+                loginWindow = null;
+                InitNotifyIcon();
+                InitJumpList();
+                return;
             }
             catch (Exception ex)
             {
                 LogUnhandledException(ex);
-                //m_StoreHelper.NoInternetException();              
             }
-#endif           
-            await LoginManager.Instance.StartupLogin();
-            await LoginManager.Instance.PhalcodeLogin(true);
 
-            AnalyticsHelper.Instance.SendCustomEvent(CustomAnalyticsEventKeys.USER_SETTINGS, AnalyticsHelper.Instance.PrepareSettingsForAnalytics());
+            //await LoginManager.Instance.StartupLogin();
+            //await LoginManager.Instance.PhalcodeLogin(true);
 
-            m_gameTimeTracker = new GameTimeTracker();
-            await m_gameTimeTracker.Start();
+            //            AnalyticsHelper.Instance.SendCustomEvent(CustomAnalyticsEventKeys.USER_SETTINGS, AnalyticsHelper.Instance.PrepareSettingsForAnalytics());
 
-            bool startMinimizedByPreferences = false;
-            bool startMinimizedByCLI = false;
+            //            m_gameTimeTracker = new GameTimeTracker();
+            //            await m_gameTimeTracker.Start();
 
-            if ((CommandLineOptions?.Minimized).HasValue)
-                startMinimizedByCLI = CommandLineOptions!.Minimized!.Value;
-            else if (SettingsViewModel.Instance.BackgroundStart)
-                startMinimizedByPreferences = true;
+            //            bool startMinimizedByPreferences = false;
+            //            bool startMinimizedByCLI = false;
 
-            if (!startMinimizedByPreferences && MainWindow == null)
-            {
-                MainWindow = new MainWindow();
-                MainWindow.Show();
-            }
-            if (startMinimizedByCLI && MainWindow != null)
-            {
-                MainWindow.Hide();
-            }
-#if WINDOWS
-            InitNotifyIcon();
-            InitJumpList();
-#endif
-            // After the app is created and most things are instantiated, handle any special command line stuff
-            if (PipeServiceHandler.Instance != null)
-            {
-                // Strictly speaking we should hold up all commands until we have a confirmed login & setup is complete, but for now we'll assume that auto-login has worked
-                PipeServiceHandler.Instance.IsReadyForCommands = true;
-                await PipeServiceHandler.Instance.HandleCommand(App.CommandLineOptions);
-            }
+            //            if ((CommandLineOptions?.Minimized).HasValue)
+            //                startMinimizedByCLI = CommandLineOptions!.Minimized!.Value;
+            //            else if (SettingsViewModel.Instance.BackgroundStart)
+            //                startMinimizedByPreferences = true;
+
+            //            if (!startMinimizedByPreferences && MainWindow == null)
+            //            {
+            //                MainWindow = new MainWindow();
+            //                MainWindow.Show();
+            //            }
+            //            if (startMinimizedByCLI && MainWindow != null)
+            //            {
+            //                MainWindow.Hide();
+            //            }
+            //#if WINDOWS
+            //            InitNotifyIcon();
+            //            InitJumpList();
+            //#endif
+            //            // After the app is created and most things are instantiated, handle any special command line stuff
+            //            if (PipeServiceHandler.Instance != null)
+            //            {
+            //                // Strictly speaking we should hold up all commands until we have a confirmed login & setup is complete, but for now we'll assume that auto-login has worked
+            //                PipeServiceHandler.Instance.IsReadyForCommands = true;
+            //                await PipeServiceHandler.Instance.HandleCommand(App.CommandLineOptions);
+            //            }
         }
 
         private void AppDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
@@ -136,10 +141,10 @@ namespace gamevault
             Application.Current.DispatcherUnhandledException -= new DispatcherUnhandledExceptionEventHandler(AppDispatcherUnhandledException);
             string errorMessage = $"MESSAGE:\n{e.Message}\nINNER_EXCEPTION:{(e.InnerException != null ? "" + e.InnerException.Message : null)}";
             string errorStackTrace = $"STACK_TRACE:\n{(e.StackTrace != null ? "" + e.StackTrace : null)}";
-            string errorLogPath = $"{AppFilePath.ErrorLog}\\GameVault_ErrorLog_{DateTime.Now.ToString("yyyyMMddHHmmssfff")}.txt";
+            string errorLogPath = $"{ProfileManager.ErrorLogDir}\\GameVault_ErrorLog_{DateTime.Now.ToString("yyyyMMddHHmmssfff")}.txt";
             if (!File.Exists(errorLogPath))
             {
-                Directory.CreateDirectory(AppFilePath.ErrorLog);
+                Directory.CreateDirectory(ProfileManager.ErrorLogDir);
                 File.Create(errorLogPath).Close();
             }
             File.WriteAllText(errorLogPath, errorMessage + "\n" + errorStackTrace);
@@ -210,23 +215,6 @@ namespace gamevault
             }
             catch { }
         }
-        private void RestoreTheme()
-        {
-            try
-            {
-                string currentThemeString = Preferences.Get(AppConfigKey.Theme, AppFilePath.UserFile, true);
-                if (currentThemeString != string.Empty)
-                {
-                    ThemeItem currentTheme = JsonSerializer.Deserialize<ThemeItem>(currentThemeString)!;
-
-                    if (App.Current.Resources.MergedDictionaries[0].Source.OriginalString != currentTheme.Path)
-                    {
-                        App.Current.Resources.MergedDictionaries[0] = new ResourceDictionary() { Source = new Uri(currentTheme.Path) };
-                    }
-                }
-            }
-            catch { }
-        }
         private void NotifyIcon_DoubleClick(Object sender, EventArgs e)
         {
             if (MainWindow == null)
@@ -292,31 +280,29 @@ namespace gamevault
             }
             Shutdown();
         }
-        private void CreateDirectories()
-        {
-            if (!Directory.Exists(AppFilePath.ImageCache))
-            {
-                Directory.CreateDirectory(AppFilePath.ImageCache);
-            }
-            if (!Directory.Exists(AppFilePath.ConfigDir))
-            {
-                Directory.CreateDirectory(AppFilePath.ConfigDir);
-            }
-            if (!Directory.Exists(AppFilePath.ThemesLoadDir))
-            {
-                Directory.CreateDirectory(AppFilePath.ThemesLoadDir);
-            }
-            if (!Directory.Exists(AppFilePath.CloudSaveConfigDir))
-            {
-                Directory.CreateDirectory(AppFilePath.CloudSaveConfigDir);
-            }
-        }
         public bool IsWindowActiveAndControlInFocus(MainControl control)
         {
             if (Current.MainWindow == null)
                 return false;
 
             return Current.MainWindow.IsActive && MainWindowViewModel.Instance.ActiveControlIndex == (int)control;
+        }
+        private void RestoreTheme()
+        {
+            try
+            {
+                string currentThemeString = Preferences.Get(AppConfigKey.Theme, /*AppFilePath.UserFile*/"", true);
+                if (currentThemeString != string.Empty)
+                {
+                    ThemeItem currentTheme = JsonSerializer.Deserialize<ThemeItem>(currentThemeString)!;
+
+                    if (App.Current.Resources.MergedDictionaries[0].Source.OriginalString != currentTheme.Path)
+                    {
+                        App.Current.Resources.MergedDictionaries[0] = new ResourceDictionary() { Source = new Uri(currentTheme.Path) };
+                    }
+                }
+            }
+            catch { }
         }
     }
 }

@@ -164,7 +164,7 @@ namespace gamevault.UserControls
                 {
                     try
                     {
-                        SaveGameHelper.Instance.PrepareConfigFile("", Path.Combine(AppFilePath.CloudSaveConfigDir, "config.yaml"));
+                        SaveGameHelper.Instance.PrepareConfigFile("", Path.Combine(LoginManager.Instance.GetUserProfile().CloudSaveConfigDir, "config.yaml"));
                         string gameMetadataTitle = ViewModel?.Game?.Metadata?.Title ?? "";
                         if (gameMetadataTitle == "")
                         {

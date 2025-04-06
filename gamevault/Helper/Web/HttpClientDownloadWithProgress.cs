@@ -50,12 +50,12 @@ namespace gamevault.Helper
             }
             else
             {
-                //Edge case where the Library download overrrides the current download. But if its was a paused download, we have also have to reset the metadata
+                //Edge case where the Library download overrrides the current download. But if its was a paused download, we also have to reset the metadata
                 if (File.Exists($"{DestinationFolderPath}\\gamevault-metadata"))
                     File.Delete($"{DestinationFolderPath}\\gamevault-metadata");
             }
 
-            using (var response = await HttpClient.GetAsync(DownloadUrl, HttpCompletionOption.ResponseHeadersRead))
+            using (HttpResponseMessage response = await WebHelper.GetAsync(DownloadUrl, HttpCompletionOption.ResponseHeadersRead))
                 await DownloadFileFromHttpResponseMessage(response);
         }
         private void CreateHeader()
@@ -77,17 +77,14 @@ namespace gamevault.Helper
                     string[] resumeDataToProcess = resumeData.Split(";");
                     ResumePosition = long.Parse(resumeDataToProcess[0]);
                     PreResumeSize = long.Parse(resumeDataToProcess[1]);
-                    HttpClient.DefaultRequestHeaders.Range = new RangeHeaderValue(long.Parse(resumeDataToProcess[0]), null);
-                    //TriggerProgressChanged(PreResumeSize, 0, ResumePosition);
+                    HttpClient.DefaultRequestHeaders.Range = new RangeHeaderValue(long.Parse(resumeDataToProcess[0]), null);                   
                 }
                 catch { }
             }
         }
 
         private async Task DownloadFileFromHttpResponseMessage(HttpResponseMessage response)
-        {
-            response.EnsureSuccessStatusCode();
-
+        {            
             try
             {
                 FileName = response.Content.Headers.ContentDisposition.FileName.Replace("\"", "");

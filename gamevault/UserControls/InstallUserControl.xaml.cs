@@ -29,7 +29,7 @@ namespace gamevault.UserControls
             InitializeComponent();
             this.DataContext = InstallViewModel.Instance;
             InitTimer();
-            uiInstalledGames.IsExpanded = Preferences.Get(AppConfigKey.InstalledGamesOpen, AppFilePath.UserFile) == "1" ? true : false;
+            uiInstalledGames.IsExpanded = Preferences.Get(AppConfigKey.InstalledGamesOpen, LoginManager.Instance.GetUserProfile().UserConfigFile) == "1" ? true : false;
         }
 
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -93,7 +93,7 @@ namespace gamevault.UserControls
                                 List<Game> offlineCacheGames = new List<Game>();
                                 foreach (string id in seperatedIds)
                                 {
-                                    string objectFromFile = Preferences.Get(id, AppFilePath.OfflineCache);
+                                    string objectFromFile = Preferences.Get(id, LoginManager.Instance.GetUserProfile().OfflineCache);
                                     if (objectFromFile != string.Empty)
                                     {
                                         try
@@ -133,7 +133,7 @@ namespace gamevault.UserControls
                             TempInstalledGames.Add(new KeyValuePair<Game, string>(game, foundGames.ElementAt(count).Value));
                             if (LoginManager.Instance.IsLoggedIn())
                             {
-                                if (!Preferences.Exists(game.ID.ToString(), AppFilePath.OfflineCache))
+                                if (!Preferences.Exists(game.ID.ToString(), LoginManager.Instance.GetUserProfile().OfflineCache))
                                 {
                                     string gameToSave = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{game.ID}");
                                     await CacheHelper.CreateOfflineCacheAsync(JsonSerializer.Deserialize<Game>(gameToSave));
@@ -155,7 +155,7 @@ namespace gamevault.UserControls
             {
                 try
                 {
-                    string lastTimePlayed = Preferences.Get(AppConfigKey.LastPlayed, AppFilePath.UserFile);
+                    string lastTimePlayed = Preferences.Get(AppConfigKey.LastPlayed, LoginManager.Instance.GetUserProfile().UserConfigFile);
                     List<string> lastPlayedDates = lastTimePlayed.Split(';').ToList();
 
                     collection = new System.Collections.ObjectModel.ObservableCollection<KeyValuePair<Game, string>>(collection.OrderByDescending(item =>
@@ -172,13 +172,13 @@ namespace gamevault.UserControls
         {
             try
             {
-                string lastTimePlayed = Preferences.Get(AppConfigKey.LastPlayed, AppFilePath.UserFile);
+                string lastTimePlayed = Preferences.Get(AppConfigKey.LastPlayed, LoginManager.Instance.GetUserProfile().UserConfigFile);
                 if (lastTimePlayed.Contains($"{gameID}"))
                 {
                     lastTimePlayed = lastTimePlayed.Replace($"{gameID};", "");
                 }
                 lastTimePlayed = lastTimePlayed.Insert(0, $"{gameID};");
-                Preferences.Set(AppConfigKey.LastPlayed, lastTimePlayed, AppFilePath.UserFile);
+                Preferences.Set(AppConfigKey.LastPlayed, lastTimePlayed, LoginManager.Instance.GetUserProfile().UserConfigFile);
             }
             catch { }
         }
@@ -220,7 +220,7 @@ namespace gamevault.UserControls
                 }
                 else
                 {
-                    string compressedStringObject = Preferences.Get(id.ToString(), AppFilePath.OfflineCache);
+                    string compressedStringObject = Preferences.Get(id.ToString(), LoginManager.Instance.GetUserProfile().OfflineCache);
                     if (compressedStringObject != string.Empty)
                     {
                         string decompressedObject = StringCompressor.DecompressString(compressedStringObject);
@@ -378,12 +378,12 @@ namespace gamevault.UserControls
 
         private void InstalledGames_Toggled(object sender, RoutedEventArgs e)
         {
-            Preferences.Set(AppConfigKey.InstalledGamesOpen, uiInstalledGames.IsExpanded ? "1" : "0", AppFilePath.UserFile);
+            Preferences.Set(AppConfigKey.InstalledGamesOpen, uiInstalledGames.IsExpanded ? "1" : "0", LoginManager.Instance.GetUserProfile().UserConfigFile);
         }
 
         private void RestoreRows()
         {
-            string result = Preferences.Get(AppConfigKey.InstalledGamesRows, AppFilePath.UserFile);
+            string result = Preferences.Get(AppConfigKey.InstalledGamesRows, LoginManager.Instance.GetUserProfile().UserConfigFile);
             if (int.TryParse(result, out int rows) && rows > 0)
             {
                 uiRowsUpDown.Value = rows;
@@ -424,7 +424,7 @@ namespace gamevault.UserControls
                     InstallViewModel.Instance.Rows = (int)uiRowsUpDown.Value;
                     InstallViewModel.Instance.Colums = 0;
                 }
-                Preferences.Set(AppConfigKey.InstalledGamesRows, uiRowsUpDown.Value, AppFilePath.UserFile);
+                Preferences.Set(AppConfigKey.InstalledGamesRows, uiRowsUpDown.Value, LoginManager.Instance.GetUserProfile().UserConfigFile);
             }
             catch { }
         }

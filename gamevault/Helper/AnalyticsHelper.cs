@@ -250,11 +250,7 @@ namespace gamevault.Helper
                 case AdminConsoleUserControl:
                     {
                         return "/admin";
-                    }
-                case Wizard:
-                    {
-                        return "/wizard";
-                    }
+                    }                
                 case GameViewUserControl:
                     {
                         return "/game";

@@ -41,11 +41,11 @@ namespace gamevault.Windows
             }
             else
             {
-                path = AppFilePath.ErrorLog.Replace(@"\\", @"\").Replace("/", @"\");
+                path = ProfileManager.ErrorLogDir.Replace(@"\\", @"\").Replace("/", @"\");
             }
             if (!Directory.Exists(path))
             {
-                path = AppFilePath.ErrorLog.Replace(@"\\", @"\").Replace("/", @"\");
+                path = ProfileManager.ErrorLogDir.Replace(@"\\", @"\").Replace("/", @"\");
             }
             if (Directory.Exists(path))
             {

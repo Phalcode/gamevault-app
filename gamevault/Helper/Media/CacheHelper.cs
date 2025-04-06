@@ -24,7 +24,7 @@ namespace gamevault.Helper
             {
                 string serializedObject = JsonSerializer.Serialize(game);
                 string compressedObject = StringCompressor.CompressString(serializedObject);
-                Preferences.Set(game.ID.ToString(), compressedObject, AppFilePath.OfflineCache);
+                Preferences.Set(game.ID.ToString(), compressedObject, LoginManager.Instance.GetUserProfile().OfflineCache);
             }
             catch { }
         }
@@ -127,15 +127,15 @@ namespace gamevault.Helper
                         await TaskQueue.Instance.WaitForProcessToFinish(game.Metadata.Cover.ID);
                     }
 
-                    string backGroundCacheFile = $"{AppFilePath.ImageCache}/gbg/{game.ID}.{game.Metadata.Background.ID}";
-                    string boxArtCacheFile = $"{AppFilePath.ImageCache}/gbox/{game.ID}.{game.Metadata.Cover.ID}";
-                    if (!Directory.Exists($"{AppFilePath.ImageCache}/gbg"))
+                    string backGroundCacheFile = $"{LoginManager.Instance.GetUserProfile().ImageCacheDir}/gbg/{game.ID}.{game.Metadata.Background.ID}";
+                    string boxArtCacheFile = $"{LoginManager.Instance.GetUserProfile().ImageCacheDir}/gbox/{game.ID}.{game.Metadata.Cover.ID}";
+                    if (!Directory.Exists($"{LoginManager.Instance.GetUserProfile().ImageCacheDir}/gbg"))
                     {
-                        Directory.CreateDirectory($"{AppFilePath.ImageCache}/gbg");
+                        Directory.CreateDirectory($"{LoginManager.Instance.GetUserProfile().ImageCacheDir}/gbg");
                     }
-                    if (!Directory.Exists($"{AppFilePath.ImageCache}/gbox"))
+                    if (!Directory.Exists($"{LoginManager.Instance.GetUserProfile().ImageCacheDir}/gbox"))
                     {
-                        Directory.CreateDirectory($"{AppFilePath.ImageCache}/gbox");
+                        Directory.CreateDirectory($"{LoginManager.Instance.GetUserProfile().ImageCacheDir}/gbox");
                     }
 
                     if (!File.Exists(backGroundCacheFile))
@@ -176,7 +176,7 @@ namespace gamevault.Helper
             await Task.Run(() =>
             {
                 double maxHeight = SystemParameters.FullPrimaryScreenHeight / 2;
-                var files = Directory.GetFiles(AppFilePath.ImageCache, "*.*", SearchOption.AllDirectories);
+                var files = Directory.GetFiles(LoginManager.Instance.GetUserProfile().ImageCacheDir, "*.*", SearchOption.AllDirectories);
                 foreach (string file in files)
                 {
                     try
@@ -224,12 +224,20 @@ namespace gamevault.Helper
         internal static Dictionary<string, string> GetImageCacheForGame(Game game)
         {
             Dictionary<string, string> imageCache = new Dictionary<string, string>();
-            string cachePath = AppFilePath.ImageCache;
+            string cachePath = LoginManager.Instance.GetUserProfile().ImageCacheDir;
             var boxArt = Directory.GetFiles(Path.Combine(cachePath, "gbox").Replace("/", "\\"), $"{game.ID}.*").FirstOrDefault();
             var background = Directory.GetFiles(Path.Combine(cachePath, "gbg").Replace("/", "\\"), $"{game.ID}.*").FirstOrDefault();
             imageCache.Add("gbox", boxArt);
             imageCache.Add("gbg", background);
             return imageCache;
+        }
+        internal static string GetUserProfileAvatarPath(UserProfile profile)
+        {
+            if (int.TryParse(Preferences.Get(AppConfigKey.UserID, profile.UserConfigFile), out int userId))
+            {
+                return Directory.GetFiles(Path.Combine(profile.ImageCacheDir, "uico"), $"{userId}.*", SearchOption.AllDirectories).FirstOrDefault() ?? "";
+            }
+            return "";
         }
         private static void ResizeImage(string path, uint maxHeight)
         {
