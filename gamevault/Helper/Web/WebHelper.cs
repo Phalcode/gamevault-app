@@ -24,6 +24,7 @@ namespace gamevault.Helper
         static WebHelper() { }
         internal static void SetCredentials(string serverUrl, string username, string password)
         {
+            HttpClient.Reset();
             HttpClient.ServerUrl = serverUrl;
             HttpClient.UserName = username;
             HttpClient.Password = password;

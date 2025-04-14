@@ -27,6 +27,10 @@ namespace gamevault.Helper
             m_Timer.Elapsed += TimerCallback;
             m_Timer.Start();
         }
+        public void Stop()
+        {
+            m_Timer?.Stop();
+        }
         private void TimerCallback(object sender, ElapsedEventArgs e)
         {
             Task.Run(async () =>

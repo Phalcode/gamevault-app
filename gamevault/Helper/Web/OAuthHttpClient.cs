@@ -31,6 +31,11 @@ namespace gamevault.Helper
             _accessToken = accessToken;
             _refreshToken = refreshToken;
         }
+        public void Reset()
+        {
+            _accessToken = "";
+            _refreshToken = "";
+        }
         public async Task<bool> LoginBasicAuthAsync(string username, string password)
         {
             var authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));

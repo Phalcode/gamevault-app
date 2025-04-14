@@ -23,13 +23,26 @@ namespace gamevault.Windows
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow
+    public partial class MainWindow : IDisposable
     {
         private GameTimeTracker GameTimeTracker;
         public MainWindow()
         {
             InitializeComponent();
             this.DataContext = MainWindowViewModel.Instance;
+            InitBackgroundTasks();
+        }
+        private void InitBackgroundTasks()
+        {
+            App.HideToSystemTray = true;
+            Task.Run(async () =>
+            {
+                if (GameTimeTracker == null)
+                {
+                    GameTimeTracker = new GameTimeTracker();
+                    await GameTimeTracker.Start();
+                }
+            });
         }
         private async void HamburgerMenuControl_OnItemInvoked(object sender, HamburgerMenuItemInvokedEventArgs args)
         {
@@ -70,11 +83,6 @@ namespace gamevault.Windows
         {
             VisualHelper.AdjustWindowChrome(this);
             MainWindowViewModel.Instance.SetActiveControl(MainControl.Library);
-            if (GameTimeTracker == null)
-            {
-                GameTimeTracker = new GameTimeTracker();
-                await GameTimeTracker.Start();
-            }
             LoginState state = LoginManager.Instance.GetState();
             if (LoginState.Success == state)
             {
@@ -143,7 +151,7 @@ namespace gamevault.Windows
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (App.ShowToastMessage)
+            if (App.HideToSystemTray)
             {
                 e.Cancel = true;
                 this.Hide();
@@ -234,6 +242,15 @@ namespace gamevault.Windows
                 System.Windows.Clipboard.SetText(MainWindowViewModel.Instance.AppBarText);
             }
             catch { }
+        }
+
+        public void Dispose()
+        {
+            GameTimeTracker.Stop();
+            MainWindowViewModel.Instance.Downloads.CancelAllDownloads();
+            ProcessShepherd.Instance.KillAllChildProcesses();
+            App.HideToSystemTray = false;
+            this.Close();
         }
     }
 }

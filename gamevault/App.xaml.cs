@@ -43,7 +43,7 @@ namespace gamevault
             }
         }
         #endregion
-        public static bool ShowToastMessage = true;
+        public static bool HideToSystemTray = true;
         public static bool IsWindowsPackage = false;
 
         public static CommandOptions? CommandLineOptions { get; internal set; } = null;
@@ -271,7 +271,7 @@ namespace gamevault
 
         private void ShutdownApp()
         {
-            ShowToastMessage = false;
+            HideToSystemTray = false;
             ProcessShepherd.Instance.KillAllChildProcesses();
             if (m_Icon != null)
             {

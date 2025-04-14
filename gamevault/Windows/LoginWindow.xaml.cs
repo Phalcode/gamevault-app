@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
 using System.Net.Http;
+using System.Text.Json;
 
 namespace gamevault.Windows
 {
@@ -52,24 +53,41 @@ namespace gamevault.Windows
 
         private LoginWindowViewModel ViewModel { get; set; }
         private StoreHelper StoreHelper;
-        public LoginWindow()
+        private bool SkipBootTasks = false;
+        public LoginWindow(bool skipBootTasks = false)
         {
             InitializeComponent();
             ViewModel = new LoginWindowViewModel();
             this.DataContext = ViewModel;
             ProfileManager.EnsureRootDirectory();
+            this.SkipBootTasks = skipBootTasks;
         }
 
         private async void LoginWindow_Loaded(object sender, RoutedEventArgs e)
         {
             VisualHelper.AdjustWindowChrome(this);
-            await CheckForUpdates(this);
-            ViewModel.StatusText = "Checking License...";
-            string phalcodeLoginMessage = await LoginManager.Instance.PhalcodeLogin(true);
-            if (phalcodeLoginMessage != string.Empty)
-                ViewModel.AppBarText = phalcodeLoginMessage;
-
             ViewModel.RememberMe = Preferences.Get(AppConfigKey.LoginRememberMe, ProfileManager.ProfileConfigFile) == "1";
+            if (!SkipBootTasks)
+            {
+                await CheckForUpdates(this);
+                ViewModel.StatusText = "Checking License...";
+                string phalcodeLoginMessage = await LoginManager.Instance.PhalcodeLogin(true);
+                if (phalcodeLoginMessage != string.Empty)
+                    ViewModel.AppBarText = phalcodeLoginMessage;
+
+               
+                if (ViewModel.RememberMe)
+                {
+                    try
+                    {
+                        string lastUserProfileIdentifier = Preferences.Get(AppConfigKey.LastUserProfile, ProfileManager.ProfileConfigFile);
+                        UserProfile lastUserProfile = ProfileManager.GetUserProfiles().First(up => up.RootDir == lastUserProfileIdentifier);
+                        await Login(lastUserProfile);
+                    }
+                    catch { }
+                }
+            }
+            
             foreach (UserProfile userProfile in ProfileManager.GetUserProfiles())
             {
                 ViewModel.UserProfiles.Add(userProfile);
@@ -135,6 +153,15 @@ namespace gamevault.Windows
 
             if (string.IsNullOrWhiteSpace(loginUser.Password))
                 throw new ArgumentException("Password is not set");
+
+            if (loginUser.ServerUrl.EndsWith("/"))
+            {
+                loginUser.ServerUrl = loginUser.ServerUrl.Substring(0, SettingsViewModel.Instance.ServerUrl.Length - 1);
+            }
+            if (!loginUser.ServerUrl.Contains(System.Uri.UriSchemeHttp))
+            {
+                loginUser.ServerUrl = $"{System.Uri.UriSchemeHttps}://{loginUser.ServerUrl}";
+            }
         }
 
         private async Task Login(UserProfile profile)
@@ -152,9 +179,17 @@ namespace gamevault.Windows
                 Preferences.Set(AppConfigKey.UserID, LoginManager.Instance.GetCurrentUser()!.ID, profile.UserConfigFile);
                 ViewModel.StatusText = "Optimizing Cache...";
                 await CacheHelper.OptimizeCache();
+                if (ViewModel.RememberMe)
+                {
+                    Preferences.Set(AppConfigKey.LastUserProfile, profile.RootDir, ProfileManager.ProfileConfigFile);
+                }
                 App.Current.MainWindow = new MainWindow();
                 App.Current.MainWindow.Show();
-                this.DialogResult = true;
+                try
+                {
+                    this.DialogResult = true;//will throw error, if its called from the MainWindow
+                }
+                catch { }
                 this.Close();
             }
             else

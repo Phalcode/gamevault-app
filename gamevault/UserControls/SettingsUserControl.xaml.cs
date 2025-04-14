@@ -21,6 +21,7 @@ using gamevault.Helper.Integrations;
 using AngleSharp.Dom;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.Wpf;
+using gamevault.Windows;
 
 namespace gamevault.UserControls
 {
@@ -149,10 +150,18 @@ namespace gamevault.UserControls
 
         private void Logout_Click(object sender, RoutedEventArgs e)
         {
-            return;
-            LoginManager.Instance.Logout();
-            MainWindowViewModel.Instance.UserAvatar = null;
-            MainWindowViewModel.Instance.AppBarText = "Successfully logged out";
+            ((FrameworkElement)sender).IsEnabled = false;
+            //MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to log", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+            //if (result == MessageDialogResult.Affirmative)
+            //{
+            //}
+            ((MainWindow)App.Current.MainWindow).Dispose();
+            App.Current.MainWindow = new LoginWindow(true);
+            App.Current.MainWindow.Show();
+            //LoginManager.Instance.Logout();
+            //MainWindowViewModel.Instance.UserAvatar = null;
+            //MainWindowViewModel.Instance.AppBarText = "Successfully logged out";
+            ((FrameworkElement)sender).IsEnabled = true;
         }
 
         private void DownloadLimit_InputValidation(object sender, EventArgs e)

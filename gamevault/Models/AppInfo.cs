@@ -55,7 +55,8 @@ namespace gamevault.Models
         UsePrimaryCloudSaveManifest,
         MountIso,
         UserID,
-        LoginRememberMe
+        LoginRememberMe,
+        LastUserProfile
 
     }
     public static class Globals
