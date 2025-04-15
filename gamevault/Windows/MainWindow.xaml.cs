@@ -17,6 +17,7 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using System.Windows.Controls;
+using System.Text.Json;
 
 namespace gamevault.Windows
 {
@@ -30,11 +31,12 @@ namespace gamevault.Windows
         {
             InitializeComponent();
             this.DataContext = MainWindowViewModel.Instance;
-            InitBackgroundTasks();
+            InitBootTasks();
         }
-        private void InitBackgroundTasks()
+        private void InitBootTasks()
         {
             App.HideToSystemTray = true;
+            RestoreTheme();
             Task.Run(async () =>
             {
                 if (GameTimeTracker == null)
@@ -131,18 +133,13 @@ namespace gamevault.Windows
         {
             try
             {
-                using (System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient())
+                string serverResonse = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/status");
+                string currentServerVersion = System.Text.Json.JsonSerializer.Deserialize<ServerInfo>(serverResonse).Version;
+                if (currentServerVersion == null || currentServerVersion == "")
                 {
-
-                    httpClient.DefaultRequestHeaders.Add("User-Agent", "Other");
-                    string serverResonse = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/status");
-                    string currentServerVersion = System.Text.Json.JsonSerializer.Deserialize<ServerInfo>(serverResonse).Version;
-                    if (currentServerVersion == null || currentServerVersion == "")
-                    {
-                        return true;
-                    }
-                    return new Version(currentServerVersion) < new Version("13.0.0");
+                    return true;
                 }
+                return new Version(currentServerVersion) < new Version("13.0.0");
             }
             catch { }
             return false;
@@ -243,13 +240,32 @@ namespace gamevault.Windows
             }
             catch { }
         }
+        private void RestoreTheme()
+        {
+            try
+            {
+                string currentThemeString = Preferences.Get(AppConfigKey.Theme, LoginManager.Instance.GetUserProfile().UserConfigFile, true);
+                if (currentThemeString != string.Empty)
+                {
+                    ThemeItem currentTheme = JsonSerializer.Deserialize<ThemeItem>(currentThemeString)!;
 
+                    if (App.Current.Resources.MergedDictionaries[0].Source.OriginalString != currentTheme.Path)
+                    {
+                        App.Instance.SetTheme(currentTheme.Path);
+                    }
+                }
+            }
+            catch { }
+        }
         public void Dispose()
         {
             GameTimeTracker.Stop();
             MainWindowViewModel.Instance.Downloads.CancelAllDownloads();
+            InstallViewModel.Instance.InstalledGames.Clear();
+            DownloadsViewModel.Instance.DownloadedGames.Clear();
             ProcessShepherd.Instance.KillAllChildProcesses();
             App.HideToSystemTray = false;
+            App.Instance.ResetToDefaultTheme();
             this.Close();
         }
     }

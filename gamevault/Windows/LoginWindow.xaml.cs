@@ -75,7 +75,7 @@ namespace gamevault.Windows
                 if (phalcodeLoginMessage != string.Empty)
                     ViewModel.AppBarText = phalcodeLoginMessage;
 
-               
+
                 if (ViewModel.RememberMe)
                 {
                     try
@@ -87,7 +87,7 @@ namespace gamevault.Windows
                     catch { }
                 }
             }
-            
+
             foreach (UserProfile userProfile in ProfileManager.GetUserProfiles())
             {
                 ViewModel.UserProfiles.Add(userProfile);
@@ -354,21 +354,17 @@ namespace gamevault.Windows
             {
                 if (App.IsWindowsPackage == false)
                 {
-                    using (HttpClient httpClient = new HttpClient())
+                    var response = await WebHelper.BaseGetAsync("https://api.github.com/repos/Phalcode/gamevault-app/releases");
+                    dynamic obj = JsonNode.Parse(response);
+                    string version = (string)obj[0]["tag_name"];
+                    if (Convert.ToInt32(version.Replace(".", "")) > Convert.ToInt32(SettingsViewModel.Instance.Version.Replace(".", "")))
                     {
-                        httpClient.DefaultRequestHeaders.Add("User-Agent", "Other");
-                        var response = await httpClient.GetStringAsync("https://api.github.com/repos/Phalcode/gamevault-app/releases");
-                        dynamic obj = JsonNode.Parse(response);
-                        string version = (string)obj[0]["tag_name"];
-                        if (Convert.ToInt32(version.Replace(".", "")) > Convert.ToInt32(SettingsViewModel.Instance.Version.Replace(".", "")))
+                        MessageBoxResult result = MessageBox.Show($"A new version of GameVault is now available on GitHub.\nCurrent Version '{SettingsViewModel.Instance.Version}' -> new Version '{version}'\nWould you like to download it? (No automatic installation)", "Info", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                        if (result == MessageBoxResult.Yes)
                         {
-                            MessageBoxResult result = MessageBox.Show($"A new version of GameVault is now available on GitHub.\nCurrent Version '{SettingsViewModel.Instance.Version}' -> new Version '{version}'\nWould you like to download it? (No automatic installation)", "Info", MessageBoxButton.YesNo, MessageBoxImage.Information);
-                            if (result == MessageBoxResult.Yes)
-                            {
-                                string downloadUrl = (string)obj[0]["assets"][0]["browser_download_url"];
-                                Process.Start(new ProcessStartInfo(downloadUrl) { UseShellExecute = true });
-                                App.Current.Shutdown();
-                            }
+                            string downloadUrl = (string)obj[0]["assets"][0]["browser_download_url"];
+                            Process.Start(new ProcessStartInfo(downloadUrl) { UseShellExecute = true });
+                            App.Current.Shutdown();
                         }
                     }
                 }

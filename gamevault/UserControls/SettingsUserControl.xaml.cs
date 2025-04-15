@@ -280,9 +280,7 @@ namespace gamevault.UserControls
             }
             try
             {
-                App.Current.Resources.MergedDictionaries[0] = new ResourceDictionary() { Source = new Uri(selectedTheme.Path) };
-                //Reload Base Styles to apply new colors
-                App.Current.Resources.MergedDictionaries[1] = new ResourceDictionary() { Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Base.xaml") };
+                App.Instance.SetTheme(selectedTheme.Path);
                 Preferences.Set(AppConfigKey.Theme, JsonSerializer.Serialize(selectedTheme), LoginManager.Instance.GetUserProfile().UserConfigFile, true);
             }
             catch (Exception ex) { MainWindowViewModel.Instance.AppBarText = ex.Message; }
@@ -384,14 +382,14 @@ namespace gamevault.UserControls
         }
         private async Task<List<JsonElement>> LoadCommunityThemesHeader()
         {
-            string jsonResponse = await WebHelper.GetAsync("https://api.github.com/repos/phalcode/gamevault-community-themes/contents/v1");
+            string jsonResponse = await WebHelper.BaseGetAsync("https://api.github.com/repos/phalcode/gamevault-community-themes/contents/v1");
             return JsonSerializer.Deserialize<List<JsonElement>>(jsonResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
         private async Task<ThemeItem> LoadThemeItemFromUrl(string url)
         {
             try
             {
-                string result = await WebHelper.GetAsync(url);
+                string result = await WebHelper.BaseGetAsync(url);
                 ResourceDictionary res = (ResourceDictionary)XamlReader.Parse(result);
                 return new ThemeItem() { DisplayName = (string)res["Theme.DisplayName"], Description = (string)res["Theme.Description"], Author = (string)res["Theme.Author"], Path = url };
             }
@@ -450,7 +448,7 @@ namespace gamevault.UserControls
             {
                 ThemeItem theme = (ThemeItem)uiCBCommunityThemes.SelectedItem;
                 string installationPath = Path.Combine(LoginManager.Instance.GetUserProfile().ThemesLoadDir, theme.DisplayName + ".xaml");
-                string result = await WebHelper.GetAsync(theme.Path);
+                string result = await WebHelper.BaseGetAsync(theme.Path);
                 File.WriteAllText(installationPath, result);
                 LoadThemes();
                 try

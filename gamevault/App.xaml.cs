@@ -64,16 +64,9 @@ namespace gamevault
         private async void Application_Startup(object sender, StartupEventArgs e)
         {
             Application.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(AppDispatcherUnhandledException);
-            //#if DEBUG
-            //            AppFilePath.InitDebugPaths();
-            //            CreateDirectories();
-            //            RestoreTheme();
-            //            await CacheHelper.OptimizeCache();
-            //#else
 
             try
             {
-                //RestoreTheme();
                 LoginWindow loginWindow = new LoginWindow();
                 bool? result = loginWindow.ShowDialog();
                 if (result == null || result == false)
@@ -232,6 +225,16 @@ namespace gamevault
             }
         }
 
+        public void SetTheme(string themeUri)
+        {
+            App.Current.Resources.MergedDictionaries[0] = new ResourceDictionary() { Source = new Uri(themeUri) };
+            App.Current.Resources.MergedDictionaries[1] = new ResourceDictionary() { Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Base.xaml") };
+        }
+        public void ResetToDefaultTheme()
+        {
+            App.Current.Resources.MergedDictionaries[0] = new ResourceDictionary() { Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Themes/ThemeDefaultDark.xaml") };
+            App.Current.Resources.MergedDictionaries[1] = new ResourceDictionary() { Source = new Uri("pack://application:,,,/gamevault;component/Resources/Assets/Base.xaml") };
+        }
         private async void NotifyIcon_Exit_Click(Object sender, EventArgs e)
         {
             await ExitApp();
@@ -287,22 +290,6 @@ namespace gamevault
 
             return Current.MainWindow.IsActive && MainWindowViewModel.Instance.ActiveControlIndex == (int)control;
         }
-        private void RestoreTheme()
-        {
-            try
-            {
-                string currentThemeString = Preferences.Get(AppConfigKey.Theme, /*AppFilePath.UserFile*/"", true);
-                if (currentThemeString != string.Empty)
-                {
-                    ThemeItem currentTheme = JsonSerializer.Deserialize<ThemeItem>(currentThemeString)!;
 
-                    if (App.Current.Resources.MergedDictionaries[0].Source.OriginalString != currentTheme.Path)
-                    {
-                        App.Current.Resources.MergedDictionaries[0] = new ResourceDictionary() { Source = new Uri(currentTheme.Path) };
-                    }
-                }
-            }
-            catch { }
-        }
     }
 }

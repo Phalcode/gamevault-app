@@ -4,6 +4,7 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -21,6 +22,7 @@ namespace gamevault.Helper
     internal class WebHelper
     {
         private static readonly OAuthHttpClient HttpClient = new OAuthHttpClient();
+        private static readonly HttpClient BaseHttpClient = new HttpClient();
         static WebHelper() { }
         internal static void SetCredentials(string serverUrl, string username, string password)
         {
@@ -44,6 +46,16 @@ namespace gamevault.Helper
         internal static async Task<string> GetAsync(string url)
         {
             var response = await HttpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
+        }
+        internal static async Task<string> BaseGetAsync(string url)
+        {
+            if (BaseHttpClient.DefaultRequestHeaders.Count() == 0)
+            {
+                BaseHttpClient.DefaultRequestHeaders.Add("User-Agent", "GameVault");
+            }
+            var response = await BaseHttpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
         }

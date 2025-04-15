@@ -171,19 +171,19 @@ namespace gamevault.UserControls
             this.IsEnabled = false;
             User selectedUser = (User)((Button)sender).DataContext;
             bool error = false;
-            
-                try
-                {
-                    await WebHelper.PutAsync($@"{SettingsViewModel.Instance.ServerUrl}/api/users/{selectedUser.ID}", JsonSerializer.Serialize(selectedUser));
-                    MainWindowViewModel.Instance.AppBarText = "Successfully saved user changes";
-                }
-                catch (Exception ex)
-                {
-                    error = true;
-                    string msg = WebExceptionHelper.TryGetServerMessage(ex);
-                    MainWindowViewModel.Instance.AppBarText = msg;
-                }
-         
+
+            try
+            {
+                await WebHelper.PutAsync($@"{SettingsViewModel.Instance.ServerUrl}/api/users/{selectedUser.ID}", JsonSerializer.Serialize(selectedUser));
+                MainWindowViewModel.Instance.AppBarText = "Successfully saved user changes";
+            }
+            catch (Exception ex)
+            {
+                error = true;
+                string msg = WebExceptionHelper.TryGetServerMessage(ex);
+                MainWindowViewModel.Instance.AppBarText = msg;
+            }
+
             if (!error)
             {
                 await HandleChangesOnCurrentUser(selectedUser);
@@ -238,21 +238,16 @@ namespace gamevault.UserControls
         {
             try
             {
-                using (HttpClient httpClient = new HttpClient())
+                var gitResponse = await WebHelper.BaseGetAsync("https://api.github.com/repos/Phalcode/gamevault-backend/releases");
+                dynamic gitObj = JsonNode.Parse(gitResponse);
+                string newestServerVersion = (string)gitObj[0]["tag_name"];
+                string serverResponse = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/status");
+                string currentServerVersion = JsonSerializer.Deserialize<ServerInfo>(serverResponse).Version;
+                if (Convert.ToInt32(newestServerVersion.Replace(".", "")) > Convert.ToInt32(currentServerVersion.Replace(".", "")))
                 {
-
-                    httpClient.DefaultRequestHeaders.Add("User-Agent", "Other");
-                    var gitResponse = await httpClient.GetStringAsync("https://api.github.com/repos/Phalcode/gamevault-backend/releases");
-                    dynamic gitObj = JsonNode.Parse(gitResponse);
-                    string newestServerVersion = (string)gitObj[0]["tag_name"];
-                    string serverResponse = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/status");
-                    string currentServerVersion = JsonSerializer.Deserialize<ServerInfo>(serverResponse).Version;
-                    if (Convert.ToInt32(newestServerVersion.Replace(".", "")) > Convert.ToInt32(currentServerVersion.Replace(".", "")))
-                    {
-                        return new KeyValuePair<string, string>($"Server Version: {currentServerVersion}", (string)gitObj[0]["html_url"]);
-                    }
-                    return new KeyValuePair<string, string>($"Server Version: {currentServerVersion}", "");
+                    return new KeyValuePair<string, string>($"Server Version: {currentServerVersion}", (string)gitObj[0]["html_url"]);
                 }
+                return new KeyValuePair<string, string>($"Server Version: {currentServerVersion}", "");
             }
             catch
             {
