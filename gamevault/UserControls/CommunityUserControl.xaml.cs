@@ -50,7 +50,7 @@ namespace gamevault.UserControls
         {
             string result = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users");
             var users = JsonSerializer.Deserialize<User[]>(result);
-            users = BringCurrentUserToTop(users);
+            users = BringCurrentUserToTop(users?.Where(u => u.DeletedAt == null)?.ToArray());
             //Log server user count only on the first time its set
             if (ViewModel.Users == null)
             {
@@ -143,7 +143,7 @@ namespace gamevault.UserControls
         }
         private string TryGetLastProgressSort()
         {
-            string result = Preferences.Get(AppConfigKey.LastCommunitySortBy,LoginManager.Instance.GetUserProfile().UserConfigFile);
+            string result = Preferences.Get(AppConfigKey.LastCommunitySortBy, LoginManager.Instance.GetUserProfile().UserConfigFile);
             try
             {
                 if (!string.IsNullOrWhiteSpace(result) && ViewModel.SortBy.Contains(result))
@@ -195,7 +195,7 @@ namespace gamevault.UserControls
             }
             if (sender != null)
             {
-                Preferences.Set(AppConfigKey.LastCommunitySortBy, uiSortBy.SelectedValue.ToString().Replace("\"", ""),LoginManager.Instance.GetUserProfile().UserConfigFile);
+                Preferences.Set(AppConfigKey.LastCommunitySortBy, uiSortBy.SelectedValue.ToString().Replace("\"", ""), LoginManager.Instance.GetUserProfile().UserConfigFile);
             }
         }
 
