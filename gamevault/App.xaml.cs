@@ -208,6 +208,15 @@ namespace gamevault
             }
             catch { }
         }
+        public void ResetJumpListGames()
+        {
+            try
+            {
+                jumpList.JumpItems.RemoveRange(5, jumpList.JumpItems.Count - 5);
+                jumpList.Apply();
+            }
+            catch { }
+        }
         private void NotifyIcon_DoubleClick(Object sender, EventArgs e)
         {
             if (MainWindow == null)

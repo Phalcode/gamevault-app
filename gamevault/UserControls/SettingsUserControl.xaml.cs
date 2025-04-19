@@ -148,7 +148,7 @@ namespace gamevault.UserControls
             });
         }
 
-        private void Logout_Click(object sender, RoutedEventArgs e)
+        private void ChangeUserProfile_Click(object sender, RoutedEventArgs e)
         {
             ((FrameworkElement)sender).IsEnabled = false;
             //MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to log", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });

@@ -104,6 +104,7 @@ namespace gamevault.Windows
             }
             await MainWindowViewModel.Instance.Library.GetGameInstalls().RestoreInstalledGames();
             await MainWindowViewModel.Instance.Downloads.RestoreDownloadedGames();
+            LoginManager.Instance.InitOnlineTimer();
             MainWindowViewModel.Instance.UserAvatar = LoginManager.Instance.GetCurrentUser();
 
             uiNewsBadge.Badge = await CheckForNews() ? "!" : "";
@@ -128,7 +129,7 @@ namespace gamevault.Windows
                 catch { }
             }
         }
-        //User Notification for major client/serveWPFr update 
+        //User Notification for major client/server update 
         private async Task<bool> IsServerTooOutdated()
         {
             try
@@ -266,6 +267,8 @@ namespace gamevault.Windows
             ProcessShepherd.Instance.KillAllChildProcesses();
             App.HideToSystemTray = false;
             App.Instance.ResetToDefaultTheme();
+            LoginManager.Instance.StopOnlineTimer();
+            App.Instance.ResetJumpListGames();
             this.Close();
         }
     }

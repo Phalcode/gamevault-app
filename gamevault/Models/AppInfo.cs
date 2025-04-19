@@ -56,7 +56,8 @@ namespace gamevault.Models
         MountIso,
         UserID,
         LoginRememberMe,
-        LastUserProfile
+        LastUserProfile,
+        IsLoggedInWithOAuth
 
     }
     public static class Globals

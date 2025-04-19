@@ -103,7 +103,7 @@ namespace gamevault.Helper
                             await WebHelper.PutAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{gameid}/increment", string.Empty);
                         }
                         DiscordHelper.Instance.SyncGameWithDiscordPresence(gamesToCountUp, foundGames);
-                        await SaveGameHelper.Instance.BackupSaveGamesFromIds(gamesToCountUp);
+                        await SaveGameHelper.Instance.BackupSaveGamesFromIds(gamesToCountUp);//Check which games are were closed and backup them
                     }
                     catch (Exception ex)
                     {

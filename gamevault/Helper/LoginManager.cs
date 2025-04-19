@@ -21,6 +21,7 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Threading;
 using Windows.Media.Protection.PlayReady;
+using static System.Windows.Forms.AxHost;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace gamevault.Helper
@@ -87,39 +88,7 @@ namespace gamevault.Helper
         {
             userProfile = profile;
         }
-        public async Task StartupLogin()
-        {
-            if (IsLoggedIn()) return;
 
-            LoginState state = LoginState.Success;
-
-            try
-            {
-                //WebHelper.SetCredentials(
-                //    Preferences.Get(AppConfigKey.Username,LoginManager.Instance.GetUserProfile().UserConfigFile),
-                //    Preferences.Get(AppConfigKey.Password,LoginManager.Instance.GetUserProfile().UserConfigFile, true)
-                //);
-                string result = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me");
-                m_User = JsonSerializer.Deserialize<User>(result);
-
-                if (m_User == null)
-                {
-                    state = LoginState.Error;
-                }
-            }
-            catch (Exception ex)
-            {
-                string code = WebExceptionHelper.GetServerStatusCode(ex);
-                state = DetermineLoginState(code);
-                if (state == LoginState.Error)
-                {
-                    m_LoginMessage = WebExceptionHelper.TryGetServerMessage(ex);
-                }
-            }
-
-            m_LoginState = state;
-            InitOnlineTimer();
-        }
         public async Task<LoginState> Login(string serverUrl, string username, string password)
         {
             LoginState state = LoginState.Success;
@@ -141,6 +110,117 @@ namespace gamevault.Helper
             m_LoginState = state;
             return state;
         }
+
+        public async Task<LoginState> OAuthLogin(UserProfile profile, bool showWindow = true)
+        {
+            // Create window in both cases, but only show it if showWindow is true
+            Window win = new Window()
+            {
+                Height = 600,
+                Width = 800,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                ShowInTaskbar = showWindow,
+                Visibility = showWindow ? Visibility.Visible : Visibility.Hidden
+            };
+
+            WebView2 uiWebView = new WebView2();
+            bool windowClosedByCompleted = false;
+
+            win.Content = uiWebView;
+            win.Show(); // Window is shown but may be hidden based on Visibility property
+
+            var env = await CoreWebView2Environment.CreateAsync(null, profile.WebConfigDir);
+            await uiWebView.EnsureCoreWebView2Async(env);
+
+            // Create a TaskCompletionSource to await the navigation completion
+            var tcs = new TaskCompletionSource<LoginState>();
+
+            win.Closing += (s, e) =>
+            {
+                // Only set the result if it hasn't been set already
+                if (!windowClosedByCompleted)
+                {
+                    uiWebView.Dispose();
+                    m_LoginState = LoginState.Error;
+                    m_LoginMessage = "Authentication canceled by user.";
+                    tcs.SetResult(LoginState.Error);
+                }
+            };
+
+            uiWebView.NavigationCompleted += async (s, e) =>
+            {
+                string content = await uiWebView.CoreWebView2.ExecuteScriptAsync("document.body.innerText");
+
+                try
+                {
+                    string result = System.Text.Json.JsonSerializer.Deserialize<string>(content);
+                    var authResponse = JsonSerializer.Deserialize<AuthResponse>(result);
+                    string accessToken = authResponse?.AccessToken;
+                    string refreshToken = authResponse?.RefreshToken;
+
+                    windowClosedByCompleted = true;
+                    win.Close();
+                    uiWebView.Dispose();
+
+                    if (!string.IsNullOrEmpty(accessToken))
+                    {
+                        WebHelper.InjectTokens(accessToken, refreshToken);
+
+                        //Actual Login with gathered Tokens
+                        LoginState state = LoginState.Success;
+                        try
+                        {
+                            string userResult = await WebHelper.GetAsync(@$"{profile.ServerUrl}/api/users/me");
+                            m_User = JsonSerializer.Deserialize<User>(userResult);
+                        }
+                        catch (Exception ex)
+                        {
+                            string code = WebExceptionHelper.GetServerStatusCode(ex);
+                            state = DetermineLoginState(code);
+                            if (state == LoginState.Error)
+                            {
+                                m_LoginMessage = WebExceptionHelper.TryGetServerMessage(ex);
+                            }
+                        }
+                        m_LoginState = state;
+                        tcs.SetResult(state);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Only set the result if it's a valid auth response
+                    // Otherwise, let the navigation continue
+                }
+            };
+            uiWebView.CoreWebView2.Navigate($"{profile.ServerUrl}/api/auth/oauth2/login");
+            // uiWebView.Source = new Uri($"{profile.ServerUrl}/api/auth/oauth2/login");
+
+            // Set a timeout for hidden window mode
+            if (!showWindow)
+            {
+                var timeoutTask = Task.Delay(7000); // 7 seconds timeout
+                var completedTask = await Task.WhenAny(tcs.Task, timeoutTask);
+
+                if (completedTask == timeoutTask)
+                {
+                    //windowClosedByCompleted = true;
+                    //win.Close();
+                    //uiWebView.Dispose();
+                    //m_LoginState = LoginState.Error;
+                    //m_LoginMessage = "Authentication timed out.";
+                    //return LoginState.Error;
+                    win.Visibility = Visibility.Visible;
+                    win.ShowInTaskbar = true;
+                    win.Show();
+                    win.Activate();
+                }
+            }
+
+            // Wait for the navigation to complete and tokens to be processed
+            return await tcs.Task;
+        }
+
+
         public async Task<LoginState> ManualLogin(string username, string password)
         {
             LoginState state = LoginState.Success;
@@ -162,52 +242,7 @@ namespace gamevault.Helper
             m_LoginState = state;
             return state;
         }
-        public async void OAuthLogin()
-        {
-            Window win = new Window() { Height = 600, Width = 800, WindowStartupLocation = WindowStartupLocation.CenterScreen };
-            WebView2 uiWebView = new WebView2();
-            win.Content = uiWebView;
-            win.Show();
-            var options = new CoreWebView2EnvironmentOptions
-            {
-                AdditionalBrowserArguments = "--disk-cache-size=1000000"
-            };
 
-            if (!Directory.Exists(ProfileManager.PhalcodeDir))
-                Directory.CreateDirectory(ProfileManager.PhalcodeDir);
-
-            var env = await CoreWebView2Environment.CreateAsync(null, ProfileManager.PhalcodeDir, options);
-            await uiWebView.EnsureCoreWebView2Async(env);
-            uiWebView.Source = new Uri($"{SettingsViewModel.Instance.ServerUrl}/api/auth/oauth2/login");
-            uiWebView.NavigationCompleted += async (s, e) =>
-            {
-                string content = await uiWebView.CoreWebView2.ExecuteScriptAsync("document.body.innerText");
-
-                try
-                {
-                    string result = System.Text.Json.JsonSerializer.Deserialize<string>(content);
-                    var authResponse = JsonSerializer.Deserialize<AuthResponse>(result);
-                    string accessToken = authResponse?.AccessToken;
-                    string refreshToken = authResponse?.RefreshToken;
-                    WebHelper.InjectTokens(accessToken, refreshToken);
-                    await LoginManager.Instance.ManualLogin("", "");
-                    MainWindowViewModel.Instance.UserAvatar = LoginManager.Instance.GetCurrentUser();
-                    win.Close();
-                    uiWebView.Dispose();
-                }
-                catch (Exception ex)
-                {
-
-                }
-            };
-        }
-        public void Logout()
-        {
-            m_User = null;
-            m_LoginState = LoginState.Error;
-            WebHelper.OverrideCredentials(string.Empty, string.Empty);
-            MainWindowViewModel.Instance.Community.Reset();
-        }
         private WpfEmbeddedBrowser wpfEmbeddedBrowser = null;
         public async Task<string> PhalcodeLogin(bool startHidden = false)
         {
@@ -257,7 +292,7 @@ namespace gamevault.Helper
                 }
 
                 loginResult = await _oidcClient.LoginAsync(new LoginRequest() { FrontChannelExtraParameters = param });
-                timer.Stop();               
+                timer.Stop();
                 username = loginResult.User == null ? null : loginResult.User.Identity.Name;
                 SettingsViewModel.Instance.License = new PhalcodeProduct() { UserName = username };
 
@@ -281,7 +316,7 @@ namespace gamevault.Helper
                 {
                     returnMessage = "Phalcode Sign-in aborted. You can choose to sign in later in the settings.";
                     Preferences.DeleteKey(AppConfigKey.Phalcode1.ToString(), ProfileManager.ProfileConfigFile);
-                }                
+                }
             }
 
             //#####GET LISENCE OBJECT#####
@@ -363,14 +398,21 @@ namespace gamevault.Helper
             }
             return LoginState.Error;
         }
-        private void InitOnlineTimer()
+        public void InitOnlineTimer()
         {
             if (onlineTimer == null)
             {
                 onlineTimer = new Timer(30000);//30 Seconds
                 onlineTimer.AutoReset = true;
                 onlineTimer.Elapsed += CheckOnlineStatus;
-                onlineTimer.Start();
+            }
+            onlineTimer.Start();
+        }
+        public void StopOnlineTimer()
+        {
+            if (onlineTimer != null)
+            {
+                onlineTimer.Stop();
             }
         }
         private async void CheckOnlineStatus(object sender, EventArgs e)
@@ -380,7 +422,7 @@ namespace gamevault.Helper
                 string serverResonse = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/status");
                 if (!IsLoggedIn())
                 {
-                    await StartupLogin();
+                    //await StartupLogin();
                     if (IsLoggedIn())
                     {
                         MainWindowViewModel.Instance.OnlineState = System.Windows.Visibility.Collapsed;

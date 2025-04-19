@@ -17,12 +17,13 @@ namespace gamevault.Models
             ImageCacheDir = imageCacheDir;
             ThemesLoadDir = Path.Combine(rootDirectory, "themes");
             WebConfigDir = Path.Combine(rootDirectory, "config", "web");
-            CloudSaveConfigDir = Path.Combine(rootDirectory, "config", "cloudsave");           
+            CloudSaveConfigDir = Path.Combine(rootDirectory, "config", "cloudsave");
+            CacheDir = Path.Combine(rootDirectory, "cache");
 
             OfflineProgress = Path.Combine(rootDirectory, "cache", "prgs");
             OfflineCache = Path.Combine(rootDirectory, "cache", "local");
-            UserConfigFile = Path.Combine(rootDirectory, "config", "user");
             IgnoreList = Path.Combine(rootDirectory, "cache", "ignorelist");
+            UserConfigFile = Path.Combine(rootDirectory, "config", "user");
         }
         public string UserCacheAvatar { get; set; }
         public string RootDir { get; set; }
@@ -38,7 +39,8 @@ namespace gamevault.Models
         public string ImageCacheDir { get; set; }
         public string ThemesLoadDir { get; set; }
         public string WebConfigDir { get; set; }
-        public string CloudSaveConfigDir { get; set; }        
+        public string CloudSaveConfigDir { get; set; }
+        public string CacheDir { get; set; }
 
         //Files
         public string OfflineProgress { get; set; }

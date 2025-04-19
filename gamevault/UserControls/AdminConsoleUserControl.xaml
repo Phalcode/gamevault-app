@@ -21,13 +21,6 @@
         <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Grid.Row="0">
             <TextBlock Text="Admin Console" FontSize="35" Margin="20,0,0,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
         </Border>
-        <Grid Grid.RowSpan="2" Panel.ZIndex="1">
-            <Viewbox>
-                <Grid Height="700" Width="700">
-                    <Grid x:Name="uiUserEditPopup" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Grid>
-            </Viewbox>
-        </Grid>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <Grid>

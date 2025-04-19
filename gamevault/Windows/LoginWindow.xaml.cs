@@ -38,6 +38,7 @@ namespace gamevault.Windows
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string EMail { get; set; }
+        public bool IsLoggedInWithOAuth { get; set; }
     }
     public enum LoginStep
     {
@@ -121,18 +122,25 @@ namespace gamevault.Windows
         {
             try
             {
-                ValidateLoginData(ViewModel.LoginUser);
+                ValidateSignInData(ViewModel.LoginUser);
                 string cleanedServerUrl = RemoveSpecialCharacters(ViewModel.LoginUser.ServerUrl);
                 UserProfile profile = ProfileManager.CreateUserProfile(RemoveSpecialCharacters(cleanedServerUrl));
-                profile.Name = ViewModel.LoginUser.Username;
                 profile.ServerUrl = ViewModel.LoginUser.ServerUrl;
-                ViewModel.UserProfiles.Add(profile);
                 Preferences.Set(AppConfigKey.ServerUrl, ViewModel.LoginUser.ServerUrl, profile.UserConfigFile);
-                Preferences.Set(AppConfigKey.Username, ViewModel.LoginUser.Username, profile.UserConfigFile);
-                Preferences.Set(AppConfigKey.Password, ViewModel.LoginUser.Password, profile.UserConfigFile, true);
+                if (!ViewModel.LoginUser.IsLoggedInWithOAuth)
+                {
+                    profile.Name = ViewModel.LoginUser.Username;
+                    ViewModel.UserProfiles.Add(profile);
+                    Preferences.Set(AppConfigKey.Username, ViewModel.LoginUser.Username, profile.UserConfigFile);
+                    Preferences.Set(AppConfigKey.Password, ViewModel.LoginUser.Password, profile.UserConfigFile, true);
+                }
+                else
+                {
+                    Preferences.Set(AppConfigKey.IsLoggedInWithOAuth, "1", profile.UserConfigFile);
+                }
                 ViewModel.LoginUser = new LoginUser();//Reset
                 RemoveDemoUserIfExists();
-                await Login(profile);
+                await Login(profile, true);
             }
             catch (Exception ex)
             {
@@ -143,16 +151,10 @@ namespace gamevault.Windows
         {
             await Login((UserProfile)((FrameworkElement)sender).DataContext);
         }
-        private void ValidateLoginData(LoginUser loginUser)
+        private void ValidateSignInData(LoginUser loginUser)
         {
             if (string.IsNullOrWhiteSpace(loginUser.ServerUrl))
                 throw new ArgumentException("ServerUrl is not set");
-
-            if (string.IsNullOrWhiteSpace(loginUser.Username))
-                throw new ArgumentException("Username is not set");
-
-            if (string.IsNullOrWhiteSpace(loginUser.Password))
-                throw new ArgumentException("Password is not set");
 
             if (loginUser.ServerUrl.EndsWith("/"))
             {
@@ -162,16 +164,40 @@ namespace gamevault.Windows
             {
                 loginUser.ServerUrl = $"{System.Uri.UriSchemeHttps}://{loginUser.ServerUrl}";
             }
+            if (!ViewModel.LoginUser.IsLoggedInWithOAuth)
+            {
+                if (string.IsNullOrWhiteSpace(loginUser.Username))
+                    throw new ArgumentException("Username is not set");
+
+                if (string.IsNullOrWhiteSpace(loginUser.Password))
+                    throw new ArgumentException("Password is not set");
+            }
         }
 
-        private async Task Login(UserProfile profile)
+        private async Task Login(UserProfile profile, bool firstTimeLogin = false)
         {
             ViewModel.StatusText = "Logging in...";
             ViewModel.LoginStepIndex = (int)LoginStep.LoadingAction;
-
-            string username = Preferences.Get(AppConfigKey.Username, profile.UserConfigFile);
-            string password = Preferences.Get(AppConfigKey.Password, profile.UserConfigFile, true);
-            LoginState state = await LoginManager.Instance.Login(profile.ServerUrl, username, password);
+            bool isLoggedInWithOAuth = Preferences.Get(AppConfigKey.IsLoggedInWithOAuth, profile.UserConfigFile) == "1";
+            LoginState state = LoginState.Success;
+            if (!isLoggedInWithOAuth)
+            {
+                string username = Preferences.Get(AppConfigKey.Username, profile.UserConfigFile);
+                string password = Preferences.Get(AppConfigKey.Password, profile.UserConfigFile, true);
+                state = await LoginManager.Instance.Login(profile.ServerUrl, username, password);
+            }
+            else
+            {
+                state = await LoginManager.Instance.OAuthLogin(profile, firstTimeLogin);
+                if (state == LoginState.Success)
+                {
+                    Preferences.Set(AppConfigKey.Username, LoginManager.Instance.GetCurrentUser().Username, profile.UserConfigFile);
+                }
+                else if (state != LoginState.Success && firstTimeLogin)
+                {
+                    ProfileManager.DeleteUserProfile(profile);
+                }
+            }
             if (state == LoginState.Success)
             {
                 LoginManager.Instance.SetUserProfile(profile);

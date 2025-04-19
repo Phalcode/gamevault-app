@@ -33,11 +33,7 @@ namespace gamevault.UserControls.SettingsComponents
         }
         private void BackupRestorePopup_Close(object sender, MouseButtonEventArgs e)
         {
-            var parent = this.Parent as Panel;
-            if (parent != null)
-            {
-                parent.Visibility = Visibility.Collapsed;
-            }
+            MainWindowViewModel.Instance.ClosePopup();
         }
 
         private void ChooseBackupDirectory_Click(object sender, RoutedEventArgs e)

@@ -80,7 +80,7 @@
                                                                             </Button>
                                                                         </Grid>
                                                                         <StackPanel x:Name="ProfileInfo" Visibility="Hidden">
-                                                                            <TextBlock Text="{Binding Name}" FontSize="17" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                                                            <TextBlock Text="{Binding Name}" FontSize="17" HorizontalAlignment="Center" TextAlignment="Center" Width="200" TextTrimming="CharacterEllipsis" FontWeight="Bold" Margin="-100,0,-100,0"/>
                                                                             <TextBlock Text="{Binding ServerUrl}" TextAlignment="Center" Width="200" TextTrimming="CharacterEllipsis" Margin="-100,0,-100,0" HorizontalAlignment="Center"/>
                                                                         </StackPanel>
                                                                     </StackPanel>
@@ -170,7 +170,7 @@
                         <TextBlock Text="Sign In" FontSize="30" HorizontalAlignment="Center"/>
                         <TextBlock Text="Specify Your Server URL" TextDecorations="Underline" Margin="0,15,0,5"/>
                         <TextBox Text="{Binding LoginUser.ServerUrl}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
-                        <StackPanel IsEnabled="{Binding IsChecked,ElementName=SignInUseIdentityProviderCheckBox,Converter={StaticResource invBoolConv}}">
+                        <StackPanel IsEnabled="{Binding LoginUser.IsLoggedInWithOAuth,Converter={StaticResource invBoolConv}}">
                             <TextBlock Text="Username or Email" TextDecorations="Underline" Margin="0,15,0,5"/>
                             <TextBox Text="{Binding LoginUser.Username}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
 
@@ -182,7 +182,7 @@
                             <TextBlock Text="OR" HorizontalAlignment="Center" Margin="10,0,10,0"/>
                             <Rectangle Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Width="70" Height="2"/>
                         </StackPanel>
-                        <CheckBox Name="SignInUseIdentityProviderCheckBox" Content="Sign in using your Identity Provider" mah:CheckBoxHelper.CheckCornerRadius="5" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,15,0,0"/>
+                        <CheckBox IsChecked="{Binding LoginUser.IsLoggedInWithOAuth}" Content="Sign in using your Identity Provider" mah:CheckBoxHelper.CheckCornerRadius="5" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,15,0,0"/>
                     </StackPanel>
                     <uc:IconButton Text="Save and Login" Height="30" Margin="0,0,10,10" Width="100" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="SaveAndLogin_Click"/>
                     <uc:IconButton Text="Back" Kind="Skeleton" BorderThickness="1" Height="30" Margin="10,0,0,10" Width="100" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="Back_Click" Tag="{x:Static local:LoginStep.SignInOrSignUp}"/>
@@ -194,7 +194,7 @@
                         <TextBlock Text="Sign Up" FontSize="30" HorizontalAlignment="Center"/>
                         <TextBlock Text="Specify Your Server URL" TextDecorations="Underline" Margin="0,15,0,5"/>
                         <TextBox Text="{Binding SignupUser.ServerUrl}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
-                        <StackPanel IsEnabled="{Binding IsChecked,ElementName=SignUpUseIdentityProviderCheckBox,Converter={StaticResource invBoolConv}}">
+                        <StackPanel IsEnabled="{Binding SignupUser.IsLoggedInWithOAuth,Converter={StaticResource invBoolConv}}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
@@ -248,7 +248,7 @@
                                 <Rectangle Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Width="70" Height="2"/>
                             </StackPanel>
                         </StackPanel>
-                        <CheckBox  Name="SignUpUseIdentityProviderCheckBox" Content="Sign up using your Identity Provider" mah:CheckBoxHelper.CheckCornerRadius="5" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,15,0,0"/>
+                        <CheckBox IsChecked="{Binding SignupUser.IsLoggedInWithOAuth}" Content="Sign up using your Identity Provider" mah:CheckBoxHelper.CheckCornerRadius="5" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,15,0,0"/>
                     </StackPanel>
                     <uc:IconButton Text="Save and Sign Up" Height="30" Margin="0,0,10,10" Width="100" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="SaveAndSignUp_Click"/>
                     <uc:IconButton Text="Back" Kind="Skeleton" BorderThickness="1" Height="30" Margin="10,0,0,10" Width="100" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="Back_Click" Tag="{x:Static local:LoginStep.SignInOrSignUp}"/>

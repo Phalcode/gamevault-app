@@ -155,15 +155,9 @@ namespace gamevault.UserControls
             MainWindowViewModel.Instance.OpenPopup(new UserSettingsUserControl(user) { Width = 1200, Height = 800, Margin = new Thickness(50) });
         }
         private void BackupRestore_Click(object sender, RoutedEventArgs e)
-        {
-            uiUserEditPopup.Visibility = Visibility.Visible;
-            var obj = new BackupRestoreUserControl();
-            //obj.UserSaved += UserSaved;
-            if (uiUserEditPopup.Children.Count != 0)
-            {
-                uiUserEditPopup.Children.Clear();
-            }
-            uiUserEditPopup.Children.Add(obj);
+        {           
+            var obj = new BackupRestoreUserControl() { Margin=new Thickness(220)};
+            MainWindowViewModel.Instance.OpenPopup(obj);           
         }
         protected async void UserSaved(object sender, EventArgs e)
         {
