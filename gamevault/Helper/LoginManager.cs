@@ -1,5 +1,6 @@
 ﻿using gamevault.Models;
 using gamevault.ViewModels;
+using gamevault.Windows;
 using IdentityModel.Client;
 using IdentityModel.OidcClient;
 using Microsoft.IdentityModel.Tokens;
@@ -31,7 +32,8 @@ namespace gamevault.Helper
         Success,
         Error,
         Unauthorized,
-        Forbidden
+        Forbidden,
+        NotActivated
     }
     internal class LoginManager
     {
@@ -383,6 +385,29 @@ namespace gamevault.Helper
             }
             catch (Exception ex) { }
         }
+
+
+        public async Task<LoginState> Register(LoginUser user)
+        {
+            try
+            {
+                string userObject = JsonSerializer.Serialize(new User { Username = user.Username, Password = user.Password, EMail = user.EMail, FirstName = user.FirstName, LastName = user.LastName, BirthDate = user.BirthDate });
+                string newUser = await WebHelper.BasePostAsync($"{user.ServerUrl}/api/auth/basic/register", userObject);
+                User newUserObject = JsonSerializer.Deserialize<User>(newUser);
+                if (newUserObject!.Activated != true)
+                {
+                    return LoginState.NotActivated;
+                }
+                return LoginState.Success;
+            }
+            catch (Exception ex)
+            {
+                m_LoginMessage = WebExceptionHelper.TryGetServerMessage(ex);
+                return LoginState.Error;
+            }
+        }
+
+
         private LoginState DetermineLoginState(string code)
         {
             switch (code)

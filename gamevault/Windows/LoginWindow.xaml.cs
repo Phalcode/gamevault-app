@@ -23,7 +23,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
 using System.Net.Http;
-using System.Text.Json;
+
 
 namespace gamevault.Windows
 {
@@ -47,7 +47,8 @@ namespace gamevault.Windows
         SignInOrSignUp = 2,
         SignIn = 3,
         SignUp = 4,
-        EditProfile = 5
+        EditProfile = 5,
+        PendingActivation = 6
     }
     public partial class LoginWindow
     {
@@ -151,19 +152,25 @@ namespace gamevault.Windows
         {
             await Login((UserProfile)((FrameworkElement)sender).DataContext);
         }
+        private string ValidateUriScheme(string uri)
+        {
+            if (uri.EndsWith("/"))
+            {
+                uri = uri.Substring(0, SettingsViewModel.Instance.ServerUrl.Length - 1);
+            }
+            if (!uri.Contains(System.Uri.UriSchemeHttp))
+            {
+                uri = $"{System.Uri.UriSchemeHttps}://{uri}";
+            }
+            return uri;
+        }
         private void ValidateSignInData(LoginUser loginUser)
         {
             if (string.IsNullOrWhiteSpace(loginUser.ServerUrl))
                 throw new ArgumentException("ServerUrl is not set");
 
-            if (loginUser.ServerUrl.EndsWith("/"))
-            {
-                loginUser.ServerUrl = loginUser.ServerUrl.Substring(0, SettingsViewModel.Instance.ServerUrl.Length - 1);
-            }
-            if (!loginUser.ServerUrl.Contains(System.Uri.UriSchemeHttp))
-            {
-                loginUser.ServerUrl = $"{System.Uri.UriSchemeHttps}://{loginUser.ServerUrl}";
-            }
+            loginUser.ServerUrl = ValidateUriScheme(loginUser.ServerUrl);
+
             if (!ViewModel.LoginUser.IsLoggedInWithOAuth)
             {
                 if (string.IsNullOrWhiteSpace(loginUser.Username))
@@ -224,11 +231,55 @@ namespace gamevault.Windows
                 ViewModel.AppBarText = LoginManager.Instance.GetServerLoginResponseMessage();
             }
         }
-        private void SaveAndSignUp_Click(object sender, RoutedEventArgs e)
+        private async void SaveAndSignUp_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModel.SignupUser.Password != ViewModel.SignupUser.RepeatPassword)
+            try
             {
-                ViewModel.AppBarText = "Passwords are not the same";
+                ValidateSignUpData();
+                LoginState state = await LoginManager.Instance.Register(ViewModel.SignupUser);
+                //if (state != LoginState.Error)
+                //{
+                //    ViewModel.SignupUser = new LoginUser();
+                //}
+                if (state == LoginState.NotActivated)
+                {
+                    ViewModel.LoginStepIndex = (int)LoginStep.PendingActivation;
+                    while (ViewModel.LoginStepIndex == (int)LoginStep.PendingActivation)
+                    {
+                        await Task.Delay(5000);
+                        if (await LoginManager.Instance.Login(ViewModel.SignupUser.ServerUrl, ViewModel.SignupUser.Username, ViewModel.SignupUser.Password) == LoginState.Success && LoginManager.Instance.GetCurrentUser() != null && LoginManager.Instance.GetCurrentUser().Activated == true)
+                        {//To Do: The Login Method should check itself if the user is activated or not.
+
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewModel.AppBarText = ex.Message;
+            }
+        }
+        private void ValidateSignUpData()
+        {
+            if (string.IsNullOrWhiteSpace(ViewModel.SignupUser.ServerUrl))
+            {
+                throw new Exception("Server URL is not set");
+            }
+            ViewModel.SignupUser.ServerUrl = ValidateUriScheme(ViewModel.SignupUser.ServerUrl);
+            if (!ViewModel.SignupUser.IsLoggedInWithOAuth)
+            {
+                if (string.IsNullOrWhiteSpace(ViewModel.SignupUser.Password) || string.IsNullOrWhiteSpace(ViewModel.SignupUser.RepeatPassword))
+                {
+                    throw new Exception("Password is not set");
+                }
+                if (ViewModel.SignupUser.Password != ViewModel.SignupUser.RepeatPassword)
+                {
+                    throw new Exception("Password must be equal");
+                }
+                if (string.IsNullOrWhiteSpace(ViewModel.SignupUser.Username))
+                {
+                    throw new Exception("Username is not set");
+                }
             }
         }
         private string RemoveSpecialCharacters(string str)

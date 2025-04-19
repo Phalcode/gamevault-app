@@ -132,7 +132,7 @@
                             <StackPanel>
                                 <Button Style="{StaticResource ButtonWrapper}" Height="50" Width="50" HorizontalAlignment="Center" Cursor="Hand" Click="SignIn_Click">
                                     <Grid Style="{DynamicResource HoverEffect}"  Background="Transparent">
-                                        <Path Data="{StaticResource IconLogin}" Fill="White">
+                                        <Path Data="{StaticResource IconLogin}" Fill="White" RenderTransformOrigin="0.05,0">
                                             <Path.RenderTransform>
                                                 <ScaleTransform ScaleX="2" ScaleY="2"/>
                                             </Path.RenderTransform>
@@ -270,6 +270,16 @@
                     </StackPanel>
                     <uc:IconButton Text="Save" Height="30" Margin="0,0,10,10" Width="100" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="UserProfileEditSave_Click"/>
                     <uc:IconButton Text="Back" Kind="Skeleton" BorderThickness="1" Height="30" Margin="10,0,0,10" Width="100" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="Back_Click" Tag="{x:Static local:LoginStep.ChooseProfile}"/>
+                </Grid>
+            </TabItem>
+            <TabItem>
+                <Grid>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="Your Account is pending Admin Approval" FontSize="30" HorizontalAlignment="Center"/>
+                        <mah:ProgressRing HorizontalAlignment="Center" IsActive="True" Margin="0,40,0,0"/>
+                        <TextBlock Text="You can wait or close this screen and check again later." HorizontalAlignment="Center" Margin="0,30,0,0" FontSize="20"/>
+                        <uc:IconButton Text="Back to Profile Selection" Height="30" Width="250" HorizontalAlignment="Center" Margin="0,20,0,0" FontSize="20" Click="Back_Click" Tag="{x:Static local:LoginStep.ChooseProfile}"/>
+                    </StackPanel>
                 </Grid>
             </TabItem>
         </TabControl>

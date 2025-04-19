@@ -83,6 +83,7 @@ namespace gamevault.Helper
             Directory.CreateDirectory(userProfile.ThemesLoadDir);
             Directory.CreateDirectory(userProfile.WebConfigDir);
             Directory.CreateDirectory(userProfile.CloudSaveConfigDir);           
+            Directory.CreateDirectory(userProfile.CacheDir);           
         }
     }
 }

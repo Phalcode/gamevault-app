@@ -72,22 +72,17 @@ namespace gamevault
                 if (result == null || result == false)
                     Shutdown();
                 loginWindow = null;
+#if WINDOWS
                 InitNotifyIcon();
                 InitJumpList();
-                return;
+#endif
             }
             catch (Exception ex)
             {
                 LogUnhandledException(ex);
             }
 
-            //await LoginManager.Instance.StartupLogin();
-            //await LoginManager.Instance.PhalcodeLogin(true);
-
-            //            AnalyticsHelper.Instance.SendCustomEvent(CustomAnalyticsEventKeys.USER_SETTINGS, AnalyticsHelper.Instance.PrepareSettingsForAnalytics());
-
-            //            m_gameTimeTracker = new GameTimeTracker();
-            //            await m_gameTimeTracker.Start();
+            //            AnalyticsHelper.Instance.SendCustomEvent(CustomAnalyticsEventKeys.USER_SETTINGS, AnalyticsHelper.Instance.PrepareSettingsForAnalytics());           
 
             //            bool startMinimizedByPreferences = false;
             //            bool startMinimizedByCLI = false;
@@ -105,18 +100,14 @@ namespace gamevault
             //            if (startMinimizedByCLI && MainWindow != null)
             //            {
             //                MainWindow.Hide();
-            //            }
-            //#if WINDOWS
-            //            InitNotifyIcon();
-            //            InitJumpList();
-            //#endif
+            //            }          
             //            // After the app is created and most things are instantiated, handle any special command line stuff
-            //            if (PipeServiceHandler.Instance != null)
-            //            {
-            //                // Strictly speaking we should hold up all commands until we have a confirmed login & setup is complete, but for now we'll assume that auto-login has worked
-            //                PipeServiceHandler.Instance.IsReadyForCommands = true;
-            //                await PipeServiceHandler.Instance.HandleCommand(App.CommandLineOptions);
-            //            }
+            if (PipeServiceHandler.Instance != null)
+            {
+                // Strictly speaking we should hold up all commands until we have a confirmed login & setup is complete, but for now we'll assume that auto-login has worked
+                PipeServiceHandler.Instance.IsReadyForCommands = true;
+                await PipeServiceHandler.Instance.HandleCommand(App.CommandLineOptions);
+            }
         }
 
         private void AppDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)

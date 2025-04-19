@@ -59,6 +59,17 @@ namespace gamevault.Helper
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
         }
+        internal static async Task<string> BasePostAsync(string url, string payload)
+        {
+            if (BaseHttpClient.DefaultRequestHeaders.Count() == 0)
+            {
+                BaseHttpClient.DefaultRequestHeaders.Add("User-Agent", "GameVault");
+            }
+            var content = new StringContent(payload, Encoding.UTF8, "application/json");
+            var response = await BaseHttpClient.PostAsync(url, content);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
+        }
         internal static async Task<HttpResponseMessage> GetAsync(string url, HttpCompletionOption option = HttpCompletionOption.ResponseContentRead)
         {
             var response = await HttpClient.GetAsync(url, null, option);

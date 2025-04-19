@@ -128,6 +128,7 @@ namespace gamevault.Windows
                 }
                 catch { }
             }
+            PipeServiceHandler.Instance.IsReadyForCommands = true;
         }
         //User Notification for major client/server update 
         private async Task<bool> IsServerTooOutdated()
@@ -269,6 +270,7 @@ namespace gamevault.Windows
             App.Instance.ResetToDefaultTheme();
             LoginManager.Instance.StopOnlineTimer();
             App.Instance.ResetJumpListGames();
+            PipeServiceHandler.Instance.IsReadyForCommands = false;
             this.Close();
         }
     }
