@@ -577,6 +577,17 @@ namespace gamevault.UserControls
             MainWindowViewModel.Instance.AppBarText = "Successfully saved custom Ludusavi Manifests";
         }
 
-
+        private void OpenUserCacheFolder_Click(object sender, RoutedEventArgs e)
+        {
+            if (Directory.Exists(LoginManager.Instance.GetUserProfile().RootDir))
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "explorer.exe",
+                    Arguments = $"\"{LoginManager.Instance.GetUserProfile().RootDir}\"",
+                    UseShellExecute = true
+                });
+            }
+        }
     }
 }

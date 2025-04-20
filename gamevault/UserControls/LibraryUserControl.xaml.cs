@@ -228,7 +228,8 @@ namespace gamevault.UserControls
             uiFilterTagSelector.ClearEntries();
             uiFilterGameStateSelector.ClearEntries();
             uiFilterReleaseDateRangeSelector.ClearSelection();
-
+            uiFilterPublisherSelector.ClearEntries();
+            uiFilterDeveloperSelector.ClearEntries();
             uiFilterBookmarks.IsChecked = false;
             uiFilterEarlyAccess.IsChecked = false;
 

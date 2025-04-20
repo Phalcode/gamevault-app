@@ -615,6 +615,7 @@
                         <TextBlock Text="Developer Settings" FontSize="20" FontWeight="Bold"/>
                         <TextBlock Text="You may need to restart the client for the changes to take effect" Margin="0,5,0,0"/>
                         <mah:ToggleSwitch Header="Target Phalcode TEST backend" IsOn="{Binding DevTargetPhalcodeTestBackend}" Margin="5,15,0,0"/>
+                        <local:IconButton Text="Open User Cache Folder" Height="30" Icon="{StaticResource IconGameSettingsFolder}" FontSize="15" IconMargin="0,0,5,5" Width="200" Margin="0,20,0,0" HorizontalAlignment="Left" Click="OpenUserCacheFolder_Click"/>
                     </StackPanel>
                 </TabItem>
             </TabControl>
