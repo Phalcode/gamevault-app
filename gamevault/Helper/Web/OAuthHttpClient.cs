@@ -25,6 +25,7 @@ namespace gamevault.Helper
         {
             _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd($"GameVault/{SettingsViewModel.Instance.Version}");
+            _httpClient.Timeout = new TimeSpan(0, 0, 20);
         }
         public void InjectTokens(string accessToken, string refreshToken)
         {

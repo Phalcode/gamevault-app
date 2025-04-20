@@ -121,10 +121,11 @@ namespace gamevault.Helper
                 Height = 600,
                 Width = 800,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                ShowInTaskbar = showWindow,
-                Visibility = showWindow ? Visibility.Visible : Visibility.Hidden
             };
-
+            if (!showWindow)
+            {
+                VisualHelper.HideWindow(win);
+            }
             WebView2 uiWebView = new WebView2();
             bool windowClosedByCompleted = false;
 
@@ -205,16 +206,7 @@ namespace gamevault.Helper
 
                 if (completedTask == timeoutTask)
                 {
-                    //windowClosedByCompleted = true;
-                    //win.Close();
-                    //uiWebView.Dispose();
-                    //m_LoginState = LoginState.Error;
-                    //m_LoginMessage = "Authentication timed out.";
-                    //return LoginState.Error;
-                    win.Visibility = Visibility.Visible;
-                    win.ShowInTaskbar = true;
-                    win.Show();
-                    win.Activate();
+                    VisualHelper.RestoreHiddenWindow(win, 600, 800);
                 }
             }
 
@@ -447,7 +439,12 @@ namespace gamevault.Helper
                 string serverResonse = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/status");
                 if (!IsLoggedIn())
                 {
-                    //await StartupLogin();
+                    bool isLoggedInWithOAuth = Preferences.Get(AppConfigKey.IsLoggedInWithOAuth, GetUserProfile().UserConfigFile) == "1";
+                    if (!isLoggedInWithOAuth)
+                    {
+                        string[] credencials = WebHelper.GetCredentials();
+                        await Login(GetUserProfile().ServerUrl, credencials[0], credencials[1]);
+                    }
                     if (IsLoggedIn())
                     {
                         MainWindowViewModel.Instance.OnlineState = System.Windows.Visibility.Collapsed;

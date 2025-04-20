@@ -235,11 +235,11 @@ namespace gamevault.Windows
                     ViewModel.LoginStepIndex = (int)LoginStep.PendingActivation;
                     while (ViewModel.LoginStepIndex == (int)LoginStep.PendingActivation)
                     {
-                        await Task.Delay(5000);
                         if (await LoginManager.Instance.Login(ViewModel.SignupUser.ServerUrl, ViewModel.SignupUser.Username, ViewModel.SignupUser.Password) == LoginState.Success && LoginManager.Instance.GetCurrentUser() != null && LoginManager.Instance.GetCurrentUser().Activated == true)
                         {//To Do: The Login Method should check itself if the user is activated or not.
 
                         }
+                        await Task.Delay(5000);
                     }
                 }
             }

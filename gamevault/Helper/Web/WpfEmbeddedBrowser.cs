@@ -23,14 +23,9 @@ namespace gamevault.Helper
             {
                 signinWindow = new Window()
                 {
-                    Width = 0,
-                    Height = 0,
-                    Title = "Phalcode Silent Sign-in",
-                    WindowStartupLocation = WindowStartupLocation.Manual,
-                    Top = int.MinValue,
-                    Left = int.MinValue,
-                    ShowInTaskbar = false,
+                    Title = "Phalcode Silent Sign-in"
                 };
+                VisualHelper.HideWindow(signinWindow);
             }
             else
             {
@@ -101,7 +96,7 @@ namespace gamevault.Helper
             {
                 AdditionalBrowserArguments = "--disk-cache-size=1000000"
             };
-           
+
             if (!Directory.Exists(ProfileManager.PhalcodeDir))
                 Directory.CreateDirectory(ProfileManager.PhalcodeDir);
 
@@ -124,16 +119,8 @@ namespace gamevault.Helper
         {
             if (signinWindow.ShowInTaskbar == false)
             {
-                signinWindow.Width = 600;
-                signinWindow.Height = 800;
+                VisualHelper.RestoreHiddenWindow(signinWindow, 800, 600);
                 signinWindow.Title = "Phalcode Sign-in";
-                signinWindow.ShowInTaskbar = true;
-                double screenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;
-                double screenHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
-                double windowWidth = signinWindow.Width;
-                double windowHeight = signinWindow.Height;
-                signinWindow.Left = (screenWidth / 2) - (windowWidth / 2);
-                signinWindow.Top = (screenHeight / 2) - (windowHeight / 2);
             }
         }
         public void ClearAllCookies()
