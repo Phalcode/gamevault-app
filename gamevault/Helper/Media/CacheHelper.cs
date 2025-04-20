@@ -4,6 +4,7 @@ using ImageMagick;
 using LiveChartsCore.Drawing;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -175,35 +176,46 @@ namespace gamevault.Helper
         {
             await Task.Run(() =>
             {
-                double maxHeight = SystemParameters.FullPrimaryScreenHeight / 2;
-                var files = Directory.GetFiles(LoginManager.Instance.GetUserProfile().ImageCacheDir, "*.*", SearchOption.AllDirectories);
-                foreach (string file in files)
+                try
                 {
-                    try
+                    double maxHeight = SystemParameters.FullPrimaryScreenHeight / 2;
+                    string imageOptimizationMetadata = Path.Combine(LoginManager.Instance.GetUserProfile().ImageCacheDir, "optmetadata");
+
+                    bool lastOptimizedSet = DateTime.TryParse(Preferences.Get(AppConfigKey.LastImageOptimization, imageOptimizationMetadata), out DateTime lastOptimized);
+                    var files = Directory.GetFiles(LoginManager.Instance.GetUserProfile().ImageCacheDir, "*.*", SearchOption.AllDirectories);
+                    foreach (string file in files)
                     {
-                        var image = new FileInfo(file);
-                        if (image.Length > 0)
+                        try
                         {
-                            if (file.Contains("uico"))
+                            var image = new FileInfo(file);
+                            if (!lastOptimizedSet || lastOptimized < image.LastWriteTime)
                             {
-                                if (GifHelper.IsGif(file))
+                                if (image.Length > 0)
                                 {
-                                    uint maxGifHeightWidth = 400;
-                                    GifHelper.OptimizeGIF(file, maxGifHeightWidth);
+                                    if (file.Contains("uico"))
+                                    {
+                                        if (GifHelper.IsGif(file))
+                                        {
+                                            uint maxGifHeightWidth = 400;
+                                            GifHelper.OptimizeGIF(file, maxGifHeightWidth);
+                                            image.Refresh();
+                                            continue;
+                                        }
+                                    }
+                                    ResizeImage(file, Convert.ToUInt32(maxHeight));
                                     image.Refresh();
-                                    continue;
+                                }
+                                else
+                                {
+                                    File.Delete(file);
                                 }
                             }
-                            ResizeImage(file, Convert.ToUInt32(maxHeight));
-                            image.Refresh();
                         }
-                        else
-                        {
-                            File.Delete(file);
-                        }
+                        catch { }
                     }
-                    catch { }
+                    Preferences.Set(AppConfigKey.LastImageOptimization, DateTime.Now.ToString(), imageOptimizationMetadata);
                 }
+                catch { }
             });
         }
         internal static async Task<string> CreateHashAsync(string input)
@@ -233,9 +245,12 @@ namespace gamevault.Helper
         }
         internal static string GetUserProfileAvatarPath(UserProfile profile)
         {
-            if (int.TryParse(Preferences.Get(AppConfigKey.UserID, profile.UserConfigFile), out int userId))
+            if (Directory.Exists(Path.Combine(profile.ImageCacheDir, "uico")))
             {
-                return Directory.GetFiles(Path.Combine(profile.ImageCacheDir, "uico"), $"{userId}.*", SearchOption.AllDirectories).FirstOrDefault() ?? "";
+                if (int.TryParse(Preferences.Get(AppConfigKey.UserID, profile.UserConfigFile), out int userId))
+                {
+                    return Directory.GetFiles(Path.Combine(profile.ImageCacheDir, "uico"), $"{userId}.*", SearchOption.AllDirectories).FirstOrDefault() ?? "";
+                }
             }
             return "";
         }
