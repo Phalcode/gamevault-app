@@ -116,7 +116,7 @@ namespace gamevault.Helper
             var jsonBytes = Convert.FromBase64String(Base64UrlDecode(payload));
 
             var json = JsonSerializer.Deserialize<JwtPayload>(Encoding.UTF8.GetString(jsonBytes));
-            return json?.Exp == null || DateTimeOffset.FromUnixTimeSeconds(json.Exp) <= DateTimeOffset.UtcNow.AddMinutes(-1);
+            return json?.Exp == null || DateTimeOffset.FromUnixTimeSeconds(json.Exp) <= DateTimeOffset.UtcNow.AddMinutes(1);
         }
 
         private string Base64UrlDecode(string input)
