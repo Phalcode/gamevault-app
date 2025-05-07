@@ -10,7 +10,7 @@
         xmlns:helper="clr-namespace:gamevault.Helper"
         mc:Ignorable="d"                
         Title="GameVault" TitleForeground="Transparent" WindowTitleBrush="Transparent" NonActiveWindowTitleBrush="Transparent" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}"
-        Height="500" Width="720" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Loaded="LoginWindow_Loaded">
+        Height="500" Width="720" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Loaded="LoginWindow_Loaded" Closing="MetroWindow_Closing">
     <mah:MetroWindow.Resources>
         <conv:InverseBoolConverter x:Key="invBoolConv"/>
     </mah:MetroWindow.Resources>

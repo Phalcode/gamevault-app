@@ -210,12 +210,11 @@ namespace gamevault
         }
         private void NotifyIcon_DoubleClick(Object sender, EventArgs e)
         {
-            if (MainWindow == null)
-            {
-                MainWindow = new MainWindow();
-                MainWindow.Show();
-            }
-            else if (MainWindow.IsVisible == false)
+
+            if (MainWindow == null || MainWindow.GetType() != typeof(MainWindow))
+                return;
+
+            if (MainWindow.IsVisible == false)
             {
                 MainWindow.Show();
             }

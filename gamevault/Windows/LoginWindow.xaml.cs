@@ -437,5 +437,13 @@ namespace gamevault.Windows
             }
             catch { }
         }
+
+        private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (!App.HideToSystemTray)
+            {
+                App.Current.Shutdown();
+            }
+        }
     }
 }
