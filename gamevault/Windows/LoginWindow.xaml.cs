@@ -204,9 +204,9 @@ namespace gamevault.Windows
                 if (ViewModel.RememberMe)
                 {
                     Preferences.Set(AppConfigKey.LastUserProfile, profile.RootDir, ProfileManager.ProfileConfigFile);
-                }
+                }                
                 App.Current.MainWindow = new MainWindow();
-                App.Current.MainWindow.Show();
+                //Window Visibility will be determined by the protocol handler
                 try
                 {
                     this.DialogResult = true;//will throw error, if its called from the MainWindow

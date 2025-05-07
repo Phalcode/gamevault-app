@@ -56,9 +56,9 @@ namespace gamevault
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            //AnalyticsHelper.Instance.InitHeartBeat();
-            //AnalyticsHelper.Instance.RegisterGlobalEvents();
-            //AnalyticsHelper.Instance.SendCustomEvent(CustomAnalyticsEventKeys.APP_INITIALIZED, AnalyticsHelper.Instance.GetSysInfo());          
+            AnalyticsHelper.Instance.InitHeartBeat();
+            AnalyticsHelper.Instance.RegisterGlobalEvents();
+            AnalyticsHelper.Instance.SendCustomEvent(CustomAnalyticsEventKeys.APP_INITIALIZED, AnalyticsHelper.Instance.GetSysInfo());
         }
 
         private async void Application_Startup(object sender, StartupEventArgs e)
@@ -82,7 +82,7 @@ namespace gamevault
                 LogUnhandledException(ex);
             }
 
-            //            AnalyticsHelper.Instance.SendCustomEvent(CustomAnalyticsEventKeys.USER_SETTINGS, AnalyticsHelper.Instance.PrepareSettingsForAnalytics());           
+            //AnalyticsHelper.Instance.SendCustomEvent(CustomAnalyticsEventKeys.USER_SETTINGS, AnalyticsHelper.Instance.PrepareSettingsForAnalytics());
 
             //            bool startMinimizedByPreferences = false;
             //            bool startMinimizedByCLI = false;

@@ -45,6 +45,7 @@ namespace gamevault.Windows
                     await GameTimeTracker.Start();
                 }
             });
+            AnalyticsHelper.Instance.SendCustomEvent(CustomAnalyticsEventKeys.USER_SETTINGS, AnalyticsHelper.Instance.PrepareSettingsForAnalytics());
         }
         private async void HamburgerMenuControl_OnItemInvoked(object sender, HamburgerMenuItemInvokedEventArgs args)
         {
