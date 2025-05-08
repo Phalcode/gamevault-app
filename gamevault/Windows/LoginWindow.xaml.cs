@@ -107,27 +107,31 @@ namespace gamevault.Windows
             int loginStep = (int)((FrameworkElement)sender).Tag;
             ViewModel.LoginStepIndex = loginStep;
         }
-
+        private UserProfile SetupUserProfile(LoginUser user)
+        {
+            string cleanedServerUrl = RemoveSpecialCharacters(user.ServerUrl);
+            UserProfile profile = ProfileManager.CreateUserProfile(cleanedServerUrl);
+            profile.ServerUrl = user.ServerUrl;
+            Preferences.Set(AppConfigKey.ServerUrl, user.ServerUrl, profile.UserConfigFile);
+            if (!user.IsLoggedInWithOAuth)
+            {
+                profile.Name = user.Username;
+                ViewModel.UserProfiles.Add(profile);
+                Preferences.Set(AppConfigKey.Username, user.Username, profile.UserConfigFile);
+                Preferences.Set(AppConfigKey.Password, user.Password, profile.UserConfigFile, true);
+            }
+            else
+            {
+                Preferences.Set(AppConfigKey.IsLoggedInWithOAuth, "1", profile.UserConfigFile);
+            }
+            return profile;
+        }
         private async void SaveAndLogin_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 ValidateSignInData(ViewModel.LoginUser);
-                string cleanedServerUrl = RemoveSpecialCharacters(ViewModel.LoginUser.ServerUrl);
-                UserProfile profile = ProfileManager.CreateUserProfile(RemoveSpecialCharacters(cleanedServerUrl));
-                profile.ServerUrl = ViewModel.LoginUser.ServerUrl;
-                Preferences.Set(AppConfigKey.ServerUrl, ViewModel.LoginUser.ServerUrl, profile.UserConfigFile);
-                if (!ViewModel.LoginUser.IsLoggedInWithOAuth)
-                {
-                    profile.Name = ViewModel.LoginUser.Username;
-                    ViewModel.UserProfiles.Add(profile);
-                    Preferences.Set(AppConfigKey.Username, ViewModel.LoginUser.Username, profile.UserConfigFile);
-                    Preferences.Set(AppConfigKey.Password, ViewModel.LoginUser.Password, profile.UserConfigFile, true);
-                }
-                else
-                {
-                    Preferences.Set(AppConfigKey.IsLoggedInWithOAuth, "1", profile.UserConfigFile);
-                }
+                UserProfile profile = SetupUserProfile(ViewModel.LoginUser);
                 ViewModel.LoginUser = new LoginUser();//Reset
                 RemoveDemoUserIfExists();
                 await Login(profile, true);
@@ -204,9 +208,13 @@ namespace gamevault.Windows
                 if (ViewModel.RememberMe)
                 {
                     Preferences.Set(AppConfigKey.LastUserProfile, profile.RootDir, ProfileManager.ProfileConfigFile);
-                }                
+                }
                 App.Current.MainWindow = new MainWindow();
-                //Window Visibility will be determined by the protocol handler
+                if(!PipeServiceHandler.Instance.IsAppStartup && !SettingsViewModel.Instance.BackgroundStart)
+                {
+                    App.Current.MainWindow.Show();
+                }
+                //First Startup Window Visibility will be determined by the protocol handler
                 try
                 {
                     this.DialogResult = true;//will throw error, if its called from the MainWindow
@@ -226,22 +234,36 @@ namespace gamevault.Windows
             {
                 ValidateSignUpData();
                 LoginState state = await LoginManager.Instance.Register(ViewModel.SignupUser);
-                //if (state != LoginState.Error)
-                //{
-                //    ViewModel.SignupUser = new LoginUser();
-                //}
-                if (state == LoginState.NotActivated)
+                UserProfile profile = null;
+                if (state != LoginState.Error)
+                {
+                    profile = SetupUserProfile(ViewModel.SignupUser);
+                    if (profile == null)
+                    {
+                        ViewModel.AppBarText = "Failed to setup User Profile";
+                        return;
+                    }
+                }
+                if (state == LoginState.Success)
+                {
+                    await Login(profile, true);
+                    return;
+                }
+                else if (state == LoginState.NotActivated)
                 {
                     ViewModel.LoginStepIndex = (int)LoginStep.PendingActivation;
                     while (ViewModel.LoginStepIndex == (int)LoginStep.PendingActivation)
                     {
-                        if (await LoginManager.Instance.Login(ViewModel.SignupUser.ServerUrl, ViewModel.SignupUser.Username, ViewModel.SignupUser.Password) == LoginState.Success && LoginManager.Instance.GetCurrentUser() != null && LoginManager.Instance.GetCurrentUser().Activated == true)
-                        {//To Do: The Login Method should check itself if the user is activated or not.
-
+                        LoginState loginState = await LoginManager.Instance.Login(ViewModel.SignupUser.ServerUrl, ViewModel.SignupUser.Username, ViewModel.SignupUser.Password);
+                        if (loginState == LoginState.Success && LoginManager.Instance.GetCurrentUser() != null)
+                        {
+                            await Login(profile, true);
                         }
                         await Task.Delay(5000);
                     }
+                    return;
                 }
+                ViewModel.AppBarText = LoginManager.Instance.GetServerLoginResponseMessage();
             }
             catch (Exception ex)
             {

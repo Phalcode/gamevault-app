@@ -46,6 +46,7 @@ namespace gamevault.Windows
                 }
             });
             AnalyticsHelper.Instance.SendCustomEvent(CustomAnalyticsEventKeys.USER_SETTINGS, AnalyticsHelper.Instance.PrepareSettingsForAnalytics());
+            PipeServiceHandler.Instance.IsReadyForCommands = true;
         }
         private async void HamburgerMenuControl_OnItemInvoked(object sender, HamburgerMenuItemInvokedEventArgs args)
         {
@@ -128,8 +129,7 @@ namespace gamevault.Windows
                     }
                 }
                 catch { }
-            }
-            PipeServiceHandler.Instance.IsReadyForCommands = true;
+            }           
         }
         //User Notification for major client/server update 
         private async Task<bool> IsServerTooOutdated()

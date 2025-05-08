@@ -69,7 +69,7 @@ namespace gamevault
                 _isReadyForCommands = value;
             }
         }
-
+        public bool IsAppStartup = true;
         private PipeServiceHandler()
         {
         }
@@ -411,7 +411,10 @@ namespace gamevault
                     // You should really implement new actions that you add
                     throw new NotImplementedException($"Action {options.Action} not implemented");
             }
-            showMainWindow = !SettingsViewModel.Instance.BackgroundStart;
+            if (IsAppStartup)
+            {
+                showMainWindow = !SettingsViewModel.Instance.BackgroundStart;
+            }
             if (options.Minimized.HasValue)
             {
                 // If we're provided a Minimized value then we can explicitly use that for whether or not to be shown
@@ -443,7 +446,7 @@ namespace gamevault
                 if (task != null)
                     await task;
             }
-
+            IsAppStartup = false;
             return null;
         }
 

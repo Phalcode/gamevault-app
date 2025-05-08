@@ -43,7 +43,11 @@ namespace gamevault.Helper
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authValue);
 
             var response = await _httpClient.GetAsync($"{ServerUrl}/api/auth/basic/login");
-            if (!response.IsSuccessStatusCode) return false;
+
+            if (!response.IsSuccessStatusCode || response.StatusCode == System.Net.HttpStatusCode.NoContent)
+            {
+                throw new HttpRequestException(await response.Content.ReadAsStringAsync(), null, response.StatusCode);
+            }
 
             var responseContent = await response.Content.ReadAsStringAsync();
             var json = JsonSerializer.Deserialize<AuthResponse>(responseContent);
@@ -59,8 +63,7 @@ namespace gamevault.Helper
         {
             if (string.IsNullOrEmpty(_accessToken))
             {
-                if (!await LoginBasicAuthAsync(UserName, Password))
-                    throw new InvalidOperationException("Not authenticated.");
+                await LoginBasicAuthAsync(UserName, Password);
             }
 
             if (IsTokenExpired(_accessToken) && !await RefreshTokenAsync())

@@ -104,7 +104,7 @@ namespace gamevault.Helper
             {
                 string code = WebExceptionHelper.GetServerStatusCode(ex);
                 state = DetermineLoginState(code);
-                if (state == LoginState.Error)
+                if (state != LoginState.Success)
                 {
                     m_LoginMessage = WebExceptionHelper.TryGetServerMessage(ex);
                 }
@@ -411,6 +411,10 @@ namespace gamevault.Helper
                 case "403":
                     {
                         return LoginState.Forbidden;
+                    }
+                case "204":
+                    {
+                        return LoginState.NotActivated;
                     }
             }
             return LoginState.Error;
