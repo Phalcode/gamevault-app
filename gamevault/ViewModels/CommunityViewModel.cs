@@ -15,6 +15,7 @@ namespace gamevault.ViewModels
         private User[]? m_Users { get; set; }
         private User? m_CurrentShownUser { get; set; }
         private List<Progress> m_UserProgresses { get; set; }
+        private bool loadingUser { get; set; }
 
         #endregion
         public User[]? Users
@@ -30,15 +31,15 @@ namespace gamevault.ViewModels
                 m_CurrentShownUser = value;
                 UserProgresses = new List<Progress>(m_CurrentShownUser.Progresses);
                 m_CurrentShownUser.Progresses = null;
-                OnPropertyChanged();               
+                OnPropertyChanged();
             }
         }
-        
+
         public List<Progress> UserProgresses
         {
             get
             {
-                if(m_UserProgresses== null)
+                if (m_UserProgresses == null)
                 {
                     m_UserProgresses = new List<Progress>();
                 }
@@ -48,6 +49,11 @@ namespace gamevault.ViewModels
             {
                 m_UserProgresses = value; OnPropertyChanged();
             }
+        }
+        public bool LoadingUser
+        {
+            get { return loadingUser; }
+            set { loadingUser = value; OnPropertyChanged(); }
         }
         public string[] SortBy
         {

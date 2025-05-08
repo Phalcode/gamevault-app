@@ -16,6 +16,37 @@
         <conv:GameTimeConverter x:Key="gameTimeConv"/>
         <conv:UTCtoLocalTimeConverter x:Key="UtcTimeConv"/>
         <conv:InverseNullConverter x:Key="inverseNullConv"/>
+
+        <!-- Animation for skeleton loading effect -->
+        <Storyboard x:Key="SkeletonLoadingAnimation">
+            <DoubleAnimation
+            Storyboard.TargetProperty="(UIElement.OpacityMask).(LinearGradientBrush.GradientStops)[0].Offset"
+            From="-1" To="2" Duration="0:0:1.5"
+            RepeatBehavior="Forever" />
+            <DoubleAnimation
+            Storyboard.TargetProperty="(UIElement.OpacityMask).(LinearGradientBrush.GradientStops)[1].Offset"
+            From="-0.5" To="2.5" Duration="0:0:1.5"
+            RepeatBehavior="Forever" />
+            <DoubleAnimation
+            Storyboard.TargetProperty="(UIElement.OpacityMask).(LinearGradientBrush.GradientStops)[2].Offset"
+            From="0" To="3" Duration="0:0:1.5"
+            RepeatBehavior="Forever" />
+        </Storyboard>
+
+        <!-- Style for skeleton loading borders -->
+        <Style x:Key="SkeletonBorderStyle" TargetType="Border">
+            <Setter Property="Background" Value="#FFEFEFEF"/>
+            <Setter Property="CornerRadius" Value="5"/>
+            <Setter Property="OpacityMask">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="#02FFFFFF" Offset="-1"/>
+                        <GradientStop Color="#FFFFFFFF" Offset="-0.5"/>
+                        <GradientStop Color="#02FFFFFF" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -35,6 +66,28 @@
             </Grid.ColumnDefinitions>
             <Viewbox Grid.RowSpan="2" Grid.ColumnSpan="3" Stretch="UniformToFill" HorizontalAlignment="Center">
                 <local:CacheImage ImageCacheType="UserBackground" Data="{Binding Path=CurrentShownUser}"/>
+            </Viewbox>
+            <Viewbox Stretch="UniformToFill" Grid.ColumnSpan="3" Panel.ZIndex="1">
+                <Viewbox.Style>
+                    <Style TargetType="Viewbox">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding LoadingUser}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Viewbox.Style>
+                <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
+                    <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Opacity="0.8" Width="286" CornerRadius="5" Margin="0,5,143,4"/>
+                    <StackPanel Orientation="Horizontal" x:Name="LoadingPlaceholder" Height="450" Width="1000">
+                        <Border x:Name="SkeletonBorder1" Style="{StaticResource SkeletonBorderStyle}" Height="77" Width="77" Margin="289,-357,0,0"/>
+                        <StackPanel Margin="0,50,0,0">
+                            <Border x:Name="SkeletonBorder2" Style="{StaticResource SkeletonBorderStyle}" Height="15" Width="130" Margin="5,0,0,0" HorizontalAlignment="Left"/>
+                            <Border x:Name="SkeletonBorder3" Style="{StaticResource SkeletonBorderStyle}" Height="15" Width="195" Margin="5,5,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
             </Viewbox>
             <Border Grid.Column="1" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Opacity="0.8" CornerRadius="10" Margin="0,10,0,10" MaxWidth="800"/>
             <DockPanel Grid.Column="1" LastChildFill="True" Background="Transparent" Margin="0,10,0,0" MaxWidth="800">
@@ -79,9 +132,7 @@
 
                             <ComboBox x:Name="uiSortBy" ItemsSource="{Binding SortBy}" SelectionChanged="SortBy_SelectionChanged"/>
                         </StackPanel>
-
                     </Grid>
-
                 </Viewbox>
                 <ScrollViewer x:Name="uiProgressScrollView" Margin="10,10,0,20" VerticalAlignment="Top">
                     <Viewbox>

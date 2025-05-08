@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 
 namespace gamevault.UserControls
 {
@@ -19,6 +20,9 @@ namespace gamevault.UserControls
     {
         private CommunityViewModel ViewModel { get; set; }
         private int forceShowId = -1;
+
+        private Storyboard skeletonAnimation;
+        private List<Border> skeletonBorders = new List<Border>();
         public CommunityUserControl()
         {
             InitializeComponent();
@@ -38,6 +42,7 @@ namespace gamevault.UserControls
             {
                 try
                 {
+                    InitUserLoadingAnimation();
                     await InitUserList();
                 }
                 catch
@@ -45,6 +50,27 @@ namespace gamevault.UserControls
                     MainWindowViewModel.Instance.AppBarText = "Can not access community tab while offline";
                 }
             }
+        }
+        private void InitUserLoadingAnimation()
+        {
+            try
+            {
+                ViewModel.LoadingUser = true;
+                skeletonAnimation = (Storyboard)FindResource("SkeletonLoadingAnimation");
+                skeletonBorders.Add((Border)FindName("SkeletonBorder1"));
+                skeletonBorders.Add((Border)FindName("SkeletonBorder2"));
+                skeletonBorders.Add((Border)FindName("SkeletonBorder3"));
+                if (skeletonAnimation != null)
+                {
+                    foreach (var border in skeletonBorders)
+                    {
+                        Storyboard.SetTarget(skeletonAnimation, border);
+                        skeletonAnimation.Begin();
+                    }
+                    LoadingPlaceholder.Visibility = Visibility.Visible;
+                }
+            }
+            catch { }
         }
         public async Task InitUserList()
         {
@@ -125,9 +151,10 @@ namespace gamevault.UserControls
                 {
                     selectedUserId = ((User)e.AddedItems[0]).ID;
                 }
+                ViewModel.LoadingUser = true;
                 string currentShownUser = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/{selectedUserId}");
                 ViewModel.CurrentShownUser = JsonSerializer.Deserialize<User>(currentShownUser);
-
+                ViewModel.LoadingUser = false;
                 string lastSort = TryGetLastProgressSort();
                 if (uiSortBy.SelectedValue?.ToString()?.Replace("\"", "") == lastSort)
                 {
@@ -139,7 +166,11 @@ namespace gamevault.UserControls
                 }
 
             }
-            catch (Exception ex) { MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex); }
+            catch (Exception ex)
+            {
+                ViewModel.LoadingUser = false;
+                MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
+            }
         }
         private string TryGetLastProgressSort()
         {
