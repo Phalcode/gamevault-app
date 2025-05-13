@@ -80,6 +80,9 @@ namespace gamevault.ViewModels
             UserName = Preferences.Get(AppConfigKey.Username, userConfigFile);            
             ServerUrl = Preferences.Get(AppConfigKey.ServerUrl, userConfigFile);
 
+            string rootDirectoriesString = Preferences.Get(AppConfigKey.RootDirectories, userConfigFile);
+            RootDirectories = string.IsNullOrWhiteSpace(rootDirectoriesString) ? null! : new ObservableCollection<DirectoryEntry>(rootDirectoriesString.Split(';').Select(part => new DirectoryEntry { Uri = part }).ToList());
+
             string showMappedTitleString = Preferences.Get(AppConfigKey.ShowMappedTitle, userConfigFile);
             showMappedTitle = showMappedTitleString == "1" || showMappedTitleString == "";
             //Setting the private members to avoid writing to the user config file over and over again
@@ -124,10 +127,7 @@ namespace gamevault.ViewModels
             usePrimaryCloudSaveManifest = usePrimaryCloudSaveManifestString == "1" || usePrimaryCloudSaveManifestString == "";
 
             string customCloudSaveManifestsString = Preferences.Get(AppConfigKey.CustomCloudSaveManifests, userConfigFile);
-            customCloudSaveManifests = string.IsNullOrWhiteSpace(customCloudSaveManifestsString) ? null! : new ObservableCollection<DirectoryEntry>(customCloudSaveManifestsString.Split(';').Select(part => new DirectoryEntry { Uri = part }).ToList());
-
-            string rootDirectoriesString = Preferences.Get(AppConfigKey.RootDirectories, userConfigFile);
-            rootDirectories = string.IsNullOrWhiteSpace(rootDirectoriesString) ? null! : new ObservableCollection<DirectoryEntry>(rootDirectoriesString.Split(';').Select(part => new DirectoryEntry { Uri = part }).ToList());
+            customCloudSaveManifests = string.IsNullOrWhiteSpace(customCloudSaveManifestsString) ? null! : new ObservableCollection<DirectoryEntry>(customCloudSaveManifestsString.Split(';').Select(part => new DirectoryEntry { Uri = part }).ToList());           
 
             string mountIsoString = Preferences.Get(AppConfigKey.MountIso, userConfigFile);
             mountIso = mountIsoString == "1";
