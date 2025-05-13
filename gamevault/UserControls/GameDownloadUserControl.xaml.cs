@@ -33,7 +33,8 @@ namespace gamevault.UserControls
         private bool isGameTypeForced = false;
         private double downloadRetryTimerTickValue = 10;
         private string mountedDrive = "";
-        public GameDownloadUserControl(Game game, bool download)
+
+        public GameDownloadUserControl(Game game, string rootDirectory, bool download)
         {
             InitializeComponent();
             ViewModel = new GameDownloadViewModel();
@@ -43,9 +44,9 @@ namespace gamevault.UserControls
             ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
             ViewModel.DownloadFailedVisibility = System.Windows.Visibility.Hidden;
 
-            m_DownloadPath = $"{SettingsViewModel.Instance.RootPath}\\GameVault\\Downloads\\({ViewModel.Game.ID}){ViewModel.Game.Title}";
+            m_DownloadPath = $"{rootDirectory}\\GameVault\\Downloads\\({ViewModel.Game.ID}){ViewModel.Game.Title}";
             m_DownloadPath = m_DownloadPath.Replace(@"\\", @"\");
-            ViewModel.InstallPath = $"{SettingsViewModel.Instance.RootPath}\\GameVault\\Installations\\({ViewModel.Game.ID}){ViewModel.Game.Title}";
+            ViewModel.InstallPath = $"{rootDirectory}\\GameVault\\Installations\\({ViewModel.Game.ID}){ViewModel.Game.Title}";
             ViewModel.InstallPath = ViewModel.InstallPath.Replace(@"\\", @"\");
             sevenZipHelper = new SevenZipHelper();
             gameSizeConverter = new GameSizeConverter();
@@ -462,7 +463,7 @@ namespace gamevault.UserControls
             {
                 return string.Empty;
             }
-        }     
+        }
         private async Task Extract()
         {
             if (!Directory.Exists(m_DownloadPath))
@@ -509,7 +510,7 @@ namespace gamevault.UserControls
             bool isEncrypted = await sevenZipHelper.IsArchiveEncrypted($"{m_DownloadPath}\\{files[0].Name}");
             if (isEncrypted)
             {
-                string extractionPassword = Preferences.Get(AppConfigKey.ExtractionPassword,LoginManager.Instance.GetUserProfile().UserConfigFile, true);
+                string extractionPassword = Preferences.Get(AppConfigKey.ExtractionPassword, LoginManager.Instance.GetUserProfile().UserConfigFile, true);
                 if (string.IsNullOrEmpty(extractionPassword))
                 {
                     extractionPassword = await ((MetroWindow)App.Current.MainWindow).ShowInputAsync("Exctraction Message", "Your Archive reqires a Password to extract");

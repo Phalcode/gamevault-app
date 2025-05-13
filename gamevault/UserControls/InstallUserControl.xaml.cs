@@ -45,10 +45,21 @@ namespace gamevault.UserControls
             Dictionary<int, string> foundGames = new Dictionary<int, string>();
             Game[]? games = await Task<Game[]>.Run(async () =>
             {
-                string installationPath = Path.Combine(SettingsViewModel.Instance.RootPath, "GameVault\\Installations");
-                if (SettingsViewModel.Instance.RootPath != string.Empty && Directory.Exists(installationPath))
+               
+                //string installationPath = Path.Combine(SettingsViewModel.Instance.RootPath, "GameVault\\Installations");
+                if (SettingsViewModel.Instance.RootDirectories.Count > 0)
                 {
-                    foreach (string dir in Directory.GetDirectories(installationPath))
+
+
+                    List<string> allDirectoriesFromRootDirectories = new List<string>();
+                    foreach (DirectoryEntry dirEntry in SettingsViewModel.Instance.RootDirectories)
+                    {
+                        if (Directory.Exists(Path.Combine(dirEntry.Uri, "GameVault", "Installations")))
+                            allDirectoriesFromRootDirectories.AddRange(Directory.GetDirectories(Path.Combine(dirEntry.Uri, "GameVault", "Installations")));
+                    }
+
+
+                    foreach (string dir in allDirectoriesFromRootDirectories)
                     {
                         var dirInf = new DirectoryInfo(dir);
                         if (dirInf.GetFiles().Length == 0 && dirInf.GetDirectories().Length == 0)

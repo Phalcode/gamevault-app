@@ -36,8 +36,6 @@ namespace gamevault.ViewModels
         #endregion
         #region PrivateMembers       
         private string m_UserName { get; set; }
-        private string m_RootPath { get; set; }
-
         private bool m_BackgroundStart { get; set; }
         private bool m_LibStartup { get; set; }
         private bool m_AutoExtract { get; set; }
@@ -60,7 +58,8 @@ namespace gamevault.ViewModels
         private bool cloudSaves { get; set; }
         private bool isCommunityThemeSelected { get; set; }
         private bool usePrimaryCloudSaveManifest { get; set; }
-        private ObservableCollection<LudusaviManifestEntry> customCloudSaveManifests;
+        private ObservableCollection<DirectoryEntry> customCloudSaveManifests;
+        private ObservableCollection<DirectoryEntry> rootDirectories;
         private bool mountIso { get; set; }
         //DevMode
         private bool devModeEnabled { get; set; }
@@ -78,8 +77,7 @@ namespace gamevault.ViewModels
         {
             userConfigFile = LoginManager.Instance.GetUserProfile().UserConfigFile;
 
-            UserName = Preferences.Get(AppConfigKey.Username, userConfigFile);
-            RootPath = Preferences.Get(AppConfigKey.RootPath, userConfigFile);
+            UserName = Preferences.Get(AppConfigKey.Username, userConfigFile);            
             ServerUrl = Preferences.Get(AppConfigKey.ServerUrl, userConfigFile);
 
             string showMappedTitleString = Preferences.Get(AppConfigKey.ShowMappedTitle, userConfigFile);
@@ -126,7 +124,10 @@ namespace gamevault.ViewModels
             usePrimaryCloudSaveManifest = usePrimaryCloudSaveManifestString == "1" || usePrimaryCloudSaveManifestString == "";
 
             string customCloudSaveManifestsString = Preferences.Get(AppConfigKey.CustomCloudSaveManifests, userConfigFile);
-            customCloudSaveManifests = string.IsNullOrWhiteSpace(customCloudSaveManifestsString) ? null! : new ObservableCollection<LudusaviManifestEntry>(customCloudSaveManifestsString.Split(';').Select(part => new LudusaviManifestEntry { Uri = part }).ToList());
+            customCloudSaveManifests = string.IsNullOrWhiteSpace(customCloudSaveManifestsString) ? null! : new ObservableCollection<DirectoryEntry>(customCloudSaveManifestsString.Split(';').Select(part => new DirectoryEntry { Uri = part }).ToList());
+
+            string rootDirectoriesString = Preferences.Get(AppConfigKey.RootDirectories, userConfigFile);
+            rootDirectories = string.IsNullOrWhiteSpace(rootDirectoriesString) ? null! : new ObservableCollection<DirectoryEntry>(rootDirectoriesString.Split(';').Select(part => new DirectoryEntry { Uri = part }).ToList());
 
             string mountIsoString = Preferences.Get(AppConfigKey.MountIso, userConfigFile);
             mountIso = mountIsoString == "1";
@@ -172,11 +173,6 @@ namespace gamevault.ViewModels
         {
             get { return m_UserName; }
             set { m_UserName = value; OnPropertyChanged(); }
-        }
-        public string RootPath
-        {
-            get { return m_RootPath; }
-            set { m_RootPath = value; OnPropertyChanged(); }
         }
         public bool BackgroundStart
         {
@@ -389,17 +385,29 @@ namespace gamevault.ViewModels
             }
             set { usePrimaryCloudSaveManifest = value; Preferences.Set(AppConfigKey.UsePrimaryCloudSaveManifest, usePrimaryCloudSaveManifest ? "1" : "0", userConfigFile); OnPropertyChanged(); }
         }
-        public ObservableCollection<LudusaviManifestEntry> CustomCloudSaveManifests
+        public ObservableCollection<DirectoryEntry> CustomCloudSaveManifests
         {
             get
             {
                 if (customCloudSaveManifests == null)
                 {
-                    customCloudSaveManifests = new ObservableCollection<LudusaviManifestEntry>();
+                    customCloudSaveManifests = new ObservableCollection<DirectoryEntry>();
                 }
                 return customCloudSaveManifests;
             }
             set { customCloudSaveManifests = value; OnPropertyChanged(); }
+        }
+        public ObservableCollection<DirectoryEntry> RootDirectories
+        {
+            get
+            {
+                if (rootDirectories == null)
+                {
+                    rootDirectories = new ObservableCollection<DirectoryEntry>();
+                }
+                return rootDirectories;
+            }
+            set { rootDirectories = value; OnPropertyChanged(); }
         }
         public bool MountIso
         {
@@ -409,34 +417,34 @@ namespace gamevault.ViewModels
             }
             set { mountIso = value; Preferences.Set(AppConfigKey.MountIso, mountIso ? "1" : "0", userConfigFile); OnPropertyChanged(); }
         }
-        public System.Windows.Forms.DialogResult SelectDownloadPath()
+        public async Task<string> SelectDownloadPath()
         {
-            using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
+            return await Task.Run(() =>
             {
-                System.Windows.Forms.DialogResult result = dialog.ShowDialog();
-                if (result == System.Windows.Forms.DialogResult.OK && Directory.Exists(dialog.SelectedPath))
+                string selectedDirectory = "";
+                App.Current.Dispatcher.Invoke(() =>
                 {
-                    try
+                    using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
                     {
-                        File.Create(@$"{dialog.SelectedPath}\accesscheck.file").Close();
-                        File.Delete(@$"{dialog.SelectedPath}\accesscheck.file");
+                        System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+                        if (result == System.Windows.Forms.DialogResult.OK && Directory.Exists(dialog.SelectedPath))
+                        {
+                            try
+                            {
+                                File.Create(@$"{dialog.SelectedPath}\accesscheck.file").Close();
+                                File.Delete(@$"{dialog.SelectedPath}\accesscheck.file");
+                            }
+                            catch (Exception ex)
+                            {
+                                MainWindowViewModel.Instance.AppBarText = $"Access to the path {dialog.SelectedPath} is denied";
+                            }
+                            selectedDirectory = dialog.SelectedPath.Replace(@"\\", @"\");
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        MainWindowViewModel.Instance.AppBarText = $"Access to the path {dialog.SelectedPath} is denied";
-                        return System.Windows.Forms.DialogResult.Cancel;
-                    }
-                    Preferences.Set(AppConfigKey.RootPath, dialog.SelectedPath, userConfigFile);
-                    RootPath = dialog.SelectedPath.Replace(@"\\", @"\");
-                    return System.Windows.Forms.DialogResult.OK;
-                }
-                return System.Windows.Forms.DialogResult.Cancel;
-            }
-        }
-        public bool SetupCompleted()
-        {
-            return !((m_RootPath == string.Empty) || (m_ServerUrl == string.Empty) || (m_UserName == string.Empty));
-        }
+                });
+                return selectedDirectory;
+            });
+        }       
         public string Version
         {
             get

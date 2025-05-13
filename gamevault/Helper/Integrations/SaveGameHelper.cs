@@ -251,7 +251,7 @@ namespace gamevault.Helper.Integrations
                 { "secondary", new List<Dictionary<string, object>>() }
             };
 
-                foreach (LudusaviManifestEntry entry in customLudusaviManifests)
+                foreach (DirectoryEntry entry in customLudusaviManifests)
                 {
                     ((List<Dictionary<string, object>>)manifest["secondary"]).Add(new Dictionary<string, object>
                 {
@@ -399,7 +399,7 @@ namespace gamevault.Helper.Integrations
         public static string ServerSettingDisabled = "Cloud Saves are not enabled on this Server";
         public static string Offline = "Can not synchronize the cloud saves, because you are offline";
     }
-    public class LudusaviManifestEntry
+    public class DirectoryEntry
     {
         public string Uri { get; set; }
     }

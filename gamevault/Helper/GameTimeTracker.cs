@@ -35,14 +35,20 @@ namespace gamevault.Helper
         {
             Task.Run(async () =>
             {
-                string installationPath = Path.Combine(SettingsViewModel.Instance.RootPath, "GameVault\\Installations");
+                //string installationPath = Path.Combine(SettingsViewModel.Instance.RootPath, "GameVault\\Installations");
 
-                if (!Directory.Exists(installationPath))
+                if (SettingsViewModel.Instance.RootDirectories.Count == 0)
                     return;
 
+                List<string> allDirectoriesFromRootDirectories = new List<string>();
+                foreach (DirectoryEntry dirEntry in SettingsViewModel.Instance.RootDirectories)
+                {
+                    if (Directory.Exists(Path.Combine(dirEntry.Uri, "GameVault", "Installations")))
+                        allDirectoriesFromRootDirectories.AddRange(Directory.GetDirectories(Path.Combine(dirEntry.Uri, "GameVault", "Installations")));
+                }
                 Dictionary<int, string> foundGames = new Dictionary<int, string>();
 
-                foreach (string dir in Directory.GetDirectories(installationPath))
+                foreach (string dir in allDirectoriesFromRootDirectories)
                 {
                     var dirInf = new DirectoryInfo(dir);
                     if (dirInf.GetFiles().Length != 0 || dirInf.GetDirectories().Length != 0)

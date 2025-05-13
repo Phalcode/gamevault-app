@@ -555,15 +555,16 @@ namespace gamevault.UserControls
         }
         private void RemoveCustomCloudSaveManifest_Click(object sender, RoutedEventArgs e)
         {
-            int index = ViewModel.CustomCloudSaveManifests.IndexOf(((LudusaviManifestEntry)((FrameworkElement)sender).DataContext));
+            int index = ViewModel.CustomCloudSaveManifests.IndexOf(((DirectoryEntry)((FrameworkElement)sender).DataContext));
             if (index >= 0)
             {
                 ViewModel.CustomCloudSaveManifests.RemoveAt(index);
             }
         }
+
         private void AddCustomCloudSaveManifest_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.CustomCloudSaveManifests.Add(new LudusaviManifestEntry());
+            ViewModel.CustomCloudSaveManifests.Add(new DirectoryEntry());
         }
 
         private void SaveCustomCloudSaveManifests_Click(object sender, RoutedEventArgs e)
@@ -576,7 +577,42 @@ namespace gamevault.UserControls
             catch { }
             MainWindowViewModel.Instance.AppBarText = "Successfully saved custom Ludusavi Manifests";
         }
-
+        private async void AddRootDirectory_Click(object sender, RoutedEventArgs e)
+        {
+            ((FrameworkElement)sender).IsEnabled = false;
+            try
+            {
+                string selectedDirectory = await SettingsViewModel.Instance.SelectDownloadPath();
+                if (Directory.Exists(selectedDirectory))
+                {
+                    ViewModel.RootDirectories.Add(new DirectoryEntry() { Uri = selectedDirectory });
+                    string result = string.Join(";", ViewModel.RootDirectories.Select(entry => entry.Uri));
+                    Preferences.Set(AppConfigKey.RootDirectories, result, LoginManager.Instance.GetUserProfile().UserConfigFile);                  
+                }
+            }
+            catch (Exception ex)
+            {
+                MainWindowViewModel.Instance.AppBarText = ex.Message;
+            }
+            ((FrameworkElement)sender).IsEnabled = true;
+        }
+        private void RemoveRootDirectory_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                int index = ViewModel.RootDirectories.IndexOf(((DirectoryEntry)((FrameworkElement)sender).DataContext));
+                if (index >= 0)
+                {
+                    ViewModel.RootDirectories.RemoveAt(index);
+                    string result = string.Join(";", ViewModel.RootDirectories.Select(entry => entry.Uri));
+                    Preferences.Set(AppConfigKey.RootDirectories, result, LoginManager.Instance.GetUserProfile().UserConfigFile);
+                }
+            }
+            catch (Exception ex)
+            {
+                MainWindowViewModel.Instance.AppBarText = ex.Message;
+            }
+        }
         private void OpenUserCacheFolder_Click(object sender, RoutedEventArgs e)
         {
             if (Directory.Exists(LoginManager.Instance.GetUserProfile().RootDir))

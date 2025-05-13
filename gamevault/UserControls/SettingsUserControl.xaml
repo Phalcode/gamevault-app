@@ -199,7 +199,40 @@
                     <StackPanel Margin="30,0,0,0">
                         <StackPanel Margin="0,0,0,0">
                             <TextBlock Text="File System" FontSize="20" FontWeight="Bold"/>
-                            <settingsComponents:RootPathUserControl Margin="10,10,0,0"/>
+                            <!--<settingsComponents:RootPathUserControl Margin="10,10,0,0"/>-->
+                            <StackPanel Margin="10,10,0,0">
+                                <TextBlock Text="Root Directories" Margin="0,2,0,2" FontSize="15"/>
+                                <ScrollViewer MaxHeight="100" VerticalScrollBarVisibility="Auto" Width="550" HorizontalAlignment="Left">
+                                    <ItemsControl ItemsSource="{Binding RootDirectories}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBox IsReadOnly="True" Text="{Binding Path=.Uri, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="File path or URL" mah:ControlsHelper.CornerRadius="5" Width="500" Height="20"/>
+                                                    <Button Style="{StaticResource ButtonWrapper}" Height="30" Width="30" Cursor="Hand" Click="RemoveRootDirectory_Click">
+                                                        <!--="RemoveCustomCloudSaveManifest_Click">-->
+                                                        <Grid Style="{DynamicResource HoverEffect}"  Background="Transparent"  RenderTransformOrigin="0.5,0.5">
+                                                            <Path Data="m11.25 4.75l-6.5 6.5m0-6.5l6.5 6.5" Stroke="IndianRed" StrokeThickness="2">
+                                                                <Path.RenderTransform>
+                                                                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                                                </Path.RenderTransform>
+                                                            </Path>
+                                                            <Grid.RenderTransform>
+                                                                <ScaleTransform/>
+                                                            </Grid.RenderTransform>
+                                                        </Grid>
+                                                    </Button>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </ScrollViewer>
+                                <local:IconButton Icon="{StaticResource IconAddTag}" Text="Add" FontSize="15" IconMargin="0,0,5,2" HorizontalAlignment="Left" Width="100" Height="30" Margin="0,5,10,0" Click="AddRootDirectory_Click"/>
+                            </StackPanel>
                         </StackPanel>
                         <StackPanel Margin="0,10,0,0">
                             <TextBlock Text="Cache Management" FontSize="20" FontWeight="Bold"/>

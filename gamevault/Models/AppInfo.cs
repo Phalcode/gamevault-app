@@ -12,7 +12,9 @@ namespace gamevault.Models
     {
         Username,
         Password,
+        RootDirectories,
         RootPath,
+        LastSelectedRootDirectory,
         Executable,
         BackgroundStart,
         ServerUrl,
