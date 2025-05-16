@@ -32,6 +32,10 @@ namespace gamevault.Helper
             _accessToken = accessToken;
             _refreshToken = refreshToken;
         }
+        public string GetRefreshToken()
+        {
+            return _refreshToken;
+        }
         public void Reset()
         {
             _accessToken = "";
@@ -46,7 +50,8 @@ namespace gamevault.Helper
 
             if (!response.IsSuccessStatusCode || response.StatusCode == System.Net.HttpStatusCode.NoContent)
             {
-                throw new HttpRequestException(await response.Content.ReadAsStringAsync(), null, response.StatusCode);
+                using JsonDocument serverResponseJson = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+                throw new HttpRequestException(serverResponseJson.RootElement.GetProperty("message").GetString(), null, response.StatusCode);
             }
 
             var responseContent = await response.Content.ReadAsStringAsync();

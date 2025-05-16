@@ -22,6 +22,7 @@ using AngleSharp.Dom;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.Wpf;
 using gamevault.Windows;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace gamevault.UserControls
 {
@@ -151,17 +152,64 @@ namespace gamevault.UserControls
         private void ChangeUserProfile_Click(object sender, RoutedEventArgs e)
         {
             ((FrameworkElement)sender).IsEnabled = false;
-            //MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to log", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
-            //if (result == MessageDialogResult.Affirmative)
-            //{
-            //}
+            Preferences.DeleteKey(AppConfigKey.LastUserProfile, ProfileManager.ProfileConfigFile);
             ((MainWindow)App.Current.MainWindow).Dispose();
             App.Current.MainWindow = new LoginWindow(true);
             App.Current.MainWindow.Show();
-            //LoginManager.Instance.Logout();
-            //MainWindowViewModel.Instance.UserAvatar = null;
-            //MainWindowViewModel.Instance.AppBarText = "Successfully logged out";
             ((FrameworkElement)sender).IsEnabled = true;
+        }
+        private async void Logout_Click(object sender, RoutedEventArgs e)
+        {
+            ((FrameworkElement)sender).IsEnabled = false;
+            MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to log out?", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+            if (result == MessageDialogResult.Affirmative)
+            {
+                try
+                {
+                    bool isLoggedInWithOAuth = Preferences.Get(AppConfigKey.IsLoggedInWithOAuth, LoginManager.Instance.GetUserProfile().UserConfigFile) == "1";
+                    if (isLoggedInWithOAuth)
+                    {
+                        //await WebHelper.PostAsync($"{SettingsViewModel.Instance.ServerUrl}/api/auth/revoke", "{" + $"\"refresh_token\": \"{WebHelper.GetRefreshToken()}\"" + "}");
+                    }
+                    else
+                    {
+                        Preferences.DeleteKey(AppConfigKey.Password, LoginManager.Instance.GetUserProfile().UserConfigFile);
+                    }
+                    Preferences.DeleteKey(AppConfigKey.LastUserProfile, ProfileManager.ProfileConfigFile);
+                    ((MainWindow)App.Current.MainWindow).Dispose();
+                    App.Current.MainWindow = new LoginWindow(true);
+                    App.Current.MainWindow.Show();
+                }
+                catch (Exception ex)
+                {
+                    MainWindowViewModel.Instance.AppBarText = ex.Message;
+                }
+            }
+            ((FrameworkElement)sender).IsEnabled = true;
+        }
+        private async void LogoutFromAllDevices_Click(object sender, RoutedEventArgs e)
+        {
+            //((FrameworkElement)sender).IsEnabled = false;
+            //MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to log out from all devices?", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+            //if (result == MessageDialogResult.Affirmative)
+            //{
+            //    try
+            //    {
+            //        bool isLoggedInWithOAuth = Preferences.Get(AppConfigKey.IsLoggedInWithOAuth, LoginManager.Instance.GetUserProfile().UserConfigFile) == "1";
+            //        if (isLoggedInWithOAuth)
+            //        {
+            //            await WebHelper.PostAsync($"{SettingsViewModel.Instance.ServerUrl}/api/auth/revoke/all", "");
+            //        }
+            //        else
+            //        {
+            //            MainWindowViewModel.Instance.AppBarText = "This action is only possible if the user is logged in via OAuth";
+            //        }
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        MainWindowViewModel.Instance.AppBarText = ex.Message;
+            //    }
+            //}
         }
 
         private void DownloadLimit_InputValidation(object sender, EventArgs e)
@@ -587,7 +635,7 @@ namespace gamevault.UserControls
                 {
                     ViewModel.RootDirectories.Add(new DirectoryEntry() { Uri = selectedDirectory });
                     string result = string.Join(";", ViewModel.RootDirectories.Select(entry => entry.Uri));
-                    Preferences.Set(AppConfigKey.RootDirectories, result, LoginManager.Instance.GetUserProfile().UserConfigFile);                  
+                    Preferences.Set(AppConfigKey.RootDirectories, result, LoginManager.Instance.GetUserProfile().UserConfigFile);
                 }
             }
             catch (Exception ex)

@@ -191,7 +191,9 @@
                         <StackPanel Margin="0,0,0,0">
                             <TextBlock Text="Account" FontSize="20" FontWeight="Bold"/>
                             <local:IconButton Text="Change User Profile" Icon="{StaticResource IconLogout}" IconMargin="0,0,5,2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="30" Margin="10,10,0,0" Width="205" FontSize="15" Click="ChangeUserProfile_Click"/>
-                            <local:IconButton Text="Edit your User" Icon="{StaticResource IconInstalledGamesSettings}" IconMargin="0,0,5,2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="30" Margin="10,10,0,0" Width="205" FontSize="15" Click="EditUser_Click"/>
+                            <local:IconButton Text="Logout" Icon="{StaticResource IconLogout}" IconMargin="0,0,5,2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="30" Margin="10,20,0,0" Width="205" FontSize="15" Click="Logout_Click"/>
+                            <local:IconButton Text="Logout from all Devices" Icon="{StaticResource IconLogout}" IconMargin="0,0,5,2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="30" Margin="10,10,0,0" Width="205" FontSize="15" Click="LogoutFromAllDevices_Click"/>
+                            <local:IconButton Text="Edit your User" Icon="{StaticResource IconInstalledGamesSettings}" IconMargin="0,0,5,2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="30" Margin="10,20,0,0" Width="205" FontSize="15" Click="EditUser_Click"/>
                         </StackPanel>
                     </StackPanel>
                 </TabItem>

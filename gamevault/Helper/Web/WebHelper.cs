@@ -43,6 +43,10 @@ namespace gamevault.Helper
         {
             HttpClient.InjectTokens(accessToken, refreshToken);
         }
+        internal static string GetRefreshToken()
+        {
+            return HttpClient.GetRefreshToken();
+        }
         internal static async Task<string> GetAsync(string url)
         {
             var response = await HttpClient.GetAsync(url);
