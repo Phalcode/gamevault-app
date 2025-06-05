@@ -178,6 +178,7 @@ namespace gamevault
         {
             try
             {
+                jumpList.JumpItems.RemoveRange(5, jumpList.JumpItems.Count - 5);// Remove all previous games. Now we add the current game list
                 var lastGames = InstallViewModel.Instance.InstalledGames.Take(5).ToArray();
                 foreach (var game in lastGames)
                 {

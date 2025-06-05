@@ -636,6 +636,7 @@ namespace gamevault.UserControls
                     ViewModel.RootDirectories.Add(new DirectoryEntry() { Uri = selectedDirectory });
                     string result = string.Join(";", ViewModel.RootDirectories.Select(entry => entry.Uri));
                     Preferences.Set(AppConfigKey.RootDirectories, result, LoginManager.Instance.GetUserProfile().UserConfigFile);
+                    await MainWindowViewModel.Instance.Library.GetGameInstalls().RestoreInstalledGames();
                 }
             }
             catch (Exception ex)
@@ -644,7 +645,7 @@ namespace gamevault.UserControls
             }
             ((FrameworkElement)sender).IsEnabled = true;
         }
-        private void RemoveRootDirectory_Click(object sender, RoutedEventArgs e)
+        private async void RemoveRootDirectory_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -654,12 +655,16 @@ namespace gamevault.UserControls
                     ViewModel.RootDirectories.RemoveAt(index);
                     string result = string.Join(";", ViewModel.RootDirectories.Select(entry => entry.Uri));
                     Preferences.Set(AppConfigKey.RootDirectories, result, LoginManager.Instance.GetUserProfile().UserConfigFile);
+
+                    ((FrameworkElement)sender).IsEnabled = false;//Disable the add button to block async restoring installed games
+                    await MainWindowViewModel.Instance.Library.GetGameInstalls().RestoreInstalledGames();
                 }
             }
             catch (Exception ex)
             {
                 MainWindowViewModel.Instance.AppBarText = ex.Message;
             }
+            ((FrameworkElement)sender).IsEnabled = true;
         }
         private void OpenUserCacheFolder_Click(object sender, RoutedEventArgs e)
         {

@@ -36,9 +36,9 @@ namespace gamevault.UserControls
             {
                 try
                 {
-                    uiFilterOrderBy.IsChecked = Preferences.Get(AppConfigKey.LastLibraryOrderBy,LoginManager.Instance.GetUserProfile().UserConfigFile) == "desc" ? true : false;
+                    uiFilterOrderBy.IsChecked = Preferences.Get(AppConfigKey.LastLibraryOrderBy, LoginManager.Instance.GetUserProfile().UserConfigFile) == "desc" ? true : false;
 
-                    string lastSortBy = Preferences.Get(AppConfigKey.LastLibrarySortBy,LoginManager.Instance.GetUserProfile().UserConfigFile);
+                    string lastSortBy = Preferences.Get(AppConfigKey.LastLibrarySortBy, LoginManager.Instance.GetUserProfile().UserConfigFile);
 
                     for (int i = 0; i < ViewModel.GameFilterSortByValues.Count; i++)
                     {
@@ -146,6 +146,10 @@ namespace gamevault.UserControls
 
             uiBtnReloadLibrary.IsEnabled = false;
             await Search();
+            if ((e.GetType() == typeof(KeyEventArgs) && ((KeyEventArgs)e).Key == Key.F5))
+            {
+                await MainWindowViewModel.Instance.Library.GetGameInstalls().RestoreInstalledGames();
+            }
             uiBtnReloadLibrary.IsEnabled = true;
         }
         public InstallUserControl GetGameInstalls()
@@ -276,7 +280,7 @@ namespace gamevault.UserControls
 
         private async void OrderBy_Changed(object sender, RoutedEventArgs e)
         {
-            Preferences.Set(AppConfigKey.LastLibraryOrderBy, (bool)uiFilterOrderBy.IsChecked ? "desc" : "asc",LoginManager.Instance.GetUserProfile().UserConfigFile);
+            Preferences.Set(AppConfigKey.LastLibraryOrderBy, (bool)uiFilterOrderBy.IsChecked ? "desc" : "asc", LoginManager.Instance.GetUserProfile().UserConfigFile);
             await Search();
         }
         private string ApplyFilter(string filter)
@@ -334,7 +338,7 @@ namespace gamevault.UserControls
         {
             if (sender == uiFilterSortBy)
             {
-                Preferences.Set(AppConfigKey.LastLibrarySortBy, ViewModel.SelectedGameFilterSortBy.Value,LoginManager.Instance.GetUserProfile().UserConfigFile);
+                Preferences.Set(AppConfigKey.LastLibrarySortBy, ViewModel.SelectedGameFilterSortBy.Value, LoginManager.Instance.GetUserProfile().UserConfigFile);
             }
             OpenFilterIfClosed();
             RefreshFilterCounter();

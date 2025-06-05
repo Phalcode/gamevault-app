@@ -42,11 +42,14 @@ namespace gamevault.UserControls
         }
         public async Task RestoreInstalledGames()
         {
+            if (gamesRestored)
+            {
+                InstallViewModel.Instance.InstalledGames.Clear();// Clear here because the double entry code won't allow to refresh
+                //File watchers are already protected against double entries and dont care, if the same code runs again
+            }
             Dictionary<int, string> foundGames = new Dictionary<int, string>();
             Game[]? games = await Task<Game[]>.Run(async () =>
             {
-               
-                //string installationPath = Path.Combine(SettingsViewModel.Instance.RootPath, "GameVault\\Installations");
                 if (SettingsViewModel.Instance.RootDirectories.Count > 0)
                 {
 
@@ -156,6 +159,10 @@ namespace gamevault.UserControls
                 }
                 InstallViewModel.Instance.InstalledGames = await SortInstalledGamesByLastPlayed(TempInstalledGames);
                 InstallViewModel.Instance.InstalledGamesFilter = CollectionViewSource.GetDefaultView(InstallViewModel.Instance.InstalledGames);
+                if (gamesRestored)
+                {
+                    SearchFilterInputTimerElapsed(null, null);//Keep the filter
+                }
             }
             gamesRestored = true;
             App.Instance.SetJumpListGames();
@@ -288,13 +295,13 @@ namespace gamevault.UserControls
             inputTimer.Data = ((TextBox)sender).Text;
             inputTimer.Start();
         }
-        private void InputTimerElapsed(object sender, EventArgs e)
+        private void SearchFilterInputTimerElapsed(object sender, EventArgs e)
         {
             inputTimer.Stop();
             if (InstallViewModel.Instance.InstalledGamesFilter == null) return;
             InstallViewModel.Instance.InstalledGamesFilter.Filter = item =>
             {
-                return ((KeyValuePair<Game, string>)item).Key.Title.Contains(inputTimer.Data, StringComparison.OrdinalIgnoreCase);
+                return ((KeyValuePair<Game, string>)item).Key.Title.Contains(inputTimer.Data ?? "", StringComparison.OrdinalIgnoreCase);
             };
         }
 
@@ -384,7 +391,7 @@ namespace gamevault.UserControls
         {
             inputTimer = new InputTimer();
             inputTimer.Interval = TimeSpan.FromMilliseconds(400);
-            inputTimer.Tick += InputTimerElapsed;
+            inputTimer.Tick += SearchFilterInputTimerElapsed;
         }
 
         private void InstalledGames_Toggled(object sender, RoutedEventArgs e)
