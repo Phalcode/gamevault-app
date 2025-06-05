@@ -295,6 +295,15 @@ namespace gamevault.Windows
         }
         private string RemoveSpecialCharacters(string str)
         {
+            if (str.StartsWith("http://", StringComparison.OrdinalIgnoreCase))
+            {
+                str = str.Substring(7);
+            }
+            else if (str.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
+                str = str.Substring(8);
+            }
+
             StringBuilder sb = new StringBuilder();
             foreach (char c in str)
             {

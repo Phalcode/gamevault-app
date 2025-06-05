@@ -37,6 +37,9 @@ namespace gamevault.UserControls
             if (loaded) return;
             loaded = true;
             string lastSelectedRootDirectory = Preferences.Get(AppConfigKey.LastSelectedRootDirectory, LoginManager.Instance.GetUserProfile().UserConfigFile);
+            if (AutoConfirmIfWindowIsHidden(lastSelectedRootDirectory))//possible if called by CLI
+                return;
+
             if (Directory.Exists(lastSelectedRootDirectory))
             {
                 int index = RootDirectories.ToList().FindIndex(x => x.Key.Uri == lastSelectedRootDirectory);
@@ -103,7 +106,24 @@ namespace gamevault.UserControls
             }
             catch (Exception ex) { }
         }
-
+        private bool AutoConfirmIfWindowIsHidden(string lastSelectedRootDirectory)
+        {
+            if (App.Instance.MainWindow.IsVisible == false)
+            {
+                if (Directory.Exists(lastSelectedRootDirectory))
+                {
+                    MainWindowViewModel.Instance.ClosePopup();
+                    ResultTaskSource.TrySetResult(lastSelectedRootDirectory);
+                }
+                else
+                {
+                    MainWindowViewModel.Instance.ClosePopup();
+                    ResultTaskSource.TrySetResult(RootDirectories.ElementAt(0).Value);
+                }
+                return true;
+            }
+            return false;
+        }
         private void DirectorySettings_Click(object sender, RoutedEventArgs e)
         {
             MainWindowViewModel.Instance.ClosePopup();

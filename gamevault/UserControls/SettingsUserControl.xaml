@@ -203,7 +203,7 @@
                             <TextBlock Text="File System" FontSize="20" FontWeight="Bold"/>
                             <!--<settingsComponents:RootPathUserControl Margin="10,10,0,0"/>-->
                             <StackPanel Margin="10,10,0,0">
-                                <TextBlock Text="Root Directories" Margin="0,2,0,2" FontSize="15"/>
+                                <TextBlock Text="Root Directories (A 'GameVault' subfolder will be created)" Margin="0,2,0,2" FontSize="15"/>
                                 <ScrollViewer MaxHeight="100" VerticalScrollBarVisibility="Auto" Width="550" HorizontalAlignment="Left">
                                     <ItemsControl ItemsSource="{Binding RootDirectories}">
                                         <ItemsControl.ItemsPanel>
