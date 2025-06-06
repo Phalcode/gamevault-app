@@ -1,5 +1,17 @@
 # GameVault App Changelog
 
+## 1.17.0
+Recommended Gamevault Server Version: `v15.0.0`
+###Changes
+
+- Removed the setup wizard and introduced a new login window
+- Added multi-profile support: if no user profile is configured, the demo user will be used by default.
+- Upgraded all connections to use the OAuth 2.0 authentication flow
+- Login and registration via configured identity providers are now supported
+- Added support for multiple root directories, including selection during download
+- Improved image cache performance
+- Added skeleton loading animations to the community tab to better indicate loading states
+
 ## 1.16.1
 Recommended Gamevault Server Version: `v14.1.0`
 ### Changes
