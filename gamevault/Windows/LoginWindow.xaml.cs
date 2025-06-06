@@ -195,7 +195,16 @@ namespace gamevault.Windows
                 }
                 else if (state != LoginState.Success && firstTimeLogin)
                 {
-                    ProfileManager.DeleteUserProfile(profile);
+                    try
+                    {
+                        await Task.Delay(500);
+                        ProfileManager.DeleteUserProfile(profile);
+                    }
+                    catch
+                    {
+                        await Task.Delay(1500);//For slower machines, we have to wait for the webview of OAuthLogin to free the web cache
+                        ProfileManager.DeleteUserProfile(profile);
+                    }
                 }
             }
             if (state == LoginState.Success)
@@ -210,7 +219,7 @@ namespace gamevault.Windows
                     Preferences.Set(AppConfigKey.LastUserProfile, profile.RootDir, ProfileManager.ProfileConfigFile);
                 }
                 App.Current.MainWindow = new MainWindow();
-                if(!PipeServiceHandler.Instance.IsAppStartup && !SettingsViewModel.Instance.BackgroundStart)
+                if (!PipeServiceHandler.Instance.IsAppStartup && !SettingsViewModel.Instance.BackgroundStart)
                 {
                     App.Current.MainWindow.Show();
                 }

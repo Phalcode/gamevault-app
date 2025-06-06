@@ -76,14 +76,21 @@ namespace gamevault.Helper
             {
                 Directory.Delete(userProfile.RootDir, true);
             }
+            string serverRootDir = Path.GetDirectoryName(userProfile.RootDir.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
+            var subDirs = Directory.GetDirectories(serverRootDir);
+            if (subDirs.Length == 1 && Path.GetFileName(subDirs[0]).Equals("ImageCache", StringComparison.OrdinalIgnoreCase))
+            {
+                // If the only subdirectory left is the ImageCache, delete the server root directory as well
+                Directory.Delete(serverRootDir, true);
+            }
         }
         public static void EnsureUserProfileFileTree(UserProfile userProfile)
         {
             Directory.CreateDirectory(userProfile.ImageCacheDir);
             Directory.CreateDirectory(userProfile.ThemesLoadDir);
             Directory.CreateDirectory(userProfile.WebConfigDir);
-            Directory.CreateDirectory(userProfile.CloudSaveConfigDir);           
-            Directory.CreateDirectory(userProfile.CacheDir);           
+            Directory.CreateDirectory(userProfile.CloudSaveConfigDir);
+            Directory.CreateDirectory(userProfile.CacheDir);
         }
     }
 }
