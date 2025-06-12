@@ -63,72 +63,69 @@ namespace gamevault.Helper.Integrations
             if (!SettingsViewModel.Instance.CloudSaves)
                 return CloudSaveStatus.SettingDisabled;
 
-            using (HttpClient client = new HttpClient())
+            try
             {
-                try
+                
+                string installationId = GetGameInstallationId(installationDir);
+                string[] auth = WebHelper.GetCredentials();
+                
+                string url = @$"{SettingsViewModel.Instance.ServerUrl}/api/savefiles/user/{LoginManager.Instance.GetCurrentUser()!.ID}/game/{gameId}";                
+                using (HttpResponseMessage response = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/savefiles/user/{LoginManager.Instance.GetCurrentUser()!.ID}/game/{gameId}", HttpCompletionOption.ResponseHeadersRead))
                 {
-                    client.Timeout = TimeSpan.FromSeconds(15);
-                    string installationId = GetGameInstallationId(installationDir);
-                    string[] auth = WebHelper.GetCredentials();
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{auth[0]}:{auth[1]}")));
-                    client.DefaultRequestHeaders.Add("User-Agent", $"GameVault/{SettingsViewModel.Instance.Version}");
-                    string url = @$"{SettingsViewModel.Instance.ServerUrl}/api/savefiles/user/{LoginManager.Instance.GetCurrentUser()!.ID}/game/{gameId}";
-                    using (HttpResponseMessage response = await client.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/savefiles/user/{LoginManager.Instance.GetCurrentUser()!.ID}/game/{gameId}", HttpCompletionOption.ResponseHeadersRead))
+                    response.EnsureSuccessStatusCode();
+                    string fileName = response.Content.Headers.ContentDisposition.FileName.Split('_')[1].Split('.')[0];
+                    if (fileName != installationId)
                     {
-                        response.EnsureSuccessStatusCode();
-                        string fileName = response.Content.Headers.ContentDisposition.FileName.Split('_')[1].Split('.')[0];
-                        if (fileName != installationId)
+                        string tempFolder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+                        Directory.CreateDirectory(tempFolder);
+                        string archive = Path.Combine(tempFolder, "backup.zip");
+                        using (Stream contentStream = await response.Content.ReadAsStreamAsync(), fileStream = new FileStream(archive, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true))
                         {
-                            string tempFolder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-                            Directory.CreateDirectory(tempFolder);
-                            string archive = Path.Combine(tempFolder, "backup.zip");
-                            using (Stream contentStream = await response.Content.ReadAsStreamAsync(), fileStream = new FileStream(archive, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true))
-                            {
-                                await contentStream.CopyToAsync(fileStream);
-                            }
-
-                            await zipHelper.ExtractArchive(archive, tempFolder);
-                            var mappingFile = Directory.GetFiles(tempFolder, "mapping.yaml", SearchOption.AllDirectories);
-                            string extractFolder = "";
-                            if (mappingFile.Length < 1)
-                                throw new Exception("no savegame extracted");
-
-                            extractFolder = Path.GetDirectoryName(Path.GetDirectoryName(mappingFile[0]));
-                            PrepareConfigFile(installationDir, Path.Combine(LoginManager.Instance.GetUserProfile().CloudSaveConfigDir, "config.yaml"));
-                            Process process = new Process();
-                            ProcessShepherd.Instance.AddProcess(process);
-                            process.StartInfo = CreateProcessHeader();                           
-                            process.StartInfo.ArgumentList.Add("--config");
-                            process.StartInfo.ArgumentList.Add(LoginManager.Instance.GetUserProfile().CloudSaveConfigDir);
-                            process.StartInfo.ArgumentList.Add("restore");
-                            process.StartInfo.ArgumentList.Add("--force");
-                            process.StartInfo.ArgumentList.Add("--path");
-                            process.StartInfo.ArgumentList.Add(extractFolder);
-                            process.Start();
-                            process.WaitForExit();
-                            ProcessShepherd.Instance.RemoveProcess(process);
-                            Directory.Delete(tempFolder, true);
-                            return CloudSaveStatus.RestoreSuccess;
+                            await contentStream.CopyToAsync(fileStream);
                         }
-                        else
-                        {
-                            return CloudSaveStatus.UpToDate;
-                        }
+
+                        await zipHelper.ExtractArchive(archive, tempFolder);
+                        var mappingFile = Directory.GetFiles(tempFolder, "mapping.yaml", SearchOption.AllDirectories);
+                        string extractFolder = "";
+                        if (mappingFile.Length < 1)
+                            throw new Exception("no savegame extracted");
+
+                        extractFolder = Path.GetDirectoryName(Path.GetDirectoryName(mappingFile[0]));
+                        PrepareConfigFile(installationDir, Path.Combine(LoginManager.Instance.GetUserProfile().CloudSaveConfigDir, "config.yaml"));
+                        Process process = new Process();
+                        ProcessShepherd.Instance.AddProcess(process);
+                        process.StartInfo = CreateProcessHeader();
+                        process.StartInfo.ArgumentList.Add("--config");
+                        process.StartInfo.ArgumentList.Add(LoginManager.Instance.GetUserProfile().CloudSaveConfigDir);
+                        process.StartInfo.ArgumentList.Add("restore");
+                        process.StartInfo.ArgumentList.Add("--force");
+                        process.StartInfo.ArgumentList.Add("--path");
+                        process.StartInfo.ArgumentList.Add(extractFolder);
+                        process.Start();
+                        process.WaitForExit();
+                        ProcessShepherd.Instance.RemoveProcess(process);
+                        Directory.Delete(tempFolder, true);
+                        return CloudSaveStatus.RestoreSuccess;
                     }
-                }
-                catch (Exception ex)
-                {
-                    string statusCode = WebExceptionHelper.GetServerStatusCode(ex);
-                    if (statusCode == "405")
+                    else
                     {
-                        MainWindowViewModel.Instance.AppBarText = CloudSaveStatus.ServerSettingDisabled;
-                    }
-                    else if (statusCode != "404")
-                    {
-                        MainWindowViewModel.Instance.AppBarText = CloudSaveStatus.RestoreFailed;
+                        return CloudSaveStatus.UpToDate;
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                string statusCode = WebExceptionHelper.GetServerStatusCode(ex);
+                if (statusCode == "405")
+                {
+                    MainWindowViewModel.Instance.AppBarText = CloudSaveStatus.ServerSettingDisabled;
+                }
+                else if (statusCode != "404")
+                {
+                    MainWindowViewModel.Instance.AppBarText = CloudSaveStatus.RestoreFailed;
+                }
+            }
+
             return CloudSaveStatus.RestoreFailed;
         }
         private string GetGameInstallationId(string installationDir)
