@@ -412,7 +412,7 @@ namespace gamevault.Helper
                     {
                         return LoginState.Forbidden;
                     }
-                case "204":
+                case "406":
                     {
                         return LoginState.NotActivated;
                     }
@@ -439,8 +439,7 @@ namespace gamevault.Helper
         private async void CheckOnlineStatus(object sender, EventArgs e)
         {
             try
-            {
-                string serverResonse = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/status");
+            {               
                 if (!IsLoggedIn())
                 {
                     bool isLoggedInWithOAuth = Preferences.Get(AppConfigKey.IsLoggedInWithOAuth, GetUserProfile().UserConfigFile) == "1";
@@ -449,6 +448,10 @@ namespace gamevault.Helper
                         string[] credencials = WebHelper.GetCredentials();
                         await Login(GetUserProfile().ServerUrl, credencials[0], credencials[1]);
                     }
+                    else
+                    {
+                        //To Do: Login by Provider but make sure, the Auth window will not be opened twice
+                    }
                     if (IsLoggedIn())
                     {
                         MainWindowViewModel.Instance.OnlineState = System.Windows.Visibility.Collapsed;
@@ -456,6 +459,7 @@ namespace gamevault.Helper
                 }
                 else
                 {
+                    await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/status");
                     MainWindowViewModel.Instance.OnlineState = System.Windows.Visibility.Collapsed;
                 }
             }

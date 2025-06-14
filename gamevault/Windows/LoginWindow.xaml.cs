@@ -12,6 +12,7 @@ using System.Windows.Controls;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace gamevault.Windows
@@ -174,10 +175,13 @@ namespace gamevault.Windows
             }
         }
 
-        private async Task Login(UserProfile profile, bool firstTimeLogin = false)
+        private async Task Login(UserProfile profile, bool firstTimeLogin = false, bool activationCall = false)
         {
-            ViewModel.StatusText = "Logging in...";
-            ViewModel.LoginStepIndex = (int)LoginStep.LoadingAction;
+            if (!activationCall)
+            {
+                ViewModel.StatusText = "Logging in...";
+                ViewModel.LoginStepIndex = (int)LoginStep.LoadingAction;
+            }
             bool isLoggedInWithOAuth = Preferences.Get(AppConfigKey.IsLoggedInWithOAuth, profile.UserConfigFile) == "1";
             LoginState state = LoginState.Success;
             if (!isLoggedInWithOAuth)
@@ -209,27 +213,15 @@ namespace gamevault.Windows
             }
             if (state == LoginState.Success)
             {
-                LoginManager.Instance.SetUserProfile(profile);
-                SettingsViewModel.Instance.Init();
-                Preferences.Set(AppConfigKey.UserID, LoginManager.Instance.GetCurrentUser()!.ID, profile.UserConfigFile);
-                ViewModel.StatusText = "Optimizing Cache...";
-                await CacheHelper.OptimizeCache();
-                if (ViewModel.RememberMe)
-                {
-                    Preferences.Set(AppConfigKey.LastUserProfile, profile.RootDir, ProfileManager.ProfileConfigFile);
-                }
-                App.Current.MainWindow = new MainWindow();
-                if (!PipeServiceHandler.Instance.IsAppStartup && !SettingsViewModel.Instance.BackgroundStart)
-                {
-                    App.Current.MainWindow.Show();
-                }
-                //First Startup Window Visibility will be determined by the protocol handler
-                try
-                {
-                    this.DialogResult = true;//will throw error, if its called from the MainWindow
-                }
-                catch { }
-                this.Close();
+                await LoadMainWindow(profile);
+            }
+            else if (state == LoginState.NotActivated)
+            {
+                ViewModel.LoginStepIndex = (int)LoginStep.PendingActivation;
+                await Task.Delay(5000);
+                if (ViewModel.LoginStepIndex == (int)LoginStep.PendingActivation)
+                    await Login(profile, firstTimeLogin, true);
+                return;
             }
             else
             {
@@ -237,12 +229,40 @@ namespace gamevault.Windows
                 ViewModel.AppBarText = LoginManager.Instance.GetServerLoginResponseMessage();
             }
         }
+        private async Task LoadMainWindow(UserProfile profile)
+        {
+            LoginManager.Instance.SetUserProfile(profile);
+            SettingsViewModel.Instance.Init();
+            Preferences.Set(AppConfigKey.UserID, LoginManager.Instance.GetCurrentUser()!.ID, profile.UserConfigFile);
+            ViewModel.StatusText = "Optimizing Cache...";
+            await CacheHelper.OptimizeCache();
+            if (ViewModel.RememberMe)
+            {
+                Preferences.Set(AppConfigKey.LastUserProfile, profile.RootDir, ProfileManager.ProfileConfigFile);
+            }
+            App.Current.MainWindow = new MainWindow();
+            if (!PipeServiceHandler.Instance.IsAppStartup && !SettingsViewModel.Instance.BackgroundStart)
+            {
+                App.Current.MainWindow.Show();
+            }
+            //First Startup Window Visibility will be determined by the protocol handler
+            try
+            {
+                this.DialogResult = true;//will throw error, if its called from the MainWindow
+            }
+            catch { }
+            this.Close();
+        }
         private async void SaveAndSignUp_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 ValidateSignUpData();
-                LoginState state = await LoginManager.Instance.Register(ViewModel.SignupUser);
+                LoginState state = LoginState.Success;
+                if (!ViewModel.SignupUser.IsLoggedInWithOAuth)
+                {
+                    state = await LoginManager.Instance.Register(ViewModel.SignupUser);//Only non-provider login has a additional call. Else its just a login, because the server will create the account internally
+                }
                 UserProfile profile = null;
                 if (state != LoginState.Error)
                 {
@@ -252,24 +272,7 @@ namespace gamevault.Windows
                         ViewModel.AppBarText = "Failed to setup User Profile";
                         return;
                     }
-                }
-                if (state == LoginState.Success)
-                {
                     await Login(profile, true);
-                    return;
-                }
-                else if (state == LoginState.NotActivated)
-                {
-                    ViewModel.LoginStepIndex = (int)LoginStep.PendingActivation;
-                    while (ViewModel.LoginStepIndex == (int)LoginStep.PendingActivation)
-                    {
-                        LoginState loginState = await LoginManager.Instance.Login(ViewModel.SignupUser.ServerUrl, ViewModel.SignupUser.Username, ViewModel.SignupUser.Password);
-                        if (loginState == LoginState.Success && LoginManager.Instance.GetCurrentUser() != null)
-                        {
-                            await Login(profile, true);
-                        }
-                        await Task.Delay(5000);
-                    }
                     return;
                 }
                 ViewModel.AppBarText = LoginManager.Instance.GetServerLoginResponseMessage();

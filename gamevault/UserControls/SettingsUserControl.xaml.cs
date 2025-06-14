@@ -59,27 +59,29 @@ namespace gamevault.UserControls
             }
 
         }
-        private void ClearOfflineCache_Clicked(object sender, RoutedEventArgs e)
+        private async void ClearOfflineCache_Clicked(object sender, RoutedEventArgs e)
         {
-
-            try
+            MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want delete the offline cache? \nThis can lead to games not being displayed correctly when you are offline.", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+            if (result == MessageDialogResult.Affirmative)
             {
-                if (File.Exists(LoginManager.Instance.GetUserProfile().IgnoreList))
+                try
                 {
-                    File.Delete(LoginManager.Instance.GetUserProfile().IgnoreList);
+                    if (File.Exists(LoginManager.Instance.GetUserProfile().IgnoreList))
+                    {
+                        File.Delete(LoginManager.Instance.GetUserProfile().IgnoreList);
+                    }
+                    if (File.Exists(LoginManager.Instance.GetUserProfile().OfflineCache))
+                    {
+                        File.Delete(LoginManager.Instance.GetUserProfile().OfflineCache);
+                    }
+                    ViewModel.OfflineCacheSize = 0;
+                    MainWindowViewModel.Instance.AppBarText = "Offline cache cleared";
                 }
-                if (File.Exists(LoginManager.Instance.GetUserProfile().OfflineCache))
+                catch
                 {
-                    File.Delete(LoginManager.Instance.GetUserProfile().OfflineCache);
+                    MainWindowViewModel.Instance.AppBarText = "Something went wrong while the offline cache was cleared";
                 }
-                ViewModel.OfflineCacheSize = 0;
-                MainWindowViewModel.Instance.AppBarText = "Offline cache cleared";
             }
-            catch
-            {
-                MainWindowViewModel.Instance.AppBarText = "Something went wrong while the offline cache was cleared";
-            }
-
         }
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {

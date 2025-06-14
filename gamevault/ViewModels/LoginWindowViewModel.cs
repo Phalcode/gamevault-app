@@ -19,7 +19,7 @@ namespace gamevault.ViewModels
         {
         }
 
-        private int loginStepIndex = 0;
+        private int loginStepIndex { get; set; } = 0;
         public int LoginStepIndex
         {
             get { return loginStepIndex; }

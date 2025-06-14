@@ -48,8 +48,8 @@ namespace gamevault.Helper
 
             var response = await _httpClient.GetAsync($"{ServerUrl}/api/auth/basic/login");
 
-            if (!response.IsSuccessStatusCode || response.StatusCode == System.Net.HttpStatusCode.NoContent)
-            {
+            if (!response.IsSuccessStatusCode)
+            {               
                 using JsonDocument serverResponseJson = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
                 throw new HttpRequestException(serverResponseJson.RootElement.GetProperty("message").GetString(), null, response.StatusCode);
             }

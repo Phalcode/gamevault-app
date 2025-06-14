@@ -37,7 +37,7 @@ namespace gamevault.UserControls
             if (loaded) return;
             loaded = true;
             string lastSelectedRootDirectory = Preferences.Get(AppConfigKey.LastSelectedRootDirectory, LoginManager.Instance.GetUserProfile().UserConfigFile);
-            if (AutoConfirmIfWindowIsHidden(lastSelectedRootDirectory))//possible if called by CLI
+            if (AutoConfirmIfWindowIsHiddenOrOnlyOneEntry(lastSelectedRootDirectory))
                 return;
 
             if (Directory.Exists(lastSelectedRootDirectory))
@@ -62,6 +62,10 @@ namespace gamevault.UserControls
                         RootDirectories.Add(rootDir, FormatBytes(drive.TotalFreeSpace));
                     }
                 }
+            }
+            if (RootDirectories.Count <= 1)
+            {
+                this.Visibility = Visibility.Collapsed;
             }
         }
         private string FormatBytes(long bytes)
@@ -106,9 +110,9 @@ namespace gamevault.UserControls
             }
             catch (Exception ex) { }
         }
-        private bool AutoConfirmIfWindowIsHidden(string lastSelectedRootDirectory)
+        private bool AutoConfirmIfWindowIsHiddenOrOnlyOneEntry(string lastSelectedRootDirectory)
         {
-            if (App.Instance.MainWindow.IsVisible == false)
+            if (App.Instance.MainWindow.IsVisible == false && RootDirectories.Any())//possible if called by CLI
             {
                 if (Directory.Exists(lastSelectedRootDirectory))
                 {
@@ -118,8 +122,14 @@ namespace gamevault.UserControls
                 else
                 {
                     MainWindowViewModel.Instance.ClosePopup();
-                    ResultTaskSource.TrySetResult(RootDirectories.ElementAt(0).Value);
+                    ResultTaskSource.TrySetResult(RootDirectories.ElementAt(0).Key.Uri);
                 }
+                return true;
+            }
+            else if (RootDirectories.Count == 1)
+            {
+                MainWindowViewModel.Instance.ClosePopup();
+                ResultTaskSource.TrySetResult(RootDirectories.ElementAt(0).Key.Uri);
                 return true;
             }
             return false;
