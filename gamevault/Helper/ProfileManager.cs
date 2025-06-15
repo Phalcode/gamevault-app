@@ -86,11 +86,25 @@ namespace gamevault.Helper
         }
         public static void EnsureUserProfileFileTree(UserProfile userProfile)
         {
-            Directory.CreateDirectory(userProfile.ImageCacheDir);
-            Directory.CreateDirectory(userProfile.ThemesLoadDir);
-            Directory.CreateDirectory(userProfile.WebConfigDir);
-            Directory.CreateDirectory(userProfile.CloudSaveConfigDir);
-            Directory.CreateDirectory(userProfile.CacheDir);
+            try
+            {
+                if (!Directory.Exists(userProfile.ImageCacheDir))
+                    Directory.CreateDirectory(userProfile.ImageCacheDir);
+
+                if (!Directory.Exists(userProfile.ThemesLoadDir))
+                    Directory.CreateDirectory(userProfile.ThemesLoadDir);
+
+                if (!Directory.Exists(userProfile.WebConfigDir))
+                    Directory.CreateDirectory(userProfile.WebConfigDir);
+
+                if (!Directory.Exists(userProfile.CloudSaveConfigDir))
+                    Directory.CreateDirectory(userProfile.CloudSaveConfigDir);
+
+                if (!Directory.Exists(userProfile.CacheDir))
+                    Directory.CreateDirectory(userProfile.CacheDir);
+
+            }
+            catch { }
         }
     }
 }

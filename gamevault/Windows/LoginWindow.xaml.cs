@@ -74,6 +74,7 @@ namespace gamevault.Windows
                     {
                         string lastUserProfileIdentifier = Preferences.Get(AppConfigKey.LastUserProfile, ProfileManager.ProfileConfigFile);
                         UserProfile lastUserProfile = ProfileManager.GetUserProfiles().First(up => up.RootDir == lastUserProfileIdentifier);
+                        ProfileManager.EnsureUserProfileFileTree(lastUserProfile);
                         await Login(lastUserProfile);
                     }
                     catch { }
@@ -144,7 +145,9 @@ namespace gamevault.Windows
         }
         private async void ProfileLogin_Click(object sender, RoutedEventArgs e)
         {
-            await Login((UserProfile)((FrameworkElement)sender).DataContext);
+            UserProfile selectedProfile = (UserProfile)((FrameworkElement)sender).DataContext;
+            ProfileManager.EnsureUserProfileFileTree(selectedProfile);
+            await Login(selectedProfile);
         }
         private string ValidateUriScheme(string uri)
         {
