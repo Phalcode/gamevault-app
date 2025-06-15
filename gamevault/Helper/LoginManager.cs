@@ -113,7 +113,7 @@ namespace gamevault.Helper
             return state;
         }
 
-        public async Task<LoginState> OAuthLogin(UserProfile profile, bool showWindow = true)
+        public async Task<LoginState> SSOLogin(UserProfile profile, bool showWindow = true)
         {
             // Create window in both cases, but only show it if showWindow is true
             Window win = new Window()
@@ -195,8 +195,8 @@ namespace gamevault.Helper
                     // Otherwise, let the navigation continue
                 }
             };
-            uiWebView.CoreWebView2.Navigate($"{profile.ServerUrl}/api/auth/oauth2/login");
-            // uiWebView.Source = new Uri($"{profile.ServerUrl}/api/auth/oauth2/login");
+            uiWebView.CoreWebView2.Navigate($"{profile.ServerUrl}/api/auth/SSO2/login");
+            // uiWebView.Source = new Uri($"{profile.ServerUrl}/api/auth/SSO2/login");
 
             // Set a timeout for hidden window mode
             if (!showWindow)
@@ -442,8 +442,8 @@ namespace gamevault.Helper
             {               
                 if (!IsLoggedIn())
                 {
-                    bool isLoggedInWithOAuth = Preferences.Get(AppConfigKey.IsLoggedInWithOAuth, GetUserProfile().UserConfigFile) == "1";
-                    if (!isLoggedInWithOAuth)
+                    bool isLoggedInWithSSO = Preferences.Get(AppConfigKey.IsLoggedInWithSSO, GetUserProfile().UserConfigFile) == "1";
+                    if (!isLoggedInWithSSO)
                     {
                         string[] credencials = WebHelper.GetCredentials();
                         await Login(GetUserProfile().ServerUrl, credencials[0], credencials[1]);

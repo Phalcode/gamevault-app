@@ -11,7 +11,7 @@ using System.Text.Json;
 
 namespace gamevault.Helper
 {
-    public class OAuthHttpClient
+    public class SSOHttpClient
     {
         private readonly HttpClient _httpClient;
         private string _accessToken;
@@ -21,7 +21,7 @@ namespace gamevault.Helper
         public string UserName;
         public string Password;
 
-        public OAuthHttpClient()
+        public SSOHttpClient()
         {
             _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd($"GameVault/{SettingsViewModel.Instance.Version}");

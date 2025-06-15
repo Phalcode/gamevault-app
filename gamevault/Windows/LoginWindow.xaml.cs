@@ -28,7 +28,7 @@ namespace gamevault.Windows
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string EMail { get; set; }
-        public bool IsLoggedInWithOAuth { get; set; }
+        public bool IsLoggedInWithSSO { get; set; }
     }
     public enum LoginStep
     {
@@ -114,7 +114,7 @@ namespace gamevault.Windows
             UserProfile profile = ProfileManager.CreateUserProfile(cleanedServerUrl);
             profile.ServerUrl = user.ServerUrl;
             Preferences.Set(AppConfigKey.ServerUrl, user.ServerUrl, profile.UserConfigFile);
-            if (!user.IsLoggedInWithOAuth)
+            if (!user.IsLoggedInWithSSO)
             {
                 profile.Name = user.Username;
                 ViewModel.UserProfiles.Add(profile);
@@ -123,7 +123,7 @@ namespace gamevault.Windows
             }
             else
             {
-                Preferences.Set(AppConfigKey.IsLoggedInWithOAuth, "1", profile.UserConfigFile);
+                Preferences.Set(AppConfigKey.IsLoggedInWithSSO, "1", profile.UserConfigFile);
             }
             return profile;
         }
@@ -165,7 +165,7 @@ namespace gamevault.Windows
 
             loginUser.ServerUrl = ValidateUriScheme(loginUser.ServerUrl);
 
-            if (!ViewModel.LoginUser.IsLoggedInWithOAuth)
+            if (!ViewModel.LoginUser.IsLoggedInWithSSO)
             {
                 if (string.IsNullOrWhiteSpace(loginUser.Username))
                     throw new ArgumentException("Username is not set");
@@ -182,9 +182,9 @@ namespace gamevault.Windows
                 ViewModel.StatusText = "Logging in...";
                 ViewModel.LoginStepIndex = (int)LoginStep.LoadingAction;
             }
-            bool isLoggedInWithOAuth = Preferences.Get(AppConfigKey.IsLoggedInWithOAuth, profile.UserConfigFile) == "1";
+            bool isLoggedInWithSSO = Preferences.Get(AppConfigKey.IsLoggedInWithSSO, profile.UserConfigFile) == "1";
             LoginState state = LoginState.Success;
-            if (!isLoggedInWithOAuth)
+            if (!isLoggedInWithSSO)
             {
                 string username = Preferences.Get(AppConfigKey.Username, profile.UserConfigFile);
                 string password = Preferences.Get(AppConfigKey.Password, profile.UserConfigFile, true);
@@ -192,7 +192,7 @@ namespace gamevault.Windows
             }
             else
             {
-                state = await LoginManager.Instance.OAuthLogin(profile, firstTimeLogin);
+                state = await LoginManager.Instance.SSOLogin(profile, firstTimeLogin);
                 if (state == LoginState.Success)
                 {
                     Preferences.Set(AppConfigKey.Username, LoginManager.Instance.GetCurrentUser().Username, profile.UserConfigFile);
@@ -206,7 +206,7 @@ namespace gamevault.Windows
                     }
                     catch
                     {
-                        await Task.Delay(1500);//For slower machines, we have to wait for the webview of OAuthLogin to free the web cache
+                        await Task.Delay(1500);//For slower machines, we have to wait for the webview of SSOLogin to free the web cache
                         ProfileManager.DeleteUserProfile(profile);
                     }
                 }
@@ -259,7 +259,7 @@ namespace gamevault.Windows
             {
                 ValidateSignUpData();
                 LoginState state = LoginState.Success;
-                if (!ViewModel.SignupUser.IsLoggedInWithOAuth)
+                if (!ViewModel.SignupUser.IsLoggedInWithSSO)
                 {
                     state = await LoginManager.Instance.Register(ViewModel.SignupUser);//Only non-provider login has a additional call. Else its just a login, because the server will create the account internally
                 }
@@ -289,7 +289,7 @@ namespace gamevault.Windows
                 throw new Exception("Server URL is not set");
             }
             ViewModel.SignupUser.ServerUrl = ValidateUriScheme(ViewModel.SignupUser.ServerUrl);
-            if (!ViewModel.SignupUser.IsLoggedInWithOAuth)
+            if (!ViewModel.SignupUser.IsLoggedInWithSSO)
             {
                 if (string.IsNullOrWhiteSpace(ViewModel.SignupUser.Password) || string.IsNullOrWhiteSpace(ViewModel.SignupUser.RepeatPassword))
                 {

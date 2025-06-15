@@ -292,7 +292,7 @@ namespace gamevault.UserControls
             }
             if (uiFilterEarlyAccess.IsChecked == true)
             {
-                filter += "&filter.early_access=$eq:true";
+                filter += "&filter.early_access=$eq:true&filter.metadata.early_access=$eq:true";
             }
             if (uiFilterReleaseDateRangeSelector.IsValid())
             {

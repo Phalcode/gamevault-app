@@ -257,12 +257,15 @@
                                             <TextBlock Text="{Binding Path=Game.Type,Converter={StaticResource enumDescConv}}" VerticalAlignment="Center" Margin="8,0,8,0" FontSize="10" FontWeight="Bold" Foreground="#FF424242"/>
                                         </Border>
                                     </Button>
-                                    <Border CornerRadius="5" Background="Gainsboro" Height="25" Margin="0,0,0,0">
+                                    <Border CornerRadius="5" Background="Gainsboro" Height="25" Margin="5,0,0,0">
                                         <Border.Style>
                                             <Style TargetType="{x:Type Border}">
                                                 <Setter Property="Visibility" Value="Collapsed"/>
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding Path=Game.EarlyAccess}" Value="True">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Path=Game.Metadata.EarlyAccess}" Value="True">
                                                         <Setter Property="Visibility" Value="Visible"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>

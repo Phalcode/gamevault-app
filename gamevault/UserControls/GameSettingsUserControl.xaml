@@ -633,7 +633,7 @@
                                         <TextBox Width="100" Margin="115,0,0,0" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.AgeRating}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.AgeRating,TargetNullValue='',FallbackValue={x:Null}}" mah:ControlsHelper.CornerRadius="5"/>
                                         <DatePicker Width="100" Margin="69,0,0,0" SelectedDate="{Binding UpdateGame.UserMetadata.ReleaseDate}" mah:TextBoxHelper.Watermark="{Binding Path=Game.Metadata.ReleaseDate,StringFormat='{}{0:dd/MM/yyyy}'}" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.UseFloatingWatermark="True"/>
                                         <TextBox Width="100" Margin="67,0,0,0" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Rating}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Rating}" mah:ControlsHelper.CornerRadius="5"/>
-                                        <CheckBox Content="Yes" IsChecked="{Binding UpdateGame.UserMetadata.EarlyAccess}" Margin="68,0,0,0"/>
+                                        <CheckBox Content="{Binding Game.Metadata.EarlyAccess}" IsChecked="{Binding UpdateGame.UserMetadata.EarlyAccess}" Margin="68,0,0,0"/>
                                     </StackPanel>
 
                                     <TextBlock Text="Default Launch Executable" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>

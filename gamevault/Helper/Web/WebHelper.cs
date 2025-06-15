@@ -21,7 +21,7 @@ namespace gamevault.Helper
 {
     internal class WebHelper
     {
-        private static readonly OAuthHttpClient HttpClient = new OAuthHttpClient();
+        private static readonly SSOHttpClient HttpClient = new SSOHttpClient();
         private static readonly HttpClient BaseHttpClient = new HttpClient();
         static WebHelper() { }
         internal static void SetCredentials(string serverUrl, string username, string password)

@@ -58,7 +58,7 @@ namespace gamevault.Models
         UserID,
         LoginRememberMe,
         LastUserProfile,
-        IsLoggedInWithOAuth,
+        IsLoggedInWithSSO,
         LastImageOptimization
 
     }

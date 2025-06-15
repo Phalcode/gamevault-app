@@ -168,8 +168,8 @@ namespace gamevault.UserControls
             {
                 try
                 {
-                    bool isLoggedInWithOAuth = Preferences.Get(AppConfigKey.IsLoggedInWithOAuth, LoginManager.Instance.GetUserProfile().UserConfigFile) == "1";
-                    if (isLoggedInWithOAuth)
+                    bool isLoggedInWithSSO = Preferences.Get(AppConfigKey.IsLoggedInWithSSO, LoginManager.Instance.GetUserProfile().UserConfigFile) == "1";
+                    if (isLoggedInWithSSO)
                     {
                         //await WebHelper.PostAsync($"{SettingsViewModel.Instance.ServerUrl}/api/auth/revoke", "{" + $"\"refresh_token\": \"{WebHelper.GetRefreshToken()}\"" + "}");
                     }
@@ -197,14 +197,14 @@ namespace gamevault.UserControls
             //{
             //    try
             //    {
-            //        bool isLoggedInWithOAuth = Preferences.Get(AppConfigKey.IsLoggedInWithOAuth, LoginManager.Instance.GetUserProfile().UserConfigFile) == "1";
-            //        if (isLoggedInWithOAuth)
+            //        bool isLoggedInWithSSO = Preferences.Get(AppConfigKey.IsLoggedInWithSSO, LoginManager.Instance.GetUserProfile().UserConfigFile) == "1";
+            //        if (isLoggedInWithSSO)
             //        {
             //            await WebHelper.PostAsync($"{SettingsViewModel.Instance.ServerUrl}/api/auth/revoke/all", "");
             //        }
             //        else
             //        {
-            //            MainWindowViewModel.Instance.AppBarText = "This action is only possible if the user is logged in via OAuth";
+            //            MainWindowViewModel.Instance.AppBarText = "This action is only possible if the user is logged in via SSO";
             //        }
             //    }
             //    catch (Exception ex)
