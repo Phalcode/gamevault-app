@@ -65,11 +65,11 @@ namespace gamevault.Helper.Integrations
 
             try
             {
-                
+
                 string installationId = GetGameInstallationId(installationDir);
                 string[] auth = WebHelper.GetCredentials();
-                
-                string url = @$"{SettingsViewModel.Instance.ServerUrl}/api/savefiles/user/{LoginManager.Instance.GetCurrentUser()!.ID}/game/{gameId}";                
+
+                string url = @$"{SettingsViewModel.Instance.ServerUrl}/api/savefiles/user/{LoginManager.Instance.GetCurrentUser()!.ID}/game/{gameId}";
                 using (HttpResponseMessage response = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/savefiles/user/{LoginManager.Instance.GetCurrentUser()!.ID}/game/{gameId}", HttpCompletionOption.ResponseHeadersRead))
                 {
                     response.EnsureSuccessStatusCode();
@@ -215,57 +215,64 @@ namespace gamevault.Helper.Integrations
         public void PrepareConfigFile(string installationPath, string yamlPath)
         {
             string userFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            var redirects = new Dictionary<string, object>
-        {
-            { "redirects", new List<Dictionary<string, object>>
-                {
-                    new Dictionary<string, object>
-                    {
-                        { "kind", "bidirectional" },
-                        { "source", userFolder },
-                        { "target", "G:\\gamevault\\currentuser" }
-                    },
-                    new Dictionary<string, object>
-                    {
-                        { "kind", "bidirectional" },
-                        { "source", installationPath },
-                        { "target", "G:\\gamevault\\installation" }
-                    }
-                }
-            }
-        };
 
-            // Simulating SettingsViewModel.Instance.CustomCloudSaveManifests
+            // Base configuration with redirects (always included)
+            var redirects = new List<Dictionary<string, object>>
+    {
+        new Dictionary<string, object>
+        {
+            { "kind", "bidirectional" },
+            { "source", userFolder },
+            { "target", "G:\\gamevault\\currentuser" }
+        },
+        new Dictionary<string, object>
+        {
+            { "kind", "bidirectional" },
+            { "source", installationPath },
+            { "target", "G:\\gamevault\\installation" }
+        }
+    };
+
+
+
+            var roots = new List<Dictionary<string, object>>();
+            foreach (DirectoryEntry rootPath in SettingsViewModel.Instance.RootDirectories)
+            {
+                roots.Add(new Dictionary<string, object>
+        {
+            { "store", "other" },
+            { "path", Path.Combine(rootPath.Uri,"GameVault","Installations") }
+        });
+            }
+
+            // Start with base configuration (redirects and roots always included)
+            var yamlData = new Dictionary<string, object>
+    {
+        { "redirects", redirects },
+        { "roots", roots }
+    };
+
+            // Add manifest section if custom manifests exist (optional)
             var customLudusaviManifests = SettingsViewModel.Instance.CustomCloudSaveManifests.Where(m => !string.IsNullOrWhiteSpace(m.Uri));
 
-            Dictionary<string, object> yamlData;
-
-            if (customLudusaviManifests.Any()) // If manifests exist, merge with redirects
+            if (customLudusaviManifests.Any())
             {
                 var manifest = new Dictionary<string, object>
-            {
-                { "enable", SettingsViewModel.Instance.UsePrimaryCloudSaveManifest },
-                { "secondary", new List<Dictionary<string, object>>() }
-            };
+        {
+            { "enable", SettingsViewModel.Instance.UsePrimaryCloudSaveManifest },
+            { "secondary", new List<Dictionary<string, object>>() }
+        };
 
                 foreach (DirectoryEntry entry in customLudusaviManifests)
                 {
                     ((List<Dictionary<string, object>>)manifest["secondary"]).Add(new Dictionary<string, object>
-                {
-                    { Uri.IsWellFormedUriString(entry.Uri, UriKind.Absolute) ? "url" : "path", entry.Uri },
-                    { "enable", true }
-                });
+            {
+                { Uri.IsWellFormedUriString(entry.Uri, UriKind.Absolute) ? "url" : "path", entry.Uri },
+                { "enable", true }
+            });
                 }
 
-                yamlData = new Dictionary<string, object>
-            {
-                { "manifest", manifest },
-                { "redirects", redirects["redirects"] } // Merge redirects
-            };
-            }
-            else
-            {
-                yamlData = redirects; // Only redirects if no manifests
+                yamlData.Add("manifest", manifest);
             }
 
             var serializer = new SerializerBuilder()
@@ -275,6 +282,7 @@ namespace gamevault.Helper.Integrations
             string result = serializer.Serialize(yamlData);
             File.WriteAllText(yamlPath, result);
         }
+
         internal async Task<string> SearchForLudusaviGameTitle(string title)
         {
             return await Task.Run<string>(() =>

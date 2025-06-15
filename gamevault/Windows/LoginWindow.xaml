@@ -62,23 +62,25 @@
                                                             <ControlTemplate TargetType="Button">
                                                                 <Grid Style="{StaticResource HoverEffect}">
                                                                     <StackPanel Background="Transparent">
-                                                                        <Grid Height="100" Width="100">
-                                                                            <uc:CacheImage UseUriSource="True" ImageCacheType="UserAvatar" Data="{Binding UserCacheAvatar}" CornerRadius="5"/>
-                                                                            <Button x:Name="DeleteUserProfile" Style="{StaticResource ButtonWrapper}" Visibility="Hidden" Margin="0,0,0,3" Click="UserProfileContextMenu_Click">
-                                                                                <Border Style="{StaticResource HoverEffect}" Background="Transparent" HorizontalAlignment="Right" VerticalAlignment="Bottom" CornerRadius="5">
-                                                                                    <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="White" Margin="0,0,5,2"/>
-                                                                                    <Border.RenderTransform>
-                                                                                        <ScaleTransform/>
-                                                                                    </Border.RenderTransform>
-                                                                                </Border>
-                                                                                <Button.ContextMenu>
-                                                                                    <ContextMenu>
-                                                                                        <MenuItem Header="Edit User Profile" Click="EditUserProfile_Click"/>
-                                                                                        <MenuItem Header="Delete User Profile" Click="DeleteUserProfile_Click"/>
-                                                                                    </ContextMenu>
-                                                                                </Button.ContextMenu>
-                                                                            </Button>
-                                                                        </Grid>
+                                                                        <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground}" CornerRadius="5">
+                                                                            <Grid Height="100" Width="100">
+                                                                                <uc:CacheImage UseUriSource="True" ImageCacheType="UserAvatar" Data="{Binding UserCacheAvatar}" CornerRadius="5"/>
+                                                                                <Button x:Name="DeleteUserProfile" Style="{StaticResource ButtonWrapper}" Visibility="Hidden" Margin="0,0,0,3" Click="UserProfileContextMenu_Click">
+                                                                                    <Border Style="{StaticResource HoverEffect}" Background="Transparent" HorizontalAlignment="Right" VerticalAlignment="Bottom" CornerRadius="5">
+                                                                                        <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="White" Margin="0,0,5,2"/>
+                                                                                        <Border.RenderTransform>
+                                                                                            <ScaleTransform/>
+                                                                                        </Border.RenderTransform>
+                                                                                    </Border>
+                                                                                    <Button.ContextMenu>
+                                                                                        <ContextMenu>
+                                                                                            <MenuItem Header="Edit User Profile" Click="EditUserProfile_Click"/>
+                                                                                            <MenuItem Header="Delete User Profile" Click="DeleteUserProfile_Click"/>
+                                                                                        </ContextMenu>
+                                                                                    </Button.ContextMenu>
+                                                                                </Button>
+                                                                            </Grid>
+                                                                        </Border>
                                                                         <StackPanel x:Name="ProfileInfo" Visibility="Hidden">
                                                                             <TextBlock Text="{Binding Name}" FontSize="17" HorizontalAlignment="Center" TextAlignment="Center" Width="200" TextTrimming="CharacterEllipsis" FontWeight="Bold" Margin="-100,0,-100,0"/>
                                                                             <TextBlock Text="{Binding ServerUrl}" TextAlignment="Center" Width="200" TextTrimming="CharacterEllipsis" Margin="-100,0,-100,0" HorizontalAlignment="Center"/>
