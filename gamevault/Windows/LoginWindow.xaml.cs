@@ -191,14 +191,14 @@ namespace gamevault.Windows
             {
                 string username = Preferences.Get(AppConfigKey.Username, profile.UserConfigFile);
                 string password = Preferences.Get(AppConfigKey.Password, profile.UserConfigFile, true);
-                state = await LoginManager.Instance.Login(profile.ServerUrl, username, password);
+                state = await LoginManager.Instance.Login(profile, username, password);
             }
             else
             {
-                state = await LoginManager.Instance.SSOLogin(profile, firstTimeLogin);
+                state = await LoginManager.Instance.SSOLogin(profile);
                 if (state == LoginState.Success)
                 {
-                    Preferences.Set(AppConfigKey.Username, LoginManager.Instance.GetCurrentUser().Username, profile.UserConfigFile);
+                    Preferences.Set(AppConfigKey.Username, LoginManager.Instance.GetCurrentUser()?.Username, profile.UserConfigFile);
                 }
                 else if (state != LoginState.Success && firstTimeLogin)
                 {

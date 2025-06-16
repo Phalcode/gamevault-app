@@ -59,8 +59,8 @@ namespace gamevault.Models
         LoginRememberMe,
         LastUserProfile,
         IsLoggedInWithSSO,
-        LastImageOptimization
-
+        LastImageOptimization,
+        SessionToken
     }
     public static class Globals
     {

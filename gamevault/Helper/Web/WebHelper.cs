@@ -1,28 +1,22 @@
 ﻿using gamevault.Models;
-using gamevault.ViewModels;
-using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
-using Windows.Media.Protection.PlayReady;
-using YoutubeExplode.Channels;
 
 namespace gamevault.Helper
 {
     internal class WebHelper
     {
         private static readonly SSOHttpClient HttpClient = new SSOHttpClient();
-        private static readonly HttpClient BaseHttpClient = new HttpClient();
+        private static readonly HttpClient BaseHttpClient = new HttpClient()
+        {
+            DefaultRequestHeaders = { { "User-Agent", "GameVault" } }
+        };
         static WebHelper() { }
         internal static void SetCredentials(string serverUrl, string username, string password)
         {
@@ -46,31 +40,29 @@ namespace gamevault.Helper
         internal static string GetRefreshToken()
         {
             return HttpClient.GetRefreshToken();
-        }
-        internal static async Task<string> GetAsync(string url)
-        {
-            var response = await HttpClient.GetAsync(url);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadAsStringAsync();
-        }
+        }        
         internal static async Task<string> BaseGetAsync(string url)
-        {
-            if (BaseHttpClient.DefaultRequestHeaders.Count() == 0)
-            {
-                BaseHttpClient.DefaultRequestHeaders.Add("User-Agent", "GameVault");
-            }
+        {           
             var response = await BaseHttpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
         }
         internal static async Task<string> BasePostAsync(string url, string payload)
-        {
-            if (BaseHttpClient.DefaultRequestHeaders.Count() == 0)
-            {
-                BaseHttpClient.DefaultRequestHeaders.Add("User-Agent", "GameVault");
-            }
+        {          
             var content = new StringContent(payload, Encoding.UTF8, "application/json");
             var response = await BaseHttpClient.PostAsync(url, content);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
+        }
+        internal static async Task<string> BaseSendRequest(HttpRequestMessage request)
+        {           
+            var response = await BaseHttpClient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
+        }
+        internal static async Task<string> GetAsync(string url)
+        {
+            var response = await HttpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
         }

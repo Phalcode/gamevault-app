@@ -189,7 +189,16 @@ namespace gamevault.UserControls
         {
             if (LoginManager.Instance.GetCurrentUser().ID == selectedUser.ID)
             {
-                await LoginManager.Instance.ManualLogin(selectedUser.Username, string.IsNullOrEmpty(selectedUser.Password) ? WebHelper.GetCredentials()[1] : selectedUser.Password);
+                UserProfile profile = LoginManager.Instance.GetUserProfile();
+                bool isLoggedInWithSSO = Preferences.Get(AppConfigKey.IsLoggedInWithSSO, profile.UserConfigFile) == "1";
+                if (isLoggedInWithSSO)
+                {
+                    await LoginManager.Instance.SSOLogin(profile);
+                }
+                else
+                {
+                    await LoginManager.Instance.Login(profile, WebHelper.GetCredentials()[0], WebHelper.GetCredentials()[1]);
+                }
                 MainWindowViewModel.Instance.UserAvatar = LoginManager.Instance.GetCurrentUser();
             }
             await InitUserList();

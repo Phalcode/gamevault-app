@@ -3,27 +3,19 @@ using gamevault.ViewModels;
 using gamevault.Windows;
 using IdentityModel.Client;
 using IdentityModel.OidcClient;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.Wpf;
 using System;
-using System.Collections.Generic;
-using System.Dynamic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Threading;
-using Windows.Media.Protection.PlayReady;
-using static System.Windows.Forms.AxHost;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace gamevault.Helper
 {
@@ -91,150 +83,159 @@ namespace gamevault.Helper
             userProfile = profile;
         }
 
-        public async Task<LoginState> Login(string serverUrl, string username, string password)
+        public async Task<LoginState> Login(UserProfile profile, string username, string password)
         {
             LoginState state = LoginState.Success;
+            bool sessionTokenReuseFailed = false;
             try
             {
-                WebHelper.SetCredentials(serverUrl, username, password);
-                string result = await WebHelper.GetAsync(@$"{serverUrl}/api/users/me");
-                m_User = JsonSerializer.Deserialize<User>(result);
-            }
-            catch (Exception ex)
-            {
-                string code = WebExceptionHelper.GetServerStatusCode(ex);
-                state = DetermineLoginState(code);
-                if (state != LoginState.Success)
+                if (await TryReuseSessionToken(profile))
                 {
-                    m_LoginMessage = WebExceptionHelper.TryGetServerMessage(ex);
+                    string result = await WebHelper.GetAsync(@$"{profile.ServerUrl}/api/users/me");
+                    m_User = JsonSerializer.Deserialize<User>(result);
+                    m_LoginState = LoginState.Success;
+                    return m_LoginState;
                 }
+                sessionTokenReuseFailed = true;
             }
-            m_LoginState = state;
-            return state;
-        }
-
-        public async Task<LoginState> SSOLogin(UserProfile profile, bool showWindow = true)
-        {
-            // Create window in both cases, but only show it if showWindow is true
-            Window win = new Window()
+            catch (Exception ex) { sessionTokenReuseFailed = true; }
+            if (sessionTokenReuseFailed)
             {
-                Height = 600,
-                Width = 800,
-                WindowStartupLocation = WindowStartupLocation.CenterScreen,
-            };
-            if (!showWindow)
-            {
-                VisualHelper.HideWindow(win);
-            }
-            WebView2 uiWebView = new WebView2();
-            bool windowClosedByCompleted = false;
-
-            win.Content = uiWebView;
-            win.Show(); // Window is shown but may be hidden based on Visibility property
-
-            var env = await CoreWebView2Environment.CreateAsync(null, profile.WebConfigDir);
-            await uiWebView.EnsureCoreWebView2Async(env);
-
-            // Create a TaskCompletionSource to await the navigation completion
-            var tcs = new TaskCompletionSource<LoginState>();
-
-            win.Closing += (s, e) =>
-            {
-                // Only set the result if it hasn't been set already
-                if (!windowClosedByCompleted)
-                {
-                    uiWebView.Dispose();
-                    m_LoginState = LoginState.Error;
-                    m_LoginMessage = "Authentication canceled by user.";
-                    tcs.SetResult(LoginState.Error);
-                }
-            };
-
-            uiWebView.NavigationCompleted += async (s, e) =>
-            {
-                string content = await uiWebView.CoreWebView2.ExecuteScriptAsync("document.body.innerText");
-
                 try
                 {
-                    string result = System.Text.Json.JsonSerializer.Deserialize<string>(content);
-                    var authResponse = JsonSerializer.Deserialize<AuthResponse>(result);
-                    string accessToken = authResponse?.AccessToken;
-                    string refreshToken = authResponse?.RefreshToken;
-
-                    windowClosedByCompleted = true;
-                    win.Close();
-                    uiWebView.Dispose();
-
-                    if (!string.IsNullOrEmpty(accessToken))
-                    {
-                        WebHelper.InjectTokens(accessToken, refreshToken);
-
-                        //Actual Login with gathered Tokens
-                        LoginState state = LoginState.Success;
-                        try
-                        {
-                            string userResult = await WebHelper.GetAsync(@$"{profile.ServerUrl}/api/users/me");
-                            m_User = JsonSerializer.Deserialize<User>(userResult);
-                        }
-                        catch (Exception ex)
-                        {
-                            string code = WebExceptionHelper.GetServerStatusCode(ex);
-                            state = DetermineLoginState(code);
-                            if (state == LoginState.Error)
-                            {
-                                m_LoginMessage = WebExceptionHelper.TryGetServerMessage(ex);
-                            }
-                        }
-                        m_LoginState = state;
-                        tcs.SetResult(state);
-                    }
+                    WebHelper.SetCredentials(profile.ServerUrl, username, password);
+                    string result = await WebHelper.GetAsync(@$"{profile.ServerUrl}/api/users/me");
+                    m_User = JsonSerializer.Deserialize<User>(result);
+                    Preferences.Set(AppConfigKey.SessionToken, WebHelper.GetRefreshToken(), profile.UserConfigFile, true);
                 }
                 catch (Exception ex)
                 {
-                    // Only set the result if it's a valid auth response
-                    // Otherwise, let the navigation continue
-                }
-            };
-            uiWebView.CoreWebView2.Navigate($"{profile.ServerUrl}/api/auth/SSO2/login");
-            // uiWebView.Source = new Uri($"{profile.ServerUrl}/api/auth/SSO2/login");
-
-            // Set a timeout for hidden window mode
-            if (!showWindow)
-            {
-                var timeoutTask = Task.Delay(7000); // 7 seconds timeout
-                var completedTask = await Task.WhenAny(tcs.Task, timeoutTask);
-
-                if (completedTask == timeoutTask)
-                {
-                    VisualHelper.RestoreHiddenWindow(win, 600, 800);
-                }
-            }
-
-            // Wait for the navigation to complete and tokens to be processed
-            return await tcs.Task;
-        }
-
-
-        public async Task<LoginState> ManualLogin(string username, string password)
-        {
-            LoginState state = LoginState.Success;
-            try
-            {
-                WebHelper.OverrideCredentials(username, password);
-                string result = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me");
-                m_User = JsonSerializer.Deserialize<User>(result);
-            }
-            catch (Exception ex)
-            {
-                string code = WebExceptionHelper.GetServerStatusCode(ex);
-                state = DetermineLoginState(code);
-                if (state == LoginState.Error)
-                {
-                    m_LoginMessage = WebExceptionHelper.TryGetServerMessage(ex);
+                    string code = WebExceptionHelper.GetServerStatusCode(ex);
+                    state = DetermineLoginState(code);
+                    if (state != LoginState.Success)
+                    {
+                        m_LoginMessage = WebExceptionHelper.TryGetServerMessage(ex);
+                    }
                 }
             }
             m_LoginState = state;
             return state;
+        }
+        public async Task<LoginState> SSOLogin(UserProfile profile)
+        {
+            LoginState state = LoginState.Success;
+            bool sessionTokenReuseFailed = false;
+            try
+            {
+                if (await TryReuseSessionToken(profile))
+                {
+                    string result = await WebHelper.GetAsync(@$"{profile.ServerUrl}/api/users/me");
+                    m_User = JsonSerializer.Deserialize<User>(result);
+                    return LoginState.Success;
+                }
+                sessionTokenReuseFailed = true;
+            }
+            catch (Exception ex) { sessionTokenReuseFailed = true; }
+
+
+            if (sessionTokenReuseFailed)
+            {
+                Window win = new Window()
+                {
+                    Height = 600,
+                    Width = 800,
+                    WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                };
+                WebView2 uiWebView = new WebView2();
+                bool windowClosedByCompleted = false;
+
+                win.Content = uiWebView;
+                win.Show(); // Window is shown but may be hidden based on Visibility property
+
+                var env = await CoreWebView2Environment.CreateAsync(null, profile.WebConfigDir);
+                await uiWebView.EnsureCoreWebView2Async(env);
+
+                // Create a TaskCompletionSource to await the navigation completion
+                var tcs = new TaskCompletionSource<LoginState>();
+
+                win.Closing += (s, e) =>
+                {
+                    // Only set the result if it hasn't been set already
+                    if (!windowClosedByCompleted)
+                    {
+                        uiWebView.Dispose();
+                        m_LoginState = LoginState.Error;
+                        m_LoginMessage = "Authentication canceled by user.";
+                        tcs.SetResult(LoginState.Error);
+                    }
+                };
+
+                uiWebView.NavigationCompleted += async (s, e) =>
+                {
+                    string content = await uiWebView.CoreWebView2.ExecuteScriptAsync("document.body.innerText");
+
+                    try
+                    {
+                        string result = System.Text.Json.JsonSerializer.Deserialize<string>(content);
+                        var authResponse = JsonSerializer.Deserialize<AuthResponse>(result);
+                        string accessToken = authResponse?.AccessToken;
+                        string refreshToken = authResponse?.RefreshToken;
+
+                        if (!string.IsNullOrEmpty(accessToken))
+                        {
+                            windowClosedByCompleted = true;
+                            win.Close();
+                            uiWebView.Dispose();
+
+                            WebHelper.InjectTokens(accessToken, refreshToken);
+                            Preferences.Set(AppConfigKey.SessionToken, refreshToken, profile.UserConfigFile, true);
+                            //Actual Login with gathered Tokens                           
+                            try
+                            {
+                                string userResult = await WebHelper.GetAsync(@$"{profile.ServerUrl}/api/users/me");
+                                m_User = JsonSerializer.Deserialize<User>(userResult);
+                            }
+                            catch (Exception ex)
+                            {
+                                string code = WebExceptionHelper.GetServerStatusCode(ex);
+                                state = DetermineLoginState(code);
+                                if (state == LoginState.Error)
+                                {
+                                    m_LoginMessage = WebExceptionHelper.TryGetServerMessage(ex);
+                                }
+                            }
+                            m_LoginState = state;
+                            tcs.SetResult(state);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // Only set the result if it's a valid auth response
+                        // Otherwise, let the navigation continue
+                    }
+                };
+                uiWebView.CoreWebView2.Navigate($"{profile.ServerUrl}/api/auth/oauth2/login");
+                // Wait for the navigation to complete and tokens to be processed
+                return await tcs.Task;
+            }
+            return LoginState.Error;
+        }
+        private async Task<bool> TryReuseSessionToken(UserProfile profile)
+        {
+            string sessionToken = Preferences.Get(AppConfigKey.SessionToken, profile.UserConfigFile, true);
+            if (!string.IsNullOrWhiteSpace(sessionToken))
+            {
+                var request = new HttpRequestMessage(HttpMethod.Post, $"{profile.ServerUrl}/api/auth/refresh") { Content = new StringContent("", Encoding.UTF8, "application/json") };
+                request.Headers.Add("Authorization", $"Bearer {sessionToken}");
+                var response = await WebHelper.BaseSendRequest(request);
+                var authResponse = JsonSerializer.Deserialize<AuthResponse>(response);
+                string accessToken = authResponse?.AccessToken;
+                string refreshToken = authResponse?.RefreshToken;
+                WebHelper.InjectTokens(accessToken, refreshToken);
+                Preferences.Set(AppConfigKey.SessionToken, refreshToken, profile.UserConfigFile, true);
+                return true;
+            }
+            return false;
         }
 
         private WpfEmbeddedBrowser wpfEmbeddedBrowser = null;
@@ -439,14 +440,14 @@ namespace gamevault.Helper
         private async void CheckOnlineStatus(object sender, EventArgs e)
         {
             try
-            {               
+            {
                 if (!IsLoggedIn())
                 {
                     bool isLoggedInWithSSO = Preferences.Get(AppConfigKey.IsLoggedInWithSSO, GetUserProfile().UserConfigFile) == "1";
                     if (!isLoggedInWithSSO)
                     {
                         string[] credencials = WebHelper.GetCredentials();
-                        await Login(GetUserProfile().ServerUrl, credencials[0], credencials[1]);
+                        await Login(GetUserProfile(), credencials[0], credencials[1]);
                     }
                     else
                     {
