@@ -172,10 +172,12 @@ namespace gamevault.UserControls
                     if (isLoggedInWithSSO)
                     {
                         //await WebHelper.PostAsync($"{SettingsViewModel.Instance.ServerUrl}/api/auth/revoke", "{" + $"\"refresh_token\": \"{WebHelper.GetRefreshToken()}\"" + "}");
+                        Preferences.DeleteKey(AppConfigKey.SessionToken, LoginManager.Instance.GetUserProfile().UserConfigFile);
                     }
                     else
                     {
                         Preferences.DeleteKey(AppConfigKey.Password, LoginManager.Instance.GetUserProfile().UserConfigFile);
+                        Preferences.DeleteKey(AppConfigKey.SessionToken, LoginManager.Instance.GetUserProfile().UserConfigFile);
                     }
                     Preferences.DeleteKey(AppConfigKey.LastUserProfile, ProfileManager.ProfileConfigFile);
                     ((MainWindow)App.Current.MainWindow).Dispose();

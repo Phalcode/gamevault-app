@@ -87,6 +87,7 @@ namespace gamevault.Helper
         {
             LoginState state = LoginState.Success;
             bool sessionTokenReuseFailed = false;
+            WebHelper.SetCredentials(profile.ServerUrl, username, password);
             try
             {
                 if (await TryReuseSessionToken(profile))
@@ -102,8 +103,7 @@ namespace gamevault.Helper
             if (sessionTokenReuseFailed)
             {
                 try
-                {
-                    WebHelper.SetCredentials(profile.ServerUrl, username, password);
+                {                   
                     string result = await WebHelper.GetAsync(@$"{profile.ServerUrl}/api/users/me");
                     m_User = JsonSerializer.Deserialize<User>(result);
                     Preferences.Set(AppConfigKey.SessionToken, WebHelper.GetRefreshToken(), profile.UserConfigFile, true);
@@ -125,6 +125,7 @@ namespace gamevault.Helper
         {
             LoginState state = LoginState.Success;
             bool sessionTokenReuseFailed = false;
+            WebHelper.SetCredentials(profile.ServerUrl, "", "");
             try
             {
                 if (await TryReuseSessionToken(profile))
