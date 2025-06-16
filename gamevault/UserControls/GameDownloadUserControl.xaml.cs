@@ -751,6 +751,11 @@ namespace gamevault.UserControls
             uiInstallOptions.Visibility = System.Windows.Visibility.Collapsed;
             uiProgressRingInstall.IsActive = false;
             uiBtnExtract.IsEnabled = true;
+            try
+            {
+                Preferences.Set(AppConfigKey.InstalledGameVersion, ViewModel?.Game?.Version, $"{ViewModel.InstallPath}\\gamevault-exec");
+            }
+            catch { }
             //Save forced install type for uninstallation
             if (isGameTypeForced && Directory.Exists(ViewModel.InstallPath) && ViewModel?.Game?.Type != null)
             {

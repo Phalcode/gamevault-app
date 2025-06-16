@@ -153,6 +153,7 @@
                 </TextBlock>
                 <TextBlock Text="{Binding Path=Game.ID,StringFormat='{}ID {0}'}" FontSize="16"/>
                 <TextBlock Text="{Binding Path=Game.Version,StringFormat='{}Version {0}',TargetNullValue='Version N/A'}" FontSize="16"/>
+                <TextBlock Text="{Binding Path=InstalledGameVersion,StringFormat='{}Installed Version {0}',TargetNullValue='Installed Version N/A'}" FontSize="16"/>
             </StackPanel>
             <Grid Grid.Column="1" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" ClipToBounds="True">
                 <mah:MetroAnimatedTabControl x:Name="uiSettingsContent" Background="Transparent">

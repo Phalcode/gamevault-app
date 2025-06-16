@@ -6,6 +6,7 @@
              xmlns:helper="clr-namespace:gamevault.Helper"
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:vm="clr-namespace:gamevault.ViewModels"
+             xmlns:conv="clr-namespace:gamevault.Converter"
              xmlns:local="clr-namespace:gamevault.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
@@ -63,6 +64,15 @@
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
+                            <conv:GameUpdateAvailableConverter x:Key="gameUpdateAvailableConv"/>
+                            <Style x:Key="UpdateAvailableCheck" TargetType="Border">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Path=Key,Converter={StaticResource gameUpdateAvailableConv}}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
                         </ItemsControl.Resources>
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -109,9 +119,15 @@
                                                 </Style>
                                             </Grid.Style>
                                             <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground}" CornerRadius="8">
-                                                <local:CacheImage Stretch="Fill" ImageCacheType="GameCover" Data="{Binding Key}" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                <Grid>
+                                                    <local:CacheImage Stretch="Fill" ImageCacheType="GameCover" Data="{Binding Key}" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    <Border Style="{StaticResource UpdateAvailableCheck}" Background="IndianRed" CornerRadius="5" VerticalAlignment="Bottom" Margin="0,0,0,0">
+
+                                                        <TextBlock Text="Update available!" FontWeight="DemiBold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,3,0,3"/>
+                                                    </Border>
+                                                </Grid>
                                             </Border>
-                                            <Border Name="banner" VerticalAlignment="Stretch" Background="{DynamicResource GameVault.Brushes.Blur}" CornerRadius="8">
+                                            <Border Name="banner" VerticalAlignment="Stretch" Background="{DynamicResource GameVault.Brushes.Blur}" CornerRadius="5">
                                                 <Border.Style>
                                                     <Style TargetType="{x:Type Border}">
                                                         <Style.Triggers>

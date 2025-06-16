@@ -50,6 +50,8 @@ namespace gamevault.UserControls
                 if (Directory.Exists(ViewModel.Directory))
                 {
                     ViewModel.LaunchParameter = Preferences.Get(AppConfigKey.LaunchParameter, $"{ViewModel.Directory}\\gamevault-exec");
+                    string installedVersion = Preferences.Get(AppConfigKey.InstalledGameVersion, $"{ViewModel.Directory}\\gamevault-exec");
+                    ViewModel.InstalledGameVersion = installedVersion == string.Empty ? null : installedVersion;
                 }
                 InitDiskUsagePieChart();//Task
             }
