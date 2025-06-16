@@ -148,9 +148,18 @@ namespace gamevault.UserControls
                             if (LoginManager.Instance.IsLoggedIn())
                             {
                                 if (!Preferences.Exists(game.ID.ToString(), LoginManager.Instance.GetUserProfile().OfflineCache))
+                                {                                    
+                                    await CacheHelper.CreateOfflineCacheAsync(game);
+                                }
+                                else
                                 {
-                                    string gameToSave = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{game.ID}");
-                                    await CacheHelper.CreateOfflineCacheAsync(JsonSerializer.Deserialize<Game>(gameToSave));
+                                    string offlineCacheGameString = Preferences.Get(game.ID.ToString(), LoginManager.Instance.GetUserProfile().OfflineCache);
+                                    offlineCacheGameString = StringCompressor.DecompressString(offlineCacheGameString);
+                                    Game offlineCacheGame = JsonSerializer.Deserialize<Game>(offlineCacheGameString);
+                                    if(game.EntityVersion != offlineCacheGame?.EntityVersion)
+                                    {
+                                        await CacheHelper.CreateOfflineCacheAsync(game);
+                                    }
                                 }
                             }
                         }
