@@ -171,7 +171,10 @@
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="400" Height="300">
                         <TextBlock Text="Sign In" FontSize="30" HorizontalAlignment="Center"/>
                         <TextBlock Text="Specify Your Server URL" TextDecorations="Underline" Margin="0,15,0,5"/>
-                        <TextBox Text="{Binding LoginUser.ServerUrl}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                            <TextBox Text="{Binding LoginUser.ServerUrl}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" Width="400" LostFocus="ServerUrlInput_LostFocus"/>
+                            <Path Data="{StaticResource IconCheck}" Fill="Green" Margin="2,1,-25,0" Visibility="Collapsed"/>
+                        </StackPanel>
                         <StackPanel IsEnabled="{Binding LoginUser.IsLoggedInWithSSO,Converter={StaticResource invBoolConv}}">
                             <TextBlock Text="Username or Email" TextDecorations="Underline" Margin="0,15,0,5"/>
                             <TextBox Text="{Binding LoginUser.Username}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>

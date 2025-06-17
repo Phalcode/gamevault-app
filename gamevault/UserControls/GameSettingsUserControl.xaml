@@ -643,6 +643,13 @@
                                     <TextBox Text="{Binding UpdateGame.UserMetadata.LaunchParameters,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.LaunchParameters}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
                                     <TextBlock Text="Default Installer Executable" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
                                     <TextBox Text="{Binding UpdateGame.UserMetadata.InstallerExecutable,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.InstallerExecutable}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                    <TextBlock Text="Default Installer Parameters" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <TextBox Text="{Binding UpdateGame.UserMetadata.InstallerParameters,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.InstallerParameters}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+
+                                    <TextBlock Text="Default Uninstaller Executable" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <TextBox Text="{Binding UpdateGame.UserMetadata.UninstallerExecutable,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.UninstallerExecutable}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
+                                    <TextBlock Text="Default Uninstaller Parameters" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
+                                    <TextBox Text="{Binding UpdateGame.UserMetadata.UninstallerParameters,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.UninstallerParameters}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>
 
                                     <TextBlock Text="Website URLs" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>
                                     <TextBox Text="{Binding UpdateGame.UserMetadata.UrlWebsites,Converter={StaticResource stringToArrayConv},ConverterParameter=',',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.WebsiteNames}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:ControlsHelper.CornerRadius="5"/>

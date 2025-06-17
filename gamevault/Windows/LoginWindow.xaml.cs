@@ -109,6 +109,23 @@ namespace gamevault.Windows
             int loginStep = (int)((FrameworkElement)sender).Tag;
             ViewModel.LoginStepIndex = loginStep;
         }
+        private async void ServerUrlInput_LostFocus(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                StackPanel parentStackPanel = ((TextBox)sender).Parent as StackPanel;
+                if (parentStackPanel != null)
+                {
+                    System.Windows.Shapes.Path validationIcon = parentStackPanel.Children.OfType<System.Windows.Shapes.Path>().FirstOrDefault();
+                    if (validationIcon != null)
+                    {
+                        string result = await WebHelper.BaseGetAsync($"{((TextBox)sender).Text}/api/status");
+                        validationIcon.Visibility = Visibility.Visible;
+                    }
+                }
+            }
+            catch { }
+        }
         private UserProfile SetupUserProfile(LoginUser user)
         {
             string cleanedServerUrl = RemoveSpecialCharacters(user.ServerUrl);

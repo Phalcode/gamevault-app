@@ -21,7 +21,11 @@ namespace gamevault.Converter
                 KeyValuePair<Game, string> result = InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == game.ID).FirstOrDefault();
                 string execFile = Path.Combine(result.Value, "gamevault-exec");
                 string installedVersion = Preferences.Get(AppConfigKey.InstalledGameVersion, execFile);
-                if (installedVersion != game.Version)
+                if(string.IsNullOrWhiteSpace(installedVersion))
+                {
+                    Preferences.Set(AppConfigKey.InstalledGameVersion, game.Version, execFile);                    
+                }
+                else if (installedVersion != game.Version)
                 {
                     return true;
                 }

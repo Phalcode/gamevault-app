@@ -717,13 +717,13 @@ namespace gamevault.UserControls
                     Process setupProcess = null;
                     try
                     {
-                        setupProcess = ProcessHelper.StartApp(setupEexecutable);
+                        setupProcess = ProcessHelper.StartApp(setupEexecutable, ViewModel.Game?.Metadata?.InstallerParameters?.Replace("%INSTALLDIR%", ViewModel.InstallPath));
                     }
                     catch
                     {
                         try
                         {
-                            setupProcess = ProcessHelper.StartApp(setupEexecutable, "", true);
+                            setupProcess = ProcessHelper.StartApp(setupEexecutable, ViewModel.Game?.Metadata?.InstallerParameters?.Replace("%INSTALLDIR%", ViewModel.InstallPath), true);
                         }
                         catch
                         {

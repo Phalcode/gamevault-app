@@ -22,6 +22,7 @@ using System.Windows.Media;
 using LiveChartsCore.SkiaSharpView.Painting;
 using gamevault.Models.Mapping;
 using IO.Swagger.Model;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 
 namespace gamevault.UserControls
@@ -211,53 +212,72 @@ namespace gamevault.UserControls
                 MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to uninstall '{ViewModel.Game.Title}' ?\nAs this is a Windows Setup Game, you will need to select an uninstall executable manually", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
                 if (result == MessageDialogResult.Affirmative)
                 {
-                    using (var dialog = new System.Windows.Forms.OpenFileDialog())
+                    string selectedUninstallerExecutablePath = "";
+                    if (!string.IsNullOrWhiteSpace(ViewModel.Game?.Metadata?.UninstallerExecutable))
                     {
-                        dialog.InitialDirectory = ViewModel.Directory;
-                        dialog.Filter = "uninstall|*.exe";
-                        System.Windows.Forms.DialogResult fileResult = dialog.ShowDialog();
-                        if (fileResult == System.Windows.Forms.DialogResult.OK && File.Exists(dialog.FileName))
+                        var entry = Directory.GetFiles(ViewModel.Directory, "*", SearchOption.AllDirectories)
+                                    .Select((file) => new { Key = file.Substring(ViewModel.Directory.Length + 1), Value = file })
+                                    .FirstOrDefault(item => item.Key.Contains(ViewModel.Game?.Metadata?.UninstallerExecutable.Replace("/", "\\"), StringComparison.OrdinalIgnoreCase));
+                        if (entry != null)
                         {
-                            MessageDialogResult pickResult = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to uninstall the game using '{Path.GetFileName(dialog.FileName)}' ?", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
-                            if (pickResult != MessageDialogResult.Affirmative)
+                            selectedUninstallerExecutablePath = entry.Value;
+                            if (!File.Exists(selectedUninstallerExecutablePath))
                             {
-                                return;
-                            }
-                            Process uninstProcess = null;
-                            try
-                            {
-                                uninstProcess = ProcessHelper.StartApp(dialog.FileName);
-                            }
-                            catch
-                            {
-
-                                try
-                                {
-                                    uninstProcess = ProcessHelper.StartApp(dialog.FileName, "", true);
-                                }
-                                catch
-                                {
-                                    MainWindowViewModel.Instance.AppBarText = $"Can not execute '{dialog.FileName}'";
-                                }
-                            }
-                            if (uninstProcess != null)
-                            {
-                                await uninstProcess.WaitForExitAsync();
-                                try
-                                {
-                                    if (Directory.Exists(ViewModel.Directory))
-                                    {
-                                        //Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(ViewModel.Directory, Microsoft.VisualBasic.FileIO.UIOption.AllDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.DeletePermanently);                                        
-                                        Directory.Delete(ViewModel.Directory, true);
-                                    }
-
-                                    InstallViewModel.Instance.InstalledGames.Remove(InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).First());
-                                    DesktopHelper.RemoveShotcut(ViewModel.Game);
-                                    MainWindowViewModel.Instance.ClosePopup();
-                                }
-                                catch { }
+                                selectedUninstallerExecutablePath = "";
                             }
                         }
+                    }
+                    if (selectedUninstallerExecutablePath == "")
+                    {
+                        using (var dialog = new System.Windows.Forms.OpenFileDialog())
+                        {
+                            dialog.InitialDirectory = ViewModel.Directory;
+                            dialog.Filter = "uninstall|*.exe";
+                            System.Windows.Forms.DialogResult fileResult = dialog.ShowDialog();
+                            if (fileResult == System.Windows.Forms.DialogResult.OK && File.Exists(dialog.FileName))
+                            {
+                                MessageDialogResult pickResult = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to uninstall the game using '{Path.GetFileName(dialog.FileName)}' ?", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+                                if (pickResult != MessageDialogResult.Affirmative)
+                                {
+                                    return;
+                                }
+                                selectedUninstallerExecutablePath = dialog.FileName;
+                            }
+                        }
+                    }
+                    Process uninstProcess = null;
+                    try
+                    {
+                        uninstProcess = ProcessHelper.StartApp(selectedUninstallerExecutablePath, ViewModel.Game?.Metadata?.UninstallerParameters);
+                    }
+                    catch
+                    {
+
+                        try
+                        {
+                            uninstProcess = ProcessHelper.StartApp(selectedUninstallerExecutablePath, ViewModel.Game?.Metadata?.UninstallerParameters, true);
+                        }
+                        catch
+                        {
+                            MainWindowViewModel.Instance.AppBarText = $"Can not execute '{selectedUninstallerExecutablePath}'";
+                        }
+                    }
+                    if (uninstProcess != null)
+                    {
+                        await uninstProcess.WaitForExitAsync();
+                        try
+                        {
+                            if (Directory.Exists(ViewModel.Directory))
+                            {
+                                //Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(ViewModel.Directory, Microsoft.VisualBasic.FileIO.UIOption.AllDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.DeletePermanently);                                        
+                                Directory.Delete(ViewModel.Directory, true);
+                            }
+
+                            InstallViewModel.Instance.InstalledGames.Remove(InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).First());
+                            DesktopHelper.RemoveShotcut(ViewModel.Game);
+                            MainWindowViewModel.Instance.ClosePopup();
+                        }
+                        catch { }
                     }
                 }
             }
