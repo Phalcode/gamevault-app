@@ -458,14 +458,15 @@ namespace gamevault
         private async Task<Game?> GetInstalledGame(int id)
         {
             Game? game = null;
-            await Dispatch(async () =>
+            if (!InstallViewModel.Instance.InstalledGames.Any())
             {
-                if (!InstallViewModel.Instance.InstalledGames.Any())
+                try
                 {
-                    await MainWindowViewModel.Instance.Library.GetGameInstalls().RestoreInstalledGames();
+                    await MainWindowViewModel.Instance.Library.GetGameInstalls().RestoreInstalledGames(true);
                 }
-                game = InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == id).Select(g => g.Key).FirstOrDefault();
-            });
+                catch { }
+            }
+            game = InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == id).Select(g => g.Key).FirstOrDefault();
             return game;
         }
 

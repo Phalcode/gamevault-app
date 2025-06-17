@@ -40,7 +40,7 @@ namespace gamevault.UserControls
                 InstallViewModel.Instance.InstalledGamesFilter = CollectionViewSource.GetDefaultView(InstallViewModel.Instance.InstalledGames);
             }
         }
-        public async Task RestoreInstalledGames()
+        public async Task RestoreInstalledGames(bool fromCLI = false)
         {
             if (gamesRestored)
             {
@@ -148,7 +148,7 @@ namespace gamevault.UserControls
                             if (LoginManager.Instance.IsLoggedIn())
                             {
                                 if (!Preferences.Exists(game.ID.ToString(), LoginManager.Instance.GetUserProfile().OfflineCache))
-                                {                                    
+                                {
                                     await CacheHelper.CreateOfflineCacheAsync(game);
                                 }
                                 else
@@ -156,7 +156,7 @@ namespace gamevault.UserControls
                                     string offlineCacheGameString = Preferences.Get(game.ID.ToString(), LoginManager.Instance.GetUserProfile().OfflineCache);
                                     offlineCacheGameString = StringCompressor.DecompressString(offlineCacheGameString);
                                     Game offlineCacheGame = JsonSerializer.Deserialize<Game>(offlineCacheGameString);
-                                    if(game.EntityVersion != offlineCacheGame?.EntityVersion)
+                                    if (game.EntityVersion != offlineCacheGame?.EntityVersion)
                                     {
                                         await CacheHelper.CreateOfflineCacheAsync(game);
                                     }
@@ -173,7 +173,9 @@ namespace gamevault.UserControls
                     SearchFilterInputTimerElapsed(null, null);//Keep the filter
                 }
             }
-            gamesRestored = true;
+            if (!fromCLI)
+                gamesRestored = true;
+
             App.Instance.SetJumpListGames();
         }
         private async Task<ObservableCollection<KeyValuePair<Game, string>>> SortInstalledGamesByLastPlayed(ObservableCollection<KeyValuePair<Game, string>> collection)
