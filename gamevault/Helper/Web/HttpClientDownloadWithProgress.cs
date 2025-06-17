@@ -77,14 +77,14 @@ namespace gamevault.Helper
                     string[] resumeDataToProcess = resumeData.Split(";");
                     ResumePosition = long.Parse(resumeDataToProcess[0]);
                     PreResumeSize = long.Parse(resumeDataToProcess[1]);
-                    HttpClient.DefaultRequestHeaders.Range = new RangeHeaderValue(long.Parse(resumeDataToProcess[0]), null);                   
+                    HttpClient.DefaultRequestHeaders.Range = new RangeHeaderValue(long.Parse(resumeDataToProcess[0]), null);
                 }
                 catch { }
             }
         }
 
         private async Task DownloadFileFromHttpResponseMessage(HttpResponseMessage response)
-        {            
+        {
             try
             {
                 FileName = response.Content.Headers.ContentDisposition.FileName.Replace("\"", "");
@@ -165,10 +165,10 @@ namespace gamevault.Helper
                         currentBytesRead += bytesRead;
                         if ((DateTime.Now - LastTime).TotalMilliseconds > 2000)
                         {
-                            TriggerProgressChanged(currentDownloadSize, currentBytesRead, fileStream.Position);
-                            LastTime = DateTime.Now;
                             //Save checkpoints all two seconds in case the app is closed by the user, or hardly crashed
                             Preferences.Set(AppConfigKey.DownloadProgress, $"{fileStream.Position};{(PreResumeSize == -1 ? currentDownloadSize : PreResumeSize)}", $"{DestinationFolderPath}\\gamevault-metadata");
+                            TriggerProgressChanged(currentDownloadSize, currentBytesRead, fileStream.Position);
+                            LastTime = DateTime.Now;
                         }
                     }
                     while (isMoreToRead);
