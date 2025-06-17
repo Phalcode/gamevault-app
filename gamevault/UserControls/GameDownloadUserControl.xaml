@@ -18,7 +18,7 @@
 
     <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Margin="1" Height="80" CornerRadius="2">
         <Grid>
-            <Button Style="{StaticResource ButtonWrapper}" HorizontalAlignment="Left" VerticalAlignment="Top" MaxWidth="52" Margin="2,2,120,2" Cursor="Hand" Click="GameImage_Click">
+            <Button Style="{StaticResource ButtonWrapper}" HorizontalAlignment="Left" VerticalAlignment="Top" MaxWidth="52" Margin="2,2,120,2" Cursor="Hand" Click="GoToGame_Click">
                 <local:CacheImage ImageCacheType="GameCover" Stretch="Fill" Data="{Binding Path=Game}" CornerRadius="2"/>
             </Button>
             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="56,2,0,0" MaxWidth="106" FontSize="6" FontWeight="Bold" TextTrimming="CharacterEllipsis">
@@ -154,7 +154,32 @@
                     </Ellipse.Style>
                 </Ellipse>
             </StackPanel>
-            <local:IconButton x:Name="uiBtnInstall" Kind="Primary" IsEnabled="False" Text="Install" FontSize="5" Icon="{StaticResource IconInstalledGamesSettings}" IconScale="0.29" IconMargin="-9,-7,-5.5,-7" CornerRadius="2" Height="9" Width="34" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="64,62,1,0" ToolTip="Install Game" Click="OpenInstallOptions_Click"/>
+            <Grid HorizontalAlignment="Left" VerticalAlignment="Center" Margin="64,62,1,0">
+                <local:IconButton x:Name="uiBtnInstall" Kind="Primary" IsEnabled="False" Text="Install" FontSize="5" Icon="{StaticResource IconInstalledGamesSettings}" IconScale="0.29" IconMargin="-9,-7,-5.5,-7" CornerRadius="2" Height="9" Width="34" ToolTip="Install Game" Click="OpenInstallOptions_Click">
+                    <local:IconButton.Style>
+                        <Style TargetType="local:IconButton" BasedOn="{StaticResource {x:Type local:IconButton}}">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding InstallationStepperProgress}" Value="2">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </local:IconButton.Style>
+                </local:IconButton>
+                <local:IconButton Kind="Primary" Text="Go to Game" FontSize="5" CornerRadius="2" Height="9" Width="34" Click="GoToGame_Click">
+                    <local:IconButton.Style>
+                        <Style TargetType="local:IconButton" BasedOn="{StaticResource {x:Type local:IconButton}}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding InstallationStepperProgress}" Value="2">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </local:IconButton.Style>
+                </local:IconButton>
+            </Grid>
             <Grid x:Name="uiInstallOptions" Visibility="Collapsed" Margin="56,10,1,2" Width="122" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}">
                 <Grid>
                     <Grid.Style>

@@ -420,7 +420,7 @@ namespace gamevault.UserControls
                 Process.Start("explorer.exe", m_DownloadPath);
         }
 
-        private void GameImage_Click(object sender, RoutedEventArgs e)
+        private void GoToGame_Click(object sender, RoutedEventArgs e)
         {
             MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(ViewModel.Game, LoginManager.Instance.IsLoggedIn()));
         }
@@ -831,7 +831,7 @@ namespace gamevault.UserControls
             }
 
             // Do not attempt to delete source since it is on a read-only ISO.
-        }
+        }       
         private void CopyInstallPathToClipboard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             try
@@ -864,7 +864,6 @@ namespace gamevault.UserControls
             temp.Type = GameType.UNDETECTABLE;
             ViewModel.Game = null;
             ViewModel.Game = temp;
-        }
-
+        }       
     }
 }
