@@ -155,7 +155,7 @@ namespace gamevault.Helper
 
                 var env = await CoreWebView2Environment.CreateAsync(null, profile.WebConfigDir);
                 await uiWebView.EnsureCoreWebView2Async(env);
-
+                uiWebView?.CoreWebView2?.CookieManager.DeleteAllCookies();
                 // Create a TaskCompletionSource to await the navigation completion
                 var tcs = new TaskCompletionSource<LoginState>();
 

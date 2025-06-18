@@ -105,7 +105,7 @@
                         <Grid HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,5,0">
                             <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Top" HorizontalAlignment="Right" Visibility="{Binding SelectedIndex,ElementName=uiSelectUser,Converter={StaticResource roleToVisConv}}" Cursor="Hand" Width="25" Height="25" Click="UserEdit_Clicked">
                                 <Grid Style="{DynamicResource HoverEffect}"  Background="Transparent" RenderTransformOrigin="0.5,0.5">
-                                    <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}">
+                                    <Path Data="{StaticResource IconEditUser}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}">
                                         <Path.RenderTransform>
                                             <ScaleTransform ScaleX="1" ScaleY="1"/>
                                         </Path.RenderTransform>

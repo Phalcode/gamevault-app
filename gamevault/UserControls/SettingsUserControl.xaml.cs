@@ -169,15 +169,11 @@ namespace gamevault.UserControls
                 try
                 {
                     bool isLoggedInWithSSO = Preferences.Get(AppConfigKey.IsLoggedInWithSSO, LoginManager.Instance.GetUserProfile().UserConfigFile) == "1";
-                    if (isLoggedInWithSSO)
-                    {
-                        //await WebHelper.PostAsync($"{SettingsViewModel.Instance.ServerUrl}/api/auth/revoke", "{" + $"\"refresh_token\": \"{WebHelper.GetRefreshToken()}\"" + "}");
-                        Preferences.DeleteKey(AppConfigKey.SessionToken, LoginManager.Instance.GetUserProfile().UserConfigFile);
-                    }
-                    else
+                    Preferences.DeleteKey(AppConfigKey.SessionToken, LoginManager.Instance.GetUserProfile().UserConfigFile);
+                    await WebHelper.PostAsync($"{SettingsViewModel.Instance.ServerUrl}/api/auth/revoke", "{" + $"\"refresh_token\": \"{WebHelper.GetRefreshToken()}\"" + "}");
+                    if (!isLoggedInWithSSO)
                     {
                         Preferences.DeleteKey(AppConfigKey.Password, LoginManager.Instance.GetUserProfile().UserConfigFile);
-                        Preferences.DeleteKey(AppConfigKey.SessionToken, LoginManager.Instance.GetUserProfile().UserConfigFile);
                     }
                     Preferences.DeleteKey(AppConfigKey.LastUserProfile, ProfileManager.ProfileConfigFile);
                     ((MainWindow)App.Current.MainWindow).Dispose();
@@ -193,27 +189,26 @@ namespace gamevault.UserControls
         }
         private async void LogoutFromAllDevices_Click(object sender, RoutedEventArgs e)
         {
-            //((FrameworkElement)sender).IsEnabled = false;
-            //MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to log out from all devices?", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
-            //if (result == MessageDialogResult.Affirmative)
-            //{
-            //    try
-            //    {
-            //        bool isLoggedInWithSSO = Preferences.Get(AppConfigKey.IsLoggedInWithSSO, LoginManager.Instance.GetUserProfile().UserConfigFile) == "1";
-            //        if (isLoggedInWithSSO)
-            //        {
-            //            await WebHelper.PostAsync($"{SettingsViewModel.Instance.ServerUrl}/api/auth/revoke/all", "");
-            //        }
-            //        else
-            //        {
-            //            MainWindowViewModel.Instance.AppBarText = "This action is only possible if the user is logged in via SSO";
-            //        }
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        MainWindowViewModel.Instance.AppBarText = ex.Message;
-            //    }
-            //}
+            ((FrameworkElement)sender).IsEnabled = false;
+            MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to log out from all devices?", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+            if (result == MessageDialogResult.Affirmative)
+            {
+                try
+                {
+                    bool isLoggedInWithSSO = Preferences.Get(AppConfigKey.IsLoggedInWithSSO, LoginManager.Instance.GetUserProfile().UserConfigFile) == "1";
+                    Preferences.DeleteKey(AppConfigKey.SessionToken, LoginManager.Instance.GetUserProfile().UserConfigFile);
+                    await WebHelper.PostAsync($"{SettingsViewModel.Instance.ServerUrl}/api/auth/revoke/all", "");
+                    if (!isLoggedInWithSSO)
+                    {
+                        Preferences.DeleteKey(AppConfigKey.Password, LoginManager.Instance.GetUserProfile().UserConfigFile);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MainWindowViewModel.Instance.AppBarText = ex.Message;
+                }
+            }
+            ((FrameworkElement)sender).IsEnabled = true;
         }
 
         private void DownloadLimit_InputValidation(object sender, EventArgs e)
