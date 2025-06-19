@@ -13,6 +13,7 @@
         Height="500" Width="720" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Loaded="LoginWindow_Loaded" Closing="MetroWindow_Closing">
     <mah:MetroWindow.Resources>
         <conv:InverseBoolConverter x:Key="invBoolConv"/>
+        <conv:BoolToVisibilityConverter x:Key="boolToVisConv"/>
     </mah:MetroWindow.Resources>
     <Grid>
         <TabControl SelectedIndex="{Binding LoginStepIndex}" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}">
@@ -172,10 +173,31 @@
                         <TextBlock Text="Sign In" FontSize="30" HorizontalAlignment="Center"/>
                         <TextBlock Text="Specify Your Server URL" TextDecorations="Underline" Margin="0,15,0,5"/>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
-                            <TextBox Text="{Binding LoginUser.ServerUrl}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" Width="400" LostFocus="ServerUrlInput_LostFocus"/>
-                            <Path Data="{StaticResource IconCheck}" Fill="Green" Margin="2,1,-25,0" Visibility="Collapsed"/>
+                            <TextBox Text="{Binding LoginUser.ServerUrl}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" Width="400" TextChanged="ServerUrlInput_TextChanged"/>
+                            <Path Data="{StaticResource IconCheck}" Fill="Green" Margin="2,1,-25,0">
+                                <Path.Style>
+                                    <Style TargetType="Path">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding LoginServerInfo.IsAvailable}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Path.Style>
+                            </Path>
                         </StackPanel>
-                        <StackPanel IsEnabled="{Binding LoginUser.IsLoggedInWithSSO,Converter={StaticResource invBoolConv}}">
+                        <StackPanel>
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding LoginServerInfo.IsBasicAuthEnabled}" Value="True">
+                                            <Setter Property="IsEnabled" Value="{Binding LoginUser.IsLoggedInWithSSO,Converter={StaticResource invBoolConv}}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
                             <TextBlock Text="Username or Email" TextDecorations="Underline" Margin="0,15,0,5"/>
                             <TextBox Text="{Binding LoginUser.Username}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
 
@@ -187,7 +209,18 @@
                             <TextBlock Text="OR" HorizontalAlignment="Center" Margin="10,0,10,0"/>
                             <Rectangle Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Width="70" Height="2"/>
                         </StackPanel>
-                        <CheckBox IsChecked="{Binding LoginUser.IsLoggedInWithSSO}" Content="Sign in using your Identity Provider" mah:CheckBoxHelper.CheckCornerRadius="5" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,15,0,0"/>
+                        <CheckBox IsChecked="{Binding LoginUser.IsLoggedInWithSSO}" Content="Sign in using your Identity Provider" mah:CheckBoxHelper.CheckCornerRadius="5" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,15,0,0">
+                            <CheckBox.Style>
+                                <Style TargetType="CheckBox" BasedOn="{StaticResource MahApps.Styles.CheckBox}">
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding LoginServerInfo.IsSSOEnabled}" Value="True">
+                                            <Setter Property="IsEnabled" Value="True"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </CheckBox.Style>
+                        </CheckBox>
                     </StackPanel>
                     <uc:IconButton Text="Save and Login" Height="30" Margin="0,0,10,10" Width="100" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="SaveAndLogin_Click"/>
                     <uc:IconButton Text="Back" Kind="Skeleton" BorderThickness="1" Height="30" Margin="10,0,0,10" Width="100" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="Back_Click" Tag="{x:Static local:LoginStep.SignInOrSignUp}"/>
@@ -198,8 +231,32 @@
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="400" Height="430" Margin="0,8,0,0">
                         <TextBlock Text="Sign Up" FontSize="30" HorizontalAlignment="Center"/>
                         <TextBlock Text="Specify Your Server URL" TextDecorations="Underline" Margin="0,15,0,5"/>
-                        <TextBox Text="{Binding SignupUser.ServerUrl}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
-                        <StackPanel IsEnabled="{Binding SignupUser.IsLoggedInWithSSO,Converter={StaticResource invBoolConv}}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBox Text="{Binding SignupUser.ServerUrl}" mah:ControlsHelper.CornerRadius="5" Width="400" BorderThickness="2" TextChanged="ServerUrlInput_TextChanged"/>
+                            <Path Data="{StaticResource IconCheck}" Fill="Green" Margin="2,1,-25,0">
+                                <Path.Style>
+                                    <Style TargetType="Path">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding SignUpServerInfo.IsAvailable}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Path.Style>
+                            </Path>
+                        </StackPanel>
+                        <StackPanel>
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SignUpServerInfo.IsBasicAuthEnabled}" Value="True">
+                                            <Setter Property="IsEnabled" Value="{Binding SignupUser.IsLoggedInWithSSO,Converter={StaticResource invBoolConv}}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
@@ -211,11 +268,17 @@
                                     <TextBox Text="{Binding SignupUser.Username}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
                                 </StackPanel>
                                 <StackPanel Width="195" Grid.Column="2">
-                                    <TextBlock Text="Birth Date" TextDecorations="Underline" Margin="0,15,0,5"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,15,0,5">
+                                        <TextBlock Text="Birth Date" TextDecorations="Underline"/>
+                                        <TextBlock Text="(Mandatory)" Visibility="{Binding SignUpServerInfo.IsBirthDateMandatory,Converter={StaticResource boolToVisConv}}" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                                    </StackPanel>
                                     <DatePicker SelectedDate="{Binding SignupUser.BirthDate}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
                                 </StackPanel>
                             </Grid>
-                            <TextBlock Text="E-Mail" TextDecorations="Underline" Margin="0,15,0,5"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,15,0,5">
+                                <TextBlock Text="E-Mail" TextDecorations="Underline"/>
+                                <TextBlock Text="(Mandatory)" Visibility="{Binding SignUpServerInfo.IsEMailMandatory,Converter={StaticResource boolToVisConv}}" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                            </StackPanel>
                             <TextBox Text="{Binding SignupUser.EMail}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -224,11 +287,17 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Width="195" Grid.Column="0">
-                                    <TextBlock Text="First Name" TextDecorations="Underline" Margin="0,15,0,5"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,15,0,5">
+                                        <TextBlock Text="First Name" TextDecorations="Underline"/>
+                                        <TextBlock Text="(Mandatory)" Visibility="{Binding SignUpServerInfo.IsFirstNameMandatory,Converter={StaticResource boolToVisConv}}" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                                    </StackPanel>
                                     <TextBox Text="{Binding SignupUser.FirstName}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
                                 </StackPanel>
                                 <StackPanel Width="195" Grid.Column="2">
-                                    <TextBlock Text="Last Name" TextDecorations="Underline" Margin="0,15,0,5"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,15,0,5">
+                                        <TextBlock Text="Last Name" TextDecorations="Underline"/>
+                                        <TextBlock Text="(Mandatory)" Visibility="{Binding SignUpServerInfo.IsLastNameMandatory,Converter={StaticResource boolToVisConv}}" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                                    </StackPanel>
                                     <TextBox Text="{Binding SignupUser.LastName}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
                                 </StackPanel>
                             </Grid>
@@ -253,7 +322,18 @@
                                 <Rectangle Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Width="70" Height="2"/>
                             </StackPanel>
                         </StackPanel>
-                        <CheckBox IsChecked="{Binding SignupUser.IsLoggedInWithSSO}" Content="Sign up using your Identity Provider" mah:CheckBoxHelper.CheckCornerRadius="5" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,15,0,0"/>
+                        <CheckBox IsChecked="{Binding SignupUser.IsLoggedInWithSSO}" Content="Sign up using your Identity Provider" mah:CheckBoxHelper.CheckCornerRadius="5" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,15,0,0">
+                            <CheckBox.Style>
+                                <Style TargetType="CheckBox" BasedOn="{StaticResource MahApps.Styles.CheckBox}">
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SignUpServerInfo.IsSSOEnabled}" Value="True">
+                                            <Setter Property="IsEnabled" Value="True"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </CheckBox.Style>
+                        </CheckBox>
                     </StackPanel>
                     <uc:IconButton Text="Save and Sign Up" Height="30" Margin="0,0,10,10" Width="100" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="SaveAndSignUp_Click"/>
                     <uc:IconButton Text="Back" Kind="Skeleton" BorderThickness="1" Height="30" Margin="10,0,0,10" Width="100" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="Back_Click" Tag="{x:Static local:LoginStep.SignInOrSignUp}"/>

@@ -202,6 +202,10 @@ namespace gamevault.UserControls
                     {
                         Preferences.DeleteKey(AppConfigKey.Password, LoginManager.Instance.GetUserProfile().UserConfigFile);
                     }
+                    Preferences.DeleteKey(AppConfigKey.LastUserProfile, ProfileManager.ProfileConfigFile);
+                    ((MainWindow)App.Current.MainWindow).Dispose();
+                    App.Current.MainWindow = new LoginWindow(true);
+                    App.Current.MainWindow.Show();
                 }
                 catch (Exception ex)
                 {

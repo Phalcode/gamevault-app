@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Text.Json;
 
 
 namespace gamevault.Windows
@@ -46,6 +47,7 @@ namespace gamevault.Windows
         private LoginWindowViewModel ViewModel { get; set; }
         private StoreHelper StoreHelper;
         private bool SkipBootTasks = false;
+        private InputTimer InputTimer { get; set; }
         public LoginWindow(bool skipBootTasks = false)
         {
             InitializeComponent();
@@ -53,6 +55,10 @@ namespace gamevault.Windows
             this.DataContext = ViewModel;
             ProfileManager.EnsureRootDirectory();
             this.SkipBootTasks = skipBootTasks;
+
+            InputTimer = new InputTimer();
+            InputTimer.Interval = TimeSpan.FromMilliseconds(400);
+            InputTimer.Tick += ServerUrlInput_Tick;
         }
 
         private async void LoginWindow_Loaded(object sender, RoutedEventArgs e)
@@ -109,22 +115,32 @@ namespace gamevault.Windows
             int loginStep = (int)((FrameworkElement)sender).Tag;
             ViewModel.LoginStepIndex = loginStep;
         }
-        private async void ServerUrlInput_LostFocus(object sender, RoutedEventArgs e)
+        private async void ServerUrlInput_Tick(object sender, EventArgs e)
         {
             try
             {
-                StackPanel parentStackPanel = ((TextBox)sender).Parent as StackPanel;
-                if (parentStackPanel != null)
+                InputTimer.Stop();
+                string result = await WebHelper.BaseGetAsync($"{ValidateUriScheme(InputTimer?.Data)}/api/status");
+                ServerInfo serverInfo = JsonSerializer.Deserialize<ServerInfo>(result);
+                if(ViewModel.LoginStepIndex == (int)LoginStep.SignIn)
                 {
-                    System.Windows.Shapes.Path validationIcon = parentStackPanel.Children.OfType<System.Windows.Shapes.Path>().FirstOrDefault();
-                    if (validationIcon != null)
-                    {
-                        string result = await WebHelper.BaseGetAsync($"{((TextBox)sender).Text}/api/status");
-                        validationIcon.Visibility = Visibility.Visible;
-                    }
+                    ViewModel.LoginServerInfo = new BindableServerInfo(serverInfo);
+                }
+                else if(ViewModel.LoginStepIndex == (int)LoginStep.SignUp)
+                {
+                    ViewModel.SignUpServerInfo = new BindableServerInfo(serverInfo);
                 }
             }
-            catch { }
+            catch
+            {
+                ViewModel.LoginServerInfo = new BindableServerInfo();
+            }
+        }
+        private void ServerUrlInput_TextChanged(object sender, RoutedEventArgs e)
+        {
+            InputTimer.Stop();
+            InputTimer.Data = ((TextBox)sender).Text;
+            InputTimer.Start();
         }
         private UserProfile SetupUserProfile(LoginUser user)
         {
@@ -149,7 +165,7 @@ namespace gamevault.Windows
         {
             try
             {
-                ValidateSignInData(ViewModel.LoginUser);
+                ValidateSignInData(ViewModel.LoginUser, true);
                 UserProfile profile = SetupUserProfile(ViewModel.LoginUser);
                 ViewModel.LoginUser = new LoginUser();//Reset
                 RemoveDemoUserIfExists();
@@ -170,7 +186,7 @@ namespace gamevault.Windows
         {
             if (uri.EndsWith("/"))
             {
-                uri = uri.Substring(0, SettingsViewModel.Instance.ServerUrl.Length - 1);
+                uri = uri.Substring(0, uri.Length - 1);
             }
             if (!uri.Contains(System.Uri.UriSchemeHttp))
             {
@@ -178,11 +194,16 @@ namespace gamevault.Windows
             }
             return uri;
         }
-        private void ValidateSignInData(LoginUser loginUser)
+        private void ValidateSignInData(LoginUser loginUser, bool isLogin)
         {
             if (string.IsNullOrWhiteSpace(loginUser.ServerUrl))
                 throw new ArgumentException("ServerUrl is not set");
 
+            if (isLogin && !ViewModel.LoginServerInfo.IsAvailable)
+            {
+                throw new ArgumentException("Server could not be reached");
+            }
+           
             loginUser.ServerUrl = ValidateUriScheme(loginUser.ServerUrl);
 
             if (!ViewModel.LoginUser.IsLoggedInWithSSO)

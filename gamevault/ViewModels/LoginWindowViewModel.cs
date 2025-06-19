@@ -31,6 +31,12 @@ namespace gamevault.ViewModels
             get { return statusText; }
             set { statusText = value; OnPropertyChanged(); }
         }
+        private BindableServerInfo loginServerInfo { get; set; } = new BindableServerInfo();
+        public BindableServerInfo LoginServerInfo
+        {
+            get { return loginServerInfo; }
+            set { loginServerInfo = value; OnPropertyChanged(); }
+        }
         private LoginUser loginUser { get; set; }
         public LoginUser LoginUser
         {
@@ -43,6 +49,12 @@ namespace gamevault.ViewModels
                 return loginUser;
             }
             set { loginUser = value; OnPropertyChanged(); }
+        }
+        private BindableServerInfo signUpServerInfo { get; set; } = new BindableServerInfo();
+        public BindableServerInfo SignUpServerInfo
+        {
+            get { return signUpServerInfo; }
+            set { signUpServerInfo = value; OnPropertyChanged(); }
         }
         private LoginUser signupUser { get; set; }
         public LoginUser SignupUser
