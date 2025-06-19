@@ -96,7 +96,7 @@ namespace gamevault.UserControls
                         }
                     case 2:
                         {
-                            url = "https://gamevau.lt/docs/client-docs/gui#edit-images";
+                            url = "https://gamevau.lt/docs/client-docs/gui/#edit-game-images";
                             break;
                         }
                     case 3:
