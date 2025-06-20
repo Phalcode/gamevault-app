@@ -17,7 +17,36 @@ namespace gamevault.Helper
         public static void EnsureRootDirectory()
         {
             if (!Directory.Exists(ProfileRootDirectory))
+            {
                 Directory.CreateDirectory(ProfileRootDirectory);
+            }
+            else
+            {
+                MoveLegacyCache();
+            }
+        }
+        private static void MoveLegacyCache()
+        {
+            try
+            {
+                string cache = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "GameVault", "cache");
+                string config = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "GameVault", "config");
+                string themes = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "GameVault", "themes");
+                string legacyDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "GameVault", "legacy", "1.16.1.0");
+                if (Directory.Exists(cache))
+                {
+                    Directory.Move(cache,legacyDir);
+                }
+                if (Directory.Exists(config))
+                {
+                    Directory.Move(config, legacyDir);
+                }
+                if (Directory.Exists(themes))
+                {
+                    Directory.Move(themes, legacyDir);
+                }
+            }
+            catch { }
         }
         public static UserProfile CreateUserProfile(string serverUrl)
         {
