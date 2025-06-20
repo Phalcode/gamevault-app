@@ -19,11 +19,8 @@ namespace gamevault.Helper
             if (!Directory.Exists(ProfileRootDirectory))
             {
                 Directory.CreateDirectory(ProfileRootDirectory);
-            }
-            else
-            {
                 MoveLegacyCache();
-            }
+            }            
         }
         private static void MoveLegacyCache()
         {
@@ -33,21 +30,30 @@ namespace gamevault.Helper
                 string config = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GameVault", "config");
                 string themes = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GameVault", "themes");
                 string legacyDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GameVault", "legacy", "1.16.1.0");
+
+                Directory.CreateDirectory(legacyDir);
+
                 if (Directory.Exists(cache))
                 {
-                    Directory.Move(cache,legacyDir);
+                    string cacheDestination = Path.Combine(legacyDir, "cache");                   
+                    Directory.Move(cache, cacheDestination);                 
                 }
+
                 if (Directory.Exists(config))
                 {
-                    Directory.Move(config, legacyDir);
+                    string configDestination = Path.Combine(legacyDir, "config");                    
+                    Directory.Move(config, configDestination);                    
                 }
+
                 if (Directory.Exists(themes))
                 {
-                    Directory.Move(themes, legacyDir);
+                    string themesDestination = Path.Combine(legacyDir, "themes");                                          
+                    Directory.Move(themes, themesDestination);                  
                 }
             }
             catch { }
         }
+
         public static UserProfile CreateUserProfile(string serverUrl)
         {
             string serverRootDirectory = Path.Combine(ProfileRootDirectory, serverUrl);
