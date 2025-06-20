@@ -58,10 +58,9 @@
                 </ScrollViewer>
             </StackPanel>
             <StackPanel VerticalAlignment="Bottom" Margin="0,0,0,10" Orientation="Horizontal" HorizontalAlignment="Center">
-                <local:IconButton Text="Install" Height="25" Width="100" Click="Install_Click"/>
+                <local:IconButton Text="Proceed" Height="25" Width="100" Click="Install_Click"/>
                 <local:IconButton Text="Cancel" Kind="Skeleton" BorderThickness="1" Height="25" Width="100" Margin="10,0,0,0" Click="Close_Click"/>
             </StackPanel>
-           
         </Grid>
     </Border>
 </UserControl>

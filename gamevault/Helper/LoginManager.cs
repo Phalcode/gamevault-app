@@ -72,7 +72,7 @@ namespace gamevault.Helper
         public void SwitchToOfflineMode()
         {
             MainWindowViewModel.Instance.OnlineState = System.Windows.Visibility.Visible;
-            m_User = null;
+            m_User = null;           
         }
         public UserProfile GetUserProfile()
         {
@@ -434,6 +434,11 @@ namespace gamevault.Helper
                 onlineTimer.Elapsed += CheckOnlineStatus;
             }
             onlineTimer.Start();
+            if (!IsLoggedIn())
+            {
+                SwitchToOfflineMode();
+                MainWindowViewModel.Instance.AppBarText = "No connection to the server. You are now in offline mode.";
+            }
         }
         public void StopOnlineTimer()
         {
@@ -452,15 +457,18 @@ namespace gamevault.Helper
                     if (!isLoggedInWithSSO)
                     {
                         string[] credencials = WebHelper.GetCredentials();
-                        await Login(GetUserProfile(), credencials[0], credencials[1]);
+                        if (await Login(GetUserProfile(), credencials[0], credencials[1]) != LoginState.Success)
+                            SwitchToOfflineMode();
                     }
                     else
                     {
-                        //To Do: Login by Provider but make sure, the Auth window will not be opened twice
+                        if (await SSOLogin(GetUserProfile()) != LoginState.Success)
+                            SwitchToOfflineMode();
                     }
                     if (IsLoggedIn())
                     {
                         MainWindowViewModel.Instance.OnlineState = System.Windows.Visibility.Collapsed;
+                        MainWindowViewModel.Instance.AppBarText = "Connected to the server. You’re back online.";
                     }
                 }
                 else

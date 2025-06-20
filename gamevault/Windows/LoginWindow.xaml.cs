@@ -263,6 +263,7 @@ namespace gamevault.Windows
             }
             if (state == LoginState.Success)
             {
+                Preferences.Set(AppConfigKey.UserID, LoginManager.Instance.GetCurrentUser()?.ID, profile.UserConfigFile);
                 await LoadMainWindow(profile);
             }
             else if (state == LoginState.NotActivated)
@@ -275,15 +276,31 @@ namespace gamevault.Windows
             }
             else
             {
-                ViewModel.LoginStepIndex = (int)LoginStep.ChooseProfile;
-                ViewModel.AppBarText = LoginManager.Instance.GetServerLoginResponseMessage();
+                if (firstTimeLogin)
+                {
+                    ViewModel.LoginStepIndex = (int)LoginStep.ChooseProfile;
+                    ViewModel.AppBarText = LoginManager.Instance.GetServerLoginResponseMessage();
+                }
+                else
+                {
+                    try
+                    {//Check if the user was ever connected and is properly set up
+                        string result = Preferences.Get(AppConfigKey.UserID, profile.UserConfigFile);
+                        if (string.IsNullOrWhiteSpace(result))
+                        {
+                            throw new Exception("User ID is not set");
+                        }
+                        await LoadMainWindow(profile);
+                    }
+                    catch { ViewModel.AppBarText = "Can not load user profile in offline mode"; ViewModel.LoginStepIndex = (int)LoginStep.ChooseProfile; }
+                }
             }
         }
         private async Task LoadMainWindow(UserProfile profile)
         {
             LoginManager.Instance.SetUserProfile(profile);
             SettingsViewModel.Instance.Init();
-            Preferences.Set(AppConfigKey.UserID, LoginManager.Instance.GetCurrentUser()!.ID, profile.UserConfigFile);
+
             ViewModel.StatusText = "Optimizing Cache...";
             await CacheHelper.OptimizeCache();
             if (ViewModel.RememberMe)

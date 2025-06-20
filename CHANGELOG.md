@@ -4,13 +4,25 @@
 Recommended Gamevault Server Version: `v15.0.0`
 ###Changes
 
-- Removed the setup wizard and introduced a new login window
-- Added multi-profile support: if no user profile is configured, the demo user will be used by default.
-- Upgraded all connections to use the OAuth 2.0 authentication flow
-- Login and registration via configured identity providers are now supported
-- Added support for multiple root directories, including selection during download
+- Replaced setup wizard with a new login window
+- Introduced multi-profile support: if no user profile is configured, the demo user is used by default
+- Login window now dynamically adapts to the server configuration
+- Upgraded all connections to use OAuth 2.0 authentication flow
+- Added support for login and registration via configured identity providers (SSO)
+- Implemented pending activation state in the login process
+- Added options for logout from this device and logout from all devices
+- Introduced support for multiple root directories, including selection during download
 - Improved image cache performance
-- Added skeleton loading animations to the community tab to better indicate loading states
+- Added support for additional request headers
+- New game settings: default parameters for Un/Installer
+- Cloud Saves: root path is now included in the generated config.yaml
+- Offline cache now auto-renews when outdated
+- Added visual indicator on the install game card when an update is available
+- Implemented skeleton loading animations in the community tab to better indicate loading states
+- Added "Go to Game" button after installation is complete
+- Pressing F5 in the Library now also refreshes the list of installed games
+- Build temporary offline cache if not exists
+- Bug fix: extraction time remaining now displays correctly
 
 ## 1.16.1
 Recommended Gamevault Server Version: `v14.1.0`

@@ -86,16 +86,7 @@ namespace gamevault.UserControls
                     {
                         if (foundGames.Count > 0)
                         {
-                            string gameIds = string.Empty;
-                            foreach (KeyValuePair<int, string> kv in foundGames)
-                            {
-                                if (gameIds == string.Empty)
-                                {
-                                    gameIds += kv.Key;
-                                    continue;
-                                }
-                                gameIds += "," + kv.Key;
-                            }
+                            string gameIds = string.Join(",", foundGames.Keys.Where(key => !string.IsNullOrEmpty(foundGames[key])));
                             if (LoginManager.Instance.IsLoggedIn())
                             {
                                 string gameList = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games?filter.id=$in:{gameIds}");
@@ -103,11 +94,10 @@ namespace gamevault.UserControls
                             }
                             else
                             {
-                                string[] seperatedIds = gameIds.Split(',');
                                 List<Game> offlineCacheGames = new List<Game>();
-                                foreach (string id in seperatedIds)
+                                foreach (KeyValuePair<int, string> entry in foundGames)
                                 {
-                                    string objectFromFile = Preferences.Get(id, LoginManager.Instance.GetUserProfile().OfflineCache);
+                                    string objectFromFile = Preferences.Get(entry.Key.ToString(), LoginManager.Instance.GetUserProfile().OfflineCache);
                                     if (objectFromFile != string.Empty)
                                     {
                                         try
@@ -120,6 +110,11 @@ namespace gamevault.UserControls
                                             }
                                         }
                                         catch (FormatException exFormat) { }
+                                    }
+                                    else
+                                    {
+                                        string gameTitle = Path.GetFileName(entry.Value);
+                                        offlineCacheGames.Add(new Game() { ID = entry.Key, Title = gameTitle.Substring(gameTitle.IndexOf(')') + 1) });
                                     }
                                 }
                                 return offlineCacheGames.ToArray();
