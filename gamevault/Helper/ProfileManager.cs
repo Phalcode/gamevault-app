@@ -10,18 +10,18 @@ namespace gamevault.Helper
 {
     internal class ProfileManager
     {
-        private static string RootDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GameVault");
+        private static string ProfileRootDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GameVault", "profiles");
         public static string ProfileConfigFile { get; private set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GameVault", "profileconfig");
         public static string ErrorLogDir { get; private set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GameVault", "errorlog");
         public static string PhalcodeDir { get; private set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GameVault", "phalcode");
         public static void EnsureRootDirectory()
         {
-            if (!Directory.Exists(RootDirectory))
-                Directory.CreateDirectory(RootDirectory);
+            if (!Directory.Exists(ProfileRootDirectory))
+                Directory.CreateDirectory(ProfileRootDirectory);
         }
         public static UserProfile CreateUserProfile(string serverUrl)
         {
-            string serverRootDirectory = Path.Combine(RootDirectory, serverUrl);
+            string serverRootDirectory = Path.Combine(ProfileRootDirectory, serverUrl);
             string serverImageCacheDirectory = Path.Combine(serverRootDirectory, "ImageCache");
             Directory.CreateDirectory(serverImageCacheDirectory);
             string userProfileRootDirectory = Path.Combine(serverRootDirectory, Guid.NewGuid().ToString());
@@ -34,12 +34,12 @@ namespace gamevault.Helper
 
         public static List<UserProfile> GetUserProfiles()
         {
-            if (!Directory.Exists(RootDirectory))
-                Directory.CreateDirectory(RootDirectory);
+            if (!Directory.Exists(ProfileRootDirectory))
+                Directory.CreateDirectory(ProfileRootDirectory);
 
 
             List<UserProfile> users = new List<UserProfile>();
-            foreach (string serverDir in Directory.GetDirectories(RootDirectory))
+            foreach (string serverDir in Directory.GetDirectories(ProfileRootDirectory))
             {
                 foreach (string userDir in Directory.GetDirectories(serverDir))
                 {

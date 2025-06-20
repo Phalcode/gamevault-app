@@ -103,7 +103,7 @@ namespace gamevault.Helper
             if (sessionTokenReuseFailed)
             {
                 try
-                {                   
+                {
                     string result = await WebHelper.GetAsync(@$"{profile.ServerUrl}/api/users/me");
                     m_User = JsonSerializer.Deserialize<User>(result);
                     Preferences.Set(AppConfigKey.SessionToken, WebHelper.GetRefreshToken(), profile.UserConfigFile, true);
@@ -360,7 +360,11 @@ namespace gamevault.Helper
             {
                 if (!SettingsViewModel.Instance.License.IsActive())
                 {
-                    Preferences.DeleteKey(AppConfigKey.Theme, ProfileManager.ProfileConfigFile);
+                    Preferences.DeleteKey(AppConfigKey.Theme, LoginManager.Instance.GetUserProfile()?.UserConfigFile);
+                }
+                else
+                {
+                    returnMessage = "";
                 }
             }
             catch { }
@@ -371,10 +375,10 @@ namespace gamevault.Helper
             SettingsViewModel.Instance.License = new PhalcodeProduct();
             Preferences.DeleteKey(AppConfigKey.Phalcode1.ToString(), ProfileManager.ProfileConfigFile);
             Preferences.DeleteKey(AppConfigKey.Phalcode2.ToString(), ProfileManager.ProfileConfigFile);
-            Preferences.DeleteKey(AppConfigKey.Theme, ProfileManager.ProfileConfigFile);
+            Preferences.DeleteKey(AppConfigKey.Theme, LoginManager.Instance.GetUserProfile()?.UserConfigFile);
             try
             {
-                Directory.Delete(LoginManager.Instance.GetUserProfile().WebConfigDir, true);
+                Directory.Delete(ProfileManager.PhalcodeDir, true);
                 //wpfEmbeddedBrowser.ClearAllCookies();
             }
             catch (Exception ex) { }

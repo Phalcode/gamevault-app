@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:local="clr-namespace:gamevault.Windows"
-        xmlns:conv="clr-namespace:gamevault.Converter"
         xmlns:uc="clr-namespace:gamevault.UserControls"
+        xmlns:conv="clr-namespace:gamevault.Converter"      
         xmlns:helper="clr-namespace:gamevault.Helper"
         mc:Ignorable="d"                
         Title="GameVault" TitleForeground="Transparent" WindowTitleBrush="Transparent" NonActiveWindowTitleBrush="Transparent" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}"
@@ -124,6 +124,14 @@
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
+                    <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,5,5,0" Cursor="Hand" Click="LoginWindowSettings_Click">
+                        <Border Style="{StaticResource HoverEffect}" Background="Transparent" HorizontalAlignment="Right" VerticalAlignment="Bottom" CornerRadius="5">
+                            <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="White" Margin="0,0,5,2"/>
+                            <Border.RenderTransform>
+                                <ScaleTransform/>
+                            </Border.RenderTransform>
+                        </Border>
+                    </Button>
                     <CheckBox Content="Remember Me" IsChecked="{Binding RememberMe}" mah:CheckBoxHelper.CheckCornerRadius="5" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10"/>
                 </Grid>
             </TabItem>
@@ -367,12 +375,55 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
+            <TabItem>
+                <Grid>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="Additional Request Headers" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        <ScrollViewer MaxHeight="100" VerticalScrollBarVisibility="Auto" Width="550" HorizontalAlignment="Center" Margin="50,10,0,0">
+                            <ItemsControl ItemsSource="{Binding AdditionalRequestHeaders}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBox Text="{Binding Name}" mah:TextBoxHelper.Watermark="Name" mah:ControlsHelper.CornerRadius="5" Width="245" Height="20"/>
+                                                <TextBox Text="{Binding Value}" mah:TextBoxHelper.Watermark="Value" mah:ControlsHelper.CornerRadius="5" Width="245" Height="20" Margin="10,0,0,0"/>
+                                            </StackPanel>
+                                            <Button Style="{StaticResource ButtonWrapper}" Height="30" Width="30" Cursor="Hand" Click="RemoveAdditionalRequestHeader_Click">
+                                                <Grid Style="{DynamicResource HoverEffect}"  Background="Transparent"  RenderTransformOrigin="0.5,0.5">
+                                                    <Path Data="m11.25 4.75l-6.5 6.5m0-6.5l6.5 6.5" Stroke="IndianRed" StrokeThickness="2">
+                                                        <Path.RenderTransform>
+                                                            <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                                        </Path.RenderTransform>
+                                                    </Path>
+                                                    <Grid.RenderTransform>
+                                                        <ScaleTransform/>
+                                                    </Grid.RenderTransform>
+                                                </Grid>
+                                            </Button>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0" HorizontalAlignment="Center">
+                            <uc:IconButton Icon="{StaticResource IconAddTag}" Text="Add" FontSize="15" IconMargin="0,0,5,2" Width="100" Height="30" Margin="0,0,10,0" Click="AddAdditionalRequestHeader_Click"/>
+                            <uc:IconButton Icon="{StaticResource IconGameSettingsSave}" Text="Save" FontSize="15" IconMargin="0,0,5,2" Width="100" Height="30" Click="SaveAdditionalHeaders_Click"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <uc:IconButton Text="Back" Kind="Skeleton" BorderThickness="1" Height="30" Margin="10,0,0,10" Width="100" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="Back_Click" Tag="{x:Static local:LoginStep.ChooseProfile}"/>
+                </Grid>
+            </TabItem>
         </TabControl>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Height="40" Margin="15,-15,0,0">
             <Image Source="pack://application:,,,/gamevault;component/Resources/Images/icon.ico" RenderOptions.BitmapScalingMode="HighQuality"/>
             <TextBlock Text="GameVault" FontSize="30" Margin="5,0,0,0"/>
         </StackPanel>
-        <mah:Flyout IsOpen="{Binding IsAppBarOpen,UpdateSourceTrigger=PropertyChanged}" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" Height="80" IsAutoCloseEnabled="True" AutoCloseInterval="4000" Focusable="False" Panel.ZIndex="2"
+        <mah:Flyout IsOpen="{Binding IsAppBarOpen,UpdateSourceTrigger=PropertyChanged}" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" Height="80" IsAutoCloseEnabled="True" AutoCloseInterval="3000" Focusable="False" Panel.ZIndex="2"
                   CloseButtonVisibility="Collapsed"
                   Position="Bottom"
                   TitleVisibility="Collapsed">

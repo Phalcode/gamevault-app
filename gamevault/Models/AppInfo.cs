@@ -61,7 +61,8 @@ namespace gamevault.Models
         IsLoggedInWithSSO,
         LastImageOptimization,
         SessionToken,
-        InstalledGameVersion
+        InstalledGameVersion,
+        AdditionalRequestHeaders
     }
     public static class Globals
     {

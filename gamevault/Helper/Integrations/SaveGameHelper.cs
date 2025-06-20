@@ -356,7 +356,7 @@ namespace gamevault.Helper.Integrations
                 string installationId = GetGameInstallationId(installationDir);
                 using (MemoryStream memoryStream = await FileToMemoryStreamAsync(saveFilePath))
                 {
-                    await WebHelper.UploadFileAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/savefiles/user/{LoginManager.Instance.GetCurrentUser()!.ID}/game/{gameId}", memoryStream, "x.zip", new Dictionary<string, string> { { "X-Installation-Id", installationId } });
+                    await WebHelper.UploadFileAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/savefiles/user/{LoginManager.Instance.GetCurrentUser()!.ID}/game/{gameId}", memoryStream, "x.zip", new RequestHeader[] { new RequestHeader() { Name = "X-Installation-Id", Value = installationId } });
                 }
             }
             catch

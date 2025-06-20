@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Text.Json;
+using gamevault.Models;
 
 namespace gamevault.Helper
 {
@@ -64,7 +65,7 @@ namespace gamevault.Helper
             return true;
         }
 
-        private async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, Dictionary<string, string>? additionalHeaders = null, HttpCompletionOption option = HttpCompletionOption.ResponseContentRead)
+        private async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, RequestHeader[]? additionalHeaders = null, HttpCompletionOption option = HttpCompletionOption.ResponseContentRead)
         {
             if (string.IsNullOrEmpty(_accessToken))
             {
@@ -79,23 +80,23 @@ namespace gamevault.Helper
             {
                 foreach (var header in additionalHeaders)
                 {
-                    request.Headers.TryAddWithoutValidation(header.Key, header.Value);
+                    request.Headers.TryAddWithoutValidation(header.Name, header.Value);
                 }
             }
 
             return await _httpClient.SendAsync(request, option);
         }
 
-        public Task<HttpResponseMessage> GetAsync(string url, Dictionary<string, string>? additionalHeaders = null, HttpCompletionOption option = HttpCompletionOption.ResponseContentRead) =>
+        public Task<HttpResponseMessage> GetAsync(string url, RequestHeader[]? additionalHeaders = null, HttpCompletionOption option = HttpCompletionOption.ResponseContentRead) =>
             SendAsync(new HttpRequestMessage(HttpMethod.Get, url), additionalHeaders, option);
 
-        public Task<HttpResponseMessage> PostAsync(string url, HttpContent content, Dictionary<string, string>? additionalHeaders = null) =>
+        public Task<HttpResponseMessage> PostAsync(string url, HttpContent content, RequestHeader[]? additionalHeaders = null) =>
             SendAsync(new HttpRequestMessage(HttpMethod.Post, url) { Content = content }, additionalHeaders);
 
-        public Task<HttpResponseMessage> PutAsync(string url, HttpContent content, Dictionary<string, string>? additionalHeaders = null) =>
+        public Task<HttpResponseMessage> PutAsync(string url, HttpContent content, RequestHeader[]? additionalHeaders = null) =>
             SendAsync(new HttpRequestMessage(HttpMethod.Put, url) { Content = content }, additionalHeaders);
 
-        public Task<HttpResponseMessage> DeleteAsync(string url, Dictionary<string, string>? additionalHeaders = null) =>
+        public Task<HttpResponseMessage> DeleteAsync(string url, RequestHeader[]? additionalHeaders = null) =>
             SendAsync(new HttpRequestMessage(HttpMethod.Delete, url), additionalHeaders);
 
         private async Task<bool> RefreshTokenAsync()

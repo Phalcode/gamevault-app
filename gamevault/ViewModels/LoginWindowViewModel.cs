@@ -104,5 +104,18 @@ namespace gamevault.ViewModels
                 Preferences.Set(AppConfigKey.LoginRememberMe, rememberMe ? "1" : "0", ProfileManager.ProfileConfigFile);
             }
         }
+        private ObservableCollection<RequestHeader> additionalRequestHeaders;
+        public ObservableCollection<RequestHeader> AdditionalRequestHeaders
+        {
+            get
+            {
+                if (additionalRequestHeaders == null)
+                {
+                    additionalRequestHeaders = new ObservableCollection<RequestHeader>();
+                }
+                return additionalRequestHeaders;
+            }
+            set { additionalRequestHeaders = value; OnPropertyChanged(); }
+        }
     }
 }

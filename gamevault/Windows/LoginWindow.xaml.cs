@@ -14,6 +14,7 @@ using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Text.Json;
+using System.Collections.ObjectModel;
 
 
 namespace gamevault.Windows
@@ -39,7 +40,8 @@ namespace gamevault.Windows
         SignIn = 3,
         SignUp = 4,
         EditProfile = 5,
-        PendingActivation = 6
+        PendingActivation = 6,
+        Settings = 7
     }
     public partial class LoginWindow
     {
@@ -65,6 +67,14 @@ namespace gamevault.Windows
         {
             VisualHelper.AdjustWindowChrome(this);
             ViewModel.RememberMe = Preferences.Get(AppConfigKey.LoginRememberMe, ProfileManager.ProfileConfigFile) == "1";
+            try
+            {
+                string result = Preferences.Get(AppConfigKey.AdditionalRequestHeaders, ProfileManager.ProfileConfigFile);
+                var objResult = JsonSerializer.Deserialize<ObservableCollection<RequestHeader>>(result);
+                ViewModel.AdditionalRequestHeaders = objResult;
+                WebHelper.SetAdditionalRequestHeaders(ViewModel.AdditionalRequestHeaders?.ToArray());
+            }
+            catch { }
             if (!SkipBootTasks)
             {
                 await CheckForUpdates(this);
@@ -72,7 +82,6 @@ namespace gamevault.Windows
                 string phalcodeLoginMessage = await LoginManager.Instance.PhalcodeLogin(true);
                 if (phalcodeLoginMessage != string.Empty)
                     ViewModel.AppBarText = phalcodeLoginMessage;
-
 
                 if (ViewModel.RememberMe)
                 {
@@ -122,11 +131,11 @@ namespace gamevault.Windows
                 InputTimer.Stop();
                 string result = await WebHelper.BaseGetAsync($"{ValidateUriScheme(InputTimer?.Data)}/api/status");
                 ServerInfo serverInfo = JsonSerializer.Deserialize<ServerInfo>(result);
-                if(ViewModel.LoginStepIndex == (int)LoginStep.SignIn)
+                if (ViewModel.LoginStepIndex == (int)LoginStep.SignIn)
                 {
                     ViewModel.LoginServerInfo = new BindableServerInfo(serverInfo);
                 }
-                else if(ViewModel.LoginStepIndex == (int)LoginStep.SignUp)
+                else if (ViewModel.LoginStepIndex == (int)LoginStep.SignUp)
                 {
                     ViewModel.SignUpServerInfo = new BindableServerInfo(serverInfo);
                 }
@@ -203,7 +212,7 @@ namespace gamevault.Windows
             {
                 throw new ArgumentException("Server could not be reached");
             }
-           
+
             loginUser.ServerUrl = ValidateUriScheme(loginUser.ServerUrl);
 
             if (!ViewModel.LoginUser.IsLoggedInWithSSO)
@@ -528,6 +537,35 @@ namespace gamevault.Windows
             {
                 App.Current.Shutdown();
             }
+        }
+
+        private void AddAdditionalRequestHeader_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.AdditionalRequestHeaders.Add(new RequestHeader());
+        }
+
+        private void RemoveAdditionalRequestHeader_Click(object sender, RoutedEventArgs e)
+        {
+            int index = ViewModel.AdditionalRequestHeaders.IndexOf(((RequestHeader)((FrameworkElement)sender).DataContext));
+            if (index >= 0)
+            {
+                ViewModel.AdditionalRequestHeaders.RemoveAt(index);
+            }
+        }
+        private void SaveAdditionalHeaders_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Preferences.Set(AppConfigKey.AdditionalRequestHeaders, ViewModel.AdditionalRequestHeaders.Where(rh => !string.IsNullOrWhiteSpace(rh.Name) && !string.IsNullOrWhiteSpace(rh.Value)), ProfileManager.ProfileConfigFile);
+                WebHelper.SetAdditionalRequestHeaders(ViewModel.AdditionalRequestHeaders?.ToArray());
+                ViewModel.LoginStepIndex = (int)LoginStep.ChooseProfile;
+                ViewModel.AppBarText = "Successfully saved additional request headers";
+            }
+            catch (Exception ex) { ViewModel.AppBarText = ex.Message; }
+        }
+        private void LoginWindowSettings_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.LoginStepIndex = (int)LoginStep.Settings;
         }
     }
 }
