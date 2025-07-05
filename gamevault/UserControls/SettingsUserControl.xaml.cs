@@ -640,6 +640,7 @@ namespace gamevault.UserControls
                     string result = string.Join(";", ViewModel.RootDirectories.Select(entry => entry.Uri));
                     Preferences.Set(AppConfigKey.RootDirectories, result, LoginManager.Instance.GetUserProfile().UserConfigFile);
                     await MainWindowViewModel.Instance.Library.GetGameInstalls().RestoreInstalledGames();
+                    await MainWindowViewModel.Instance.Downloads.RestoreDownloadedGames();
                 }
             }
             catch (Exception ex)
@@ -661,6 +662,7 @@ namespace gamevault.UserControls
 
                     ((FrameworkElement)sender).IsEnabled = false;//Disable the add button to block async restoring installed games
                     await MainWindowViewModel.Instance.Library.GetGameInstalls().RestoreInstalledGames();
+                    await MainWindowViewModel.Instance.Downloads.RestoreDownloadedGames();
                 }
             }
             catch (Exception ex)

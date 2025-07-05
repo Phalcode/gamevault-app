@@ -371,7 +371,10 @@ namespace gamevault.UserControls
                 }
                 string result = await WebHelper.PutAsync(url, JsonSerializer.Serialize(selectedUser));
                 ViewModel.OriginUser = JsonSerializer.Deserialize<User>(result);
-                WebHelper.OverrideCredentials(selectedUser.Username, selectedUser.Password);
+                if (LoginManager.Instance.GetCurrentUser().ID == ViewModel.OriginUser.ID)
+                {
+                    WebHelper.OverrideCredentials(selectedUser.Username, selectedUser.Password);
+                }
                 MainWindowViewModel.Instance.AppBarText = "Successfully saved user changes";
             }
             catch (Exception ex)

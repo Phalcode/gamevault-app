@@ -53,7 +53,11 @@ namespace gamevault.UserControls
                          string gameId = dirName.Substring(2, dirName.IndexOf(')') - 2);
 
                          if (int.TryParse(gameId, out int id))
-                             foundPathsById.Add(id, SettingsViewModel.Instance.RootDirectories.First(x => dir.Contains(x.Uri)).Uri);
+                             foundPathsById.Add(id, SettingsViewModel.Instance.RootDirectories
+                            .Where(x => dir.Contains(x.Uri))
+                            .OrderByDescending(x => x.Uri.Length)
+                            .First().Uri);
+
                      }
                      catch { continue; }
                  }
@@ -107,9 +111,32 @@ namespace gamevault.UserControls
             if (games == null)
                 return;
 
-            foreach (KeyValuePair<Game, string> game in games)
+            var validGameIds = new HashSet<int>(games.Keys.Select(g => g.ID));
+            // Remove controls not in the dictionary, unless they're downloading
+            for (int i = DownloadsViewModel.Instance.DownloadedGames.Count - 1; i >= 0; i--)
             {
-                DownloadsViewModel.Instance.DownloadedGames.Add(new GameDownloadUserControl(game.Key, game.Value, false));
+                var control = DownloadsViewModel.Instance.DownloadedGames[i];
+                int gameId = control.GetGameId();
+
+                bool existsInDict = validGameIds.Contains(gameId);
+                
+                if (control.IsDownloading())
+                {
+                    control.PauseDownload();
+                }
+                if (!existsInDict)
+                {
+                    DownloadsViewModel.Instance.DownloadedGames.RemoveAt(i);
+                }
+            }
+            var existingIds = new HashSet<int>(DownloadsViewModel.Instance.DownloadedGames.Select(c => c.GetGameId()));
+
+            foreach (var game in games)
+            {
+                if (!existingIds.Contains(game.Key.ID))
+                {
+                    DownloadsViewModel.Instance.DownloadedGames.Add(new GameDownloadUserControl(game.Key, game.Value, false));
+                }
             }
         }
         public void RefreshGame(Game game)

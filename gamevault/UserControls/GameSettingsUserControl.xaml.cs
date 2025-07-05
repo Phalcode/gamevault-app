@@ -245,6 +245,11 @@ namespace gamevault.UserControls
                             }
                         }
                     }
+                    if (!File.Exists(selectedUninstallerExecutablePath))
+                    {
+                        MainWindowViewModel.Instance.AppBarText = "No valid uninstall executable selected";
+                        return;
+                    }
                     Process uninstProcess = null;
                     try
                     {

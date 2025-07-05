@@ -65,7 +65,10 @@
                                                                     <StackPanel Background="Transparent">
                                                                         <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground}" CornerRadius="5">
                                                                             <Grid Height="100" Width="100">
-                                                                                <uc:CacheImage UseUriSource="True" ImageCacheType="UserAvatar" Data="{Binding UserCacheAvatar}" CornerRadius="5"/>
+                                                                                <Grid>
+                                                                                    <uc:CacheImage UseUriSource="True" ImageCacheType="UserAvatar" Data="{Binding UserCacheAvatar}" CornerRadius="5"/>
+                                                                                    <Border x:Name="HoverBlur" Visibility="Hidden" Background="{DynamicResource GameVault.Brushes.Blur}" CornerRadius="5"/>
+                                                                                </Grid>
                                                                                 <Button x:Name="DeleteUserProfile" Style="{StaticResource ButtonWrapper}" Visibility="Hidden" Margin="0,0,0,3" Click="UserProfileContextMenu_Click">
                                                                                     <Border Style="{StaticResource HoverEffect}" Background="Transparent" HorizontalAlignment="Right" VerticalAlignment="Bottom" CornerRadius="5">
                                                                                         <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="White" Margin="0,0,5,2"/>
@@ -96,6 +99,7 @@
                                                                     <Trigger Property="IsMouseOver" Value="True">
                                                                         <Setter TargetName="DeleteUserProfile" Property="Visibility" Value="Visible"/>
                                                                         <Setter TargetName="ProfileInfo" Property="Visibility" Value="Visible"/>
+                                                                        <Setter TargetName="HoverBlur" Property="Visibility" Value="Visible"/>
                                                                     </Trigger>
                                                                 </ControlTemplate.Triggers>
                                                             </ControlTemplate>

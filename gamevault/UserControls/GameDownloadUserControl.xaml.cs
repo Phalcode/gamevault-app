@@ -260,6 +260,16 @@ namespace gamevault.UserControls
                 ViewModel.State = "Download Paused";
             }
         }
+        public void PauseDownload()
+        {
+            if (client == null || ViewModel.IsDownloadPaused || !IsDownloadActive)
+                return;
+
+            ViewModel.IsDownloadPaused = true;
+            client.Pause();
+            IsDownloadActive = false;
+            ViewModel.State = "Download Paused";
+        }
         private void DownloadProgress(long totalFileSize, long currentBytesDownloaded, long totalBytesDownloaded, double? progressPercentage, long resumePosition)
         {
             App.Current.Dispatcher.Invoke((Action)delegate
