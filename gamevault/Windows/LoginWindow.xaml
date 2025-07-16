@@ -185,7 +185,7 @@
                         <TextBlock Text="Sign In" FontSize="30" HorizontalAlignment="Center"/>
                         <TextBlock Text="Specify Your Server URL" TextDecorations="Underline" Margin="0,15,0,5"/>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
-                            <TextBox Text="{Binding LoginUser.ServerUrl}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" Width="400" TextChanged="ServerUrlInput_TextChanged"/>
+                            <TextBox Text="{Binding LoginUser.ServerUrl}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" Width="400" TextChanged="ServerUrlInput_TextChanged" KeyDown="UserLoginTextBox_KeyDown"/>
                             <Path Data="{StaticResource IconCheck}" Fill="Green" Margin="2,1,-25,0">
                                 <Path.Style>
                                     <Style TargetType="Path">
@@ -211,10 +211,10 @@
                                 </Style>
                             </StackPanel.Style>
                             <TextBlock Text="Username or Email" TextDecorations="Underline" Margin="0,15,0,5"/>
-                            <TextBox Text="{Binding LoginUser.Username}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
+                            <TextBox Text="{Binding LoginUser.Username}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" KeyDown="UserLoginTextBox_KeyDown"/>
 
                             <TextBlock Text="Password" TextDecorations="Underline" Margin="0,15,0,5"/>
-                            <TextBox helper:PasswordBoxAttachedProperties.IsPassword="True" helper:PasswordBoxAttachedProperties.ActualPassword="{Binding LoginUser.Password}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
+                            <TextBox helper:PasswordBoxAttachedProperties.IsPassword="True" helper:PasswordBoxAttachedProperties.ActualPassword="{Binding LoginUser.Password}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" KeyDown="UserLoginTextBox_KeyDown"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
                             <Rectangle Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Width="70" Height="2"/>
@@ -244,7 +244,7 @@
                         <TextBlock Text="Sign Up" FontSize="30" HorizontalAlignment="Center"/>
                         <TextBlock Text="Specify Your Server URL" TextDecorations="Underline" Margin="0,15,0,5"/>
                         <StackPanel Orientation="Horizontal">
-                            <TextBox Text="{Binding SignupUser.ServerUrl}" mah:ControlsHelper.CornerRadius="5" Width="400" BorderThickness="2" TextChanged="ServerUrlInput_TextChanged"/>
+                            <TextBox Text="{Binding SignupUser.ServerUrl}" mah:ControlsHelper.CornerRadius="5" Width="400" BorderThickness="2" TextChanged="ServerUrlInput_TextChanged" KeyDown="UserRegistrationTextBox_KeyDown"/>
                             <Path Data="{StaticResource IconCheck}" Fill="Green" Margin="2,1,-25,0">
                                 <Path.Style>
                                     <Style TargetType="Path">
@@ -277,21 +277,21 @@
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Width="195" Grid.Column="0">
                                     <TextBlock Text="Username" TextDecorations="Underline" Margin="0,15,0,5"/>
-                                    <TextBox Text="{Binding SignupUser.Username}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
+                                    <TextBox Text="{Binding SignupUser.Username}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" KeyDown="UserRegistrationTextBox_KeyDown"/>
                                 </StackPanel>
                                 <StackPanel Width="195" Grid.Column="2">
                                     <StackPanel Orientation="Horizontal" Margin="0,15,0,5">
                                         <TextBlock Text="Birth Date" TextDecorations="Underline"/>
                                         <TextBlock Text="(Mandatory)" Visibility="{Binding SignUpServerInfo.IsBirthDateMandatory,Converter={StaticResource boolToVisConv}}" VerticalAlignment="Center" Margin="5,0,0,0"/>
                                     </StackPanel>
-                                    <DatePicker SelectedDate="{Binding SignupUser.BirthDate}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
+                                    <DatePicker SelectedDate="{Binding SignupUser.BirthDate}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" KeyDown="UserRegistrationTextBox_KeyDown"/>
                                 </StackPanel>
                             </Grid>
                             <StackPanel Orientation="Horizontal" Margin="0,15,0,5">
                                 <TextBlock Text="E-Mail" TextDecorations="Underline"/>
                                 <TextBlock Text="(Mandatory)" Visibility="{Binding SignUpServerInfo.IsEMailMandatory,Converter={StaticResource boolToVisConv}}" VerticalAlignment="Center" Margin="5,0,0,0"/>
                             </StackPanel>
-                            <TextBox Text="{Binding SignupUser.EMail}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
+                            <TextBox Text="{Binding SignupUser.EMail}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" KeyDown="UserRegistrationTextBox_KeyDown"/>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
@@ -303,14 +303,14 @@
                                         <TextBlock Text="First Name" TextDecorations="Underline"/>
                                         <TextBlock Text="(Mandatory)" Visibility="{Binding SignUpServerInfo.IsFirstNameMandatory,Converter={StaticResource boolToVisConv}}" VerticalAlignment="Center" Margin="5,0,0,0"/>
                                     </StackPanel>
-                                    <TextBox Text="{Binding SignupUser.FirstName}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
+                                    <TextBox Text="{Binding SignupUser.FirstName}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" KeyDown="UserRegistrationTextBox_KeyDown"/>
                                 </StackPanel>
                                 <StackPanel Width="195" Grid.Column="2">
                                     <StackPanel Orientation="Horizontal" Margin="0,15,0,5">
                                         <TextBlock Text="Last Name" TextDecorations="Underline"/>
                                         <TextBlock Text="(Mandatory)" Visibility="{Binding SignUpServerInfo.IsLastNameMandatory,Converter={StaticResource boolToVisConv}}" VerticalAlignment="Center" Margin="5,0,0,0"/>
                                     </StackPanel>
-                                    <TextBox Text="{Binding SignupUser.LastName}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
+                                    <TextBox Text="{Binding SignupUser.LastName}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" KeyDown="UserRegistrationTextBox_KeyDown"/>
                                 </StackPanel>
                             </Grid>
                             <Grid>
@@ -321,11 +321,11 @@
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Width="195" Grid.Column="0">
                                     <TextBlock Text="Password" TextDecorations="Underline" Margin="0,15,0,5"/>
-                                    <TextBox helper:PasswordBoxAttachedProperties.IsPassword="True" helper:PasswordBoxAttachedProperties.ActualPassword="{Binding SignupUser.Password}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
+                                    <TextBox helper:PasswordBoxAttachedProperties.IsPassword="True" helper:PasswordBoxAttachedProperties.ActualPassword="{Binding SignupUser.Password}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" KeyDown="UserRegistrationTextBox_KeyDown"/>
                                 </StackPanel>
                                 <StackPanel Width="195" Grid.Column="2">
                                     <TextBlock Text="Repeat Password" TextDecorations="Underline" Margin="0,15,0,5"/>
-                                    <TextBox helper:PasswordBoxAttachedProperties.IsPassword="True" helper:PasswordBoxAttachedProperties.ActualPassword="{Binding SignupUser.RepeatPassword}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
+                                    <TextBox helper:PasswordBoxAttachedProperties.IsPassword="True" helper:PasswordBoxAttachedProperties.ActualPassword="{Binding SignupUser.RepeatPassword}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" KeyDown="UserRegistrationTextBox_KeyDown"/>
                                 </StackPanel>
                             </Grid>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">

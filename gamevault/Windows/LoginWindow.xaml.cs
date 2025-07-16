@@ -172,6 +172,10 @@ namespace gamevault.Windows
         }
         private async void SaveAndLogin_Click(object sender, RoutedEventArgs e)
         {
+            await SaveAndLogin();
+        }
+        private async Task SaveAndLogin()
+        {
             try
             {
                 ValidateSignInData(ViewModel.LoginUser, true);
@@ -225,13 +229,20 @@ namespace gamevault.Windows
             }
         }
 
-        private async Task Login(UserProfile profile, bool firstTimeLogin = false, bool activationCall = false)
+        private async Task Login(UserProfile profile, bool firstTimeLogin = false, bool calledByActivationLoop = false)
         {
-            if (!activationCall)
+            if (!calledByActivationLoop)
             {
                 ViewModel.StatusText = "Logging in...";
                 ViewModel.LoginStepIndex = (int)LoginStep.LoadingAction;
+
+                if (await CheckIfServerIsOutdated(profile.ServerUrl))
+                {
+                    ViewModel.LoginStepIndex = (int)LoginStep.ChooseProfile;
+                    return;
+                }
             }
+
             bool isLoggedInWithSSO = Preferences.Get(AppConfigKey.IsLoggedInWithSSO, profile.UserConfigFile) == "1";
             LoginState state = LoginState.Success;
             if (!isLoggedInWithSSO)
@@ -321,6 +332,10 @@ namespace gamevault.Windows
             this.Close();
         }
         private async void SaveAndSignUp_Click(object sender, RoutedEventArgs e)
+        {
+           await SaveAndSignUp();
+        }
+        private async Task SaveAndSignUp()
         {
             try
             {
@@ -548,6 +563,49 @@ namespace gamevault.Windows
             catch { }
         }
 
+        private async Task<bool> CheckIfServerIsOutdated(string serverUrl)
+        {
+            //User Notification for major client/server update
+            bool isServerOutdated = false;
+            try
+            {
+                string serverResonse = await WebHelper.BaseGetAsync(@$"{serverUrl}/api/status");
+                string currentServerVersion = System.Text.Json.JsonSerializer.Deserialize<ServerInfo>(serverResonse).Version;
+                if (currentServerVersion == null || currentServerVersion == "")
+                {
+                    isServerOutdated = true;
+                }
+                isServerOutdated = new Version(currentServerVersion) < new Version("15.0.0");
+            }
+            catch { }
+            if (isServerOutdated)
+            {
+                try
+                {
+                    MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync("CLIENT-SERVER-INCOMPABILITY DETECTED",
+                          $"Your GameVault Client is not compatible with the GameVault Server you are using (<15.0.0). This server is too old for your client.\r\n\r\nYou have the following options:\r\n",
+                          MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
+                          {
+                              AffirmativeButtonText = "Get older client version from GitHub",
+                              NegativeButtonText = "Update the server",
+                              AnimateHide = false,
+                              DialogMessageFontSize = 20,
+                              DialogTitleFontSize = 25
+                          });
+                    if (result == MessageDialogResult.Affirmative)
+                    {
+                        Process.Start(new ProcessStartInfo("https://github.com/Phalcode/gamevault-app/releases") { UseShellExecute = true });
+                    }
+                    else
+                    {
+                        Process.Start(new ProcessStartInfo("https://github.com/Phalcode/gamevault-backend/releases/tag/12.2.0") { UseShellExecute = true });
+                    }
+                }
+                catch { }
+            }
+            return isServerOutdated;
+        }
+
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (!App.HideToSystemTray)
@@ -583,6 +641,21 @@ namespace gamevault.Windows
         private void LoginWindowSettings_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.LoginStepIndex = (int)LoginStep.Settings;
+        }
+
+        private async void UserLoginTextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                await SaveAndLogin();
+            }
+        }
+        private async void UserRegistrationTextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                await SaveAndSignUp();
+            }
         }
     }
 }
