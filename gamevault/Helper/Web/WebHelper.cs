@@ -160,6 +160,27 @@ namespace gamevault.Helper
                 return responseContent;
             }
         }
+        public static string RemoveSpecialCharactersFromUrl(string url)
+        {
+            if (url.StartsWith("http://", StringComparison.OrdinalIgnoreCase))
+            {
+                url = url.Substring(7);
+            }
+            else if (url.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
+                url = url.Substring(8);
+            }
+
+            StringBuilder sb = new StringBuilder();
+            foreach (char c in url)
+            {
+                if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '.' || c == '_')
+                {
+                    sb.Append(c);
+                }
+            }
+            return sb.ToString();
+        }
     }
 }
 

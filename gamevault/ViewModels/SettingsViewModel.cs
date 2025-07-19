@@ -77,8 +77,8 @@ namespace gamevault.ViewModels
         {
             userConfigFile = LoginManager.Instance.GetUserProfile().UserConfigFile;
 
-            UserName = Preferences.Get(AppConfigKey.Username, userConfigFile);            
-            ServerUrl = Preferences.Get(AppConfigKey.ServerUrl, userConfigFile);
+            UserName = Preferences.Get(AppConfigKey.Username, userConfigFile);
+            ServerUrl = Preferences.Get(AppConfigKey.ServerUrl, userConfigFile, true);
 
             string rootDirectoriesString = Preferences.Get(AppConfigKey.RootDirectories, userConfigFile);
             RootDirectories = string.IsNullOrWhiteSpace(rootDirectoriesString) ? null! : new ObservableCollection<DirectoryEntry>(rootDirectoriesString.Split(';').Select(part => new DirectoryEntry { Uri = part }).ToList());
@@ -127,7 +127,7 @@ namespace gamevault.ViewModels
             usePrimaryCloudSaveManifest = usePrimaryCloudSaveManifestString == "1" || usePrimaryCloudSaveManifestString == "";
 
             string customCloudSaveManifestsString = Preferences.Get(AppConfigKey.CustomCloudSaveManifests, userConfigFile);
-            customCloudSaveManifests = string.IsNullOrWhiteSpace(customCloudSaveManifestsString) ? null! : new ObservableCollection<DirectoryEntry>(customCloudSaveManifestsString.Split(';').Select(part => new DirectoryEntry { Uri = part }).ToList());           
+            customCloudSaveManifests = string.IsNullOrWhiteSpace(customCloudSaveManifestsString) ? null! : new ObservableCollection<DirectoryEntry>(customCloudSaveManifestsString.Split(';').Select(part => new DirectoryEntry { Uri = part }).ToList());
 
             string mountIsoString = Preferences.Get(AppConfigKey.MountIso, userConfigFile);
             mountIso = mountIsoString == "1";
@@ -444,7 +444,7 @@ namespace gamevault.ViewModels
                 });
                 return selectedDirectory;
             });
-        }       
+        }
         public string Version
         {
             get

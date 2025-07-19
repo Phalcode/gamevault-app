@@ -111,7 +111,7 @@ namespace gamevault.Windows
 
             uiNewsBadge.Badge = await CheckForNews() ? "!" : "";
             InitNewsTimer();
-       
+
         }
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -236,6 +236,7 @@ namespace gamevault.Windows
             LoginManager.Instance.StopOnlineTimer();
             App.Instance.ResetJumpListGames();
             PipeServiceHandler.Instance.IsReadyForCommands = false;
+            MainWindowViewModel.Instance.UserAvatar = null;
             this.Close();
         }
     }

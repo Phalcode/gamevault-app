@@ -161,10 +161,10 @@ namespace gamevault.Windows
         }
         private UserProfile SetupUserProfile(LoginUser user)
         {
-            string cleanedServerUrl = RemoveSpecialCharacters(user.ServerUrl);
+            string cleanedServerUrl = WebHelper.RemoveSpecialCharactersFromUrl(user.ServerUrl);
             UserProfile profile = ProfileManager.CreateUserProfile(cleanedServerUrl);
             profile.ServerUrl = user.ServerUrl;
-            Preferences.Set(AppConfigKey.ServerUrl, user.ServerUrl, profile.UserConfigFile);
+            Preferences.Set(AppConfigKey.ServerUrl, user.ServerUrl, profile.UserConfigFile, true);
             if (!user.IsLoggedInWithSSO)
             {
                 profile.Name = user.Username;
@@ -404,27 +404,7 @@ namespace gamevault.Windows
                 }
             }
         }
-        private string RemoveSpecialCharacters(string str)
-        {
-            if (str.StartsWith("http://", StringComparison.OrdinalIgnoreCase))
-            {
-                str = str.Substring(7);
-            }
-            else if (str.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
-            {
-                str = str.Substring(8);
-            }
-
-            StringBuilder sb = new StringBuilder();
-            foreach (char c in str)
-            {
-                if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '.' || c == '_')
-                {
-                    sb.Append(c);
-                }
-            }
-            return sb.ToString();
-        }
+        
 
         private void UserProfileContextMenu_Click(object sender, RoutedEventArgs e)
         {
@@ -477,12 +457,12 @@ namespace gamevault.Windows
                 {
                     ProfileManager.DeleteUserProfile(profileToEdit);
                     ViewModel.UserProfiles.Remove(profileToEdit);
-                    string cleanedServerUrl = RemoveSpecialCharacters(ViewModel.EditUser.ServerUrl);
+                    string cleanedServerUrl = WebHelper.RemoveSpecialCharactersFromUrl(ViewModel.EditUser.ServerUrl);
                     UserProfile profile = ProfileManager.CreateUserProfile(cleanedServerUrl);
                     profile.Name = ViewModel.EditUser.Username;
                     profile.ServerUrl = ViewModel.EditUser.ServerUrl;
                     ViewModel.UserProfiles.Add(profile);
-                    Preferences.Set(AppConfigKey.ServerUrl, ViewModel.EditUser.ServerUrl, profile.UserConfigFile);
+                    Preferences.Set(AppConfigKey.ServerUrl, ViewModel.EditUser.ServerUrl, profile.UserConfigFile, true);
                     Preferences.Set(AppConfigKey.Username, ViewModel.EditUser.Username, profile.UserConfigFile);
                     Preferences.Set(AppConfigKey.Password, ViewModel.EditUser.Password, profile.UserConfigFile, true);
                 }
@@ -507,13 +487,13 @@ namespace gamevault.Windows
                 string demoUsername = "demo";
                 string demoPassword = "demodemo";
 
-                UserProfile demoProfile = ProfileManager.CreateUserProfile(RemoveSpecialCharacters(demoServerUrl));
+                UserProfile demoProfile = ProfileManager.CreateUserProfile(WebHelper.RemoveSpecialCharactersFromUrl(demoServerUrl));
                 demoProfile.Name = demoUsername;
                 demoProfile.ServerUrl = demoServerUrl;
 
                 ViewModel.UserProfiles.Add(demoProfile);
 
-                Preferences.Set(AppConfigKey.ServerUrl, demoServerUrl, demoProfile.UserConfigFile);
+                Preferences.Set(AppConfigKey.ServerUrl, demoServerUrl, demoProfile.UserConfigFile, true);
                 Preferences.Set(AppConfigKey.Username, demoUsername, demoProfile.UserConfigFile);
                 Preferences.Set(AppConfigKey.Password, demoPassword, demoProfile.UserConfigFile, true);
             }
@@ -674,6 +654,6 @@ namespace gamevault.Windows
                 await SaveAndSignUp();
             }
         }
-        
+
     }
 }

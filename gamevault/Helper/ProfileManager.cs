@@ -19,8 +19,35 @@ namespace gamevault.Helper
             if (!Directory.Exists(ProfileRootDirectory))
             {
                 Directory.CreateDirectory(ProfileRootDirectory);
+                MigrateLegacyCache();
                 MoveLegacyCache();
-            }            
+            }
+        }
+        private static void MigrateLegacyCache()
+        {
+            string legacyUserCacheFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GameVault", "config", "user");
+            if (File.Exists(legacyUserCacheFile))
+            {
+                try
+                {
+                    string username = Preferences.Get("Username", legacyUserCacheFile);
+                    string password = Preferences.Get("Password", legacyUserCacheFile, true);
+                    string serverurl = Preferences.Get("ServerUrl", legacyUserCacheFile, true);
+                    string rootpath = Preferences.Get("RootPath", legacyUserCacheFile);
+                    if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password) && !string.IsNullOrEmpty(serverurl))
+                    {
+                        UserProfile profile = CreateUserProfile(WebHelper.RemoveSpecialCharactersFromUrl(serverurl));
+                        Preferences.Set(AppConfigKey.ServerUrl, serverurl, profile.UserConfigFile, true);
+                        Preferences.Set(AppConfigKey.Username, username, profile.UserConfigFile);
+                        Preferences.Set(AppConfigKey.Password, password, profile.UserConfigFile, true);
+                        if (Directory.Exists(rootpath))
+                        {
+                            Preferences.Set(AppConfigKey.RootDirectories, rootpath, profile.UserConfigFile);
+                        }
+                    }
+                }
+                catch { }
+            }
         }
         private static void MoveLegacyCache()
         {
@@ -35,20 +62,20 @@ namespace gamevault.Helper
 
                 if (Directory.Exists(cache))
                 {
-                    string cacheDestination = Path.Combine(legacyDir, "cache");                   
-                    Directory.Move(cache, cacheDestination);                 
+                    string cacheDestination = Path.Combine(legacyDir, "cache");
+                    Directory.Move(cache, cacheDestination);
                 }
 
                 if (Directory.Exists(config))
                 {
-                    string configDestination = Path.Combine(legacyDir, "config");                    
-                    Directory.Move(config, configDestination);                    
+                    string configDestination = Path.Combine(legacyDir, "config");
+                    Directory.Move(config, configDestination);
                 }
 
                 if (Directory.Exists(themes))
                 {
-                    string themesDestination = Path.Combine(legacyDir, "themes");                                          
-                    Directory.Move(themes, themesDestination);                  
+                    string themesDestination = Path.Combine(legacyDir, "themes");
+                    Directory.Move(themes, themesDestination);
                 }
             }
             catch { }
@@ -89,7 +116,7 @@ namespace gamevault.Helper
                             {
                                 UserProfile userProfile = new UserProfile(userDir, Path.Combine(serverDir, "ImageCache"));
                                 userProfile.Name = Preferences.Get(AppConfigKey.Username, userProfile.UserConfigFile);
-                                userProfile.ServerUrl = Preferences.Get(AppConfigKey.ServerUrl, userProfile.UserConfigFile);
+                                userProfile.ServerUrl = Preferences.Get(AppConfigKey.ServerUrl, userProfile.UserConfigFile, true);
                                 userProfile.UserCacheAvatar = CacheHelper.GetUserProfileAvatarPath(userProfile);
                                 if (string.IsNullOrWhiteSpace(userProfile.ServerUrl) || string.IsNullOrWhiteSpace(userProfile.Name))
                                 {
