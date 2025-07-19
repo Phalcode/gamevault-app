@@ -142,7 +142,7 @@ namespace gamevault.Windows
             }
             catch (Exception ex)
             {
-                string message = WebExceptionHelper.TryGetServerMessage(ex);               
+                string message = WebExceptionHelper.TryGetServerMessage(ex);
                 if (ViewModel.LoginStepIndex == (int)LoginStep.SignIn)
                 {
                     ViewModel.LoginServerInfo = new BindableServerInfo(message == "" ? "Could not connect to server" : message);
@@ -178,11 +178,15 @@ namespace gamevault.Windows
             }
             return profile;
         }
+        private async void SaveWithoutLogin_Click(object sender, RoutedEventArgs e)
+        {
+            await SaveAndLogin(true);
+        }
         private async void SaveAndLogin_Click(object sender, RoutedEventArgs e)
         {
             await SaveAndLogin();
         }
-        private async Task SaveAndLogin()
+        private async Task SaveAndLogin(bool saveOnly = false)
         {
             try
             {
@@ -190,6 +194,11 @@ namespace gamevault.Windows
                 UserProfile profile = SetupUserProfile(ViewModel.LoginUser);
                 ViewModel.LoginUser = new LoginUser();//Reset
                 RemoveDemoUserIfExists();
+                if (saveOnly)
+                {
+                    ViewModel.LoginStepIndex = (int)LoginStep.ChooseProfile;
+                    return;
+                }
                 await Login(profile, true);
             }
             catch (Exception ex)
@@ -665,5 +674,6 @@ namespace gamevault.Windows
                 await SaveAndSignUp();
             }
         }
+        
     }
 }

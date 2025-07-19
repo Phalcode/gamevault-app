@@ -240,6 +240,7 @@
                             </CheckBox.Style>
                         </CheckBox>
                     </StackPanel>
+                    <uc:IconButton Text="Save" Kind="Skeleton" Height="30" BorderThickness="1" Margin="0,0,120,10" Width="100" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="SaveWithoutLogin_Click"/>
                     <uc:IconButton Text="Save and Login" Height="30" Margin="0,0,10,10" Width="100" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="SaveAndLogin_Click"/>
                     <uc:IconButton Text="Back" Kind="Skeleton" BorderThickness="1" Height="30" Margin="10,0,0,10" Width="100" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="Back_Click" Tag="{x:Static local:LoginStep.SignInOrSignUp}"/>
                 </Grid>
