@@ -34,8 +34,17 @@ namespace gamevault.Models
 
         public bool IsBasicAuthEnabled { get; set; }
         public bool IsSSOEnabled { get; set; }
+        public string ErrorMessage { get; set; }
+        public bool HasError { get; set; }
 
-        public BindableServerInfo() { }
+        public BindableServerInfo(string errorMessage = "")
+        {
+            if (errorMessage != "")
+            {
+                HasError = true;
+                ErrorMessage = errorMessage;
+            }
+        }
         public BindableServerInfo(ServerInfo info)
         {
             IsAvailable = true;
@@ -46,6 +55,6 @@ namespace gamevault.Models
             IsBirthDateMandatory = info.RequiredRegistrationFields.Contains("birth_date");
             IsBasicAuthEnabled = info.AvailableAuthenticationMethods.Contains("basic");
             IsSSOEnabled = info.AvailableAuthenticationMethods.Contains("sso");
-        }      
+        }
     }
 }

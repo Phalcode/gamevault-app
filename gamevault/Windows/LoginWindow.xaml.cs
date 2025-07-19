@@ -140,9 +140,17 @@ namespace gamevault.Windows
                     ViewModel.SignUpServerInfo = new BindableServerInfo(serverInfo);
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                ViewModel.LoginServerInfo = new BindableServerInfo();
+                string message = WebExceptionHelper.TryGetServerMessage(ex);               
+                if (ViewModel.LoginStepIndex == (int)LoginStep.SignIn)
+                {
+                    ViewModel.LoginServerInfo = new BindableServerInfo(message == "" ? "Could not connect to server" : message);
+                }
+                else if (ViewModel.LoginStepIndex == (int)LoginStep.SignUp)
+                {
+                    ViewModel.SignUpServerInfo = new BindableServerInfo(message == "" ? "Could not connect to server" : message);
+                }
             }
         }
         private void ServerUrlInput_TextChanged(object sender, RoutedEventArgs e)
@@ -333,7 +341,7 @@ namespace gamevault.Windows
         }
         private async void SaveAndSignUp_Click(object sender, RoutedEventArgs e)
         {
-           await SaveAndSignUp();
+            await SaveAndSignUp();
         }
         private async Task SaveAndSignUp()
         {
