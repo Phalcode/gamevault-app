@@ -144,7 +144,7 @@
                                         <Border.Style>
                                             <Style TargetType="Border">
                                                 <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Button.Border}"/>
-                                                
+
                                                 <Style.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
                                                         <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}" />
@@ -200,7 +200,7 @@
                                         <Border.Style>
                                             <Style TargetType="Border">
                                                 <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Button.Border}"/>
-                                                
+
                                                 <Style.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
                                                         <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}" />
@@ -283,6 +283,17 @@
                                     <!--<TextBox Text="{Binding Path=UpdateUser.LastName,UpdateSourceTrigger=PropertyChanged}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" Height="30" Width="400" TextChanged="UserDetails_TextChanged"/>-->
                                 </StackPanel>
                             </Grid>
+                            <local:IconButton Text="Copy API Key" Kind="Skeleton" FontSize="15" BorderThickness="1" Icon="{DynamicResource IconCopy}" IconMargin="0,0,5,2" IconScale="0.9" Width="130" Height="33" Margin="0,0,135,0" HorizontalAlignment="Right" Click="CopyUserApiKey_Click">
+                                <local:IconButton.Style>
+                                    <Style TargetType="{x:Type local:IconButton}" BasedOn="{StaticResource {x:Type local:IconButton}}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding OriginUser.ApiKey}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </local:IconButton.Style>
+                            </local:IconButton>
                             <local:IconButton Text="Save" FontSize="15" Icon="{DynamicResource IconGameSettingsSave}" IconMargin="0,0,5,2" IsEnabled="{Binding UserDetailsChanged}" Width="115" Height="33" Margin="0,0,10,0" HorizontalAlignment="Right" Click="SaveUserDetails_Click"/>
                         </Grid>
                     </mah:MetroTabItem>

@@ -193,6 +193,7 @@ namespace gamevault.Windows
                 ValidateSignInData(ViewModel.LoginUser, true);
                 UserProfile profile = SetupUserProfile(ViewModel.LoginUser);
                 ViewModel.LoginUser = new LoginUser();//Reset
+                ViewModel.LoginServerInfo= new BindableServerInfo();//Reset
                 RemoveDemoUserIfExists();
                 if (saveOnly)
                 {
@@ -226,6 +227,9 @@ namespace gamevault.Windows
         }
         private void ValidateSignInData(LoginUser loginUser, bool isLogin)
         {
+            if(ViewModel.UserProfiles.Any(user=>user.Name == loginUser.Username))
+                throw new ArgumentException("Profile with this name already exists");
+
             if (string.IsNullOrWhiteSpace(loginUser.ServerUrl))
                 throw new ArgumentException("ServerUrl is not set");
 

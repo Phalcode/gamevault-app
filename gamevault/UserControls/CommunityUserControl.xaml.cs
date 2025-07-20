@@ -152,7 +152,12 @@ namespace gamevault.UserControls
                     selectedUserId = ((User)e.AddedItems[0]).ID;
                 }
                 ViewModel.LoadingUser = true;
-                string currentShownUser = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/{selectedUserId}");
+                string userUrl = @$"{SettingsViewModel.Instance.ServerUrl}/api/users/{selectedUserId}";
+                if (selectedUserId == LoginManager.Instance.GetCurrentUser()?.ID)
+                {
+                    userUrl = @$"{SettingsViewModel.Instance.ServerUrl}/api/users/me";
+                }
+                string currentShownUser = await WebHelper.GetAsync(userUrl);
                 ViewModel.CurrentShownUser = JsonSerializer.Deserialize<User>(currentShownUser);
                 ViewModel.LoadingUser = false;
                 string lastSort = TryGetLastProgressSort();
@@ -253,7 +258,12 @@ namespace gamevault.UserControls
             try
             {
                 int currentUserId = ViewModel.CurrentShownUser.ID;
-                string currentShownUser = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/{currentUserId}");
+                string userUrl = @$"{SettingsViewModel.Instance.ServerUrl}/api/users/{currentUserId}";
+                if (currentUserId == LoginManager.Instance.GetCurrentUser()?.ID)
+                {
+                    userUrl = @$"{SettingsViewModel.Instance.ServerUrl}/api/users/me";
+                }
+                string currentShownUser = await WebHelper.GetAsync(userUrl);
                 ViewModel.CurrentShownUser = JsonSerializer.Deserialize<User>(currentShownUser);
                 SortBy_SelectionChanged(null, new SelectionChangedEventArgs(System.Windows.Controls.Primitives.Selector.SelectionChangedEvent, new List<string>(), new List<string> { uiSortBy.SelectedValue.ToString() }));
 

@@ -650,6 +650,11 @@ namespace gamevault.UserControls
         }
         private async Task Install()
         {
+            if (InstallViewModel.Instance.InstalledGames.Any(game => game.Key.ID == ViewModel.Game.ID))
+            {
+                await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"The Game {ViewModel.Game.Title} is already installed at \n'{InstallViewModel.Instance.InstalledGames.First(game => game.Key.ID == ViewModel.Game.ID).Value}'", "", MessageDialogStyle.Affirmative, new MetroDialogSettings() { AffirmativeButtonText = "Ok", AnimateHide = false });
+                return;
+            }
             string targedDir = (SettingsViewModel.Instance.MountIso && Directory.Exists(mountedDrive)) ? mountedDrive : $"{m_DownloadPath}\\Extract";
 
             uiBtnInstallPortable.IsEnabled = false;
@@ -842,7 +847,7 @@ namespace gamevault.UserControls
             }
 
             // Do not attempt to delete source since it is on a read-only ISO.
-        }       
+        }
         private void CopyInstallPathToClipboard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             try
@@ -875,6 +880,6 @@ namespace gamevault.UserControls
             temp.Type = GameType.UNDETECTABLE;
             ViewModel.Game = null;
             ViewModel.Game = temp;
-        }       
+        }
     }
 }

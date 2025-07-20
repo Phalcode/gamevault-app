@@ -33,6 +33,8 @@ namespace gamevault.Models
         [JsonPropertyName("password")]
         public string Password { get; set; }
         public string RepeatPassword { get; set; }
+        [JsonPropertyName("api_key")]
+        public string ApiKey { get; set; }
         [JsonPropertyName("progresses")]
         public Progress[]? Progresses { get; set; }       
         [JsonPropertyName("role")]

@@ -641,6 +641,16 @@ namespace gamevault.UserControls
                     Preferences.Set(AppConfigKey.RootDirectories, result, LoginManager.Instance.GetUserProfile().UserConfigFile);
                     await MainWindowViewModel.Instance.Library.GetGameInstalls().RestoreInstalledGames();
                     await MainWindowViewModel.Instance.Downloads.RestoreDownloadedGames();
+                    if (InstallViewModel.Instance.InstalledGamesDuplicates?.Count > 0)
+                    {
+                        string duplicateMessage = "Duplicate game installation detected.\n\n";
+                        foreach (var duplicate in InstallViewModel.Instance.InstalledGamesDuplicates)
+                        {
+                            string gameTitle = InstallViewModel.Instance.InstalledGames?.First(game => game.Key.ID == duplicate.Key).Key.Title;
+                            duplicateMessage += $"\n'{gameTitle}' is already installed at:\n{duplicate.Value}";
+                        }
+                        await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync(duplicateMessage, "", MessageDialogStyle.Affirmative, new MetroDialogSettings() { AffirmativeButtonText = "Ok", DialogTitleFontSize = 20, AnimateHide = false });
+                    }
                 }
             }
             catch (Exception ex)

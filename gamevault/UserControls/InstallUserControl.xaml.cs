@@ -48,6 +48,7 @@ namespace gamevault.UserControls
                 //File watchers are already protected against double entries and dont care, if the same code runs again
             }
             Dictionary<int, string> foundGames = new Dictionary<int, string>();
+            InstallViewModel.Instance.InstalledGamesDuplicates = new Dictionary<int, string>();
             Game[]? games = await Task<Game[]>.Run(async () =>
             {
                 if (SettingsViewModel.Instance.RootDirectories.Count > 0)
@@ -74,11 +75,15 @@ namespace gamevault.UserControls
                         {
                             int id = GetGameIdByDirectory(dir);
                             if (id == -1) continue;
-                            if (InstallViewModel.Instance.InstalledGames.Where(x => x.Key.ID == id).Count() > 0)
-                                continue;
+                            //if (InstallViewModel.Instance.InstalledGames.Where(x => x.Key.ID == id).Count() > 0)
+                            //    continue;
                             if (!foundGames.ContainsKey(id))
                             {
                                 foundGames.Add(id, dir);
+                            }
+                            else
+                            {
+                                InstallViewModel.Instance.InstalledGamesDuplicates.Add(id, dir);
                             }
                         }
                     }

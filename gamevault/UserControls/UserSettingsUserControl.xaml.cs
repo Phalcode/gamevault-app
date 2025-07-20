@@ -420,7 +420,15 @@ namespace gamevault.UserControls
             await MainWindowViewModel.Instance.Community.InitUserList();
 
         }
-
+        private void CopyUserApiKey_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Clipboard.SetText(ViewModel.OriginUser.ApiKey);
+                MainWindowViewModel.Instance.AppBarText = "Copied Installation Directory to Clipboard";
+            }
+            catch { }
+        }
         private void Help_Click(object sender, MouseButtonEventArgs e)
         {
             try
@@ -449,7 +457,7 @@ namespace gamevault.UserControls
             {
                 MainWindowViewModel.Instance.AppBarText = ex.Message;
             }
-        }
+        }        
     }
 }
 
