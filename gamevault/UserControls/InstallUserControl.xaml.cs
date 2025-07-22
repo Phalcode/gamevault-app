@@ -48,7 +48,7 @@ namespace gamevault.UserControls
                 //File watchers are already protected against double entries and dont care, if the same code runs again
             }
             Dictionary<int, string> foundGames = new Dictionary<int, string>();
-            InstallViewModel.Instance.InstalledGamesDuplicates = new Dictionary<int, string>();
+            InstallViewModel.Instance.InstalledGamesDuplicates.Clear();
             Game[]? games = await Task<Game[]>.Run(async () =>
             {
                 if (SettingsViewModel.Instance.RootDirectories.Count > 0)
@@ -83,7 +83,10 @@ namespace gamevault.UserControls
                             }
                             else
                             {
-                                InstallViewModel.Instance.InstalledGamesDuplicates.Add(id, dir);
+                                if (!InstallViewModel.Instance.InstalledGamesDuplicates.ContainsKey(id))
+                                {
+                                    InstallViewModel.Instance.InstalledGamesDuplicates.Add(id, dir);
+                                }
                             }
                         }
                     }
@@ -94,7 +97,7 @@ namespace gamevault.UserControls
                             string gameIds = string.Join(",", foundGames.Keys.Where(key => !string.IsNullOrEmpty(foundGames[key])));
                             if (LoginManager.Instance.IsLoggedIn())
                             {
-                                string gameList = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games?filter.id=$in:{gameIds}");
+                                string gameList = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games?filter.id=$in:{gameIds}&limit=-1");
                                 return JsonSerializer.Deserialize<PaginatedData<Game>>(gameList).Data;
                             }
                             else

@@ -336,7 +336,7 @@ namespace gamevault.Helper
                     .Where(prop => !propertiesToExclude.Contains(prop.Name))
                     .ToDictionary(prop => prop.Name, prop => prop.GetValue(SettingsViewModel.Instance)?.ToString());
 
-                trimmedObject.Add("HasLicence", (SettingsViewModel.Instance.License?.IsActive() == true).ToString());
+                trimmedObject.Add("HasLicense", (SettingsViewModel.Instance.License?.IsActive() == true).ToString());
                 return trimmedObject;
             }
             catch { }

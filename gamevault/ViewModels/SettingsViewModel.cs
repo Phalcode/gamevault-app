@@ -449,7 +449,7 @@ namespace gamevault.ViewModels
         {
             get
             {
-                return Assembly.GetExecutingAssembly().GetName().Version.ToString() + "EA2";
+                return Assembly.GetExecutingAssembly().GetName().Version.ToString() + "EA3";
             }
         }
         //DevMode

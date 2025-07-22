@@ -22,6 +22,7 @@ Recommended Gamevault Server Version: `v15.0.0`
 - Added "Go to Game" button after installation is complete
 - Pressing F5 in the Library now also refreshes the list of installed games
 - Build temporary offline cache if not exists
+- Copy button for own users API key in the user settings
 - Bug fix: extraction time remaining now displays correctly
 
 ## 1.16.1

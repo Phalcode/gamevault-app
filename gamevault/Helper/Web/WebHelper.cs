@@ -31,9 +31,12 @@ namespace gamevault.Helper
         internal static void OverrideCredentials(string username, string password)
         {
             HttpClient.UserName = username;
-            HttpClient.Password = password;
             Preferences.Set(AppConfigKey.Username, HttpClient.UserName, LoginManager.Instance.GetUserProfile().UserConfigFile);
-            Preferences.Set(AppConfigKey.Password, HttpClient.Password, LoginManager.Instance.GetUserProfile().UserConfigFile, true);
+            if (!string.IsNullOrWhiteSpace(password))
+            {
+                HttpClient.Password = password;
+                Preferences.Set(AppConfigKey.Password, HttpClient.Password, LoginManager.Instance.GetUserProfile().UserConfigFile, true);
+            }
         }
         internal static void InjectTokens(string accessToken, string refreshToken)
         {

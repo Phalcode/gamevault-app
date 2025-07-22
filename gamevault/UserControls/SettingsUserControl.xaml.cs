@@ -641,15 +641,9 @@ namespace gamevault.UserControls
                     Preferences.Set(AppConfigKey.RootDirectories, result, LoginManager.Instance.GetUserProfile().UserConfigFile);
                     await MainWindowViewModel.Instance.Library.GetGameInstalls().RestoreInstalledGames();
                     await MainWindowViewModel.Instance.Downloads.RestoreDownloadedGames();
-                    if (InstallViewModel.Instance.InstalledGamesDuplicates?.Count > 0)
+                    if (InstallViewModel.Instance.InstalledGamesDuplicates.Any())
                     {
-                        string duplicateMessage = "Duplicate game installation detected.\n\n";
-                        foreach (var duplicate in InstallViewModel.Instance.InstalledGamesDuplicates)
-                        {
-                            string gameTitle = InstallViewModel.Instance.InstalledGames?.First(game => game.Key.ID == duplicate.Key).Key.Title;
-                            duplicateMessage += $"\n'{gameTitle}' is already installed at:\n{duplicate.Value}";
-                        }
-                        await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync(duplicateMessage, "", MessageDialogStyle.Affirmative, new MetroDialogSettings() { AffirmativeButtonText = "Ok", DialogTitleFontSize = 20, AnimateHide = false });
+                        await ShowInstalledGameDuplicates();
                     }
                 }
             }
@@ -658,6 +652,19 @@ namespace gamevault.UserControls
                 MainWindowViewModel.Instance.AppBarText = ex.Message;
             }
             ((FrameworkElement)sender).IsEnabled = true;
+        }
+        private async Task ShowInstalledGameDuplicates()
+        {
+            string duplicateMessage = "";
+            foreach (var duplicate in InstallViewModel.Instance.InstalledGamesDuplicates)
+            {
+                var matchingGame = InstallViewModel.Instance.InstalledGames?.FirstOrDefault(game => game.Key.ID == duplicate.Key);
+                if (string.IsNullOrEmpty(matchingGame?.Key?.Title))
+                    continue;
+
+                duplicateMessage += $"\n\n'{matchingGame?.Key?.Title}' is already installed at:\n{duplicate.Value}";
+            }
+            await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync("Duplicate game installation detected", duplicateMessage, MessageDialogStyle.Affirmative, new MetroDialogSettings() { AffirmativeButtonText = "Ok", DialogTitleFontSize = 20, AnimateHide = false });
         }
         private async void RemoveRootDirectory_Click(object sender, RoutedEventArgs e)
         {
