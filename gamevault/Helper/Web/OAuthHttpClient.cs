@@ -48,13 +48,7 @@ namespace gamevault.Helper
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authValue);
 
             var response = await _httpClient.GetAsync($"{ServerUrl}/api/auth/basic/login");
-
-            if (!response.IsSuccessStatusCode)
-            {               
-                using JsonDocument serverResponseJson = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
-                throw new HttpRequestException(serverResponseJson.RootElement.GetProperty("message").GetString(), null, response.StatusCode);
-            }
-
+            await WebExceptionHelper.EnsureSuccessStatusCode(response);
             var responseContent = await response.Content.ReadAsStringAsync();
             var json = JsonSerializer.Deserialize<AuthResponse>(responseContent);
 
