@@ -27,6 +27,7 @@ namespace gamevault.UserControls
         private InputTimer inputTimer { get; set; }
 
         private bool scrollBlocked = false;
+        private Guid searchCancellationToken = Guid.Empty;
         public LibraryUserControl()
         {
             InitializeComponent();
@@ -94,8 +95,12 @@ namespace gamevault.UserControls
             inputTimer?.Stop();
             await Search();
         }
+        
         private async Task Search()
         {
+            Guid currentSearchToken = Guid.NewGuid();
+            searchCancellationToken = currentSearchToken;
+
             if (!LoginManager.Instance.IsLoggedIn())
             {
                 MainWindowViewModel.Instance.AppBarText = "You are not logged in or offline";
@@ -120,6 +125,9 @@ namespace gamevault.UserControls
             filterUrl = ApplyFilter(filterUrl);
 
             PaginatedData<Game>? gameResult = await GetGamesData(filterUrl);
+            if (currentSearchToken != searchCancellationToken)
+                return;
+
             if (gameResult != null)
             {
                 ViewModel.CanLoadServerGames = true;
