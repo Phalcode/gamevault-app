@@ -425,7 +425,7 @@ namespace gamevault.UserControls
             try
             {
                 Clipboard.SetText(ViewModel.OriginUser.ApiKey);
-                MainWindowViewModel.Instance.AppBarText = "Copied Installation Directory to Clipboard";
+                MainWindowViewModel.Instance.AppBarText = "Copied API Key to Clipboard";
             }
             catch { }
         }

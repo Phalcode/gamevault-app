@@ -2,7 +2,7 @@
 
 ## 1.17.0
 Recommended Gamevault Server Version: `v15.0.0`
-###Changes
+### Changes
 
 - Replaced setup wizard with a new login window
 - Introduced multi-profile support: if no user profile is configured, the demo user is used by default
@@ -21,9 +21,10 @@ Recommended Gamevault Server Version: `v15.0.0`
 - Implemented skeleton loading animations in the community tab to better indicate loading states
 - Added "Go to Game" button after installation is complete
 - Pressing F5 in the Library now also refreshes the list of installed games
-- Build temporary offline cache if not exists
+- Build temporary offline cache if it does not exist, so that you can still see your installed games in offline mode even if you have deleted the offline cache or it is corrupted.
 - Copy button for own users API key in the user settings
 - Bug fix: extraction time remaining now displays correctly
+- Bug fix: Duplicate entries when typing in the library search
 
 ## 1.16.1
 Recommended Gamevault Server Version: `v14.1.0`
