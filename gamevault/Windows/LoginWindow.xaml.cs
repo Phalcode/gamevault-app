@@ -108,6 +108,15 @@ namespace gamevault.Windows
         }
         private void NewProfile_Click(object sender, RoutedEventArgs e)
         {
+            if (!SettingsViewModel.Instance.License.IsActive() && ViewModel.UserProfiles.Count >= 1)
+            {
+                bool isDemoUserException = ViewModel.UserProfiles.Count == 1 && ViewModel.UserProfiles[0].ServerUrl == "https://demo.gamevau.lt";
+                if (!isDemoUserException)
+                {
+                    ViewModel.AppBarText = "Oops! You just reached a premium feature of GameVault - Upgrade now and support the devs!";
+                    return;
+                }                
+            }
             ViewModel.LoginStepIndex = (int)LoginStep.SignInOrSignUp;
         }
         private void SignIn_Click(object sender, RoutedEventArgs e)
@@ -193,7 +202,7 @@ namespace gamevault.Windows
                 ValidateSignInData(ViewModel.LoginUser, true);
                 UserProfile profile = SetupUserProfile(ViewModel.LoginUser);
                 ViewModel.LoginUser = new LoginUser();//Reset
-                ViewModel.LoginServerInfo= new BindableServerInfo();//Reset
+                ViewModel.LoginServerInfo = new BindableServerInfo();//Reset
                 RemoveDemoUserIfExists();
                 if (saveOnly)
                 {
@@ -227,7 +236,7 @@ namespace gamevault.Windows
         }
         private void ValidateSignInData(LoginUser loginUser, bool isLogin)
         {
-            if(ViewModel.UserProfiles.Any(user=>user.Name == loginUser.Username))
+            if (ViewModel.UserProfiles.Any(user => user.Name == loginUser.Username))
                 throw new ArgumentException("Profile with this name already exists");
 
             if (string.IsNullOrWhiteSpace(loginUser.ServerUrl))
@@ -320,11 +329,15 @@ namespace gamevault.Windows
                         string result = Preferences.Get(AppConfigKey.UserID, profile.UserConfigFile);
                         if (string.IsNullOrWhiteSpace(result))
                         {
-                            throw new Exception("User ID is not set");
+                            throw new Exception("NOID");
                         }
                         await LoadMainWindow(profile);
                     }
-                    catch { ViewModel.AppBarText = "Can not load user profile in offline mode"; ViewModel.LoginStepIndex = (int)LoginStep.ChooseProfile; }
+                    catch (Exception ex)
+                    {
+                        ViewModel.AppBarText = ex.Message == "NOID" ? LoginManager.Instance.GetServerLoginResponseMessage() : "Can not load user profile in offline mode";
+                        ViewModel.LoginStepIndex = (int)LoginStep.ChooseProfile;
+                    }
                 }
             }
         }
@@ -408,7 +421,7 @@ namespace gamevault.Windows
                 }
             }
         }
-        
+
 
         private void UserProfileContextMenu_Click(object sender, RoutedEventArgs e)
         {
