@@ -28,6 +28,7 @@ namespace gamevault.ViewModels
         private MetadataProviderDto[]? metadataProviders { get; set; }
         private bool metadataProvidersLoaded { get; set; }
         private int selectedMetadataProviderIndex { get; set; }
+        private string? installedGameVersion { get; set; }
         #endregion
         public Game Game
         {
@@ -125,6 +126,11 @@ namespace gamevault.ViewModels
             {
                 OnPropertyChanged();
             }
+        }
+        public string? InstalledGameVersion
+        {
+            get { return installedGameVersion; }
+            set { installedGameVersion = value; OnPropertyChanged(); }
         }
     }
 }

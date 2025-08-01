@@ -1,4 +1,5 @@
-﻿using gamevault.Models;
+﻿using gamevault.Helper;
+using gamevault.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -14,7 +15,7 @@ namespace gamevault.Converter
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
 
-            bool showMappedTitle = Preferences.Get(AppConfigKey.ShowMappedTitle, AppFilePath.UserFile) == "1";
+            bool showMappedTitle = Preferences.Get(AppConfigKey.ShowMappedTitle,LoginManager.Instance.GetUserProfile().UserConfigFile) == "1";
             if (showMappedTitle && value is Game game && !string.IsNullOrWhiteSpace(game?.Metadata?.Title))
             {
                 return true;

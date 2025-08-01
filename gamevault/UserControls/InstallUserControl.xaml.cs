@@ -29,7 +29,7 @@ namespace gamevault.UserControls
             InitializeComponent();
             this.DataContext = InstallViewModel.Instance;
             InitTimer();
-            uiInstalledGames.IsExpanded = Preferences.Get(AppConfigKey.InstalledGamesOpen, AppFilePath.UserFile) == "1" ? true : false;
+            uiInstalledGames.IsExpanded = Preferences.Get(AppConfigKey.InstalledGamesOpen, LoginManager.Instance.GetUserProfile().UserConfigFile) == "1" ? true : false;
         }
 
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -40,15 +40,30 @@ namespace gamevault.UserControls
                 InstallViewModel.Instance.InstalledGamesFilter = CollectionViewSource.GetDefaultView(InstallViewModel.Instance.InstalledGames);
             }
         }
-        public async Task RestoreInstalledGames()
+        public async Task RestoreInstalledGames(bool fromCLI = false)
         {
-            Dictionary<int, string> foundGames = new Dictionary<int, string>();
-            Game[]? games = await Task<Game[]>.Run(() =>
+            if (gamesRestored)
             {
-                string installationPath = Path.Combine(SettingsViewModel.Instance.RootPath, "GameVault\\Installations");
-                if (SettingsViewModel.Instance.RootPath != string.Empty && Directory.Exists(installationPath))
+                InstallViewModel.Instance.InstalledGames.Clear();// Clear here because the double entry code won't allow to refresh
+                //File watchers are already protected against double entries and dont care, if the same code runs again
+            }
+            Dictionary<int, string> foundGames = new Dictionary<int, string>();
+            InstallViewModel.Instance.InstalledGamesDuplicates.Clear();
+            Game[]? games = await Task<Game[]>.Run(async () =>
+            {
+                if (SettingsViewModel.Instance.RootDirectories.Count > 0)
                 {
-                    foreach (string dir in Directory.GetDirectories(installationPath))
+
+
+                    List<string> allDirectoriesFromRootDirectories = new List<string>();
+                    foreach (DirectoryEntry dirEntry in SettingsViewModel.Instance.RootDirectories)
+                    {
+                        if (Directory.Exists(Path.Combine(dirEntry.Uri, "GameVault", "Installations")))
+                            allDirectoriesFromRootDirectories.AddRange(Directory.GetDirectories(Path.Combine(dirEntry.Uri, "GameVault", "Installations")));
+                    }
+
+
+                    foreach (string dir in allDirectoriesFromRootDirectories)
                     {
                         var dirInf = new DirectoryInfo(dir);
                         if (dirInf.GetFiles().Length == 0 && dirInf.GetDirectories().Length == 0)
@@ -60,11 +75,18 @@ namespace gamevault.UserControls
                         {
                             int id = GetGameIdByDirectory(dir);
                             if (id == -1) continue;
-                            if (InstallViewModel.Instance.InstalledGames.Where(x => x.Key.ID == id).Count() > 0)
-                                continue;
+                            //if (InstallViewModel.Instance.InstalledGames.Where(x => x.Key.ID == id).Count() > 0)
+                            //    continue;
                             if (!foundGames.ContainsKey(id))
                             {
                                 foundGames.Add(id, dir);
+                            }
+                            else
+                            {
+                                if (!InstallViewModel.Instance.InstalledGamesDuplicates.ContainsKey(id))
+                                {
+                                    InstallViewModel.Instance.InstalledGamesDuplicates.Add(id, dir);
+                                }
                             }
                         }
                     }
@@ -72,28 +94,18 @@ namespace gamevault.UserControls
                     {
                         if (foundGames.Count > 0)
                         {
-                            string gameIds = string.Empty;
-                            foreach (KeyValuePair<int, string> kv in foundGames)
-                            {
-                                if (gameIds == string.Empty)
-                                {
-                                    gameIds += kv.Key;
-                                    continue;
-                                }
-                                gameIds += "," + kv.Key;
-                            }
+                            string gameIds = string.Join(",", foundGames.Keys.Where(key => !string.IsNullOrEmpty(foundGames[key])));
                             if (LoginManager.Instance.IsLoggedIn())
                             {
-                                string gameList = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/games?filter.id=$in:{gameIds}");
+                                string gameList = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games?filter.id=$in:{gameIds}&limit=-1");
                                 return JsonSerializer.Deserialize<PaginatedData<Game>>(gameList).Data;
                             }
                             else
                             {
-                                string[] seperatedIds = gameIds.Split(',');
                                 List<Game> offlineCacheGames = new List<Game>();
-                                foreach (string id in seperatedIds)
+                                foreach (KeyValuePair<int, string> entry in foundGames)
                                 {
-                                    string objectFromFile = Preferences.Get(id, AppFilePath.OfflineCache);
+                                    string objectFromFile = Preferences.Get(entry.Key.ToString(), LoginManager.Instance.GetUserProfile().OfflineCache);
                                     if (objectFromFile != string.Empty)
                                     {
                                         try
@@ -106,6 +118,11 @@ namespace gamevault.UserControls
                                             }
                                         }
                                         catch (FormatException exFormat) { }
+                                    }
+                                    else
+                                    {
+                                        string gameTitle = Path.GetFileName(entry.Value);
+                                        offlineCacheGames.Add(new Game() { ID = entry.Key, Title = gameTitle.Substring(gameTitle.IndexOf(')') + 1) });
                                     }
                                 }
                                 return offlineCacheGames.ToArray();
@@ -133,10 +150,19 @@ namespace gamevault.UserControls
                             TempInstalledGames.Add(new KeyValuePair<Game, string>(game, foundGames.ElementAt(count).Value));
                             if (LoginManager.Instance.IsLoggedIn())
                             {
-                                if (!Preferences.Exists(game.ID.ToString(), AppFilePath.OfflineCache))
+                                if (!Preferences.Exists(game.ID.ToString(), LoginManager.Instance.GetUserProfile().OfflineCache))
                                 {
-                                    string gameToSave = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{game.ID}");
-                                    await CacheHelper.CreateOfflineCacheAsync(JsonSerializer.Deserialize<Game>(gameToSave));
+                                    await CacheHelper.CreateOfflineCacheAsync(game);
+                                }
+                                else
+                                {
+                                    string offlineCacheGameString = Preferences.Get(game.ID.ToString(), LoginManager.Instance.GetUserProfile().OfflineCache);
+                                    offlineCacheGameString = StringCompressor.DecompressString(offlineCacheGameString);
+                                    Game offlineCacheGame = JsonSerializer.Deserialize<Game>(offlineCacheGameString);
+                                    if (game.EntityVersion != offlineCacheGame?.EntityVersion)
+                                    {
+                                        await CacheHelper.CreateOfflineCacheAsync(game);
+                                    }
                                 }
                             }
                         }
@@ -145,8 +171,14 @@ namespace gamevault.UserControls
                 }
                 InstallViewModel.Instance.InstalledGames = await SortInstalledGamesByLastPlayed(TempInstalledGames);
                 InstallViewModel.Instance.InstalledGamesFilter = CollectionViewSource.GetDefaultView(InstallViewModel.Instance.InstalledGames);
+                if (gamesRestored)
+                {
+                    SearchFilterInputTimerElapsed(null, null);//Keep the filter
+                }
             }
-            gamesRestored = true;
+            if (!fromCLI)
+                gamesRestored = true;
+
             App.Instance.SetJumpListGames();
         }
         private async Task<ObservableCollection<KeyValuePair<Game, string>>> SortInstalledGamesByLastPlayed(ObservableCollection<KeyValuePair<Game, string>> collection)
@@ -155,7 +187,7 @@ namespace gamevault.UserControls
             {
                 try
                 {
-                    string lastTimePlayed = Preferences.Get(AppConfigKey.LastPlayed, AppFilePath.UserFile);
+                    string lastTimePlayed = Preferences.Get(AppConfigKey.LastPlayed, LoginManager.Instance.GetUserProfile().UserConfigFile);
                     List<string> lastPlayedDates = lastTimePlayed.Split(';').ToList();
 
                     collection = new System.Collections.ObjectModel.ObservableCollection<KeyValuePair<Game, string>>(collection.OrderByDescending(item =>
@@ -172,13 +204,13 @@ namespace gamevault.UserControls
         {
             try
             {
-                string lastTimePlayed = Preferences.Get(AppConfigKey.LastPlayed, AppFilePath.UserFile);
+                string lastTimePlayed = Preferences.Get(AppConfigKey.LastPlayed, LoginManager.Instance.GetUserProfile().UserConfigFile);
                 if (lastTimePlayed.Contains($"{gameID}"))
                 {
                     lastTimePlayed = lastTimePlayed.Replace($"{gameID};", "");
                 }
                 lastTimePlayed = lastTimePlayed.Insert(0, $"{gameID};");
-                Preferences.Set(AppConfigKey.LastPlayed, lastTimePlayed, AppFilePath.UserFile);
+                Preferences.Set(AppConfigKey.LastPlayed, lastTimePlayed, LoginManager.Instance.GetUserProfile().UserConfigFile);
             }
             catch { }
         }
@@ -198,7 +230,7 @@ namespace gamevault.UserControls
             //watcher.IncludeSubdirectories = true;
             m_FileWatcherList.Add(watcher);
         }
-        private void OnCreated(object sender, FileSystemEventArgs e)
+        private async void OnCreated(object sender, FileSystemEventArgs e)
         {
             string dir = ((FileSystemWatcher)sender).Path;
             ((FileSystemWatcher)sender).Created -= new FileSystemEventHandler(OnCreated);
@@ -215,12 +247,12 @@ namespace gamevault.UserControls
                 Game? game = null;
                 if (LoginManager.Instance.IsLoggedIn())
                 {
-                    string result = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{id}");
+                    string result = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{id}");
                     game = JsonSerializer.Deserialize<Game>(result);
                 }
                 else
                 {
-                    string compressedStringObject = Preferences.Get(id.ToString(), AppFilePath.OfflineCache);
+                    string compressedStringObject = Preferences.Get(id.ToString(), LoginManager.Instance.GetUserProfile().OfflineCache);
                     if (compressedStringObject != string.Empty)
                     {
                         string decompressedObject = StringCompressor.DecompressString(compressedStringObject);
@@ -277,13 +309,13 @@ namespace gamevault.UserControls
             inputTimer.Data = ((TextBox)sender).Text;
             inputTimer.Start();
         }
-        private void InputTimerElapsed(object sender, EventArgs e)
+        private void SearchFilterInputTimerElapsed(object sender, EventArgs e)
         {
             inputTimer.Stop();
             if (InstallViewModel.Instance.InstalledGamesFilter == null) return;
             InstallViewModel.Instance.InstalledGamesFilter.Filter = item =>
             {
-                return ((KeyValuePair<Game, string>)item).Key.Title.Contains(inputTimer.Data, StringComparison.OrdinalIgnoreCase);
+                return ((KeyValuePair<Game, string>)item).Key.Title.Contains(inputTimer.Data ?? "", StringComparison.OrdinalIgnoreCase);
             };
         }
 
@@ -360,7 +392,7 @@ namespace gamevault.UserControls
             try
             {
                 int ID = ((KeyValuePair<Game, string>)((FrameworkElement)sender).DataContext).Key.ID;
-                string result = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{ID}");
+                string result = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{ID}");
                 Game resultGame = JsonSerializer.Deserialize<Game>(result);
                 MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(resultGame) { Width = 1200, Height = 800, Margin = new Thickness(50) });
             }
@@ -373,17 +405,17 @@ namespace gamevault.UserControls
         {
             inputTimer = new InputTimer();
             inputTimer.Interval = TimeSpan.FromMilliseconds(400);
-            inputTimer.Tick += InputTimerElapsed;
+            inputTimer.Tick += SearchFilterInputTimerElapsed;
         }
 
         private void InstalledGames_Toggled(object sender, RoutedEventArgs e)
         {
-            Preferences.Set(AppConfigKey.InstalledGamesOpen, uiInstalledGames.IsExpanded ? "1" : "0", AppFilePath.UserFile);
+            Preferences.Set(AppConfigKey.InstalledGamesOpen, uiInstalledGames.IsExpanded ? "1" : "0", LoginManager.Instance.GetUserProfile().UserConfigFile);
         }
 
         private void RestoreRows()
         {
-            string result = Preferences.Get(AppConfigKey.InstalledGamesRows, AppFilePath.UserFile);
+            string result = Preferences.Get(AppConfigKey.InstalledGamesRows, LoginManager.Instance.GetUserProfile().UserConfigFile);
             if (int.TryParse(result, out int rows) && rows > 0)
             {
                 uiRowsUpDown.Value = rows;
@@ -424,7 +456,7 @@ namespace gamevault.UserControls
                     InstallViewModel.Instance.Rows = (int)uiRowsUpDown.Value;
                     InstallViewModel.Instance.Colums = 0;
                 }
-                Preferences.Set(AppConfigKey.InstalledGamesRows, uiRowsUpDown.Value, AppFilePath.UserFile);
+                Preferences.Set(AppConfigKey.InstalledGamesRows, uiRowsUpDown.Value, LoginManager.Instance.GetUserProfile().UserConfigFile);
             }
             catch { }
         }

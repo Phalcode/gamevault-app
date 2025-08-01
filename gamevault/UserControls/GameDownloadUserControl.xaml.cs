@@ -33,7 +33,8 @@ namespace gamevault.UserControls
         private bool isGameTypeForced = false;
         private double downloadRetryTimerTickValue = 10;
         private string mountedDrive = "";
-        public GameDownloadUserControl(Game game, bool download)
+
+        public GameDownloadUserControl(Game game, string rootDirectory, bool download)
         {
             InitializeComponent();
             ViewModel = new GameDownloadViewModel();
@@ -43,9 +44,9 @@ namespace gamevault.UserControls
             ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
             ViewModel.DownloadFailedVisibility = System.Windows.Visibility.Hidden;
 
-            m_DownloadPath = $"{SettingsViewModel.Instance.RootPath}\\GameVault\\Downloads\\({ViewModel.Game.ID}){ViewModel.Game.Title}";
+            m_DownloadPath = $"{rootDirectory}\\GameVault\\Downloads\\({ViewModel.Game.ID}){ViewModel.Game.Title}";
             m_DownloadPath = m_DownloadPath.Replace(@"\\", @"\");
-            ViewModel.InstallPath = $"{SettingsViewModel.Instance.RootPath}\\GameVault\\Installations\\({ViewModel.Game.ID}){ViewModel.Game.Title}";
+            ViewModel.InstallPath = $"{rootDirectory}\\GameVault\\Installations\\({ViewModel.Game.ID}){ViewModel.Game.Title}";
             ViewModel.InstallPath = ViewModel.InstallPath.Replace(@"\\", @"\");
             sevenZipHelper = new SevenZipHelper();
             gameSizeConverter = new GameSizeConverter();
@@ -202,7 +203,7 @@ namespace gamevault.UserControls
                 if (downloadRetryTimer.Data != "error")
                 {
                     if (!App.Instance.IsWindowActiveAndControlInFocus(MainControl.Downloads))
-                        ToastMessageHelper.CreateToastMessage("Download Failed", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.Metadata.Cover?.ID}");
+                        ToastMessageHelper.CreateToastMessage("Download Failed", ViewModel.Game.Title, $"{LoginManager.Instance.GetUserProfile().ImageCacheDir}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.Metadata.Cover?.ID}");
                 }
                 StartRetryTimer();
                 MainWindowViewModel.Instance.UpdateTaskbarProgress();
@@ -258,6 +259,16 @@ namespace gamevault.UserControls
                 IsDownloadActive = false;
                 ViewModel.State = "Download Paused";
             }
+        }
+        public void PauseDownload()
+        {
+            if (client == null || ViewModel.IsDownloadPaused || !IsDownloadActive)
+                return;
+
+            ViewModel.IsDownloadPaused = true;
+            client.Pause();
+            IsDownloadActive = false;
+            ViewModel.State = "Download Paused";
         }
         private void DownloadProgress(long totalFileSize, long currentBytesDownloaded, long totalBytesDownloaded, double? progressPercentage, long resumePosition)
         {
@@ -321,7 +332,7 @@ namespace gamevault.UserControls
             MainWindowViewModel.Instance.Library.GetGameInstalls().AddSystemFileWatcher(ViewModel.InstallPath);
 
             if (!App.Instance.IsWindowActiveAndControlInFocus(MainControl.Downloads))
-                ToastMessageHelper.CreateToastMessage("Download Complete", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.Metadata?.Cover?.ID}");
+                ToastMessageHelper.CreateToastMessage("Download Complete", ViewModel.Game.Title, $"{LoginManager.Instance.GetUserProfile().ImageCacheDir}/gbox/{ViewModel.Game.ID}.{ViewModel.Game.Metadata?.Cover?.ID}");
 
             if (SettingsViewModel.Instance.AutoExtract)
             {
@@ -419,7 +430,7 @@ namespace gamevault.UserControls
                 Process.Start("explorer.exe", m_DownloadPath);
         }
 
-        private void GameImage_Click(object sender, RoutedEventArgs e)
+        private void GoToGame_Click(object sender, RoutedEventArgs e)
         {
             MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(ViewModel.Game, LoginManager.Instance.IsLoggedIn()));
         }
@@ -430,6 +441,7 @@ namespace gamevault.UserControls
             {
                 ViewModel.GameExtractionProgress = e.PercentageDone;
                 long totalBytesDownloaded = (Convert.ToInt64(ViewModel.Game.Size) / 100) * e.PercentageDone;
+                downloadSpeedCalc.UpdateSpeed(totalBytesDownloaded);
                 ViewModel.ExtractionInfo = $"{$"{FormatBytesHumanReadable(totalBytesDownloaded, (DateTime.Now - startTime).TotalSeconds, 1000)}/s"} - {FormatBytesHumanReadable(totalBytesDownloaded)} of {FormatBytesHumanReadable(Convert.ToInt64(ViewModel.Game.Size))} | Time left: {CalculateTimeLeft(Convert.ToInt64(ViewModel.Game.Size), totalBytesDownloaded, (DateTime.Now - startTime).TotalMilliseconds)}";
             }
             catch { }
@@ -462,7 +474,7 @@ namespace gamevault.UserControls
             {
                 return string.Empty;
             }
-        }     
+        }
         private async Task Extract()
         {
             if (!Directory.Exists(m_DownloadPath))
@@ -509,7 +521,7 @@ namespace gamevault.UserControls
             bool isEncrypted = await sevenZipHelper.IsArchiveEncrypted($"{m_DownloadPath}\\{files[0].Name}");
             if (isEncrypted)
             {
-                string extractionPassword = Preferences.Get(AppConfigKey.ExtractionPassword, AppFilePath.UserFile, true);
+                string extractionPassword = Preferences.Get(AppConfigKey.ExtractionPassword, LoginManager.Instance.GetUserProfile().UserConfigFile, true);
                 if (string.IsNullOrEmpty(extractionPassword))
                 {
                     extractionPassword = await ((MetroWindow)App.Current.MainWindow).ShowInputAsync("Exctraction Message", "Your Archive reqires a Password to extract");
@@ -543,7 +555,7 @@ namespace gamevault.UserControls
                 ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
 
                 if (!App.Instance.IsWindowActiveAndControlInFocus(MainControl.Downloads))
-                    ToastMessageHelper.CreateToastMessage("Extraction Complete", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game?.ID}.{ViewModel.Game?.Metadata?.Cover?.ID}");
+                    ToastMessageHelper.CreateToastMessage("Extraction Complete", ViewModel.Game.Title, $"{LoginManager.Instance.GetUserProfile().ImageCacheDir}/gbox/{ViewModel.Game?.ID}.{ViewModel.Game?.Metadata?.Cover?.ID}");
 
                 if (SettingsViewModel.Instance.AutoInstallPortable && (ViewModel.Game?.Type == GameType.WINDOWS_PORTABLE || ViewModel.Game?.Type == GameType.LINUX_PORTABLE))
                 {
@@ -580,7 +592,7 @@ namespace gamevault.UserControls
                 {
                     ViewModel.State = "Something went wrong during extraction";
                     if (!App.Instance.IsWindowActiveAndControlInFocus(MainControl.Downloads))
-                        ToastMessageHelper.CreateToastMessage("Extraction Failed", ViewModel.Game.Title, $"{AppFilePath.ImageCache}/gbox/{ViewModel.Game?.ID}.{ViewModel.Game?.Metadata?.Cover?.ID}");
+                        ToastMessageHelper.CreateToastMessage("Extraction Failed", ViewModel.Game.Title, $"{LoginManager.Instance.GetUserProfile().ImageCacheDir}/gbox/{ViewModel.Game?.ID}.{ViewModel.Game?.Metadata?.Cover?.ID}");
                 }
                 ViewModel.ExtractionUIVisibility = System.Windows.Visibility.Hidden;
             }
@@ -638,6 +650,11 @@ namespace gamevault.UserControls
         }
         private async Task Install()
         {
+            if (InstallViewModel.Instance.InstalledGames.Any(game => game.Key.ID == ViewModel.Game.ID))
+            {
+                await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"The Game {ViewModel.Game.Title} is already installed at \n'{InstallViewModel.Instance.InstalledGames.First(game => game.Key.ID == ViewModel.Game.ID).Value}'", "", MessageDialogStyle.Affirmative, new MetroDialogSettings() { AffirmativeButtonText = "Ok", AnimateHide = false });
+                return;
+            }
             string targedDir = (SettingsViewModel.Instance.MountIso && Directory.Exists(mountedDrive)) ? mountedDrive : $"{m_DownloadPath}\\Extract";
 
             uiBtnInstallPortable.IsEnabled = false;
@@ -716,13 +733,13 @@ namespace gamevault.UserControls
                     Process setupProcess = null;
                     try
                     {
-                        setupProcess = ProcessHelper.StartApp(setupEexecutable);
+                        setupProcess = ProcessHelper.StartApp(setupEexecutable, ViewModel.Game?.Metadata?.InstallerParameters?.Replace("%INSTALLDIR%", ViewModel.InstallPath));
                     }
                     catch
                     {
                         try
                         {
-                            setupProcess = ProcessHelper.StartApp(setupEexecutable, "", true);
+                            setupProcess = ProcessHelper.StartApp(setupEexecutable, ViewModel.Game?.Metadata?.InstallerParameters?.Replace("%INSTALLDIR%", ViewModel.InstallPath), true);
                         }
                         catch
                         {
@@ -750,6 +767,11 @@ namespace gamevault.UserControls
             uiInstallOptions.Visibility = System.Windows.Visibility.Collapsed;
             uiProgressRingInstall.IsActive = false;
             uiBtnExtract.IsEnabled = true;
+            try
+            {
+                Preferences.Set(AppConfigKey.InstalledGameVersion, ViewModel?.Game?.Version, $"{ViewModel.InstallPath}\\gamevault-exec");
+            }
+            catch { }
             //Save forced install type for uninstallation
             if (isGameTypeForced && Directory.Exists(ViewModel.InstallPath) && ViewModel?.Game?.Type != null)
             {
@@ -859,6 +881,5 @@ namespace gamevault.UserControls
             ViewModel.Game = null;
             ViewModel.Game = temp;
         }
-
     }
 }

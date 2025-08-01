@@ -119,19 +119,26 @@ namespace IO.Swagger.Model
         [JsonPropertyName("launch_executable")]
         public string? LaunchExecutable { get; set; }
 
-        /// <summary>
-        /// Predefined installer executable for the game.
-        /// </summary>
-        /// <value>Predefined installer executable for the game.</value>
-        
+       
+        [JsonPropertyName("installer_parameters")]
+        public string? InstallerParameters { get; set; }
+
         [JsonPropertyName("installer_executable")]
         public string? InstallerExecutable { get; set; }
+
+       
+        [JsonPropertyName("uninstaller_parameters")]
+        public string? UninstallerParameters { get; set; }
+
+       
+        [JsonPropertyName("uninstaller_executable")]
+        public string? UninstallerExecutable { get; set; }
 
         /// <summary>
         /// URLs of externally hosted screenshots of the game
         /// </summary>
         /// <value>URLs of externally hosted screenshots of the game</value>
-        
+
         [JsonPropertyName("url_screenshots")]
         public string[]? UrlScreenshots { get; set; }
 

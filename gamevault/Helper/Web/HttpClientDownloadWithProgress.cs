@@ -50,12 +50,12 @@ namespace gamevault.Helper
             }
             else
             {
-                //Edge case where the Library download overrrides the current download. But if its was a paused download, we have also have to reset the metadata
+                //Edge case where the Library download overrrides the current download. But if its was a paused download, we also have to reset the metadata
                 if (File.Exists($"{DestinationFolderPath}\\gamevault-metadata"))
                     File.Delete($"{DestinationFolderPath}\\gamevault-metadata");
             }
 
-            using (var response = await HttpClient.GetAsync(DownloadUrl, HttpCompletionOption.ResponseHeadersRead))
+            using (HttpResponseMessage response = await WebHelper.GetAsync(DownloadUrl, HttpCompletionOption.ResponseHeadersRead))
                 await DownloadFileFromHttpResponseMessage(response);
         }
         private void CreateHeader()
@@ -78,7 +78,6 @@ namespace gamevault.Helper
                     ResumePosition = long.Parse(resumeDataToProcess[0]);
                     PreResumeSize = long.Parse(resumeDataToProcess[1]);
                     HttpClient.DefaultRequestHeaders.Range = new RangeHeaderValue(long.Parse(resumeDataToProcess[0]), null);
-                    //TriggerProgressChanged(PreResumeSize, 0, ResumePosition);
                 }
                 catch { }
             }
@@ -86,8 +85,6 @@ namespace gamevault.Helper
 
         private async Task DownloadFileFromHttpResponseMessage(HttpResponseMessage response)
         {
-            response.EnsureSuccessStatusCode();
-
             try
             {
                 FileName = response.Content.Headers.ContentDisposition.FileName.Replace("\"", "");
@@ -168,10 +165,10 @@ namespace gamevault.Helper
                         currentBytesRead += bytesRead;
                         if ((DateTime.Now - LastTime).TotalMilliseconds > 2000)
                         {
-                            TriggerProgressChanged(currentDownloadSize, currentBytesRead, fileStream.Position);
-                            LastTime = DateTime.Now;
                             //Save checkpoints all two seconds in case the app is closed by the user, or hardly crashed
                             Preferences.Set(AppConfigKey.DownloadProgress, $"{fileStream.Position};{(PreResumeSize == -1 ? currentDownloadSize : PreResumeSize)}", $"{DestinationFolderPath}\\gamevault-metadata");
+                            TriggerProgressChanged(currentDownloadSize, currentBytesRead, fileStream.Position);
+                            LastTime = DateTime.Now;
                         }
                     }
                     while (isMoreToRead);

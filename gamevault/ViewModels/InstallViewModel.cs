@@ -49,6 +49,7 @@ namespace gamevault.ViewModels
             }
             set { m_InstalledGames = value; OnPropertyChanged(); }
         }
+        public Dictionary<int,string> InstalledGamesDuplicates= new Dictionary<int, string>();
         public ICollectionView? InstalledGamesFilter
         {
             get { return installedGamesFilter; }

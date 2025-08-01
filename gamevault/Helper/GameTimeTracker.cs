@@ -27,18 +27,28 @@ namespace gamevault.Helper
             m_Timer.Elapsed += TimerCallback;
             m_Timer.Start();
         }
+        public void Stop()
+        {
+            m_Timer?.Stop();
+        }
         private void TimerCallback(object sender, ElapsedEventArgs e)
         {
             Task.Run(async () =>
             {
-                string installationPath = Path.Combine(SettingsViewModel.Instance.RootPath, "GameVault\\Installations");
+                //string installationPath = Path.Combine(SettingsViewModel.Instance.RootPath, "GameVault\\Installations");
 
-                if (!Directory.Exists(installationPath))
+                if (SettingsViewModel.Instance.RootDirectories.Count == 0)
                     return;
 
+                List<string> allDirectoriesFromRootDirectories = new List<string>();
+                foreach (DirectoryEntry dirEntry in SettingsViewModel.Instance.RootDirectories)
+                {
+                    if (Directory.Exists(Path.Combine(dirEntry.Uri, "GameVault", "Installations")))
+                        allDirectoriesFromRootDirectories.AddRange(Directory.GetDirectories(Path.Combine(dirEntry.Uri, "GameVault", "Installations")));
+                }
                 Dictionary<int, string> foundGames = new Dictionary<int, string>();
 
-                foreach (string dir in Directory.GetDirectories(installationPath))
+                foreach (string dir in allDirectoriesFromRootDirectories)
                 {
                     var dirInf = new DirectoryInfo(dir);
                     if (dirInf.GetFiles().Length != 0 || dirInf.GetDirectories().Length != 0)
@@ -96,10 +106,10 @@ namespace gamevault.Helper
                         }
                         foreach (int gameid in gamesToCountUp)
                         {
-                            WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{gameid}/increment", string.Empty);
+                            await WebHelper.PutAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{gameid}/increment", string.Empty);
                         }
                         DiscordHelper.Instance.SyncGameWithDiscordPresence(gamesToCountUp, foundGames);
-                        await SaveGameHelper.Instance.BackupSaveGamesFromIds(gamesToCountUp);
+                        await SaveGameHelper.Instance.BackupSaveGamesFromIds(gamesToCountUp);//Check which games are were closed and backup them
                     }
                     catch (Exception ex)
                     {
@@ -116,7 +126,7 @@ namespace gamevault.Helper
         {
             try
             {
-                return new FileInfo(AppFilePath.OfflineProgress).Length > 0;
+                return new FileInfo(LoginManager.Instance.GetUserProfile().OfflineProgress).Length > 0;
             }
             catch
             {
@@ -129,33 +139,30 @@ namespace gamevault.Helper
             {
                 try
                 {
-                    string timeString = Preferences.Get(gameid.ToString(), AppFilePath.OfflineProgress, true);
+                    string timeString = Preferences.Get(gameid.ToString(), LoginManager.Instance.GetUserProfile().OfflineProgress, true);
                     int result = int.TryParse(timeString, out result) ? result : 0;
                     result++;
-                    Preferences.Set(gameid.ToString(), result, AppFilePath.OfflineProgress, true);
+                    Preferences.Set(gameid.ToString(), result, LoginManager.Instance.GetUserProfile().OfflineProgress, true);
                 }
                 catch { }
             }
         }
         private async Task SendOfflineProgess()
         {
-            await Task.Run(() =>
-             {
-                 if (LoginManager.Instance.IsLoggedIn())
-                 {
-                     foreach (string key in GetAllOfflineCacheKeys())
-                     {
-                         try
-                         {
-                             string value = Preferences.Get(key, AppFilePath.OfflineProgress, true);
-                             int.Parse(value);
-                             WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{key}/increment/{value}", string.Empty);
-                             Preferences.DeleteKey(key, AppFilePath.OfflineProgress);
-                         }
-                         catch { }
-                     }
-                 }
-             });
+            if (LoginManager.Instance.IsLoggedIn())
+            {
+                foreach (string key in GetAllOfflineCacheKeys())
+                {
+                    try
+                    {
+                        string value = Preferences.Get(key, LoginManager.Instance.GetUserProfile().OfflineProgress, true);
+                        int.Parse(value);
+                        await WebHelper.PutAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{key}/increment/{value}", string.Empty);
+                        Preferences.DeleteKey(key, LoginManager.Instance.GetUserProfile().OfflineProgress);
+                    }
+                    catch { }
+                }
+            }
         }
         private int GetGameIdByDirectory(string dir)
         {
@@ -171,10 +178,10 @@ namespace gamevault.Helper
         }
         private string[] GetAllOfflineCacheKeys()
         {
-            if (File.Exists(AppFilePath.OfflineProgress))
+            if (File.Exists(LoginManager.Instance.GetUserProfile().OfflineProgress))
             {
                 List<string> keys = new List<string>();
-                foreach (string line in File.ReadAllLines(AppFilePath.OfflineProgress))
+                foreach (string line in File.ReadAllLines(LoginManager.Instance.GetUserProfile().OfflineProgress))
                 {
                     try
                     {

@@ -63,73 +63,69 @@ namespace gamevault.Helper.Integrations
             if (!SettingsViewModel.Instance.CloudSaves)
                 return CloudSaveStatus.SettingDisabled;
 
-            using (HttpClient client = new HttpClient())
+            try
             {
-                try
-                {
-                    client.Timeout = TimeSpan.FromSeconds(15);
-                    string installationId = GetGameInstallationId(installationDir);
-                    string[] auth = WebHelper.GetCredentials();
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{auth[0]}:{auth[1]}")));
-                    client.DefaultRequestHeaders.Add("User-Agent", $"GameVault/{SettingsViewModel.Instance.Version}");
-                    string url = @$"{SettingsViewModel.Instance.ServerUrl}/api/savefiles/user/{LoginManager.Instance.GetCurrentUser()!.ID}/game/{gameId}";
-                    using (HttpResponseMessage response = await client.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/savefiles/user/{LoginManager.Instance.GetCurrentUser()!.ID}/game/{gameId}", HttpCompletionOption.ResponseHeadersRead))
-                    {
-                        response.EnsureSuccessStatusCode();
-                        string fileName = response.Content.Headers.ContentDisposition.FileName.Split('_')[1].Split('.')[0];
-                        if (fileName != installationId)
-                        {
-                            string tempFolder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-                            Directory.CreateDirectory(tempFolder);
-                            string archive = Path.Combine(tempFolder, "backup.zip");
-                            using (Stream contentStream = await response.Content.ReadAsStreamAsync(), fileStream = new FileStream(archive, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true))
-                            {
-                                await contentStream.CopyToAsync(fileStream);
-                            }
 
-                            await zipHelper.ExtractArchive(archive, tempFolder);
-                            var mappingFile = Directory.GetFiles(tempFolder, "mapping.yaml", SearchOption.AllDirectories);
-                            string extractFolder = "";
-                            if (mappingFile.Length < 1)
-                                throw new Exception("no savegame extracted");
+                string installationId = GetGameInstallationId(installationDir);
+                string[] auth = WebHelper.GetCredentials();
 
-                            extractFolder = Path.GetDirectoryName(Path.GetDirectoryName(mappingFile[0]));
-                            PrepareConfigFile(installationDir, Path.Combine(AppFilePath.CloudSaveConfigDir, "config.yaml"));
-                            Process process = new Process();
-                            ProcessShepherd.Instance.AddProcess(process);
-                            process.StartInfo = CreateProcessHeader();
-                            //process.StartInfo.Arguments = $"--config {AppFilePath.CloudSaveConfigDir} restore --force --path \"{extractFolder}\"";
-                            process.StartInfo.ArgumentList.Add("--config");
-                            process.StartInfo.ArgumentList.Add(AppFilePath.CloudSaveConfigDir);
-                            process.StartInfo.ArgumentList.Add("restore");
-                            process.StartInfo.ArgumentList.Add("--force");
-                            process.StartInfo.ArgumentList.Add("--path");
-                            process.StartInfo.ArgumentList.Add(extractFolder);
-                            process.Start();
-                            process.WaitForExit();
-                            ProcessShepherd.Instance.RemoveProcess(process);
-                            Directory.Delete(tempFolder, true);
-                            return CloudSaveStatus.RestoreSuccess;
-                        }
-                        else
-                        {
-                            return CloudSaveStatus.UpToDate;
-                        }
-                    }
-                }
-                catch (Exception ex)
+                string url = @$"{SettingsViewModel.Instance.ServerUrl}/api/savefiles/user/{LoginManager.Instance.GetCurrentUser()!.ID}/game/{gameId}";
+                using (HttpResponseMessage response = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/savefiles/user/{LoginManager.Instance.GetCurrentUser()!.ID}/game/{gameId}", HttpCompletionOption.ResponseHeadersRead))
                 {
-                    string statusCode = WebExceptionHelper.GetServerStatusCode(ex);
-                    if (statusCode == "405")
+                    response.EnsureSuccessStatusCode();
+                    string fileName = response.Content.Headers.ContentDisposition.FileName.Split('_')[1].Split('.')[0];
+                    if (fileName != installationId)
                     {
-                        MainWindowViewModel.Instance.AppBarText = CloudSaveStatus.ServerSettingDisabled;
+                        string tempFolder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+                        Directory.CreateDirectory(tempFolder);
+                        string archive = Path.Combine(tempFolder, "backup.zip");
+                        using (Stream contentStream = await response.Content.ReadAsStreamAsync(), fileStream = new FileStream(archive, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true))
+                        {
+                            await contentStream.CopyToAsync(fileStream);
+                        }
+
+                        await zipHelper.ExtractArchive(archive, tempFolder);
+                        var mappingFile = Directory.GetFiles(tempFolder, "mapping.yaml", SearchOption.AllDirectories);
+                        string extractFolder = "";
+                        if (mappingFile.Length < 1)
+                            throw new Exception("no savegame extracted");
+
+                        extractFolder = Path.GetDirectoryName(Path.GetDirectoryName(mappingFile[0]));
+                        PrepareConfigFile(installationDir, Path.Combine(LoginManager.Instance.GetUserProfile().CloudSaveConfigDir, "config.yaml"));
+                        Process process = new Process();
+                        ProcessShepherd.Instance.AddProcess(process);
+                        process.StartInfo = CreateProcessHeader();
+                        process.StartInfo.ArgumentList.Add("--config");
+                        process.StartInfo.ArgumentList.Add(LoginManager.Instance.GetUserProfile().CloudSaveConfigDir);
+                        process.StartInfo.ArgumentList.Add("restore");
+                        process.StartInfo.ArgumentList.Add("--force");
+                        process.StartInfo.ArgumentList.Add("--path");
+                        process.StartInfo.ArgumentList.Add(extractFolder);
+                        process.Start();
+                        process.WaitForExit();
+                        ProcessShepherd.Instance.RemoveProcess(process);
+                        Directory.Delete(tempFolder, true);
+                        return CloudSaveStatus.RestoreSuccess;
                     }
-                    else if (statusCode != "404")
+                    else
                     {
-                        MainWindowViewModel.Instance.AppBarText = CloudSaveStatus.RestoreFailed;
+                        return CloudSaveStatus.UpToDate;
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                string statusCode = WebExceptionHelper.GetServerStatusCode(ex);
+                if (statusCode == "405")
+                {
+                    MainWindowViewModel.Instance.AppBarText = CloudSaveStatus.ServerSettingDisabled;
+                }
+                else if (statusCode != "404")
+                {
+                    MainWindowViewModel.Instance.AppBarText = CloudSaveStatus.RestoreFailed;
+                }
+            }
+
             return CloudSaveStatus.RestoreFailed;
         }
         private string GetGameInstallationId(string installationDir)
@@ -187,10 +183,14 @@ namespace gamevault.Helper.Integrations
 
             var installedGame = InstallViewModel.Instance?.InstalledGames?.FirstOrDefault(g => g.Key?.ID == gameId);
             string gameMetadataTitle = installedGame?.Key?.Metadata?.Title ?? "";
+            if (gameMetadataTitle == "")
+            {
+                gameMetadataTitle = installedGame?.Key?.Title ?? "";
+            }
             string installationDir = installedGame?.Value ?? "";
             if (gameMetadataTitle != "" && installationDir != "")
             {
-                PrepareConfigFile(installedGame?.Value!, Path.Combine(AppFilePath.CloudSaveConfigDir, "config.yaml"));
+                PrepareConfigFile(installedGame?.Value!, Path.Combine(LoginManager.Instance.GetUserProfile().CloudSaveConfigDir, "config.yaml"));
                 string title = await SearchForLudusaviGameTitle(gameMetadataTitle);
                 if (string.IsNullOrEmpty(title))
                     return CloudSaveStatus.BackupFailed;
@@ -215,57 +215,64 @@ namespace gamevault.Helper.Integrations
         public void PrepareConfigFile(string installationPath, string yamlPath)
         {
             string userFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            var redirects = new Dictionary<string, object>
-        {
-            { "redirects", new List<Dictionary<string, object>>
-                {
-                    new Dictionary<string, object>
-                    {
-                        { "kind", "bidirectional" },
-                        { "source", userFolder },
-                        { "target", "G:\\gamevault\\currentuser" }
-                    },
-                    new Dictionary<string, object>
-                    {
-                        { "kind", "bidirectional" },
-                        { "source", installationPath },
-                        { "target", "G:\\gamevault\\installation" }
-                    }
-                }
-            }
-        };
 
-            // Simulating SettingsViewModel.Instance.CustomCloudSaveManifests
+            // Base configuration with redirects (always included)
+            var redirects = new List<Dictionary<string, object>>
+    {
+        new Dictionary<string, object>
+        {
+            { "kind", "bidirectional" },
+            { "source", userFolder },
+            { "target", "G:\\gamevault\\currentuser" }
+        },
+        new Dictionary<string, object>
+        {
+            { "kind", "bidirectional" },
+            { "source", installationPath },
+            { "target", "G:\\gamevault\\installation" }
+        }
+    };
+
+
+
+            var roots = new List<Dictionary<string, object>>();
+            foreach (DirectoryEntry rootPath in SettingsViewModel.Instance.RootDirectories)
+            {
+                roots.Add(new Dictionary<string, object>
+        {
+            { "store", "other" },
+            { "path", Path.Combine(rootPath.Uri,"GameVault","Installations") }
+        });
+            }
+
+            // Start with base configuration (redirects and roots always included)
+            var yamlData = new Dictionary<string, object>
+    {
+        { "redirects", redirects },
+        { "roots", roots }
+    };
+
+            // Add manifest section if custom manifests exist (optional)
             var customLudusaviManifests = SettingsViewModel.Instance.CustomCloudSaveManifests.Where(m => !string.IsNullOrWhiteSpace(m.Uri));
 
-            Dictionary<string, object> yamlData;
-
-            if (customLudusaviManifests.Any()) // If manifests exist, merge with redirects
+            if (customLudusaviManifests.Any())
             {
                 var manifest = new Dictionary<string, object>
-            {
-                { "enable", SettingsViewModel.Instance.UsePrimaryCloudSaveManifest },
-                { "secondary", new List<Dictionary<string, object>>() }
-            };
+        {
+            { "enable", SettingsViewModel.Instance.UsePrimaryCloudSaveManifest },
+            { "secondary", new List<Dictionary<string, object>>() }
+        };
 
-                foreach (LudusaviManifestEntry entry in customLudusaviManifests)
+                foreach (DirectoryEntry entry in customLudusaviManifests)
                 {
                     ((List<Dictionary<string, object>>)manifest["secondary"]).Add(new Dictionary<string, object>
-                {
-                    { Uri.IsWellFormedUriString(entry.Uri, UriKind.Absolute) ? "url" : "path", entry.Uri },
-                    { "enable", true }
-                });
+            {
+                { Uri.IsWellFormedUriString(entry.Uri, UriKind.Absolute) ? "url" : "path", entry.Uri },
+                { "enable", true }
+            });
                 }
 
-                yamlData = new Dictionary<string, object>
-            {
-                { "manifest", manifest },
-                { "redirects", redirects["redirects"] } // Merge redirects
-            };
-            }
-            else
-            {
-                yamlData = redirects; // Only redirects if no manifests
+                yamlData.Add("manifest", manifest);
             }
 
             var serializer = new SerializerBuilder()
@@ -275,6 +282,7 @@ namespace gamevault.Helper.Integrations
             string result = serializer.Serialize(yamlData);
             File.WriteAllText(yamlPath, result);
         }
+
         internal async Task<string> SearchForLudusaviGameTitle(string title)
         {
             return await Task.Run<string>(() =>
@@ -284,7 +292,7 @@ namespace gamevault.Helper.Integrations
                 process.StartInfo = CreateProcessHeader(true);
                 //process.StartInfo.Arguments = $"find \"{title}\" --fuzzy --api";//--normalized
                 process.StartInfo.ArgumentList.Add("--config");
-                process.StartInfo.ArgumentList.Add(AppFilePath.CloudSaveConfigDir);
+                process.StartInfo.ArgumentList.Add(LoginManager.Instance.GetUserProfile().CloudSaveConfigDir);
                 process.StartInfo.ArgumentList.Add("find");
                 process.StartInfo.ArgumentList.Add(title);
                 process.StartInfo.ArgumentList.Add("--fuzzy");
@@ -324,9 +332,9 @@ namespace gamevault.Helper.Integrations
                Process process = new Process();
                ProcessShepherd.Instance.AddProcess(process);
                process.StartInfo = CreateProcessHeader();
-               //process.StartInfo.Arguments = $"--config {AppFilePath.CloudSaveConfigDir} backup --force --format \"zip\" --path \"{tempFolder}\" \"{lunusaviTitle}\"";
+               //process.StartInfo.Arguments = $"--config {LoginManager.Instance.GetUserProfile().CloudSaveConfigDir} backup --force --format \"zip\" --path \"{tempFolder}\" \"{lunusaviTitle}\"";
                process.StartInfo.ArgumentList.Add("--config");
-               process.StartInfo.ArgumentList.Add(AppFilePath.CloudSaveConfigDir);
+               process.StartInfo.ArgumentList.Add(LoginManager.Instance.GetUserProfile().CloudSaveConfigDir);
                process.StartInfo.ArgumentList.Add("backup");
                process.StartInfo.ArgumentList.Add("--force");
                process.StartInfo.ArgumentList.Add("--format");
@@ -348,7 +356,7 @@ namespace gamevault.Helper.Integrations
                 string installationId = GetGameInstallationId(installationDir);
                 using (MemoryStream memoryStream = await FileToMemoryStreamAsync(saveFilePath))
                 {
-                    await WebHelper.UploadFileAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/savefiles/user/{LoginManager.Instance.GetCurrentUser()!.ID}/game/{gameId}", memoryStream, "x.zip", new KeyValuePair<string, string>("X-Installation-Id", installationId));
+                    await WebHelper.UploadFileAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/savefiles/user/{LoginManager.Instance.GetCurrentUser()!.ID}/game/{gameId}", memoryStream, "x.zip", new RequestHeader[] { new RequestHeader() { Name = "X-Installation-Id", Value = installationId } });
                 }
             }
             catch
@@ -396,7 +404,7 @@ namespace gamevault.Helper.Integrations
         public static string ServerSettingDisabled = "Cloud Saves are not enabled on this Server";
         public static string Offline = "Can not synchronize the cloud saves, because you are offline";
     }
-    public class LudusaviManifestEntry
+    public class DirectoryEntry
     {
         public string Uri { get; set; }
     }

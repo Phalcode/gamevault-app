@@ -22,6 +22,7 @@ using System.Windows.Media;
 using LiveChartsCore.SkiaSharpView.Painting;
 using gamevault.Models.Mapping;
 using IO.Swagger.Model;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 
 namespace gamevault.UserControls
@@ -50,6 +51,8 @@ namespace gamevault.UserControls
                 if (Directory.Exists(ViewModel.Directory))
                 {
                     ViewModel.LaunchParameter = Preferences.Get(AppConfigKey.LaunchParameter, $"{ViewModel.Directory}\\gamevault-exec");
+                    string installedVersion = Preferences.Get(AppConfigKey.InstalledGameVersion, $"{ViewModel.Directory}\\gamevault-exec");
+                    ViewModel.InstalledGameVersion = installedVersion == string.Empty ? null : installedVersion;
                 }
                 InitDiskUsagePieChart();//Task
             }
@@ -93,7 +96,7 @@ namespace gamevault.UserControls
                         }
                     case 2:
                         {
-                            url = "https://gamevau.lt/docs/client-docs/gui#edit-images";
+                            url = "https://gamevau.lt/docs/client-docs/gui/#edit-game-images";
                             break;
                         }
                     case 3:
@@ -209,53 +212,77 @@ namespace gamevault.UserControls
                 MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to uninstall '{ViewModel.Game.Title}' ?\nAs this is a Windows Setup Game, you will need to select an uninstall executable manually", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
                 if (result == MessageDialogResult.Affirmative)
                 {
-                    using (var dialog = new System.Windows.Forms.OpenFileDialog())
+                    string selectedUninstallerExecutablePath = "";
+                    if (!string.IsNullOrWhiteSpace(ViewModel.Game?.Metadata?.UninstallerExecutable))
                     {
-                        dialog.InitialDirectory = ViewModel.Directory;
-                        dialog.Filter = "uninstall|*.exe";
-                        System.Windows.Forms.DialogResult fileResult = dialog.ShowDialog();
-                        if (fileResult == System.Windows.Forms.DialogResult.OK && File.Exists(dialog.FileName))
+                        var entry = Directory.GetFiles(ViewModel.Directory, "*", SearchOption.AllDirectories)
+                                    .Select((file) => new { Key = file.Substring(ViewModel.Directory.Length + 1), Value = file })
+                                    .FirstOrDefault(item => item.Key.Contains(ViewModel.Game?.Metadata?.UninstallerExecutable.Replace("/", "\\"), StringComparison.OrdinalIgnoreCase));
+                        if (entry != null)
                         {
-                            MessageDialogResult pickResult = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to uninstall the game using '{Path.GetFileName(dialog.FileName)}' ?", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
-                            if (pickResult != MessageDialogResult.Affirmative)
+                            selectedUninstallerExecutablePath = entry.Value;
+                            if (!File.Exists(selectedUninstallerExecutablePath))
                             {
-                                return;
-                            }
-                            Process uninstProcess = null;
-                            try
-                            {
-                                uninstProcess = ProcessHelper.StartApp(dialog.FileName);
-                            }
-                            catch
-                            {
-
-                                try
-                                {
-                                    uninstProcess = ProcessHelper.StartApp(dialog.FileName, "", true);
-                                }
-                                catch
-                                {
-                                    MainWindowViewModel.Instance.AppBarText = $"Can not execute '{dialog.FileName}'";
-                                }
-                            }
-                            if (uninstProcess != null)
-                            {
-                                await uninstProcess.WaitForExitAsync();
-                                try
-                                {
-                                    if (Directory.Exists(ViewModel.Directory))
-                                    {
-                                        //Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(ViewModel.Directory, Microsoft.VisualBasic.FileIO.UIOption.AllDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.DeletePermanently);                                        
-                                        Directory.Delete(ViewModel.Directory, true);
-                                    }
-
-                                    InstallViewModel.Instance.InstalledGames.Remove(InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).First());
-                                    DesktopHelper.RemoveShotcut(ViewModel.Game);
-                                    MainWindowViewModel.Instance.ClosePopup();
-                                }
-                                catch { }
+                                selectedUninstallerExecutablePath = "";
                             }
                         }
+                    }
+                    if (selectedUninstallerExecutablePath == "")
+                    {
+                        using (var dialog = new System.Windows.Forms.OpenFileDialog())
+                        {
+                            dialog.InitialDirectory = ViewModel.Directory;
+                            dialog.Filter = "uninstall|*.exe";
+                            System.Windows.Forms.DialogResult fileResult = dialog.ShowDialog();
+                            if (fileResult == System.Windows.Forms.DialogResult.OK && File.Exists(dialog.FileName))
+                            {
+                                MessageDialogResult pickResult = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"Are you sure you want to uninstall the game using '{Path.GetFileName(dialog.FileName)}' ?", "", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Yes", NegativeButtonText = "No", AnimateHide = false });
+                                if (pickResult != MessageDialogResult.Affirmative)
+                                {
+                                    return;
+                                }
+                                selectedUninstallerExecutablePath = dialog.FileName;
+                            }
+                        }
+                    }
+                    if (!File.Exists(selectedUninstallerExecutablePath))
+                    {
+                        MainWindowViewModel.Instance.AppBarText = "No valid uninstall executable selected";
+                        return;
+                    }
+                    Process uninstProcess = null;
+                    try
+                    {
+                        uninstProcess = ProcessHelper.StartApp(selectedUninstallerExecutablePath, ViewModel.Game?.Metadata?.UninstallerParameters);
+                    }
+                    catch
+                    {
+
+                        try
+                        {
+                            uninstProcess = ProcessHelper.StartApp(selectedUninstallerExecutablePath, ViewModel.Game?.Metadata?.UninstallerParameters, true);
+                        }
+                        catch
+                        {
+                            MainWindowViewModel.Instance.AppBarText = $"Can not execute '{selectedUninstallerExecutablePath}'";
+                        }
+                    }
+                    if (uninstProcess != null)
+                    {
+                        await uninstProcess.WaitForExitAsync();
+                        try
+                        {
+                            if (Directory.Exists(ViewModel.Directory))
+                            {
+                                //Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(ViewModel.Directory, Microsoft.VisualBasic.FileIO.UIOption.AllDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.DeletePermanently);                                        
+                                Directory.Delete(ViewModel.Directory, true);
+                            }
+
+                            InstallViewModel.Instance.InstalledGames.Remove(InstallViewModel.Instance.InstalledGames.Where(g => g.Key.ID == ViewModel.Game.ID).First());
+                            DesktopHelper.RemoveShotcut(ViewModel.Game);
+                            MainWindowViewModel.Instance.ClosePopup();
+                        }
+                        catch { }
                     }
                 }
             }
@@ -587,30 +614,29 @@ namespace gamevault.UserControls
                 BitmapSource bitmapSource = tag == "box" ? (BitmapSource)ViewModel.GameCoverImageSource : (BitmapSource)ViewModel.BackgroundImageSource;
                 string resp = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/media", BitmapHelper.BitmapSourceToMemoryStream(bitmapSource), "x.jpg", null);
                 Media? newImage = JsonSerializer.Deserialize<Media>(resp);
-                await Task.Run(() =>
-                {
-                    try
-                    {
-                        UpdateGameDto updateGame = new UpdateGameDto() { UserMetadata = new UpdateGameUserMetadataDto() };
-                        if (tag == "box")
-                        {
-                            updateGame.UserMetadata.Cover = newImage;
-                        }
-                        else
-                        {
-                            updateGame.UserMetadata.Background = newImage;
-                        }
 
-                        string changedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}", JsonSerializer.Serialize(updateGame), true);
-                        ViewModel.Game = JsonSerializer.Deserialize<Game>(changedGame);
-                        success = true;
-                        MainWindowViewModel.Instance.AppBarText = "Successfully updated image";
-                    }
-                    catch (Exception ex)
+                try
+                {
+                    UpdateGameDto updateGame = new UpdateGameDto() { UserMetadata = new UpdateGameUserMetadataDto() };
+                    if (tag == "box")
                     {
-                        MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
+                        updateGame.UserMetadata.Cover = newImage;
                     }
-                });
+                    else
+                    {
+                        updateGame.UserMetadata.Background = newImage;
+                    }
+
+                    string changedGame = await WebHelper.PutAsync($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}", JsonSerializer.Serialize(updateGame));
+                    ViewModel.Game = JsonSerializer.Deserialize<Game>(changedGame);
+                    success = true;
+                    MainWindowViewModel.Instance.AppBarText = "Successfully updated image";
+                }
+                catch (Exception ex)
+                {
+                    MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
+                }
+
                 //Update Data Context for Library. So that the images are also refreshed there directly
                 if (success)
                 {
@@ -759,7 +785,7 @@ namespace gamevault.UserControls
             this.Cursor = Cursors.Wait;
             try
             {
-                string currentShownUser = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/metadata/providers/{ViewModel.MetadataProviders?[ViewModel.SelectedMetadataProviderIndex]?.Slug}/search?query={GameMetadataSearchTimer.Data}");
+                string currentShownUser = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/metadata/providers/{ViewModel.MetadataProviders?[ViewModel.SelectedMetadataProviderIndex]?.Slug}/search?query={GameMetadataSearchTimer.Data}");
                 ViewModel.RemapSearchResults = JsonSerializer.Deserialize<MinimalGame[]>(currentShownUser);
             }
             catch (Exception ex)
@@ -813,22 +839,19 @@ namespace gamevault.UserControls
         {
             bool success = false;
             this.IsEnabled = false;
-            await Task.Run(() =>
+            try
             {
-                try
-                {
-                    UpdateGameDto updateGame = new UpdateGameDto() { MappingRequests = new List<MapGameDto>() { new MapGameDto() { ProviderSlug = providerSlug, ProviderDataId = providerId, ProviderPriority = priority } } };
-                    string remappedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{gameId}", JsonSerializer.Serialize(updateGame), true);
-                    ViewModel.Game = JsonSerializer.Deserialize<Game>(remappedGame);
-                    success = true;
-                    MainWindowViewModel.Instance.AppBarText = $"Successfully re-mapped {ViewModel.Game.Title}";
-                }
-                catch (Exception ex)
-                {
-                    string errMessage = WebExceptionHelper.TryGetServerMessage(ex);
-                    MainWindowViewModel.Instance.AppBarText = errMessage;
-                }
-            });
+                UpdateGameDto updateGame = new UpdateGameDto() { MappingRequests = new List<MapGameDto>() { new MapGameDto() { ProviderSlug = providerSlug, ProviderDataId = providerId, ProviderPriority = priority } } };
+                string remappedGame = await WebHelper.PutAsync($"{SettingsViewModel.Instance.ServerUrl}/api/games/{gameId}", JsonSerializer.Serialize(updateGame));
+                ViewModel.Game = JsonSerializer.Deserialize<Game>(remappedGame);
+                success = true;
+                MainWindowViewModel.Instance.AppBarText = $"Successfully re-mapped {ViewModel.Game.Title}";
+            }
+            catch (Exception ex)
+            {
+                string errMessage = WebExceptionHelper.TryGetServerMessage(ex);
+                MainWindowViewModel.Instance.AppBarText = errMessage;
+            }
             InstallViewModel.Instance.RefreshGame(ViewModel.Game);
             MainWindowViewModel.Instance.Library.RefreshGame(ViewModel.Game);
             if (success)
@@ -847,7 +870,7 @@ namespace gamevault.UserControls
             try
             {
                 ViewModel.MetadataProvidersLoaded = false;
-                string result = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/metadata/providers");
+                string result = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/metadata/providers");
                 var providers = JsonSerializer.Deserialize<MetadataProviderDto[]?>(result);
                 foreach (GameMetadata gmd in ViewModel.Game.ProviderMetadata)
                 {
@@ -887,22 +910,20 @@ namespace gamevault.UserControls
         {
             this.IsEnabled = false;
             bool success = false;
-            await Task.Run(() =>
+
+            try
             {
-                try
-                {
-                    string remappedGame = WebHelper.Put($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}", JsonSerializer.Serialize(ViewModel.UpdateGame), true);
-                    ViewModel.Game = JsonSerializer.Deserialize<Game>(remappedGame);
-                    success = true;
-                    ViewModel.UpdateGame = new UpdateGameDto() { UserMetadata = new UpdateGameUserMetadataDto() };
-                    MainWindowViewModel.Instance.AppBarText = $"Successfully edited {ViewModel.Game.Title}";
-                }
-                catch (Exception ex)
-                {
-                    string errMessage = WebExceptionHelper.TryGetServerMessage(ex);
-                    MainWindowViewModel.Instance.AppBarText = errMessage;
-                }
-            });
+                string remappedGame = await WebHelper.PutAsync($"{SettingsViewModel.Instance.ServerUrl}/api/games/{ViewModel.Game.ID}", JsonSerializer.Serialize(ViewModel.UpdateGame));
+                ViewModel.Game = JsonSerializer.Deserialize<Game>(remappedGame);
+                success = true;
+                ViewModel.UpdateGame = new UpdateGameDto() { UserMetadata = new UpdateGameUserMetadataDto() };
+                MainWindowViewModel.Instance.AppBarText = $"Successfully edited {ViewModel.Game.Title}";
+            }
+            catch (Exception ex)
+            {
+                string errMessage = WebExceptionHelper.TryGetServerMessage(ex);
+                MainWindowViewModel.Instance.AppBarText = errMessage;
+            }
             if (success)
             {
                 if (MainWindowViewModel.Instance.ActiveControl.GetType() == typeof(GameViewUserControl))

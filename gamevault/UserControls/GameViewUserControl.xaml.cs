@@ -150,7 +150,7 @@ namespace gamevault.UserControls
                 {
                     try
                     {
-                        string result = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{gameID}");
+                        string result = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{gameID}");
                         ViewModel.Game = JsonSerializer.Deserialize<Game>(result);
                         ViewModel.UserProgresses = ViewModel.Game.Progresses.Where(p => p.User.ID != LoginManager.Instance.GetCurrentUser().ID).ToArray();
                         ViewModel.CurrentUserProgress = ViewModel.Game.Progresses.FirstOrDefault(progress => progress.User.ID == LoginManager.Instance.GetCurrentUser()?.ID) ?? new Progress { MinutesPlayed = 0, State = State.UNPLAYED.ToString() };
@@ -164,8 +164,13 @@ namespace gamevault.UserControls
                 {
                     try
                     {
-                        SaveGameHelper.Instance.PrepareConfigFile("", Path.Combine(AppFilePath.CloudSaveConfigDir, "config.yaml"));
-                        ViewModel.CloudSaveMatchTitle = await SaveGameHelper.Instance.SearchForLudusaviGameTitle(ViewModel?.Game?.Metadata?.Title);
+                        SaveGameHelper.Instance.PrepareConfigFile("", Path.Combine(LoginManager.Instance.GetUserProfile().CloudSaveConfigDir, "config.yaml"));
+                        string gameMetadataTitle = ViewModel?.Game?.Metadata?.Title ?? "";
+                        if (gameMetadataTitle == "")
+                        {
+                            gameMetadataTitle = ViewModel?.Game?.Title ?? "";
+                        }
+                        ViewModel.CloudSaveMatchTitle = await SaveGameHelper.Instance.SearchForLudusaviGameTitle(gameMetadataTitle);
                     }
                     catch { }
                 });
@@ -196,7 +201,7 @@ namespace gamevault.UserControls
             this.IsEnabled = false;
             try
             {
-                string result = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{gameID}");
+                string result = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{gameID}");
                 ViewModel.Game = JsonSerializer.Deserialize<Game>(result);
                 ViewModel.UserProgresses = ViewModel.Game.Progresses.Where(p => p.User.ID != LoginManager.Instance.GetCurrentUser().ID).ToArray();
                 ViewModel.CurrentUserProgress = ViewModel.Game.Progresses.FirstOrDefault(progress => progress.User.ID == LoginManager.Instance.GetCurrentUser()?.ID) ?? new Progress { MinutesPlayed = 0, State = State.UNPLAYED.ToString() };
@@ -281,18 +286,15 @@ namespace gamevault.UserControls
                 return;
             if (e.AddedItems.Count > 0)
             {
-                await Task.Run(() =>
+                try
                 {
-                    try
-                    {
-                        WebHelper.Put(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{gameID}", System.Text.Json.JsonSerializer.Serialize(new Progress() { State = ViewModel.CurrentUserProgress.State }));
-                    }
-                    catch (Exception ex)
-                    {
-                        string msg = WebExceptionHelper.TryGetServerMessage(ex);
-                        MainWindowViewModel.Instance.AppBarText = msg;
-                    }
-                });
+                    await WebHelper.PutAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/progresses/user/{LoginManager.Instance.GetCurrentUser().ID}/game/{gameID}", System.Text.Json.JsonSerializer.Serialize(new Progress() { State = ViewModel.CurrentUserProgress.State }));
+                }
+                catch (Exception ex)
+                {
+                    string msg = WebExceptionHelper.TryGetServerMessage(ex);
+                    MainWindowViewModel.Instance.AppBarText = msg;
+                }
             }
         }
         private void ShowProgressUser_Click(object sender, MouseButtonEventArgs e)
@@ -328,7 +330,7 @@ namespace gamevault.UserControls
                 }
                 else
                 {
-                    await WebHelper.PostAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me/bookmark/{ViewModel.Game.ID}");
+                    await WebHelper.PostAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me/bookmark/{ViewModel.Game.ID}", "");
                     ViewModel.Game.BookmarkedUsers = new List<User> { LoginManager.Instance.GetCurrentUser()! };
                 }
                 MainWindowViewModel.Instance.Library.RefreshGame(ViewModel.Game);

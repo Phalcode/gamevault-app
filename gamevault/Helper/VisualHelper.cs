@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows;
+using MahApps.Metro.Controls;
 
 namespace gamevault.Helper
 {
@@ -21,6 +22,39 @@ namespace gamevault.Helper
             }
             while (parentDepObj != null);
             return default;
+        }
+        internal static void AdjustWindowChrome(MetroWindow window)
+        {
+            try
+            {
+                var thumb = (FrameworkElement)window.Template.FindName("PART_WindowTitleThumb", window);
+                thumb.Margin = new Thickness(50, 0, 0, 0);
+                System.Windows.Controls.Panel.SetZIndex(thumb, 7);
+                var btnCommands = (FrameworkElement)window.Template.FindName("PART_WindowButtonCommands", window);
+                System.Windows.Controls.Panel.SetZIndex(btnCommands, 8);
+            }
+            catch { }
+        }
+        internal static void HideWindow(Window window)
+        {
+            window.Width = 0;
+            window.Height = 0;
+            window.WindowStartupLocation = WindowStartupLocation.Manual;
+            window.Top = int.MinValue;
+            window.Left = int.MinValue;
+            window.ShowInTaskbar = false;
+        }
+        internal static void RestoreHiddenWindow(Window window, int height, int width)
+        {
+            window.Width = width;
+            window.Height = height;           
+            window.ShowInTaskbar = true;
+            double screenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;
+            double screenHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
+            double windowWidth = window.Width;
+            double windowHeight = window.Height;
+            window.Left = (screenWidth / 2) - (windowWidth / 2);
+            window.Top = (screenHeight / 2) - (windowHeight / 2);
         }
     }
 }

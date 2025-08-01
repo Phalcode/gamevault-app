@@ -27,6 +27,7 @@ namespace gamevault.UserControls
         private InputTimer inputTimer { get; set; }
 
         private bool scrollBlocked = false;
+        private Guid searchCancellationToken = Guid.Empty;
         public LibraryUserControl()
         {
             InitializeComponent();
@@ -36,9 +37,9 @@ namespace gamevault.UserControls
             {
                 try
                 {
-                    uiFilterOrderBy.IsChecked = Preferences.Get(AppConfigKey.LastLibraryOrderBy, AppFilePath.UserFile) == "desc" ? true : false;
+                    uiFilterOrderBy.IsChecked = Preferences.Get(AppConfigKey.LastLibraryOrderBy, LoginManager.Instance.GetUserProfile().UserConfigFile) == "desc" ? true : false;
 
-                    string lastSortBy = Preferences.Get(AppConfigKey.LastLibrarySortBy, AppFilePath.UserFile);
+                    string lastSortBy = Preferences.Get(AppConfigKey.LastLibrarySortBy, LoginManager.Instance.GetUserProfile().UserConfigFile);
 
                     for (int i = 0; i < ViewModel.GameFilterSortByValues.Count; i++)
                     {
@@ -94,11 +95,15 @@ namespace gamevault.UserControls
             inputTimer?.Stop();
             await Search();
         }
+        
         private async Task Search()
         {
+            Guid currentSearchToken = Guid.NewGuid();
+            searchCancellationToken = currentSearchToken;
+
             if (!LoginManager.Instance.IsLoggedIn())
             {
-                MainWindowViewModel.Instance.AppBarText = "You are not logged in or offline";
+                MainWindowViewModel.Instance.AppBarText = "You are offline";
                 return;
             }
             if (!uiExpanderGameCards.IsExpanded)
@@ -120,6 +125,9 @@ namespace gamevault.UserControls
             filterUrl = ApplyFilter(filterUrl);
 
             PaginatedData<Game>? gameResult = await GetGamesData(filterUrl);
+            if (currentSearchToken != searchCancellationToken)
+                return;
+
             if (gameResult != null)
             {
                 ViewModel.CanLoadServerGames = true;
@@ -146,6 +154,10 @@ namespace gamevault.UserControls
 
             uiBtnReloadLibrary.IsEnabled = false;
             await Search();
+            if ((e.GetType() == typeof(KeyEventArgs) && ((KeyEventArgs)e).Key == Key.F5))
+            {
+                await MainWindowViewModel.Instance.Library.GetGameInstalls().RestoreInstalledGames();
+            }
             uiBtnReloadLibrary.IsEnabled = true;
         }
         public InstallUserControl GetGameInstalls()
@@ -154,19 +166,16 @@ namespace gamevault.UserControls
         }
         private async Task<PaginatedData<Game>?> GetGamesData(string url)
         {
-            return await Task.Run(() =>
+            try
             {
-                try
-                {
-                    string gameList = WebHelper.GetRequest(url);
-                    return JsonSerializer.Deserialize<PaginatedData<Game>>(gameList);
-                }
-                catch (Exception ex)
-                {
-                    MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
-                    return null;
-                }
-            });
+                string gameList = await WebHelper.GetAsync(url);
+                return JsonSerializer.Deserialize<PaginatedData<Game>>(gameList);
+            }
+            catch (Exception ex)
+            {
+                MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
+                return null;
+            }
         }
         private async Task ProcessGamesData(PaginatedData<Game> gameResult)
         {
@@ -231,7 +240,8 @@ namespace gamevault.UserControls
             uiFilterTagSelector.ClearEntries();
             uiFilterGameStateSelector.ClearEntries();
             uiFilterReleaseDateRangeSelector.ClearSelection();
-
+            uiFilterPublisherSelector.ClearEntries();
+            uiFilterDeveloperSelector.ClearEntries();
             uiFilterBookmarks.IsChecked = false;
             uiFilterEarlyAccess.IsChecked = false;
 
@@ -278,7 +288,7 @@ namespace gamevault.UserControls
 
         private async void OrderBy_Changed(object sender, RoutedEventArgs e)
         {
-            Preferences.Set(AppConfigKey.LastLibraryOrderBy, (bool)uiFilterOrderBy.IsChecked ? "desc" : "asc", AppFilePath.UserFile);
+            Preferences.Set(AppConfigKey.LastLibraryOrderBy, (bool)uiFilterOrderBy.IsChecked ? "desc" : "asc", LoginManager.Instance.GetUserProfile().UserConfigFile);
             await Search();
         }
         private string ApplyFilter(string filter)
@@ -290,7 +300,7 @@ namespace gamevault.UserControls
             }
             if (uiFilterEarlyAccess.IsChecked == true)
             {
-                filter += "&filter.early_access=$eq:true";
+                filter += "&filter.early_access=$eq:true&filter.metadata.early_access=$eq:true";
             }
             if (uiFilterReleaseDateRangeSelector.IsValid())
             {
@@ -336,7 +346,7 @@ namespace gamevault.UserControls
         {
             if (sender == uiFilterSortBy)
             {
-                Preferences.Set(AppConfigKey.LastLibrarySortBy, ViewModel.SelectedGameFilterSortBy.Value, AppFilePath.UserFile);
+                Preferences.Set(AppConfigKey.LastLibrarySortBy, ViewModel.SelectedGameFilterSortBy.Value, LoginManager.Instance.GetUserProfile().UserConfigFile);
             }
             OpenFilterIfClosed();
             RefreshFilterCounter();
@@ -365,19 +375,17 @@ namespace gamevault.UserControls
             }
             else
             {
-                Game? result = await Task<Game>.Run(() =>
+                Game? result = null;
+                try
                 {
-                    try
-                    {
-                        string randomGame = WebHelper.GetRequest($"{SettingsViewModel.Instance.ServerUrl}/api/games/random");
-                        return JsonSerializer.Deserialize<Game>(randomGame);
-                    }
-                    catch (Exception ex)
-                    {
-                        MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
-                        return null;
-                    }
-                });
+                    string randomGame = await WebHelper.GetAsync($"{SettingsViewModel.Instance.ServerUrl}/api/games/random");
+                    result = JsonSerializer.Deserialize<Game>(randomGame);
+                }
+                catch (Exception ex)
+                {
+                    MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
+                }
+
                 if (result != null)
                 {
                     MainWindowViewModel.Instance.SetActiveControl(new GameViewUserControl(result, true));
@@ -397,7 +405,7 @@ namespace gamevault.UserControls
                 parent.Tag = "busy";
                 try
                 {
-                    string result = await WebHelper.GetRequestAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{((Game)((FrameworkElement)sender).DataContext).ID}");
+                    string result = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games/{((Game)((FrameworkElement)sender).DataContext).ID}");
                     Game resultGame = JsonSerializer.Deserialize<Game>(result);
                     MainWindowViewModel.Instance.OpenPopup(new GameSettingsUserControl(resultGame) { Width = 1200, Height = 800, Margin = new Thickness(50) });
                 }
@@ -431,7 +439,7 @@ namespace gamevault.UserControls
                     }
                     else
                     {
-                        await WebHelper.PostAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me/bookmark/{currentGame.ID}");
+                        await WebHelper.PostAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/users/me/bookmark/{currentGame.ID}", "");
                         currentGame.BookmarkedUsers = new List<User> { LoginManager.Instance.GetCurrentUser()! };
                     }
 

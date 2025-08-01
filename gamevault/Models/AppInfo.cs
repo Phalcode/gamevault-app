@@ -12,7 +12,8 @@ namespace gamevault.Models
     {
         Username,
         Password,
-        RootPath,
+        RootDirectories,
+        LastSelectedRootDirectory,
         Executable,
         BackgroundStart,
         ServerUrl,
@@ -53,36 +54,15 @@ namespace gamevault.Models
         InstallationId,
         CustomCloudSaveManifests,
         UsePrimaryCloudSaveManifest,
-        MountIso
-
-    }
-    public static class AppFilePath
-    {
-        internal static string ImageCache = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/cache/images";
-        internal static string OfflineProgress = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/cache/prgs";
-        internal static string OfflineCache = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/cache/local";
-        internal static string ConfigDir = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/config";
-        internal static string ThemesLoadDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GameVault", "themes");
-        internal static string WebConfigDir = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/config/web";
-        internal static string UserFile = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/config/user";
-        internal static string IgnoreList = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/cache/ignorelist";
-        internal static string ErrorLog = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/errorlog";
-        internal static string CloudSaveConfigDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GameVault", "config", "cloudsave");
-
-
-        internal static void InitDebugPaths()
-        {
-            ImageCache = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/debug/cache/images";
-            OfflineProgress = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/debug/cache/prgs";
-            OfflineCache = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/debug/cache/local";
-            ConfigDir = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/debug/config";
-            ThemesLoadDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GameVault", "debug", "themes");
-            WebConfigDir = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/debug/config/web";
-            UserFile = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/debug/config/user";
-            IgnoreList = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/debug/cache/ignorelist";
-            ErrorLog = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GameVault/debug/errorlog";
-            CloudSaveConfigDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GameVault", "debug", "config", "cloudsave");
-        }
+        MountIso,
+        UserID,
+        LoginRememberMe,
+        LastUserProfile,
+        IsLoggedInWithSSO,
+        LastImageOptimization,
+        SessionToken,
+        InstalledGameVersion,
+        AdditionalRequestHeaders
     }
     public static class Globals
     {

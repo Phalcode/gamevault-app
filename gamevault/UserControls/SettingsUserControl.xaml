@@ -34,11 +34,6 @@
                 <TabItem Header="Application">
                     <StackPanel Margin="30,0,0,0">
                         <StackPanel Margin="0,0,0,0">
-                            <TextBlock Text="Server Settings" FontSize="20" FontWeight="Bold"/>
-                            <settingsComponents:ServerUrlUserControl Margin="10,10,0,0" HorizontalAlignment="Left"/>
-
-                        </StackPanel>
-                        <StackPanel Margin="0,10,0,0">
                             <TextBlock Text="Startup" FontSize="20" FontWeight="Bold"/>
                             <mah:ToggleSwitch x:Name="uiAutostartToggle" Header="Launch GameVault on Computer Startup" VerticalAlignment="Top" Margin="10,10,0,0"/>
                             <mah:ToggleSwitch Header="Minimize GameVault to System Tray on Startup" VerticalAlignment="Top" IsOn="{Binding BackgroundStart}" Margin="10,10,0,0"/>
@@ -194,11 +189,13 @@
                 <TabItem Header="User">
                     <StackPanel Margin="30,0,0,0">
                         <StackPanel Margin="0,0,0,0">
-                            <TextBlock Text="Account" FontSize="20" FontWeight="Bold"/>
-                            <settingsComponents:LoginUserControl  Margin="10,10,0,0" HorizontalAlignment="Left"/>
-                            <local:IconButton Text="Logout" Icon="{StaticResource IconLogout}" IconMargin="0,0,5,2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="30" Margin="10,10,0,0" Width="205" FontSize="15" Click="Logout_Click"/>
-                            <settingsComponents:RegisterUserControl Margin="10,10,0,0" HorizontalAlignment="Left"/>
-                            <local:IconButton Text="Edit your User" Icon="{StaticResource IconInstalledGamesSettings}" IconMargin="0,0,5,2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="30" Margin="10,10,0,0" Width="205" FontSize="15" Click="EditUser_Click"/>
+                            <TextBlock Text="User" FontSize="20" FontWeight="Bold"/>
+                            <local:IconButton Text="Edit User" Icon="{StaticResource IconEditUser}" IconMargin="0,0,7,2" IconScale="0.9" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="30" Margin="10,10,0,0" Width="205" FontSize="15" Click="EditUser_Click"/>
+                            <TextBlock Text="Profile" FontSize="20" FontWeight="Bold" Margin="0,10,0,0"/>
+                            <local:IconButton Text="Change Profile" Icon="{StaticResource IconChangeProfile}" IconMargin="0,0,5,2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="30" Margin="10,10,0,0" Width="205" FontSize="15" Click="ChangeUserProfile_Click"/>
+                            <local:IconButton Kind="Danger" Text="Logout from this Device" Icon="{StaticResource IconLogout}" IconMargin="0,0,5,2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="30" Margin="10,10,0,0" Width="205" FontSize="15" Click="Logout_Click"/>
+                            <local:IconButton Kind="Danger" Text="Logout from all Devices" Icon="{StaticResource IconLogout}" IconMargin="0,0,5,2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="30" Margin="10,10,0,0" Width="205" FontSize="15" Click="LogoutFromAllDevices_Click"/>
+                           
                         </StackPanel>
                     </StackPanel>
                 </TabItem>
@@ -206,7 +203,40 @@
                     <StackPanel Margin="30,0,0,0">
                         <StackPanel Margin="0,0,0,0">
                             <TextBlock Text="File System" FontSize="20" FontWeight="Bold"/>
-                            <settingsComponents:RootPathUserControl Margin="10,10,0,0"/>
+                            <!--<settingsComponents:RootPathUserControl Margin="10,10,0,0"/>-->
+                            <StackPanel Margin="10,10,0,0">
+                                <TextBlock Text="Root Directories (A 'GameVault' subfolder will be created)" Margin="0,2,0,2" FontSize="15"/>
+                                <ScrollViewer MaxHeight="100" VerticalScrollBarVisibility="Auto" Width="550" HorizontalAlignment="Left">
+                                    <ItemsControl ItemsSource="{Binding RootDirectories}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBox IsReadOnly="True" Text="{Binding Path=.Uri, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="File path or URL" mah:ControlsHelper.CornerRadius="5" Width="500" Height="20"/>
+                                                    <Button Style="{StaticResource ButtonWrapper}" Height="30" Width="30" Cursor="Hand" Click="RemoveRootDirectory_Click">
+                                                        <!--="RemoveCustomCloudSaveManifest_Click">-->
+                                                        <Grid Style="{DynamicResource HoverEffect}"  Background="Transparent"  RenderTransformOrigin="0.5,0.5">
+                                                            <Path Data="m11.25 4.75l-6.5 6.5m0-6.5l6.5 6.5" Stroke="IndianRed" StrokeThickness="2">
+                                                                <Path.RenderTransform>
+                                                                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                                                </Path.RenderTransform>
+                                                            </Path>
+                                                            <Grid.RenderTransform>
+                                                                <ScaleTransform/>
+                                                            </Grid.RenderTransform>
+                                                        </Grid>
+                                                    </Button>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </ScrollViewer>
+                                <local:IconButton Icon="{StaticResource IconAddTag}" Text="Add" FontSize="15" IconMargin="0,0,5,2" HorizontalAlignment="Left" Width="100" Height="30" Margin="0,5,10,0" Click="AddRootDirectory_Click"/>
+                            </StackPanel>
                         </StackPanel>
                         <StackPanel Margin="0,10,0,0">
                             <TextBlock Text="Cache Management" FontSize="20" FontWeight="Bold"/>
@@ -501,7 +531,7 @@
                                         <mah:ToggleSwitch Margin="0,5,0,0" IsOn="{Binding CloudSaves}"/>
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="Custom Ludusavi Manifests" Margin="0,2,0,2" FontSize="15"/>
-                                            <CheckBox Content="Use Primary Manifest" IsChecked="{Binding UsePrimaryCloudSaveManifest}" Margin="15,0,0,0" ToolTip="Disable primary Ludusavi manifest to only use the custom ones"/>
+                                            <CheckBox Content="Use Primary Manifest" IsChecked="{Binding UsePrimaryCloudSaveManifest}" mah:CheckBoxHelper.CheckCornerRadius="5" Margin="15,0,0,0" ToolTip="Disable primary Ludusavi manifest to only use the custom ones"/>
                                         </StackPanel>
                                         <ScrollViewer MaxHeight="100" VerticalScrollBarVisibility="Auto" Width="550" HorizontalAlignment="Left">
                                             <ItemsControl ItemsSource="{Binding CustomCloudSaveManifests}">
@@ -622,6 +652,7 @@
                         <TextBlock Text="Developer Settings" FontSize="20" FontWeight="Bold"/>
                         <TextBlock Text="You may need to restart the client for the changes to take effect" Margin="0,5,0,0"/>
                         <mah:ToggleSwitch Header="Target Phalcode TEST backend" IsOn="{Binding DevTargetPhalcodeTestBackend}" Margin="5,15,0,0"/>
+                        <local:IconButton Text="Open User Cache Folder" Height="30" Icon="{StaticResource IconGameSettingsFolder}" FontSize="15" IconMargin="0,0,5,5" Width="200" Margin="0,20,0,0" HorizontalAlignment="Left" Click="OpenUserCacheFolder_Click"/>
                     </StackPanel>
                 </TabItem>
             </TabControl>

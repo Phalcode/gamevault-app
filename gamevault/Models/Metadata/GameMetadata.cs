@@ -315,7 +315,16 @@ namespace gamevault.Models
         [JsonPropertyName("launch_parameters")]
         public string? LaunchParameters { get; set; }
 
+        [JsonPropertyName("installer_parameters")]
+        public string? InstallerParameters { get; set; }
+
         [JsonPropertyName("installer_executable")]
         public string? InstallerExecutable { get; set; }
+
+        [JsonPropertyName("uninstaller_parameters")]
+        public string? UninstallerParameters { get; set; }
+
+        [JsonPropertyName("uninstaller_executable")]
+        public string? UninstallerExecutable { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using gamevault.Helper;
+using gamevault.Models;
 using gamevault.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -33,11 +34,7 @@ namespace gamevault.UserControls.SettingsComponents
         }
         private void BackupRestorePopup_Close(object sender, MouseButtonEventArgs e)
         {
-            var parent = this.Parent as Panel;
-            if (parent != null)
-            {
-                parent.Visibility = Visibility.Collapsed;
-            }
+            MainWindowViewModel.Instance.ClosePopup();
         }
 
         private void ChooseBackupDirectory_Click(object sender, RoutedEventArgs e)
@@ -128,7 +125,7 @@ namespace gamevault.UserControls.SettingsComponents
             this.IsEnabled = false;
             try
             {
-                await WebHelper.UploadFileAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/admin/database/restore", File.OpenRead(uiRestoreFile.Tag.ToString()), uiRestoreFile.Text, new KeyValuePair<string, string>("X-Database-Password", uiRestoreDatabasePassword.Password));
+                await WebHelper.UploadFileAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/admin/database/restore", File.OpenRead(uiRestoreFile.Tag.ToString()), uiRestoreFile.Text, new RequestHeader[] { new RequestHeader() { Name = "X-Database-Password", Value = uiRestoreDatabasePassword.Password } });
                 MainWindowViewModel.Instance.AppBarText = "Successfully uploaded database file";
             }
             catch (HttpRequestException httpEx)

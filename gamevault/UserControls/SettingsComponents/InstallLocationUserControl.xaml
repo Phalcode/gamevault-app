@@ -1,0 +1,66 @@
+﻿<UserControl x:Class="gamevault.UserControls.InstallLocationUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:local="clr-namespace:gamevault.UserControls"
+             xmlns:helper="clr-namespace:gamevault.Helper"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" Margin="300" Height="300" Width="420" Loaded="UserControl_Loaded">
+    <Border CornerRadius="5" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" BorderThickness="1" BorderBrush="{DynamicResource MahApps.Brushes.Accent3}">
+        <Grid>
+            <Button Style="{StaticResource ButtonWrapper}" HorizontalAlignment="Right" VerticalAlignment="Top"  Margin="0,2,3,0" Cursor="Hand" Panel.ZIndex="1" Click="Close_Click">
+                <Grid Style="{DynamicResource HoverEffect}"  Background="Transparent" Height="25" Width="23">
+                    <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Stroke="{DynamicResource MahApps.Brushes.ThemeForeground}" Data="{DynamicResource IconClose}" RenderTransformOrigin="0,0"/>
+                    <Grid.RenderTransform>
+                        <ScaleTransform/>
+                    </Grid.RenderTransform>
+                </Grid>
+            </Button>
+            <Button Style="{StaticResource ButtonWrapper}" HorizontalAlignment="Right" VerticalAlignment="Top"  Margin="0,2,35,0" Cursor="Hand" Panel.ZIndex="1" Click="DirectorySettings_Click">
+                <Grid Style="{DynamicResource HoverEffect}"  Background="Transparent" Height="25" Width="23">
+                    <Path Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Data="{DynamicResource IconInstalledGamesSettings}" RenderTransformOrigin="0,0"/>
+                    <Grid.RenderTransform>
+                        <ScaleTransform/>
+                    </Grid.RenderTransform>
+                </Grid>
+            </Button>
+            <StackPanel>
+                <TextBlock Text="Choose your download location" FontWeight="Bold" FontSize="20" Margin="10"/>
+                <ScrollViewer Height="200" VerticalScrollBarVisibility="Auto" Background="Transparent">
+                    <ItemsControl ItemsSource="{Binding RootDirectories}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ToggleButton Width="380" Margin="10,10,10,0" helper:ToggleButtonGroupBehavior.GroupName="RootDirectorySelection" Style="{StaticResource BaseToggleButton}">
+                                    <ToggleButton.Content>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Path Fill="White" Data="{StaticResource IconHardDrive}">
+                                                <Path.LayoutTransform>
+                                                    <ScaleTransform ScaleX="0.7" ScaleY="0.7"/>
+                                                </Path.LayoutTransform>
+                                            </Path>
+                                            <TextBlock Text="{Binding Path=.Key.Uri}" TextTrimming="CharacterEllipsis" Width="280" Margin="5,0,0,0" FontSize="12"/>
+                                            <Grid Width="60">
+                                                <TextBlock Text="{Binding Path=.Value}" FontSize="12" HorizontalAlignment="Right"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </ToggleButton.Content>
+                                </ToggleButton>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </StackPanel>
+            <StackPanel VerticalAlignment="Bottom" Margin="0,0,0,10" Orientation="Horizontal" HorizontalAlignment="Center">
+                <local:IconButton Text="Proceed" Height="25" Width="100" Click="Install_Click"/>
+                <local:IconButton Text="Cancel" Kind="Skeleton" BorderThickness="1" Height="25" Width="100" Margin="10,0,0,0" Click="Close_Click"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

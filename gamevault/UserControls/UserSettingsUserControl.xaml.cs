@@ -13,6 +13,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using Windows.ApplicationModel.VoiceCommands;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace gamevault.UserControls
@@ -291,35 +292,32 @@ namespace gamevault.UserControls
                 string resp = await WebHelper.UploadFileAsync($"{SettingsViewModel.Instance.ServerUrl}/api/media", ms, filename, null);
                 ms.Dispose();
                 var newImageId = JsonSerializer.Deserialize<Media>(resp).ID;
-                await Task.Run(() =>
+                try
                 {
-                    try
+                    UpdateUserDto updateObject = new UpdateUserDto();
+                    if (tag == "avatar")
                     {
-                        UpdateUserDto updateObject = new UpdateUserDto();
-                        if (tag == "avatar")
-                        {
-                            updateObject.AvatarId = newImageId;
-                        }
-                        else
-                        {
-                            updateObject.BackgroundId = newImageId;
-                        }
-                        string url = $"{SettingsViewModel.Instance.ServerUrl}/api/users/{ViewModel.OriginUser.ID}";
-                        if (LoginManager.Instance.GetCurrentUser().ID == ViewModel.OriginUser.ID)
-                        {
-                            url = @$"{SettingsViewModel.Instance.ServerUrl}/api/users/me";
-                        }
-                        string updatedUser = WebHelper.Put(url, JsonSerializer.Serialize(updateObject), true);
-                        ViewModel.OriginUser = JsonSerializer.Deserialize<User>(updatedUser);
-                        success = true;
-                        MainWindowViewModel.Instance.AppBarText = "Successfully updated image";
+                        updateObject.AvatarId = newImageId;
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        string msg = WebExceptionHelper.TryGetServerMessage(ex);
-                        MainWindowViewModel.Instance.AppBarText = msg;
+                        updateObject.BackgroundId = newImageId;
                     }
-                });
+                    string url = $"{SettingsViewModel.Instance.ServerUrl}/api/users/{ViewModel.OriginUser.ID}";
+                    if (LoginManager.Instance.GetCurrentUser().ID == ViewModel.OriginUser.ID)
+                    {
+                        url = @$"{SettingsViewModel.Instance.ServerUrl}/api/users/me";
+                    }
+                    string updatedUser = await WebHelper.PutAsync(url, JsonSerializer.Serialize(updateObject));
+                    ViewModel.OriginUser = JsonSerializer.Deserialize<User>(updatedUser);
+                    success = true;
+                    MainWindowViewModel.Instance.AppBarText = "Successfully updated image";
+                }
+                catch (Exception ex)
+                {
+                    string msg = WebExceptionHelper.TryGetServerMessage(ex);
+                    MainWindowViewModel.Instance.AppBarText = msg;
+                }
                 //Update Data Context for Community Page. So that the images are also refreshed there directly
                 if (success)
                 {
@@ -358,35 +356,36 @@ namespace gamevault.UserControls
             if (newPassword != "")
                 selectedUser.Password = newPassword;
 
-            if(selectedUser.BirthDate == ViewModel.OriginUser.BirthDate)//Set birthday to null, so a underage user can edit the rest of its data
+            if (selectedUser.BirthDate == ViewModel.OriginUser.BirthDate)//Set birthday to null, so a underage user can edit the rest of its data
             {
                 selectedUser.BirthDate = null;
             }
 
             bool error = false;
-            await Task.Run(() =>
+            try
             {
-                try
+                string url = $"{SettingsViewModel.Instance.ServerUrl}/api/users/{ViewModel.OriginUser.ID}";
+                if (LoginManager.Instance.GetCurrentUser().ID == ViewModel.OriginUser.ID)
                 {
-                    string url = $"{SettingsViewModel.Instance.ServerUrl}/api/users/{ViewModel.OriginUser.ID}";
-                    if (LoginManager.Instance.GetCurrentUser().ID == ViewModel.OriginUser.ID)
-                    {
-                        url = @$"{SettingsViewModel.Instance.ServerUrl}/api/users/me";
-                    }
-                    string result = WebHelper.Put(url, JsonSerializer.Serialize(selectedUser), true);
-                    ViewModel.OriginUser = JsonSerializer.Deserialize<User>(result);
-                    MainWindowViewModel.Instance.AppBarText = "Successfully saved user changes";
+                    url = @$"{SettingsViewModel.Instance.ServerUrl}/api/users/me";
                 }
-                catch (Exception ex)
+                string result = await WebHelper.PutAsync(url, JsonSerializer.Serialize(selectedUser));
+                ViewModel.OriginUser = JsonSerializer.Deserialize<User>(result);
+                if (LoginManager.Instance.GetCurrentUser().ID == ViewModel.OriginUser.ID)
                 {
-                    ConvertToUpdateUser();//Reset to Origin User
-                    error = true;
-                    string msg = WebExceptionHelper.TryGetServerMessage(ex);
-                    MainWindowViewModel.Instance.AppBarText = msg;
+                    WebHelper.OverrideCredentials(selectedUser.Username, selectedUser.Password);
                 }
-            });
+                MainWindowViewModel.Instance.AppBarText = "Successfully saved user changes";
+            }
+            catch (Exception ex)
+            {
+                ConvertToUpdateUser();//Reset to Origin User
+                error = true;
+                string msg = WebExceptionHelper.TryGetServerMessage(ex);
+                MainWindowViewModel.Instance.AppBarText = msg;
+            }
             if (!error)
-            {               
+            {
                 try
                 {
                     ViewModel.OriginUser.Password = newPassword;
@@ -404,7 +403,16 @@ namespace gamevault.UserControls
         {
             if (LoginManager.Instance.GetCurrentUser().ID == selectedUser.ID)
             {
-                await LoginManager.Instance.ManualLogin(selectedUser.Username, string.IsNullOrEmpty(selectedUser.Password) ? WebHelper.GetCredentials()[1] : selectedUser.Password);
+                UserProfile profile = LoginManager.Instance.GetUserProfile();
+                bool isLoggedInWithSSO = Preferences.Get(AppConfigKey.IsLoggedInWithSSO, profile.UserConfigFile) == "1";
+                if (isLoggedInWithSSO)
+                {
+                    await LoginManager.Instance.SSOLogin(profile);
+                }
+                else
+                {
+                    await LoginManager.Instance.Login(profile, WebHelper.GetCredentials()[0], WebHelper.GetCredentials()[1]);
+                }
                 MainWindowViewModel.Instance.UserAvatar = LoginManager.Instance.GetCurrentUser();
             }
 
@@ -412,7 +420,15 @@ namespace gamevault.UserControls
             await MainWindowViewModel.Instance.Community.InitUserList();
 
         }
-
+        private void CopyUserApiKey_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Clipboard.SetText(ViewModel.OriginUser.ApiKey);
+                MainWindowViewModel.Instance.AppBarText = "Copied API Key to Clipboard";
+            }
+            catch { }
+        }
         private void Help_Click(object sender, MouseButtonEventArgs e)
         {
             try
@@ -422,7 +438,7 @@ namespace gamevault.UserControls
                 {
                     case 0:
                         {
-                            url = "https://gamevau.lt/docs/client-docs/gui#edit-images-1";
+                            url = "https://gamevau.lt/docs/client-docs/gui/#edit-user-images";
                             break;
                         }
                     case 1:
@@ -441,7 +457,7 @@ namespace gamevault.UserControls
             {
                 MainWindowViewModel.Instance.AppBarText = ex.Message;
             }
-        }
+        }        
     }
 }
 

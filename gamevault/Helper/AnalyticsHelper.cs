@@ -11,11 +11,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Management;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
-using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -38,6 +36,7 @@ namespace gamevault.Helper
         internal static string SERVER_USER_COUNT => "SERVER_USER_COUNT";
         internal static string USER_SETTINGS => "USER_SETTINGS";
     }
+
     internal class AnalyticsHelper
     {
         #region Singleton
@@ -59,11 +58,13 @@ namespace gamevault.Helper
             }
         }
         #endregion
+
         private Timer _heartBeatTimer;
-        private string timeZone;
-        private string language;
-        private HttpClient client;
-        private bool trackingEnabled = false;
+        private readonly string timeZone;
+        private readonly string language;
+        private readonly HttpClient client;
+        private readonly bool trackingEnabled = false;
+
         internal AnalyticsHelper()
         {
             trackingEnabled = SettingsViewModel.Instance.SendAnonymousAnalytics;
@@ -75,8 +76,8 @@ namespace gamevault.Helper
 
             client = new HttpClient();
             client.DefaultRequestHeaders.UserAgent.Clear();
-            string plattform = IsWineRunning() ? "Linux" : "Windows NT";
-            var userAgent = $"GameVault/{SettingsViewModel.Instance.Version} ({plattform})";
+            string platform = IsWineRunning() ? "Linux" : "Windows NT";
+            var userAgent = $"GameVault/{SettingsViewModel.Instance.Version} ({platform})";
             client.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent);
             try
             {
@@ -86,6 +87,7 @@ namespace gamevault.Helper
             catch { }
 
         }
+
         internal void InitHeartBeat()
         {
             if (!trackingEnabled)
@@ -93,10 +95,12 @@ namespace gamevault.Helper
 
             _heartBeatTimer = new Timer(HeartBeat, null, TimeSpan.Zero, TimeSpan.FromSeconds(30));
         }
+
         private void HeartBeat(object state)
         {
             SendHeartBeat(AnalyticsTargets.HB);
         }
+
         internal void RegisterGlobalEvents()
         {
             if (!trackingEnabled)
@@ -106,6 +110,7 @@ namespace gamevault.Helper
 
             EventManager.RegisterClassHandler(typeof(IconButton), IconButton.ClickEvent, new RoutedEventHandler(GlobalButton_Click));
         }
+
         private async void GlobalButton_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -119,33 +124,35 @@ namespace gamevault.Helper
             }
             catch { }
         }
+
         private string ParseMethodName(ButtonBase buttonBase)
         {
             var type = buttonBase.GetType();
-            var eventHandlersStore = typeof(UIElement).GetProperty("EventHandlersStore", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            var eventHandlersStoreValue = eventHandlersStore.GetValue(buttonBase, null);
+            var eventHandlersStore = typeof(UIElement).GetProperty("EventHandlersStore", BindingFlags.NonPublic | BindingFlags.Instance);
+            var eventHandlersStoreValue = eventHandlersStore?.GetValue(buttonBase);
 
             if (eventHandlersStoreValue != null)
             {
                 var entriesField = eventHandlersStoreValue.GetType().GetField("_entries", BindingFlags.NonPublic | BindingFlags.Instance);
-                var entriesValue = entriesField.GetValue(eventHandlersStoreValue);
+                var entriesValue = entriesField?.GetValue(eventHandlersStoreValue);
 
-                var mapStoreField = entriesValue.GetType().GetField("_mapStore", BindingFlags.NonPublic | BindingFlags.Instance);
-                var mapStoreValue = mapStoreField.GetValue(entriesValue);
+                var mapStoreField = entriesValue?.GetType().GetField("_mapStore", BindingFlags.NonPublic | BindingFlags.Instance);
+                var mapStoreValue = mapStoreField?.GetValue(entriesValue);
 
-                var entry0Field = mapStoreValue.GetType().GetField("_entry0", BindingFlags.NonPublic | BindingFlags.Instance);
-                var entry0Value = entry0Field.GetValue(mapStoreValue);
+                var entry0Field = mapStoreValue?.GetType().GetField("_entry0", BindingFlags.NonPublic | BindingFlags.Instance);
+                var entry0Value = entry0Field?.GetValue(mapStoreValue);
 
-                var Value = entry0Value.GetType().GetField("Value").GetValue(entry0Value);
+                var valueField = entry0Value?.GetType().GetField("Value");
+                var value = valueField?.GetValue(entry0Value);
 
-                var listStoreField = Value.GetType().GetField("_listStore", BindingFlags.NonPublic | BindingFlags.Instance);
+                var listStoreField = value?.GetType().GetField("_listStore", BindingFlags.NonPublic | BindingFlags.Instance);
                 if (listStoreField == null)
                 {
                     string methodName = ((EventSetter)buttonBase.Style.Setters[0]).Handler.Method.Name;
                     string className = ((EventSetter)buttonBase.Style.Setters[0]).Handler.Method.DeclaringType?.Name ?? "UnknownClass";
                     return $"{className}.{methodName}";
                 }
-                var listStoreValue = listStoreField.GetValue(Value);
+                var listStoreValue = listStoreField.GetValue(value);
                 var loneEntryField = listStoreValue.GetType().GetField("_loneEntry", BindingFlags.NonPublic | BindingFlags.Instance);
                 var loneEntryValue = loneEntryField.GetValue(listStoreValue);
 
@@ -170,16 +177,27 @@ namespace gamevault.Helper
             }
             return string.Empty;
         }
+
         private async Task SendHeartBeat(string url)
         {
             try
             {
                 var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData()), Encoding.UTF8, "application/json");
-                await client.PostAsync(url, jsonContent);              
+                await client.PostAsync(url, jsonContent);
             }
-            catch (Exception e) { }
+            catch (Exception)
+            {
+                // swallow
+            }
 
         }
+
+        private string Truncate(string? value, int maxLength)
+        {
+            if (string.IsNullOrEmpty(value)) return string.Empty;
+            return value.Length <= maxLength ? value : value.Substring(0, maxLength);
+        }
+
         public async Task SendPageView(UserControl page)
         {
             if (!trackingEnabled)
@@ -191,9 +209,14 @@ namespace gamevault.Helper
                 var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { Timezone = timeZone, CurrentPage = pageString, Language = language }), Encoding.UTF8, "application/json");
                 await client.PostAsync(AnalyticsTargets.LG, jsonContent);
             }
-            catch (Exception e) { }
+            catch (Exception)
+            {
+                // swallow
+            }
 
         }
+
+        #region ** New Swetrix Error Structure **
         public void SendErrorLog(Exception ex)
         {
             if (!trackingEnabled)
@@ -203,128 +226,172 @@ namespace gamevault.Helper
             {
                 try
                 {
-                    var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { ExceptionType = ex.GetType().ToString(), ExceptionMessage = $"Message:{ex.Message} | InnerException:{ex.InnerException?.Message} | StackTrace:{ex.StackTrace?.Substring(0, Math.Min(2000, ex.StackTrace.Length))} | Is Windows Package: {(App.IsWindowsPackage == true ? "True" : "False")} | Version: {SettingsViewModel.Instance.Version}", Timezone = timeZone, Language = language }), Encoding.UTF8, "application/json");
+                    // Extract first meaningful frame with file info if available
+                    int? line = null;
+                    int? column = null;
+                    string? file = null;
+
+                    try
+                    {
+                        var st = new StackTrace(ex, true);
+                        var frame = st.GetFrames()?.FirstOrDefault(f => f.GetFileLineNumber() > 0) ?? st.GetFrame(0);
+                        if (frame != null)
+                        {
+                            line = frame.GetFileLineNumber();
+                            column = frame.GetFileColumnNumber();
+                            file = frame.GetFileName();
+                        }
+                    }
+                    catch { /* ignore parsing issues */ }
+
+                    var data = new AnalyticsData
+                    {
+                        Name = Truncate(ex.GetType().Name, 200),
+                        Message = Truncate(ex.Message, 2000),
+                        LineNo = line,
+                        ColNo = column,
+                        FileName = Truncate(file, 1000),
+                        StackTrace = Truncate(ex.StackTrace, 7500),
+                        Timezone = timeZone,
+                        Language = language,
+                        Metadata = new
+                        {
+                            InnerException = ex.InnerException?.Message,
+                            IsWindowsPackage = App.IsWindowsPackage == true,
+                            Version = SettingsViewModel.Instance.Version
+                        }
+                    };
+
+                    var jsonContent = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
                     await client.PostAsync(AnalyticsTargets.ER, jsonContent);
                 }
-                catch (Exception ex) { }
+                catch (Exception)
+                {
+                    // swallow
+                }
             });
         }
+        #endregion
+
         public void SendCustomEvent(string eventName, object meta)
         {
-            if (!trackingEnabled) return;
+            if (!trackingEnabled)
+                return;
             Task.Run(async () =>
             {
                 try
                 {
                     var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { Event = eventName, Metadata = meta, Timezone = timeZone, Language = language }), Encoding.UTF8, "application/json");
-                    HttpResponseMessage res =
-                    await client.PostAsync(AnalyticsTargets.CU, jsonContent);                   
+                    await client.PostAsync(AnalyticsTargets.CU, jsonContent);
                 }
                 catch { }
             });
         }
+
         private string? ParseUserControl(UserControl page)
         {
             switch (page)
             {
                 case LibraryUserControl:
-                    {
-                        return "/library";
-
-                    }
+                    return "/library";
                 case DownloadsUserControl:
-                    {
-                        return "/downloads";
-
-                    }
+                    return "/downloads";
                 case CommunityUserControl:
-                    {
-                        return "/community";
-
-                    }
+                    return "/community";
                 case SettingsUserControl:
-                    {
-                        return "/settings";
-
-                    }
+                    return "/settings";
                 case AdminConsoleUserControl:
-                    {
-                        return "/admin";
-                    }
-                case Wizard:
-                    {
-                        return "/wizard";
-                    }
+                    return "/admin";
                 case GameViewUserControl:
-                    {
-                        return "/game";
-                    }
+                    return "/game";
                 default:
-                    {
-                        return null;
-                    }
+                    return null;
             }
         }
+
         public object GetSysInfo()
         {
             try
             {
                 var OS = new ManagementObjectSearcher("select * from Win32_OperatingSystem").Get().Cast<ManagementObject>().First();
-                string os = $"{OS["Caption"]} - {OS["OSArchitecture"]} - Version.{OS["Version"]}"; os = os.Replace("NT 5.1.2600", "XP"); os = os.Replace("NT 5.2.3790", "Server 2003");
+                string os = $"{OS["Caption"]} - {OS["OSArchitecture"]} - Version.{OS["Version"]}".Replace("NT 5.1.2600", "XP").Replace("NT 5.2.3790", "Server 2003");
                 string ram = $"{OS["TotalVisibleMemorySize"]} KB";
                 var CPU = new ManagementObjectSearcher("select * from Win32_Processor").Get().Cast<ManagementObject>().First();
                 string cpu = $"{CPU["Name"]} - {CPU["MaxClockSpeed"]} MHz - {CPU["NumberOfCores"]} Core";
-                return new { app_version = SettingsViewModel.Instance.Version, hardware_os = os, hardware_ram = ram, hardware_cpu = cpu, };
+                return new { app_version = SettingsViewModel.Instance.Version, hardware_os = os, hardware_ram = ram, hardware_cpu = cpu };
             }
             catch (Exception ex)
             {
                 return new { app_version = SettingsViewModel.Instance.Version, hardware_os = $"The system information could not be loaded due to an {ex.GetType().Name}" };
             }
         }
+
         public Dictionary<string, string> PrepareSettingsForAnalytics()
         {
             try
             {
                 var propertiesToExclude = new[] { "Instance", "UserName", "RootPath", "ServerUrl", "License", "RegistrationUser", "SendAnonymousAnalytics", "IgnoreList", "Themes", "CommunityThemes" };
                 var trimmedObject = SettingsViewModel.Instance.GetType()
-            .GetProperties()
-            .Where(prop => !propertiesToExclude.Contains(prop.Name))
-            .ToDictionary(prop => prop.Name, prop => prop.GetValue(SettingsViewModel.Instance)?.ToString());
+                    .GetProperties()
+                    .Where(prop => !propertiesToExclude.Contains(prop.Name))
+                    .ToDictionary(prop => prop.Name, prop => prop.GetValue(SettingsViewModel.Instance)?.ToString());
 
-                trimmedObject.Add("HasLicence", (SettingsViewModel.Instance.License?.IsActive() == true).ToString());
+                trimmedObject.Add("HasLicense", (SettingsViewModel.Instance.License?.IsActive() == true).ToString());
                 return trimmedObject;
             }
             catch { }
             return null;
         }
+
         private bool IsWineRunning()
         {
             // Search for WINLOGON process
             int p = Process.GetProcessesByName("winlogon").Length;
             return p == 0;
         }
+
+        #region ** DTOs & Helpers **
         private class AnalyticsData
         {
             [JsonPropertyName("pid")]
             public string ProjectID => "N2kuL4i8qmOQ";
 
+            // General Event Fields
             [JsonPropertyName("ev")]
             public string? Event { get; set; }
+
             [JsonPropertyName("tz")]
             public string? Timezone { get; set; }
+
             [JsonPropertyName("pg")]
             public string? CurrentPage { get; set; }
 
             [JsonPropertyName("lc")]
             public string? Language { get; set; }
+
             [JsonPropertyName("meta")]
-            public object? Metadata { get; set; }//Properties of type string only
-            //Error
+            public object? Metadata { get; set; }
+
+            // Error specific fields
             [JsonPropertyName("name")]
-            public string? ExceptionType { get; set; }
+            public string? Name { get; set; }
+
             [JsonPropertyName("message")]
-            public string? ExceptionMessage { get; set; }
+            public string? Message { get; set; }
+
+            [JsonPropertyName("lineno")]
+            public int? LineNo { get; set; }
+
+            [JsonPropertyName("colno")]
+            public int? ColNo { get; set; }
+
+            [JsonPropertyName("stackTrace")]
+            public string? StackTrace { get; set; }
+
+            [JsonPropertyName("filename")]
+            public string? FileName { get; set; }
         }
+
         private static class AnalyticsTargets
         {
             public static string HB => Encoding.UTF8.GetString(Convert.FromBase64String("aHR0cHM6Ly9hbmFseXRpY3MucGxhdGZvcm0ucGhhbGNvLmRlL2xvZy9oYg=="));
@@ -332,5 +399,7 @@ namespace gamevault.Helper
             public static string CU => Encoding.UTF8.GetString(Convert.FromBase64String("aHR0cHM6Ly9hbmFseXRpY3MucGxhdGZvcm0ucGhhbGNvLmRlL2xvZy9jdXN0b20="));
             public static string ER => Encoding.UTF8.GetString(Convert.FromBase64String("aHR0cHM6Ly9hbmFseXRpY3MucGxhdGZvcm0ucGhhbGNvLmRlL2xvZy9lcnJvcg=="));
         }
+        #endregion
     }
 }
+

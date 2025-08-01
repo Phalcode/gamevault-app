@@ -1,0 +1,462 @@
+﻿<mah:MetroWindow x:Class="gamevault.Windows.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:local="clr-namespace:gamevault.Windows"
+        xmlns:uc="clr-namespace:gamevault.UserControls"
+        xmlns:conv="clr-namespace:gamevault.Converter"      
+        xmlns:helper="clr-namespace:gamevault.Helper"
+        mc:Ignorable="d"                
+        Title="GameVault" TitleForeground="Transparent" WindowTitleBrush="Transparent" NonActiveWindowTitleBrush="Transparent" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}"
+        Height="500" Width="720" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Loaded="LoginWindow_Loaded" Closing="MetroWindow_Closing">
+    <mah:MetroWindow.Resources>
+        <conv:InverseBoolConverter x:Key="invBoolConv"/>
+        <conv:BoolToVisibilityConverter x:Key="boolToVisConv"/>
+    </mah:MetroWindow.Resources>
+    <Grid>
+        <TabControl SelectedIndex="{Binding LoginStepIndex}" Background="{DynamicResource MahApps.Brushes.ThemeBackground2}">
+            <TabItem>
+                <Grid Height="220" VerticalAlignment="Center">
+                    <Image x:Name="RotateImage" Source="pack://application:,,,/gamevault;component/Resources/Images/icon.ico" Height="130" VerticalAlignment="Top" Margin="15" RenderTransformOrigin="0.5,0.5">
+                        <Image.RenderTransform>
+                            <RotateTransform CenterX="0" CenterY="0" />
+                        </Image.RenderTransform>
+                        <Image.Style>
+                            <Style>
+                                <Style.Triggers>
+                                    <Trigger Property="Image.IsEnabled" Value="True">
+                                        <Trigger.EnterActions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Angle" From="0" To="360" Duration="0:0:5" RepeatBehavior="Forever" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </Trigger.EnterActions>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>
+                    <TextBlock Text="{Binding StatusText}" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="10" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+                </Grid>
+            </TabItem>
+            <TabItem>
+                <Grid>
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock Text="Choose Your Profile" FontSize="30" HorizontalAlignment="Center"/>
+                        <StackPanel  Margin="0,30,0,0" Orientation="Horizontal" HorizontalAlignment="Center">
+                            <ItemsControl ItemsSource="{Binding UserProfiles}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Cursor="Hand" Click="ProfileLogin_Click" Margin="0,0,25,0">
+                                            <Button.Style>
+                                                <Style TargetType="Button" BasedOn="{StaticResource ButtonWrapper}">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Grid Style="{StaticResource HoverEffect}">
+                                                                    <StackPanel Background="Transparent">
+                                                                        <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground}" CornerRadius="5">
+                                                                            <Grid Height="100" Width="100">
+                                                                                <Grid>
+                                                                                    <uc:CacheImage UseUriSource="True" ImageCacheType="UserAvatar" Data="{Binding UserCacheAvatar}" CornerRadius="5"/>
+                                                                                    <Border x:Name="HoverBlur" Visibility="Hidden" Background="{DynamicResource GameVault.Brushes.Blur}" CornerRadius="5"/>
+                                                                                </Grid>
+                                                                                <Button x:Name="DeleteUserProfile" Style="{StaticResource ButtonWrapper}" Visibility="Hidden" Margin="0,0,0,3" Click="UserProfileContextMenu_Click">
+                                                                                    <Border Style="{StaticResource HoverEffect}" Background="Transparent" HorizontalAlignment="Right" VerticalAlignment="Bottom" CornerRadius="5">
+                                                                                        <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="White" Margin="0,0,5,2"/>
+                                                                                        <Border.RenderTransform>
+                                                                                            <ScaleTransform/>
+                                                                                        </Border.RenderTransform>
+                                                                                    </Border>
+                                                                                    <Button.ContextMenu>
+                                                                                        <ContextMenu>
+                                                                                            <MenuItem Header="Edit User Profile" Click="EditUserProfile_Click"/>
+                                                                                            <MenuItem Header="Delete User Profile" Click="DeleteUserProfile_Click"/>
+                                                                                        </ContextMenu>
+                                                                                    </Button.ContextMenu>
+                                                                                </Button>
+                                                                            </Grid>
+                                                                        </Border>
+                                                                        <StackPanel x:Name="ProfileInfo" Visibility="Hidden">
+                                                                            <TextBlock Text="{Binding Name}" FontSize="17" HorizontalAlignment="Center" TextAlignment="Center" Width="200" TextTrimming="CharacterEllipsis" FontWeight="Bold" Margin="-100,0,-100,0"/>
+                                                                            <TextBlock Text="{Binding ServerUrl}" TextAlignment="Center" Width="200" TextTrimming="CharacterEllipsis" Margin="-100,0,-100,0" HorizontalAlignment="Center"/>
+                                                                        </StackPanel>
+                                                                    </StackPanel>
+
+                                                                    <Grid.RenderTransform>
+                                                                        <ScaleTransform/>
+                                                                    </Grid.RenderTransform>
+                                                                </Grid>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter TargetName="DeleteUserProfile" Property="Visibility" Value="Visible"/>
+                                                                        <Setter TargetName="ProfileInfo" Property="Visibility" Value="Visible"/>
+                                                                        <Setter TargetName="HoverBlur" Property="Visibility" Value="Visible"/>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <StackPanel Margin="0,20,0,0">
+                                <Button Style="{StaticResource ButtonWrapper}" Height="50" Width="50" HorizontalAlignment="Center" Cursor="Hand" Click="NewProfile_Click">
+                                    <Grid Style="{DynamicResource HoverEffect}"  Background="Transparent">
+                                        <Path Data="{StaticResource IconAddSimple}" Fill="White">
+                                            <Path.RenderTransform>
+                                                <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                            </Path.RenderTransform>
+                                        </Path>
+                                        <Grid.RenderTransform>
+                                            <ScaleTransform/>
+                                        </Grid.RenderTransform>
+                                    </Grid>
+                                </Button>
+                                <TextBlock Text="New Profile" FontSize="15" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                    <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,5,5,0" Cursor="Hand" Click="LoginWindowSettings_Click">
+                        <Border Style="{StaticResource HoverEffect}" Background="Transparent" HorizontalAlignment="Right" VerticalAlignment="Bottom" CornerRadius="5">
+                            <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="White" Margin="0,0,5,2"/>
+                            <Border.RenderTransform>
+                                <ScaleTransform/>
+                            </Border.RenderTransform>
+                        </Border>
+                    </Button>
+                    <CheckBox Content="Remember Me" IsChecked="{Binding RememberMe}" mah:CheckBoxHelper.CheckCornerRadius="5" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10"/>
+                </Grid>
+            </TabItem>
+            <TabItem>
+                <Grid>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="Sign In or Sign Up" FontSize="30"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,30,0,0">
+                            <StackPanel>
+                                <Button Style="{StaticResource ButtonWrapper}" Height="50" Width="50" HorizontalAlignment="Center" Cursor="Hand" Click="SignIn_Click">
+                                    <Grid Style="{DynamicResource HoverEffect}"  Background="Transparent">
+                                        <Path Data="{StaticResource IconLogin}" Fill="White" RenderTransformOrigin="0.05,0">
+                                            <Path.RenderTransform>
+                                                <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                            </Path.RenderTransform>
+                                        </Path>
+                                        <Grid.RenderTransform>
+                                            <ScaleTransform/>
+                                        </Grid.RenderTransform>
+                                    </Grid>
+                                </Button>
+                                <TextBlock Text="Sign In" FontSize="15" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel Margin="80,0,0,0">
+                                <Button Style="{StaticResource ButtonWrapper}" Height="50" Width="50" HorizontalAlignment="Center" Cursor="Hand" Click="SignUp_Click">
+                                    <Grid Style="{DynamicResource HoverEffect}"  Background="Transparent">
+                                        <Path Data="{StaticResource IconAddSimple}" Fill="White">
+                                            <Path.RenderTransform>
+                                                <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                            </Path.RenderTransform>
+                                        </Path>
+                                        <Grid.RenderTransform>
+                                            <ScaleTransform/>
+                                        </Grid.RenderTransform>
+                                    </Grid>
+                                </Button>
+                                <TextBlock Text="Sign Up" FontSize="15" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                    <uc:IconButton Text="Back" Kind="Skeleton" BorderThickness="1" Height="30" Margin="10,0,0,10" Width="100" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="Back_Click" Tag="{x:Static local:LoginStep.ChooseProfile}"/>
+                </Grid>
+            </TabItem>
+            <TabItem>
+                <Grid>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="400" Height="300">
+                        <TextBlock Text="Sign In" FontSize="30" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Specify Your Server URL" TextDecorations="Underline" Margin="0,15,0,5"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                            <TextBox Text="{Binding LoginUser.ServerUrl}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" Width="400" TextChanged="ServerUrlInput_TextChanged" KeyDown="UserLoginTextBox_KeyDown"/>
+                            <Path Margin="2,1,-25,0">
+                                <Path.Style>
+                                    <Style TargetType="Path">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding LoginServerInfo.IsAvailable}" Value="True">
+                                                <Setter Property="Data" Value="{StaticResource IconCheck}"/>
+                                                <Setter Property="Fill" Value="Green"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding LoginServerInfo.HasError}" Value="True">
+                                                <Setter Property="Data" Value="{StaticResource IconErrorCircle}"/>
+                                                <Setter Property="Fill" Value="IndianRed"/>
+                                                <Setter Property="ToolTip" Value="{Binding LoginServerInfo.ErrorMessage}"/>
+                                                <Setter Property="Cursor" Value="Help"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Path.Style>
+                            </Path>
+                        </StackPanel>
+                        <StackPanel>
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding LoginServerInfo.IsBasicAuthEnabled}" Value="True">
+                                            <Setter Property="IsEnabled" Value="{Binding LoginUser.IsLoggedInWithSSO,Converter={StaticResource invBoolConv}}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <TextBlock Text="Username or Email" TextDecorations="Underline" Margin="0,15,0,5"/>
+                            <TextBox Text="{Binding LoginUser.Username}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" KeyDown="UserLoginTextBox_KeyDown"/>
+
+                            <TextBlock Text="Password" TextDecorations="Underline" Margin="0,15,0,5"/>
+                            <TextBox helper:PasswordBoxAttachedProperties.IsPassword="True" helper:PasswordBoxAttachedProperties.ActualPassword="{Binding LoginUser.Password}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" KeyDown="UserLoginTextBox_KeyDown"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
+                            <Rectangle Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Width="70" Height="2"/>
+                            <TextBlock Text="OR" HorizontalAlignment="Center" Margin="10,0,10,0"/>
+                            <Rectangle Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Width="70" Height="2"/>
+                        </StackPanel>
+                        <CheckBox IsChecked="{Binding LoginUser.IsLoggedInWithSSO}" Content="Sign in using your Identity Provider" mah:CheckBoxHelper.CheckCornerRadius="5" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,15,0,0">
+                            <CheckBox.Style>
+                                <Style TargetType="CheckBox" BasedOn="{StaticResource MahApps.Styles.CheckBox}">
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding LoginServerInfo.IsSSOEnabled}" Value="True">
+                                            <Setter Property="IsEnabled" Value="True"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </CheckBox.Style>
+                        </CheckBox>
+                    </StackPanel>
+                    <uc:IconButton Text="Save" Kind="Skeleton" Height="30" BorderThickness="1" Margin="0,0,120,10" Width="100" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="SaveWithoutLogin_Click">
+                        <uc:IconButton.Style>
+                            <Style TargetType="uc:IconButton" BasedOn="{StaticResource {x:Type uc:IconButton}}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding LoginServerInfo.IsBasicAuthEnabled}" Value="True">
+                                        <Setter Property="IsEnabled" Value="{Binding LoginUser.IsLoggedInWithSSO,Converter={StaticResource invBoolConv}}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </uc:IconButton.Style>
+                    </uc:IconButton>
+                    <uc:IconButton Text="Save and Login" Height="30" Margin="0,0,10,10" Width="100" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="SaveAndLogin_Click"/>
+                    <uc:IconButton Text="Back" Kind="Skeleton" BorderThickness="1" Height="30" Margin="10,0,0,10" Width="100" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="Back_Click" Tag="{x:Static local:LoginStep.SignInOrSignUp}"/>
+                </Grid>
+            </TabItem>
+            <TabItem>
+                <Grid>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="400" Height="430" Margin="0,8,0,0">
+                        <TextBlock Text="Sign Up" FontSize="30" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Specify Your Server URL" TextDecorations="Underline" Margin="0,15,0,5"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBox Text="{Binding SignupUser.ServerUrl}" mah:ControlsHelper.CornerRadius="5" Width="400" BorderThickness="2" TextChanged="ServerUrlInput_TextChanged" KeyDown="UserRegistrationTextBox_KeyDown"/>
+                            <Path Margin="2,1,-25,0">
+                                <Path.Style>
+                                    <Style TargetType="Path">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding SignUpServerInfo.IsAvailable}" Value="True">
+                                                <Setter Property="Data" Value="{StaticResource IconCheck}"/>
+                                                <Setter Property="Fill" Value="Green"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding SignUpServerInfo.HasError}" Value="True">
+                                                <Setter Property="Data" Value="{StaticResource IconErrorCircle}"/>
+                                                <Setter Property="Fill" Value="IndianRed"/>
+                                                <Setter Property="ToolTip" Value="{Binding SignUpServerInfo.ErrorMessage}"/>
+                                                <Setter Property="Cursor" Value="Help"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Path.Style>
+                            </Path>
+                        </StackPanel>
+                        <StackPanel>
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SignUpServerInfo.IsBasicAuthEnabled}" Value="True">
+                                            <Setter Property="IsEnabled" Value="{Binding SignupUser.IsLoggedInWithSSO,Converter={StaticResource invBoolConv}}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Width="195" Grid.Column="0">
+                                    <TextBlock Text="Username" TextDecorations="Underline" Margin="0,15,0,5"/>
+                                    <TextBox Text="{Binding SignupUser.Username}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" KeyDown="UserRegistrationTextBox_KeyDown"/>
+                                </StackPanel>
+                                <StackPanel Width="195" Grid.Column="2">
+                                    <StackPanel Orientation="Horizontal" Margin="0,15,0,5">
+                                        <TextBlock Text="Birth Date" TextDecorations="Underline"/>
+                                        <TextBlock Text="(Mandatory)" Visibility="{Binding SignUpServerInfo.IsBirthDateMandatory,Converter={StaticResource boolToVisConv}}" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                                    </StackPanel>
+                                    <DatePicker SelectedDate="{Binding SignupUser.BirthDate}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" KeyDown="UserRegistrationTextBox_KeyDown"/>
+                                </StackPanel>
+                            </Grid>
+                            <StackPanel Orientation="Horizontal" Margin="0,15,0,5">
+                                <TextBlock Text="E-Mail" TextDecorations="Underline"/>
+                                <TextBlock Text="(Mandatory)" Visibility="{Binding SignUpServerInfo.IsEMailMandatory,Converter={StaticResource boolToVisConv}}" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                            </StackPanel>
+                            <TextBox Text="{Binding SignupUser.EMail}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" KeyDown="UserRegistrationTextBox_KeyDown"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Width="195" Grid.Column="0">
+                                    <StackPanel Orientation="Horizontal" Margin="0,15,0,5">
+                                        <TextBlock Text="First Name" TextDecorations="Underline"/>
+                                        <TextBlock Text="(Mandatory)" Visibility="{Binding SignUpServerInfo.IsFirstNameMandatory,Converter={StaticResource boolToVisConv}}" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                                    </StackPanel>
+                                    <TextBox Text="{Binding SignupUser.FirstName}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" KeyDown="UserRegistrationTextBox_KeyDown"/>
+                                </StackPanel>
+                                <StackPanel Width="195" Grid.Column="2">
+                                    <StackPanel Orientation="Horizontal" Margin="0,15,0,5">
+                                        <TextBlock Text="Last Name" TextDecorations="Underline"/>
+                                        <TextBlock Text="(Mandatory)" Visibility="{Binding SignUpServerInfo.IsLastNameMandatory,Converter={StaticResource boolToVisConv}}" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                                    </StackPanel>
+                                    <TextBox Text="{Binding SignupUser.LastName}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" KeyDown="UserRegistrationTextBox_KeyDown"/>
+                                </StackPanel>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Width="195" Grid.Column="0">
+                                    <TextBlock Text="Password" TextDecorations="Underline" Margin="0,15,0,5"/>
+                                    <TextBox helper:PasswordBoxAttachedProperties.IsPassword="True" helper:PasswordBoxAttachedProperties.ActualPassword="{Binding SignupUser.Password}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" KeyDown="UserRegistrationTextBox_KeyDown"/>
+                                </StackPanel>
+                                <StackPanel Width="195" Grid.Column="2">
+                                    <TextBlock Text="Repeat Password" TextDecorations="Underline" Margin="0,15,0,5"/>
+                                    <TextBox helper:PasswordBoxAttachedProperties.IsPassword="True" helper:PasswordBoxAttachedProperties.ActualPassword="{Binding SignupUser.RepeatPassword}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2" KeyDown="UserRegistrationTextBox_KeyDown"/>
+                                </StackPanel>
+                            </Grid>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
+                                <Rectangle Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Width="70" Height="2"/>
+                                <TextBlock Text="OR" HorizontalAlignment="Center" Margin="10,0,10,0"/>
+                                <Rectangle Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Width="70" Height="2"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <CheckBox IsChecked="{Binding SignupUser.IsLoggedInWithSSO}" Content="Sign up using your Identity Provider" mah:CheckBoxHelper.CheckCornerRadius="5" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,15,0,0">
+                            <CheckBox.Style>
+                                <Style TargetType="CheckBox" BasedOn="{StaticResource MahApps.Styles.CheckBox}">
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SignUpServerInfo.IsSSOEnabled}" Value="True">
+                                            <Setter Property="IsEnabled" Value="True"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </CheckBox.Style>
+                        </CheckBox>
+                    </StackPanel>
+                    <uc:IconButton Text="Save and Sign Up" Height="30" Margin="0,0,10,10" Width="100" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="SaveAndSignUp_Click"/>
+                    <uc:IconButton Text="Back" Kind="Skeleton" BorderThickness="1" Height="30" Margin="10,0,0,10" Width="100" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="Back_Click" Tag="{x:Static local:LoginStep.SignInOrSignUp}"/>
+                </Grid>
+            </TabItem>
+            <TabItem>
+                <Grid>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="400" Height="300">
+                        <TextBlock Text="Edit User Profile" FontSize="30" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Specify Your Server URL" TextDecorations="Underline" Margin="0,15,0,5"/>
+                        <TextBox Text="{Binding EditUser.ServerUrl}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
+                        <StackPanel>
+                            <TextBlock Text="Username or Email" TextDecorations="Underline" Margin="0,15,0,5"/>
+                            <TextBox Text="{Binding EditUser.Username}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
+
+                            <TextBlock Text="Password" TextDecorations="Underline" Margin="0,15,0,5"/>
+                            <TextBox helper:PasswordBoxAttachedProperties.IsPassword="True" helper:PasswordBoxAttachedProperties.ActualPassword="{Binding EditUser.Password}" mah:ControlsHelper.CornerRadius="5" BorderThickness="2"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <uc:IconButton Text="Save" Height="30" Margin="0,0,10,10" Width="100" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="UserProfileEditSave_Click"/>
+                    <uc:IconButton Text="Back" Kind="Skeleton" BorderThickness="1" Height="30" Margin="10,0,0,10" Width="100" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="Back_Click" Tag="{x:Static local:LoginStep.ChooseProfile}"/>
+                </Grid>
+            </TabItem>
+            <TabItem>
+                <Grid>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="Your Account is pending Admin Approval" FontSize="30" HorizontalAlignment="Center"/>
+                        <mah:ProgressRing HorizontalAlignment="Center" IsActive="True" Margin="0,40,0,0"/>
+                        <TextBlock Text="You can wait or close this screen and check again later." HorizontalAlignment="Center" Margin="0,30,0,0" FontSize="20"/>
+                        <uc:IconButton Text="Back to Profile Selection" Height="30" Width="250" HorizontalAlignment="Center" Margin="0,20,0,0" FontSize="20" Click="Back_Click" Tag="{x:Static local:LoginStep.ChooseProfile}"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem>
+                <Grid>
+                    <TextBlock Text="Client Settings" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                    <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,40,0,0">
+                        <TextBlock Text="Advanced" FontSize="16" FontWeight="Bold" HorizontalAlignment="Left"/>
+                        <TextBlock Text="Additional Request Headers" FontSize="15" HorizontalAlignment="Left" Margin="10,10,0,0"/>
+                        <ScrollViewer MaxHeight="250" VerticalScrollBarVisibility="Auto" Width="550" HorizontalAlignment="Left" Margin="10,10,0,0">
+                            <ItemsControl ItemsSource="{Binding AdditionalRequestHeaders}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBox Text="{Binding Name}" mah:TextBoxHelper.Watermark="Name" mah:ControlsHelper.CornerRadius="5" Width="245" Height="20"/>
+                                                <TextBox Text="{Binding Value}" mah:TextBoxHelper.Watermark="Value" mah:ControlsHelper.CornerRadius="5" Width="245" Height="20" Margin="10,0,0,0"/>
+                                            </StackPanel>
+                                            <Button Style="{StaticResource ButtonWrapper}" Height="30" Width="30" Cursor="Hand" Click="RemoveAdditionalRequestHeader_Click">
+                                                <Grid Style="{DynamicResource HoverEffect}"  Background="Transparent"  RenderTransformOrigin="0.5,0.5">
+                                                    <Path Data="{StaticResource IconErrorCross}" Stroke="IndianRed" StrokeThickness="2">
+                                                        <Path.RenderTransform>
+                                                            <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                                        </Path.RenderTransform>
+                                                    </Path>
+                                                    <Grid.RenderTransform>
+                                                        <ScaleTransform/>
+                                                    </Grid.RenderTransform>
+                                                </Grid>
+                                            </Button>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                        <StackPanel Orientation="Horizontal" Margin="10,5,0,0" HorizontalAlignment="Left">
+                            <uc:IconButton Icon="{StaticResource IconAddTag}" Text="Add" FontSize="15" IconMargin="0,0,5,2" Width="100" Height="30" Margin="0,0,10,0" Click="AddAdditionalRequestHeader_Click"/>
+                            <uc:IconButton Icon="{StaticResource IconGameSettingsSave}" Text="Save" FontSize="15" IconMargin="0,0,5,2" Width="100" Height="30" Click="SaveAdditionalHeaders_Click"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <uc:IconButton Text="Back" Kind="Skeleton" BorderThickness="1" Height="30" Margin="10,0,0,10" Width="100" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="Back_Click" Tag="{x:Static local:LoginStep.ChooseProfile}"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Height="40" Margin="15,-15,0,0">
+            <Image Source="pack://application:,,,/gamevault;component/Resources/Images/icon.ico" RenderOptions.BitmapScalingMode="HighQuality"/>
+            <TextBlock Text="GameVault" FontSize="30" Margin="5,0,0,0"/>
+        </StackPanel>
+        <mah:Flyout IsOpen="{Binding IsAppBarOpen,UpdateSourceTrigger=PropertyChanged}" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" Height="80" IsAutoCloseEnabled="True" AutoCloseInterval="3000" Focusable="False" Panel.ZIndex="2"
+                  CloseButtonVisibility="Collapsed"
+                  Position="Bottom"
+                  TitleVisibility="Collapsed">
+            <TextBlock VerticalAlignment="Center" Text="{Binding AppBarText}" FontSize="20" TextWrapping="Wrap" Margin="10,0,35,0"/>
+        </mah:Flyout>
+    </Grid>
+</mah:MetroWindow>

@@ -5,11 +5,13 @@ using MahApps.Metro.Controls.Dialogs;
 using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using gamevault.Helper.Integrations;
+using AngleSharp.Io;
+using System.IO;
 
 namespace gamevault.UserControls
 {
@@ -27,14 +29,20 @@ namespace gamevault.UserControls
         }
         public async Task RestoreDownloadedGames()
         {
-            Game[]? games = await Task<Game[]>.Run(() =>
+            Dictionary<Game, string>? games = await Task.Run<Dictionary<Game, string>?>(async () =>
              {
-                 string downloadPath = $"{SettingsViewModel.Instance.RootPath}\\GameVault\\Downloads";
-                 if (SettingsViewModel.Instance.RootPath == string.Empty || !Directory.Exists(downloadPath))
+
+                 if (SettingsViewModel.Instance.RootDirectories.Count == 0)
                      return null;
 
-                 List<string> allIds = new List<string>();
-                 foreach (string dir in Directory.GetDirectories(downloadPath))
+                 List<string> allDirectoriesFromRootDirectories = new List<string>();
+                 foreach (DirectoryEntry dirEntry in SettingsViewModel.Instance.RootDirectories)
+                 {
+                     if (Directory.Exists(Path.Combine(dirEntry.Uri, "GameVault", "Downloads")))
+                         allDirectoriesFromRootDirectories.AddRange(Directory.GetDirectories(Path.Combine(dirEntry.Uri, "GameVault", "Downloads")));
+                 }
+                 Dictionary<int, string> foundPathsById = new Dictionary<int, string>();
+                 foreach (string dir in allDirectoriesFromRootDirectories)
                  {
                      try
                      {
@@ -45,32 +53,49 @@ namespace gamevault.UserControls
                          string gameId = dirName.Substring(2, dirName.IndexOf(')') - 2);
 
                          if (int.TryParse(gameId, out int id))
-                             allIds.Add(id.ToString());
+                             foundPathsById.Add(id, SettingsViewModel.Instance.RootDirectories
+                            .Where(x => dir.Contains(x.Uri))
+                            .OrderByDescending(x => x.Uri.Length)
+                            .First().Uri);
+
                      }
                      catch { continue; }
                  }
-                 if (allIds.Count == 0)
+                 if (foundPathsById.Count == 0)
                      return null;
                  try
                  {
                      if (LoginManager.Instance.IsLoggedIn())
                      {
-                         string gameList = WebHelper.GetRequest(@$"{SettingsViewModel.Instance.ServerUrl}/api/games?filter.id=$in:{string.Join(',', allIds)}");
-                         return JsonSerializer.Deserialize<PaginatedData<Game>>(gameList)?.Data;
+                         string gameList = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games?filter.id=$in:{string.Join(',', foundPathsById.Keys)}");
+                         Dictionary<Game, string> foundGames = new Dictionary<Game, string>();
+                         foreach (Game game in JsonSerializer.Deserialize<PaginatedData<Game>>(gameList)?.Data)
+                         {
+                             if (foundPathsById.TryGetValue(game.ID, out string path))
+                             {
+                                 foundGames.Add(game, path);
+                             }
+                         }
+                         return foundGames;
                      }
-                     List<Game> offlineCacheGames = new List<Game>();
-                     foreach (string id in allIds)
+                     Dictionary<Game, string> offlineCacheGames = new Dictionary<Game, string>();
+                     foreach (int id in foundPathsById.Keys)
                      {
-                         string objectFromFile = Preferences.Get(id, AppFilePath.OfflineCache);
+                         string objectFromFile = Preferences.Get(id.ToString(), LoginManager.Instance.GetUserProfile().OfflineCache);
                          if (objectFromFile == string.Empty)
                              continue;
 
                          string decompressedObject = StringCompressor.DecompressString(objectFromFile);
                          Game? deserializedObject = JsonSerializer.Deserialize<Game>(decompressedObject);
                          if (deserializedObject != null)
-                             offlineCacheGames.Add(deserializedObject);
+                         {
+                             if (foundPathsById.TryGetValue(deserializedObject.ID, out string path))
+                             {
+                                 offlineCacheGames.Add(deserializedObject, path);
+                             }
+                         }
+                         return offlineCacheGames;
                      }
-                     return offlineCacheGames.ToArray();
                  }
                  catch (FormatException exFormat)
                  {
@@ -86,9 +111,32 @@ namespace gamevault.UserControls
             if (games == null)
                 return;
 
-            foreach (Game game in games)
+            var validGameIds = new HashSet<int>(games.Keys.Select(g => g.ID));
+            // Remove controls not in the dictionary, unless they're downloading
+            for (int i = DownloadsViewModel.Instance.DownloadedGames.Count - 1; i >= 0; i--)
             {
-                DownloadsViewModel.Instance.DownloadedGames.Add(new GameDownloadUserControl(game, false));
+                var control = DownloadsViewModel.Instance.DownloadedGames[i];
+                int gameId = control.GetGameId();
+
+                bool existsInDict = validGameIds.Contains(gameId);
+                
+                if (control.IsDownloading())
+                {
+                    control.PauseDownload();
+                }
+                if (!existsInDict)
+                {
+                    DownloadsViewModel.Instance.DownloadedGames.RemoveAt(i);
+                }
+            }
+            var existingIds = new HashSet<int>(DownloadsViewModel.Instance.DownloadedGames.Select(c => c.GetGameId()));
+
+            foreach (var game in games)
+            {
+                if (!existingIds.Contains(game.Key.ID))
+                {
+                    DownloadsViewModel.Instance.DownloadedGames.Add(new GameDownloadUserControl(game.Key, game.Value, false));
+                }
             }
         }
         public void RefreshGame(Game game)
@@ -112,14 +160,25 @@ namespace gamevault.UserControls
 
         public async Task TryStartDownload(Game game)
         {
+            if (SettingsViewModel.Instance.RootDirectories.Count == 0)
+            {
+                MainWindowViewModel.Instance.AppBarText = "No Root Directory configured! Go to ⚙️Settings->Data";
+                return;
+            }
+            var installLocationPicker = new InstallLocationUserControl();
+            MainWindowViewModel.Instance.OpenPopup(installLocationPicker);
+            string selectedDirectory = await installLocationPicker.SelectInstallLocation();
+            if (selectedDirectory == string.Empty)
+                return;
+
+            if (!Directory.Exists(selectedDirectory))
+            {
+                MainWindowViewModel.Instance.AppBarText = "Selected directory does not exist";
+                return;
+            }
             if (LoginManager.Instance.IsLoggedIn() == false)
             {
                 MainWindowViewModel.Instance.AppBarText = "You are not logged in or offline";
-                return;
-            }
-            if (SettingsViewModel.Instance.RootPath == string.Empty)
-            {
-                MainWindowViewModel.Instance.AppBarText = "Root path is not set! Go to ⚙️Settings->Data";
                 return;
             }
             if (IsAlreadyDownloading(game.ID))
@@ -131,19 +190,19 @@ namespace gamevault.UserControls
             {
                 return;
             }
-            if (IsEnoughDriveSpaceAvailable(Convert.ToInt64(game.Size)))
+            if (IsEnoughDriveSpaceAvailable(Convert.ToInt64(game.Size), selectedDirectory))
             {
                 GameDownloadUserControl? oldDownloadEntry = DownloadsViewModel.Instance.DownloadedGames.Where(g => g.GetGameId() == game.ID).FirstOrDefault();
                 if (oldDownloadEntry != null)
                 {
                     DownloadsViewModel.Instance.DownloadedGames.Remove(oldDownloadEntry);
                 }
-                DownloadsViewModel.Instance.DownloadedGames.Insert(0, new GameDownloadUserControl(game, true));
+                DownloadsViewModel.Instance.DownloadedGames.Insert(0, new GameDownloadUserControl(game, selectedDirectory, true));
                 MainWindowViewModel.Instance.AppBarText = $"'{game.Title}' has been added to the download queue";
             }
             else
             {
-                FileInfo f = new FileInfo(SettingsViewModel.Instance.RootPath);
+                FileInfo f = new FileInfo(selectedDirectory);
                 string? driveName = Path.GetPathRoot(f.FullName);
                 MainWindowViewModel.Instance.AppBarText = $"Not enough space available for drive {driveName}";
             }
@@ -170,9 +229,9 @@ namespace gamevault.UserControls
             }
             return false;
         }
-        private bool IsEnoughDriveSpaceAvailable(long gameSize)
+        private bool IsEnoughDriveSpaceAvailable(long gameSize, string directory)
         {
-            FileInfo f = new FileInfo(SettingsViewModel.Instance.RootPath);
+            FileInfo f = new FileInfo(directory);
             string? driveName = Path.GetPathRoot(f.FullName);
             foreach (DriveInfo drive in DriveInfo.GetDrives())
             {

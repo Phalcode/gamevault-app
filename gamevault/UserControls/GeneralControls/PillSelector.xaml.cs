@@ -151,24 +151,21 @@ namespace gamevault.UserControls
                 };
 
                 Selection selection = SelectionType;
-                await Task.Run(() =>
+                try
                 {
-                    try
+                    string result = await WebHelper.GetAsync(url);
+                    data = selection switch
                     {
-                        string result = WebHelper.GetRequest(url);
-                        data = selection switch
-                        {
-                            Selection.Tags => JsonSerializer.Deserialize<PaginatedData<Pill>>(result).Data,
-                            Selection.Genres => JsonSerializer.Deserialize<PaginatedData<Pill>>(result).Data,
-                            Selection.Developers => JsonSerializer.Deserialize<PaginatedData<Pill>>(result).Data,
-                            Selection.Publishers => JsonSerializer.Deserialize<PaginatedData<Pill>>(result).Data
-                        };
-                    }
-                    catch (Exception ex)
-                    {
-                        MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
-                    }
-                });
+                        Selection.Tags => JsonSerializer.Deserialize<PaginatedData<Pill>>(result).Data,
+                        Selection.Genres => JsonSerializer.Deserialize<PaginatedData<Pill>>(result).Data,
+                        Selection.Developers => JsonSerializer.Deserialize<PaginatedData<Pill>>(result).Data,
+                        Selection.Publishers => JsonSerializer.Deserialize<PaginatedData<Pill>>(result).Data
+                    };
+                }
+                catch (Exception ex)
+                {
+                    MainWindowViewModel.Instance.AppBarText = WebExceptionHelper.TryGetServerMessage(ex);
+                }
             }
             uiSelectionEntries.ItemsSource = data;
         }
@@ -197,7 +194,7 @@ namespace gamevault.UserControls
         {
             if (selectedEntries.Contains((Pill)((FrameworkElement)sender).DataContext)) return;
             if (MaxSelection > 0 && selectedEntries.Count >= MaxSelection) return;
-            if(!IsMultiSelection)
+            if (!IsMultiSelection)
             {
                 selectedEntries.Clear();
             }

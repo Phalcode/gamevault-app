@@ -21,13 +21,6 @@
         <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Grid.Row="0">
             <TextBlock Text="Admin Console" FontSize="35" Margin="20,0,0,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
         </Border>
-        <Grid Grid.RowSpan="2" Panel.ZIndex="1">
-            <Viewbox>
-                <Grid Height="700" Width="700">
-                    <Grid x:Name="uiUserEditPopup" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Grid>
-            </Viewbox>
-        </Grid>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <Grid>
@@ -105,9 +98,9 @@
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Grid Height="6" Margin="1,1,0,0">
-                                                <Grid.Style>
-                                                    <Style TargetType="{x:Type Grid}">
+                                            <Border Height="6" Margin="1,1,0,0" CornerRadius="1">
+                                                <Border.Style>
+                                                    <Style TargetType="{x:Type Border}">
                                                         <Setter Property="Visibility" Value="Visible"/>
                                                         <Setter Property="Background" Value="#26FF0000"/>
                                                         <Style.Triggers>
@@ -123,60 +116,61 @@
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
-                                                </Grid.Style>
+                                                </Border.Style>
+                                                <Grid>
+                                                    <Button Style="{StaticResource ButtonWrapper}" Width="6" HorizontalAlignment="Left" Cursor="Hand" Click="ShowUser_Click">
+                                                        <local:CacheImage ImageCacheType="UserAvatar" Data="{Binding}" Stretch="Fill" CornerRadius="0.5"/>
+                                                    </Button>
+                                                    <TextBlock FontSize="2" Margin="8,0,0,0" Text="{Binding Path=Username}" VerticalAlignment="Center"/>
 
-                                                <Button Style="{StaticResource ButtonWrapper}" Width="6" HorizontalAlignment="Left" Cursor="Hand" Click="ShowUser_Click">
-                                                    <local:CacheImage ImageCacheType="UserAvatar" Data="{Binding}" Stretch="Fill" CornerRadius="0.5"/>
-                                                </Button>
-                                                <TextBlock FontSize="2" Margin="8,0,0,0" Text="{Binding Path=Username}" VerticalAlignment="Center"/>
+                                                    <Viewbox Width="8" Margin="0,0,20,0" HorizontalAlignment="Right" >
+                                                        <mah:ToggleSwitch Header="Activated" IsOn="{Binding Path=Activated}" Toggled="Activated_Toggled"/>
+                                                    </Viewbox>
 
-                                                <Viewbox Width="8" Margin="0,0,20,0" HorizontalAlignment="Right" >
-                                                    <mah:ToggleSwitch Header="Activated" IsOn="{Binding Path=Activated}" Toggled="Activated_Toggled"/>
-                                                </Viewbox>
+                                                    <Viewbox Width="11" Margin="0,0,10,0" HorizontalAlignment="Right">
+                                                        <ComboBox ItemsSource="{Binding Path=DataContext.PermissionRoleEnumTypes,RelativeSource={RelativeSource AncestorType=UserControl}}" SelectedItem="{Binding Path=Role}" SelectionChanged="PermissionRole_SelectionChanged"/>
+                                                    </Viewbox>
 
-                                                <Viewbox Width="11" Margin="0,0,10,0" HorizontalAlignment="Right">
-                                                    <ComboBox ItemsSource="{Binding Path=DataContext.PermissionRoleEnumTypes,RelativeSource={RelativeSource AncestorType=UserControl}}" SelectedItem="{Binding Path=Role}" SelectionChanged="PermissionRole_SelectionChanged"/>
-                                                </Viewbox>
-
-                                                <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Top" HorizontalAlignment="Right" Cursor="Hand" Width="2.5" Height="2.5" Margin="0,1.8,5,0" Click="EditUser_Clicked">
-                                                    <Grid Style="{DynamicResource HoverEffect}"  Background="Transparent"  RenderTransformOrigin="0.5,0.5">
-                                                        <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Margin="0,0,-20,-20">
-                                                            <Path.RenderTransform>
-                                                                <ScaleTransform ScaleX="0.1" ScaleY="0.1"/>
-                                                            </Path.RenderTransform>
-                                                        </Path>
-                                                        <Grid.RenderTransform>
-                                                            <ScaleTransform/>
-                                                        </Grid.RenderTransform>
-                                                    </Grid>
-                                                </Button>
-                                                <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Top" HorizontalAlignment="Right" Cursor="Hand" Width="2.5" Height="2.5" Margin="0,1.8,1,0" Click="DeleteUser_Clicked">
-                                                    <Grid Style="{DynamicResource HoverEffect}" Background="Transparent" RenderTransformOrigin="0.5,0.5">
-                                                        <Path Margin="0,0,-20,-20">
-                                                            <Path.Style>
-                                                                <Style TargetType="{x:Type Path}">
-                                                                    <Setter Property="Data" Value="{DynamicResource IconReload}"/>
-                                                                    <Setter Property="Fill" Value="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
-                                                                    <Setter Property="ToolTip" Value="Recover user"/>
-                                                                    <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding Path=DeletedAt}" Value="{x:Null}">
-                                                                            <Setter Property="Data" Value="{DynamicResource IconTrash}"/>
-                                                                            <Setter Property="Fill" Value="IndianRed"/>
-                                                                            <Setter Property="ToolTip" Value="Delete user"/>
-                                                                        </DataTrigger>
-                                                                    </Style.Triggers>
-                                                                </Style>
-                                                            </Path.Style>
-                                                            <Path.RenderTransform>
-                                                                <ScaleTransform ScaleX="0.1" ScaleY="0.1"/>
-                                                            </Path.RenderTransform>
-                                                        </Path>
-                                                        <Grid.RenderTransform>
-                                                            <ScaleTransform/>
-                                                        </Grid.RenderTransform>
-                                                    </Grid>
-                                                </Button>
-                                            </Grid>
+                                                    <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Top" HorizontalAlignment="Right" Cursor="Hand" Width="2.5" Height="2.5" Margin="0,1.8,5,0" Click="EditUser_Clicked">
+                                                        <Grid Style="{DynamicResource HoverEffect}"  Background="Transparent"  RenderTransformOrigin="0.5,0.5">
+                                                            <Path Data="{StaticResource IconInstalledGamesSettings}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Margin="0,0,-20,-20">
+                                                                <Path.RenderTransform>
+                                                                    <ScaleTransform ScaleX="0.1" ScaleY="0.1"/>
+                                                                </Path.RenderTransform>
+                                                            </Path>
+                                                            <Grid.RenderTransform>
+                                                                <ScaleTransform/>
+                                                            </Grid.RenderTransform>
+                                                        </Grid>
+                                                    </Button>
+                                                    <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Top" HorizontalAlignment="Right" Cursor="Hand" Width="2.5" Height="2.5" Margin="0,1.8,1,0" Click="DeleteUser_Clicked">
+                                                        <Grid Style="{DynamicResource HoverEffect}" Background="Transparent" RenderTransformOrigin="0.5,0.5">
+                                                            <Path Margin="0,0,-20,-20">
+                                                                <Path.Style>
+                                                                    <Style TargetType="{x:Type Path}">
+                                                                        <Setter Property="Data" Value="{DynamicResource IconReload}"/>
+                                                                        <Setter Property="Fill" Value="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+                                                                        <Setter Property="ToolTip" Value="Recover user"/>
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding Path=DeletedAt}" Value="{x:Null}">
+                                                                                <Setter Property="Data" Value="{DynamicResource IconTrash}"/>
+                                                                                <Setter Property="Fill" Value="IndianRed"/>
+                                                                                <Setter Property="ToolTip" Value="Delete user"/>
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Path.Style>
+                                                                <Path.RenderTransform>
+                                                                    <ScaleTransform ScaleX="0.1" ScaleY="0.1"/>
+                                                                </Path.RenderTransform>
+                                                            </Path>
+                                                            <Grid.RenderTransform>
+                                                                <ScaleTransform/>
+                                                            </Grid.RenderTransform>
+                                                        </Grid>
+                                                    </Button>
+                                                </Grid>
+                                            </Border>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>

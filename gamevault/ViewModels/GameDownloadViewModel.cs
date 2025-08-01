@@ -1,4 +1,5 @@
 ﻿using gamevault.Converter;
+using gamevault.Helper;
 using gamevault.Models;
 using gamevault.UserControls;
 using System;
@@ -109,7 +110,7 @@ namespace gamevault.ViewModels
             {
                 if (createShortcut == null)
                 {
-                    createShortcut = Preferences.Get(AppConfigKey.CreateDesktopShortcut, AppFilePath.UserFile) == "1";
+                    createShortcut = Preferences.Get(AppConfigKey.CreateDesktopShortcut, LoginManager.Instance.GetUserProfile().UserConfigFile) == "1";
                 }
                 return createShortcut;
             }
@@ -117,7 +118,7 @@ namespace gamevault.ViewModels
             set
             {
                 createShortcut = value; OnPropertyChanged();
-                Preferences.Set(AppConfigKey.CreateDesktopShortcut, createShortcut == true ? "1" : "0", AppFilePath.UserFile);
+                Preferences.Set(AppConfigKey.CreateDesktopShortcut, createShortcut == true ? "1" : "0", LoginManager.Instance.GetUserProfile().UserConfigFile);
             }
         }
         public string[] SupportedArchives
