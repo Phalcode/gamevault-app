@@ -95,7 +95,7 @@ namespace gamevault.UserControls
             inputTimer?.Stop();
             await Search();
         }
-        
+
         private async Task Search()
         {
             Guid currentSearchToken = Guid.NewGuid();
@@ -300,11 +300,11 @@ namespace gamevault.UserControls
             }
             if (uiFilterEarlyAccess.IsChecked == true)
             {
-                filter += "&filter.early_access=$eq:true&filter.metadata.early_access=$eq:true";
+                filter += "&filter.metadata.early_access=$eq:true";
             }
             if (uiFilterReleaseDateRangeSelector.IsValid())
             {
-                filter += $"&filter.release_date=$btw:{uiFilterReleaseDateRangeSelector.GetYearFrom()}-01-01,{uiFilterReleaseDateRangeSelector.GetYearTo()}-12-31";
+                filter += $"&filter.metadata.release_date=$btw:{uiFilterReleaseDateRangeSelector.GetYearFrom()}-01-01,{uiFilterReleaseDateRangeSelector.GetYearTo()}-12-31";
             }
             string genres = uiFilterGenreSelector.GetSelectedEntries();
             if (genres != string.Empty)
