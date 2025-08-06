@@ -1,6 +1,6 @@
 # GameVault App Changelog
 
-##1.17.1
+## 1.17.1
 Recommended Gamevault Server Version: `v15.0.2`
 ### Changes
 - User registration has also been added to the Admin Panel.
