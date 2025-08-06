@@ -1,5 +1,12 @@
 # GameVault App Changelog
 
+##1.17.1
+Recommended Gamevault Server Version: `v15.0.2`
+### Changes
+- User registration has also been added to the Admin Panel.
+- Better handling of the game settings early access check box
+- Added 'getallgames' to the clients query API
+
 ## 1.17.0
 Recommended Gamevault Server Version: `v15.0.0`
 ### Changes

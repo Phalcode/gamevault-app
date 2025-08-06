@@ -983,7 +983,36 @@ namespace gamevault.UserControls
             }
             catch { }
         }
+
         #endregion
 
+        #region EarlyAccessToggleFix
+        private bool needEarlyAccessToggleFix = false;
+        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (needEarlyAccessToggleFix)
+                {
+                    needEarlyAccessToggleFix = false;
+                    var checkBox = sender as CheckBox;
+                    checkBox.IsChecked = true;
+                }
+            }
+            catch { }
+        }
+
+        private void CheckBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                if (ViewModel.UpdateGame?.UserMetadata?.EarlyAccess == null && ViewModel.Game?.Metadata?.EarlyAccess == false)
+                {
+                    needEarlyAccessToggleFix = true;
+                }
+            }
+            catch { }
+        }
+        #endregion
     }
 }

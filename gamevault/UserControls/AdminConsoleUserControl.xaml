@@ -73,7 +73,7 @@
                                                 <ScaleTransform ScaleX="0.05" ScaleY="0.05"/>
                                             </mah:ToggleSwitch.RenderTransform>
                                         </mah:ToggleSwitch>
-                                        <Grid x:Name="uiBtnReload" Style="{DynamicResource HoverEffect}" Background="Transparent" Cursor="Hand" Width="2" Height="2" Margin="-287,2,0,0"  ToolTip="Refresh admin console (F5)" MouseLeftButtonUp="Reload_Click">
+                                        <Grid x:Name="uiBtnReload" Style="{DynamicResource HoverEffect}" Background="Transparent" Cursor="Hand" Width="2" Height="2" Margin="-286.59,2,0,0"  ToolTip="Refresh admin console (F5)" MouseLeftButtonUp="Reload_Click">
                                             <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.49,0.49" Margin="-9,-9,-9,-9">
                                                 <Path.RenderTransform>
                                                     <ScaleTransform ScaleX="0.1" ScaleY="0.1"/>
@@ -90,6 +90,18 @@
                         <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Margin="0,0.5,0,0"  CornerRadius="1">
                             <Grid>
                                 <TextBlock Text="Users" FontSize="1.5" FontWeight="Bold" VerticalAlignment="Top" Margin="1,0,0,0"/>
+                                <Button Style="{StaticResource ButtonWrapper}" VerticalAlignment="Top" HorizontalAlignment="Right" Cursor="Hand" Width="2.5" Height="2.5" Margin="0,0.5,1,0" Click="RegistrateUser_Click" ToolTip="Registrate new User">
+                                    <Grid Style="{DynamicResource HoverEffect}"  Background="Transparent"  RenderTransformOrigin="0.5,0.5">
+                                        <Path Data="{StaticResource IconAddSimple}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" Stroke="{DynamicResource MahApps.Brushes.ThemeForeground}" Margin="0.13,0.13,-22,-22">
+                                            <Path.RenderTransform>
+                                                <ScaleTransform ScaleX="0.09" ScaleY="0.09"/>
+                                            </Path.RenderTransform>
+                                        </Path>
+                                        <Grid.RenderTransform>
+                                            <ScaleTransform/>
+                                        </Grid.RenderTransform>
+                                    </Grid>
+                                </Button>
                                 <ItemsControl ItemsSource="{Binding Path=Users}" Margin="0,1.4,0,1" >
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>

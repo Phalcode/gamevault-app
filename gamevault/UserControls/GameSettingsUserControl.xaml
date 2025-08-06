@@ -57,6 +57,7 @@
         <conv:InverseNullConverter x:Key="invNullConv"/>
         <conv:StringToArrayConverter x:Key="stringToArrayConv"/>
         <conv:IsGameMappedConverter x:Key="isGameMappedConv"/>
+        <conv:GameSettingsEarlyAccessContentConverter x:Key="earlyAccessContentConv"/>
     </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Key="Esc">
@@ -634,7 +635,27 @@
                                         <TextBox Width="100" Margin="115,0,0,0" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.AgeRating}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.AgeRating,TargetNullValue='',FallbackValue={x:Null}}" mah:ControlsHelper.CornerRadius="5"/>
                                         <DatePicker Width="100" Margin="69,0,0,0" SelectedDate="{Binding UpdateGame.UserMetadata.ReleaseDate}" mah:TextBoxHelper.Watermark="{Binding Path=Game.Metadata.ReleaseDate,StringFormat='{}{0:dd/MM/yyyy}'}" mah:ControlsHelper.CornerRadius="5" mah:TextBoxHelper.UseFloatingWatermark="True"/>
                                         <TextBox Width="100" Margin="67,0,0,0" mah:TextBoxHelper.Watermark="{Binding Game.Metadata.Rating}" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding UpdateGame.UserMetadata.Rating}" mah:ControlsHelper.CornerRadius="5"/>
-                                        <CheckBox Content="{Binding Game.Metadata.EarlyAccess}" IsChecked="{Binding UpdateGame.UserMetadata.EarlyAccess}" Margin="68,0,0,0"/>
+                                        <Grid Margin="68,0,0,0">
+                                            <CheckBox Margin="0,0,0,0" mah:CheckBoxHelper.CheckCornerRadius="5">
+                                                <CheckBox.Style>
+                                                    <Style TargetType="CheckBox" BasedOn="{StaticResource MahApps.Styles.CheckBox}">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding UpdateGame.UserMetadata.EarlyAccess}" Value="{x:Null}">
+                                                                <Setter Property="IsChecked" Value="{Binding Game.Metadata.EarlyAccess}"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </CheckBox.Style>
+                                            </CheckBox>
+                                            <CheckBox PreviewMouseLeftButtonDown="CheckBox_PreviewMouseLeftButtonDown" Click="CheckBox_Click" IsChecked="{Binding UpdateGame.UserMetadata.EarlyAccess}" mah:CheckBoxHelper.CheckCornerRadius="5" mah:CheckBoxHelper.CheckBackgroundFillIndeterminateMouseOver="Transparent" mah:CheckBoxHelper.CheckBackgroundFillIndeterminatePressed="Transparent" mah:CheckBoxHelper.CheckBackgroundFillChecked="Transparent" mah:CheckBoxHelper.CheckBackgroundFillUnchecked="Transparent" mah:CheckBoxHelper.CheckBackgroundFillIndeterminate="Transparent"  mah:CheckBoxHelper.CheckGlyphForegroundIndeterminate="Transparent" mah:CheckBoxHelper.CheckGlyphForegroundIndeterminateMouseOver="Transparent" mah:CheckBoxHelper.CheckGlyphForegroundIndeterminatePressed="Transparent">
+                                                <CheckBox.Content>
+                                                    <MultiBinding Converter="{StaticResource earlyAccessContentConv}">
+                                                        <Binding Path="Game.Metadata.EarlyAccess"/>
+                                                        <Binding Path="UpdateGame.UserMetadata.EarlyAccess"/>
+                                                    </MultiBinding>
+                                                </CheckBox.Content>
+                                            </CheckBox>
+                                        </Grid>
                                     </StackPanel>
 
                                     <TextBlock Text="Default Launch Executable" FontSize="15" FontWeight="Bold" TextDecorations="Underline" Margin="0,5,0,5"/>

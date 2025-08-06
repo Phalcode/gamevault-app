@@ -18,11 +18,8 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Windows.Markup;
 using gamevault.Helper.Integrations;
-using AngleSharp.Dom;
-using Microsoft.Web.WebView2.Core;
-using Microsoft.Web.WebView2.Wpf;
 using gamevault.Windows;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using gamevault.UserControls.SettingsComponents;
 
 namespace gamevault.UserControls
 {

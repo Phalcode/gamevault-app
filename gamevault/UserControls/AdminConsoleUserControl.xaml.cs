@@ -266,6 +266,9 @@ namespace gamevault.UserControls
             e.Handled = true;
         }
 
-
+        private void RegistrateUser_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindowViewModel.Instance.OpenPopup(new RegistrationUserControl());
+        }
     }
 }
