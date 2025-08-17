@@ -72,7 +72,7 @@ namespace gamevault.Helper
         public void SwitchToOfflineMode()
         {
             MainWindowViewModel.Instance.OnlineState = System.Windows.Visibility.Visible;
-            m_User = null;           
+            m_User = null;
         }
         public UserProfile GetUserProfile()
         {
@@ -385,12 +385,20 @@ namespace gamevault.Helper
         }
 
 
-        public async Task<LoginState> Register(LoginUser user)
+        public async Task<LoginState> Register(LoginUser user, bool useOAuth = false)
         {
             try
             {
                 string userObject = JsonSerializer.Serialize(new User { Username = user.Username, Password = user.Password, EMail = user.EMail, FirstName = user.FirstName, LastName = user.LastName, BirthDate = user.BirthDate });
-                string newUser = await WebHelper.BasePostAsync($"{user.ServerUrl}/api/auth/basic/register", userObject);
+                string newUser = "";
+                if (useOAuth)
+                {
+                    newUser = await WebHelper.PostAsync($"{user.ServerUrl}/api/auth/basic/register", userObject);
+                }
+                else
+                {
+                    newUser = await WebHelper.BasePostAsync($"{user.ServerUrl}/api/auth/basic/register", userObject);
+                }
                 User newUserObject = JsonSerializer.Deserialize<User>(newUser);
                 if (newUserObject!.Activated != true)
                 {
