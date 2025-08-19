@@ -652,8 +652,12 @@ namespace gamevault.UserControls
         {
             if (InstallViewModel.Instance.InstalledGames.Any(game => game.Key.ID == ViewModel.Game.ID))
             {
-                await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"The Game {ViewModel.Game.Title} is already installed at \n'{InstallViewModel.Instance.InstalledGames.First(game => game.Key.ID == ViewModel.Game.ID).Value}'", "", MessageDialogStyle.Affirmative, new MetroDialogSettings() { AffirmativeButtonText = "Ok", AnimateHide = false });
-                return;
+                MessageDialogResult result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync($"The Game {ViewModel.Game.Title} is already installed at \n'{InstallViewModel.Instance.InstalledGames.First(game => game.Key.ID == ViewModel.Game.ID).Value}'" +
+                       $"\nWarning: Overwriting an existing installation with a new one may cause data corruption.", "",
+                       MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "Continue", NegativeButtonText = "Cancel", AnimateHide = false });
+
+                if (result == MessageDialogResult.Negative)
+                    return;
             }
             string targedDir = (SettingsViewModel.Instance.MountIso && Directory.Exists(mountedDrive)) ? mountedDrive : $"{m_DownloadPath}\\Extract";
 
