@@ -22,6 +22,7 @@ namespace gamevault.UserControls
         private int forceShowId = -1;
 
         private Storyboard skeletonAnimation;
+        private List<Storyboard> runningSkeletonAnimations = new List<Storyboard>();
         private List<Border> skeletonBorders = new List<Border>();
         public CommunityUserControl()
         {
@@ -57,20 +58,49 @@ namespace gamevault.UserControls
             {
                 ViewModel.LoadingUser = true;
                 skeletonAnimation = (Storyboard)FindResource("SkeletonLoadingAnimation");
-                skeletonBorders.Add((Border)FindName("SkeletonBorder1"));
-                skeletonBorders.Add((Border)FindName("SkeletonBorder2"));
-                skeletonBorders.Add((Border)FindName("SkeletonBorder3"));
+                Style? skeletonBorderStyle = FindResource("SkeletonBorderStyle") as Style;
+                foreach (var border in VisualHelper.FindVisualChildren<Border>(LoadingPlaceholder))
+                {
+                    if (border.Style == skeletonBorderStyle)
+                    {
+                        skeletonBorders.Add(border);
+                    }
+                }
                 if (skeletonAnimation != null)
                 {
                     foreach (var border in skeletonBorders)
                     {
+                        skeletonAnimation = skeletonAnimation.Clone();
                         Storyboard.SetTarget(skeletonAnimation, border);
-                        skeletonAnimation.Begin();
+                        skeletonAnimation.Begin(border, true);
+                        runningSkeletonAnimations.Add(skeletonAnimation);
                     }
                     LoadingPlaceholder.Visibility = Visibility.Visible;
                 }
             }
             catch { }
+        }
+        private void LoadingPlaceholder_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (skeletonAnimation == null)
+                return;
+
+
+            Visibility visibility = ((FrameworkElement)sender).Visibility;
+            if (visibility == Visibility.Collapsed)
+            {
+                for (int i = 0; i < runningSkeletonAnimations.Count; i++)
+                {
+                    runningSkeletonAnimations[i].Pause(skeletonBorders[i]);
+                }
+            }
+            else if (visibility == Visibility.Visible)
+            {
+                for (int i = 0; i < runningSkeletonAnimations.Count; i++)
+                {
+                    runningSkeletonAnimations[i].Resume(skeletonBorders[i]);
+                }
+            }
         }
         public async Task InitUserList()
         {

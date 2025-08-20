@@ -23,6 +23,25 @@ namespace gamevault.Helper
             while (parentDepObj != null);
             return default;
         }
+        internal static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
+        {
+            if (depObj != null)
+            {
+                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+                {
+                    DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
+                    if (child is T t)
+                    {
+                        yield return t;
+                    }
+
+                    foreach (T childOfChild in FindVisualChildren<T>(child))
+                    {
+                        yield return childOfChild;
+                    }
+                }
+            }
+        }
         internal static void AdjustWindowChrome(MetroWindow window)
         {
             try
@@ -47,7 +66,7 @@ namespace gamevault.Helper
         internal static void RestoreHiddenWindow(Window window, int height, int width)
         {
             window.Width = width;
-            window.Height = height;           
+            window.Height = height;
             window.ShowInTaskbar = true;
             double screenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;
             double screenHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
