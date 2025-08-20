@@ -107,11 +107,11 @@ namespace gamevault.UserControls.SettingsComponents
             try
             {
                 ValidateSignUpData();
-                LoginState state = await LoginManager.Instance.Register(ViewModel.SignupUser);
+                LoginState state = await LoginManager.Instance.Register(ViewModel.SignupUser, true);
                 if (state != LoginState.Error)
                 {
                     MainWindowViewModel.Instance.ClosePopup();
-                    if(MainWindowViewModel.Instance.ActiveControl.GetType() == typeof(AdminConsoleUserControl))
+                    if (MainWindowViewModel.Instance.ActiveControl.GetType() == typeof(AdminConsoleUserControl))
                     {
                         await MainWindowViewModel.Instance.AdminConsole.InitUserList();
                     }

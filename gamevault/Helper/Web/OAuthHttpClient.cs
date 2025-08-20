@@ -9,6 +9,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Text.Json;
 using gamevault.Models;
+using System.Diagnostics;
 
 namespace gamevault.Helper
 {
@@ -66,7 +67,7 @@ namespace gamevault.Helper
                 await LoginBasicAuthAsync(UserName, Password);
             }
 
-            if (IsTokenExpired(_accessToken) && !await RefreshTokenAsync())
+            if (IsTokenExpired() && !await RefreshTokenAsync())
                 throw new InvalidOperationException("Failed to refresh token.");
 
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
@@ -106,20 +107,30 @@ namespace gamevault.Helper
 
             _accessToken = json?.AccessToken;
             _refreshToken = json?.RefreshToken;
-
+            nextTokenRefresh = GetNextTokenRefresh(_accessToken);
+            //Debug.WriteLine($"Token refreshed. Next refresh at: {nextTokenRefresh}");
             return true;
         }
-
-        private bool IsTokenExpired(string token)
+        DateTimeOffset nextTokenRefresh;
+        private bool IsTokenExpired()
+        {
+            return nextTokenRefresh <= DateTimeOffset.UtcNow.AddMinutes(1);
+        }
+        private DateTimeOffset GetNextTokenRefresh(string token)
         {
             var parts = token.Split('.');
-            if (parts.Length != 3) return true;
+            if (parts.Length != 3) return DateTimeOffset.UtcNow;
 
             var payload = parts[1];
             var jsonBytes = Convert.FromBase64String(Base64UrlDecode(payload));
-
-            var json = JsonSerializer.Deserialize<JwtPayload>(Encoding.UTF8.GetString(jsonBytes));
-            return json?.Exp == null || DateTimeOffset.FromUnixTimeSeconds(json.Exp) <= DateTimeOffset.UtcNow.AddMinutes(1);
+            var json = JsonSerializer.Deserialize<JwtPayload>(Encoding.UTF8.GetString(jsonBytes));            
+            if (json?.Exp == null)
+            {
+                return DateTimeOffset.UtcNow;
+            }
+            var expTimestamp = DateTimeOffset.FromUnixTimeSeconds(json.Exp);
+            var creationTimestamp = DateTimeOffset.FromUnixTimeSeconds(json.Creation);
+            return DateTimeOffset.UtcNow + (expTimestamp - creationTimestamp);
         }
 
         private string Base64UrlDecode(string input)
@@ -140,6 +151,8 @@ namespace gamevault.Helper
 
     public class JwtPayload
     {
+        [JsonPropertyName("iat")]
+        public long Creation { get; set; }
         [JsonPropertyName("exp")]
         public long Exp { get; set; }
     }

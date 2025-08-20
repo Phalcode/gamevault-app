@@ -1,6 +1,14 @@
 # GameVault App Changelog
 
-##1.17.1
+## 1.17.2
+Recommended Gamevault Server Version: `v15.0.2`
+### Changes
+- Added authorization to the admin panel’s registration action, allowing administrators to register users even when server-side registration is disabled.
+- Extended the existing installation overwrite warning to allow users to continue the installation at their own risk.
+- Performance optimization in the community tab
+- Bug fix: OAuth access token expiration was not calculated correctly under certain circumstances.
+
+## 1.17.1
 Recommended Gamevault Server Version: `v15.0.2`
 ### Changes
 - User registration has also been added to the Admin Panel.
