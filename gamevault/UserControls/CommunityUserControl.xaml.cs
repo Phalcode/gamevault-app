@@ -56,6 +56,9 @@ namespace gamevault.UserControls
         {
             try
             {
+                if (skeletonAnimation != null)
+                    return;  //Already initialized
+
                 ViewModel.LoadingUser = true;
                 skeletonAnimation = (Storyboard)FindResource("SkeletonLoadingAnimation");
                 Style? skeletonBorderStyle = FindResource("SkeletonBorderStyle") as Style;
