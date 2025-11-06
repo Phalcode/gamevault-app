@@ -40,6 +40,33 @@ namespace gamevault.UserControls
                 InstallViewModel.Instance.InstalledGamesFilter = CollectionViewSource.GetDefaultView(InstallViewModel.Instance.InstalledGames);
             }
         }
+        private List<Game> GetGamesFromOfflineCache(Dictionary<int, string> games)
+        {
+            List<Game> offlineCacheGames = new List<Game>();
+            foreach (KeyValuePair<int, string> entry in games)
+            {
+                string objectFromFile = Preferences.Get(entry.Key.ToString(), LoginManager.Instance.GetUserProfile().OfflineCache);
+                if (objectFromFile != string.Empty)
+                {
+                    try
+                    {
+                        string decompressedObject = StringCompressor.DecompressString(objectFromFile);
+                        Game? deserializedObject = JsonSerializer.Deserialize<Game>(decompressedObject);
+                        if (deserializedObject != null)
+                        {
+                            offlineCacheGames.Add(deserializedObject);
+                        }
+                    }
+                    catch (FormatException exFormat) { }
+                }
+                else
+                {
+                    string gameTitle = Path.GetFileName(entry.Value);
+                    offlineCacheGames.Add(new Game() { ID = entry.Key, Title = gameTitle.Substring(gameTitle.IndexOf(')') + 1) });
+                }
+            }
+            return offlineCacheGames;
+        }
         public async Task RestoreInstalledGames(bool fromCLI = false)
         {
             if (gamesRestored)
@@ -98,33 +125,26 @@ namespace gamevault.UserControls
                             if (LoginManager.Instance.IsLoggedIn())
                             {
                                 string gameList = await WebHelper.GetAsync(@$"{SettingsViewModel.Instance.ServerUrl}/api/games?filter.id=$in:{gameIds}&limit=-1");
-                                return JsonSerializer.Deserialize<PaginatedData<Game>>(gameList).Data;
+                                Game[] serverGames = JsonSerializer.Deserialize<PaginatedData<Game>>(gameList)!.Data;
+
+                                var serverGameIds = new HashSet<int>(serverGames.Select(g => g.ID));
+                                var missingGames = foundGames.Where(kvp => !serverGameIds.Contains(kvp.Key))
+                                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+                                //Make sure to display installed games that are already deleted on the server
+                                if (missingGames.Count > 0)
+                                {
+                                    List<Game> offlineCacheGames = GetGamesFromOfflineCache(foundGames);
+                                    if (offlineCacheGames.Count > 0)
+                                    {
+                                        serverGames = serverGames.Concat(offlineCacheGames).ToArray();
+                                    }
+                                }
+                                return serverGames;
                             }
                             else
                             {
-                                List<Game> offlineCacheGames = new List<Game>();
-                                foreach (KeyValuePair<int, string> entry in foundGames)
-                                {
-                                    string objectFromFile = Preferences.Get(entry.Key.ToString(), LoginManager.Instance.GetUserProfile().OfflineCache);
-                                    if (objectFromFile != string.Empty)
-                                    {
-                                        try
-                                        {
-                                            string decompressedObject = StringCompressor.DecompressString(objectFromFile);
-                                            Game? deserializedObject = JsonSerializer.Deserialize<Game>(decompressedObject);
-                                            if (deserializedObject != null)
-                                            {
-                                                offlineCacheGames.Add(deserializedObject);
-                                            }
-                                        }
-                                        catch (FormatException exFormat) { }
-                                    }
-                                    else
-                                    {
-                                        string gameTitle = Path.GetFileName(entry.Value);
-                                        offlineCacheGames.Add(new Game() { ID = entry.Key, Title = gameTitle.Substring(gameTitle.IndexOf(')') + 1) });
-                                    }
-                                }
+                                List<Game> offlineCacheGames = GetGamesFromOfflineCache(foundGames);
                                 return offlineCacheGames.ToArray();
                             }
                         }
