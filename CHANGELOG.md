@@ -5,6 +5,7 @@ Recommended Gamevault Server Version: `v16.1.1`
 ### Changes
 - Bug fix: Installed games were sometimes not displayed if they were deleted from the server.
 - Bug fix: Completed downloads were sometimes displayed as paused after a restart.
+- Bug fix: YouTube videos are loading again
 
 ## 1.17.2
 Recommended Gamevault Server Version: `v15.0.2`
