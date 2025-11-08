@@ -1,9 +1,16 @@
 # GameVault App Changelog
 
+## 1.17.3
+Recommended Gamevault Server Version: `v16.1.1`
+### Changes
+- Bug fix: Installed games were sometimes not displayed if they were deleted from the server.
+- Bug fix: Completed downloads were sometimes displayed as paused after a restart.
+- Bug fix: YouTube videos are loading again
+
 ## 1.17.2
 Recommended Gamevault Server Version: `v15.0.2`
 ### Changes
-- Added authorization to the admin panel’s registration action, allowing administrators to register users even when server-side registration is disabled.
+- Added authorization to the admin panels registration action, allowing administrators to register users even when server-side registration is disabled.
 - Extended the existing installation overwrite warning to allow users to continue the installation at their own risk.
 - Performance optimization in the community tab
 - Bug fix: OAuth access token expiration was not calculated correctly under certain circumstances.

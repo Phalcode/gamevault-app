@@ -190,7 +190,7 @@ namespace gamevault.Helper
                 return;
 
             totalDownloadSize = PreResumeSize == -1 ? totalDownloadSize : PreResumeSize;
-            double progressPercentage = Math.Round((double)totalBytesRead / totalDownloadSize * 100, 0);
+            double progressPercentage = (double)totalBytesRead / totalDownloadSize * 100;
             ProgressChanged(totalDownloadSize, currentBytesRead, totalBytesRead, progressPercentage, ResumePosition);
         }
         public void Cancel()
