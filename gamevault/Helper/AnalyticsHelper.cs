@@ -1,5 +1,4 @@
-﻿using AngleSharp.Io;
-using gamevault.UserControls;
+﻿using gamevault.UserControls;
 using gamevault.ViewModels;
 using System;
 using System.CodeDom;

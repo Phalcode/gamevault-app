@@ -12,7 +12,6 @@ using System.Diagnostics;
 using MahApps.Metro.Controls.Dialogs;
 using MahApps.Metro.Controls;
 using System.Text.Json;
-using AngleSharp.Common;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Collections.Generic;

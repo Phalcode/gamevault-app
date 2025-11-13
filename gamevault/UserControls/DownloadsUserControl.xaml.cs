@@ -10,7 +10,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using gamevault.Helper.Integrations;
-using AngleSharp.Io;
 using System.IO;
 
 namespace gamevault.UserControls
