@@ -1,5 +1,10 @@
 # GameVault App Changelog
 
+## 1.17.4
+Recommended Gamevault Server Version: `v16.1.1`
+### Changes
+- Bug fix: Fixed youtube video region lock
+
 ## 1.17.3
 Recommended Gamevault Server Version: `v16.1.1`
 ### Changes
