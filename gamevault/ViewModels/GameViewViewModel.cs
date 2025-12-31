@@ -1,4 +1,4 @@
-﻿using gamevault.Models;
+using gamevault.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -61,12 +61,27 @@ namespace gamevault.ViewModels
         public string? DescriptionMarkdown
         {
             get { return descriptionMarkdown; }
-            set { descriptionMarkdown = value; OnPropertyChanged(); }
+            set
+            {
+                descriptionMarkdown = value?
+                    .Replace("\t", "\u00A0\u00A0\u00A0\u00A0")
+                    .Replace("    ", "\u00A0\u00A0\u00A0\u00A0");
+
+                OnPropertyChanged();
+            }
         }
+
         public string? NotesMarkdown
         {
             get { return notesMarkdown; }
-            set { notesMarkdown = value; OnPropertyChanged(); }
+            set
+            {
+                notesMarkdown = value?
+                    .Replace("\t", "\u00A0\u00A0\u00A0\u00A0")
+                    .Replace("    ", "\u00A0\u00A0\u00A0\u00A0");
+
+                OnPropertyChanged();
+            }
         }
         public string CloudSaveMatchTitle
         {
