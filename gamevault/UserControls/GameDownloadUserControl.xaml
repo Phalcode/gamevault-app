@@ -251,7 +251,7 @@
                     </Border>
                     <TextBlock Text="To install this game, please follow the steps below:" FontWeight="Bold" Margin="0,10,0,0" FontSize="4"/>
 
-                    <TextBlock FontSize="4" TextWrapping="Wrap" Text="This is a Portable Game, so there's no need for any setup. Once you click 'Install', the files will be automatically moved to the installation folder." MaxWidth="126" Margin="0,18,0,0"/>
+                    <TextBlock FontSize="4" TextWrapping="Wrap" Text="This portable game does not require installation. Click 'Install' to copy its files to the installation folder." MaxWidth="126" Margin="0,18,0,0"/>
 
                     <local:IconButton x:Name="uiBtnInstallPortable" Kind="Primary" Text="Install" FontSize="5" Icon="{StaticResource IconInstalledGamesSettings}" IconScale="0.29" IconMargin="-8,-7,-5.5,-7" CornerRadius="2" Height="9" Width="34" BorderThickness="0.2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,1,0" Click="Install_Click"/>
                 </Grid>
