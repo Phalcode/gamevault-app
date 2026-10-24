@@ -33,6 +33,13 @@ namespace gamevault.Windows
             this.DataContext = MainWindowViewModel.Instance;
             InitBootTasks();
         }
+        private const double PopupMinScale = 0.9;
+        private void PopupContent_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            //The Viewbox measures the popup at its natural size. Below PopupMinScale of that size the popup stops shrinking and becomes scrollable
+            uiPopupViewbox.MinWidth = e.NewSize.Width * PopupMinScale;
+            uiPopupViewbox.MinHeight = e.NewSize.Height * PopupMinScale;
+        }
         private void InitBootTasks()
         {
             App.HideToSystemTray = true;

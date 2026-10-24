@@ -156,21 +156,18 @@
 
         <Grid Panel.ZIndex="1">
             <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Background="{x:Null}" Focusable="False">
-                <Viewbox Width="{Binding ViewportWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer}}" Height="{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
-                    <Viewbox.Style>
-                        <Style TargetType="Viewbox">
-                            <!--Below this size the popup stops shrinking and becomes scrollable-->
-                            <Setter Property="MinWidth" Value="1170"/>
-                            <Setter Property="MinHeight" Value="810"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Popup}" Value="{x:Null}">
-                                    <Setter Property="MinWidth" Value="0"/>
-                                    <Setter Property="MinHeight" Value="0"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Viewbox.Style>
-                    <uc:TransitioningContentControlEx RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding Popup}" />
+                <ScrollViewer.Style>
+                    <Style TargetType="ScrollViewer" BasedOn="{StaticResource {x:Type ScrollViewer}}">
+                        <Style.Triggers>
+                            <!--Without a popup the overlay must not swallow clicks meant for the page below-->
+                            <DataTrigger Binding="{Binding Popup}" Value="{x:Null}">
+                                <Setter Property="IsHitTestVisible" Value="False"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ScrollViewer.Style>
+                <Viewbox x:Name="uiPopupViewbox" Width="{Binding ViewportWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer}}" Height="{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
+                    <uc:TransitioningContentControlEx RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding Popup}" SizeChanged="PopupContent_SizeChanged"/>
                 </Viewbox>
             </ScrollViewer>
             <Grid.Style>
