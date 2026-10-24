@@ -24,17 +24,20 @@
         <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground2}" Grid.Row="0">
             <TextBlock Text="Library" FontSize="35" Margin="20,0,0,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
         </Border>
-        <ScrollViewer x:Name="uiMainScrollBar" Grid.Row="1" VerticalScrollBarVisibility="Auto"  RequestBringIntoView="uiMainScrollBar_RequestBringIntoView" ScrollChanged="uiMainScrollBar_ScrollChanged">
+        <ScrollViewer x:Name="uiMainScrollBar" Grid.Row="1" VerticalScrollBarVisibility="Auto"  RequestBringIntoView="uiMainScrollBar_RequestBringIntoView" ScrollChanged="uiMainScrollBar_ScrollChanged" SizeChanged="uiMainScrollBar_SizeChanged">
             <StackPanel>
-                <Viewbox>
-                    <local:InstallUserControl x:Name="uiGameInstalls" Width="2000"/>
-                </Viewbox>
-                <Viewbox>
-                    <Expander x:Name="uiExpanderGameCards" Width="2000" Margin="10,0,10,10" mah:ExpanderHelper.HeaderDownStyle="{StaticResource CustomExpanderToggleButton}" BorderBrush="{x:Null}">
+                <local:InstallUserControl x:Name="uiGameInstalls"/>
+                    <Expander x:Name="uiExpanderGameCards" Margin="10,0,10,10" mah:ExpanderHelper.HeaderDownStyle="{StaticResource CustomExpanderToggleButton}" BorderBrush="{x:Null}">
                         <Expander.Header>
                             <Grid Height="35">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="Server Games" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" FontWeight="Bold" HorizontalAlignment="Left" FontSize="20" VerticalAlignment="Center"/>
-                                <TextBlock FontWeight="Bold" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" HorizontalAlignment="Left" FontSize="20" VerticalAlignment="Center" Margin="135,0,0,0">
+                                <TextBlock FontWeight="Bold" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" HorizontalAlignment="Left" FontSize="20" VerticalAlignment="Center" Margin="10,0,0,0">
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Visibility" Value="Visible" />
@@ -55,8 +58,15 @@
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>
-                                <TextBox HorizontalAlignment="Center" Width="378" Margin="0,4,45,4" Style="{DynamicResource SearchTextBox}" TextChanged="Search_TextChanged"/>
-                                <Button Style="{StaticResource ButtonWrapper}" x:Name="uiBtnReloadLibrary" Height="25" Width="25" Margin="394,0,0,0" Cursor="Hand" ToolTip="Reload Library (F5)" Click="ReloadLibrary_Click">
+                                </StackPanel>
+                                <Grid Grid.Column="1" MaxWidth="468" Margin="20,0,20,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Margin="0,4,0,4" Style="{DynamicResource SearchTextBox}" TextChanged="Search_TextChanged"/>
+                                <Button Grid.Column="1" Style="{StaticResource ButtonWrapper}" x:Name="uiBtnReloadLibrary" Height="25" Width="25" Margin="18,0,0,0" Cursor="Hand" ToolTip="Reload Library (F5)" Click="ReloadLibrary_Click">
                                     <Grid  Style="{DynamicResource HoverEffect}" Background="Transparent">
                                         <Path Data="{StaticResource IconReload}" Fill="{DynamicResource MahApps.Brushes.IdealForeground}" Margin="0,0.6,0,0" RenderTransformOrigin="0.5,0.5">
                                             <Path.RenderTransform>
@@ -68,7 +78,7 @@
                                         </Grid.RenderTransform>
                                     </Grid>
                                 </Button>
-                                <Button Style="{StaticResource ButtonWrapper}" Height="30" Width="33" Margin="480,0,0,0" Cursor="Hand" ToolTip="I'm Feeling Lucky" Click="RandomGame_Click">
+                                <Button Grid.Column="2" Style="{StaticResource ButtonWrapper}" Height="30" Width="33" Margin="14,0,0,0" Cursor="Hand" ToolTip="I'm Feeling Lucky" Click="RandomGame_Click">
                                     <Grid Style="{DynamicResource HoverEffect}" Background="Transparent">
                                         <Path Data="{StaticResource IconLibraryDices}" Fill="{DynamicResource MahApps.Brushes.IdealForeground}" Margin="-229,-229,-227,-227" RenderTransformOrigin="0.5,0.5">
                                             <Path.RenderTransform>
@@ -80,6 +90,8 @@
                                         </Grid.RenderTransform>
                                     </Grid>
                                 </Button>
+                                </Grid>
+                                <Grid Grid.Column="2" Width="75">
                                 <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" Width="30" Margin="0,0,40,0" Cursor="Hand" ToolTip="Clear all Filters" Background="Transparent" MouseLeftButtonDown="ClearAllFilters_Click">
                                     <Path Data="m11.25 4.75l-6.5 6.5m0-6.5l6.5 6.5" Stroke="IndianRed" StrokeThickness="2" RenderTransformOrigin="0.04,0.02">
                                         <Path.RenderTransform>
@@ -110,11 +122,16 @@
                                         <ScaleTransform/>
                                     </Grid.RenderTransform>
                                 </Grid>
+                                </Grid>
                             </Grid>
                         </Expander.Header>
                         <StackPanel>
                             <Grid Visibility="{Binding FilterVisibility}">
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <WrapPanel Orientation="Horizontal" HorizontalAlignment="Left">
                                     <local:PillSelector x:Name="uiFilterGameTypeSelector" SelectionType="GameType" Margin="12,0,24,0" Width="175" EntriesUpdated="FilterUpdated"/>
                                     <local:PillSelector x:Name="uiFilterTagSelector" SelectionType="Tags" Margin="0,0,24,0" Width="175" EntriesUpdated="FilterUpdated"/>
                                     <local:PillSelector x:Name="uiFilterGenreSelector" SelectionType="Genres" Margin="0,0,24,0" Width="175" EntriesUpdated="FilterUpdated"/>
@@ -192,8 +209,8 @@
                                             </ToggleButton.Style>
                                         </ToggleButton>
                                     </StackPanel>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+                                </WrapPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
                                     <ToggleButton x:Name="uiFilterOrderBy" Width="35" Height="35" Cursor="Hand" Margin="0,10,0,0">
                                         <ToggleButton.Style>
                                             <Style TargetType="ToggleButton">
@@ -283,10 +300,10 @@
                                         </TextBlock>
                                     </StackPanel>
                                     <!--Games found-->
-                                    <vwp:VirtualizingItemsControl x:Name="uiServerGamesItemsControl" ItemsSource="{Binding Path=GameCards}" Margin="0,0,0,0" Background="Transparent" IsTabStop="False" MaxHeight="891">
+                                    <vwp:VirtualizingItemsControl x:Name="uiServerGamesItemsControl" ItemsSource="{Binding Path=GameCards}" Margin="0,0,0,0" Background="Transparent" IsTabStop="False" SizeChanged="ServerGamesItemsControl_SizeChanged">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
-                                                <UniformGrid Background="Transparent" Columns="10" Margin="0,5,0,5"/>
+                                                <UniformGrid Background="Transparent" Columns="{Binding GameCardColumns}" Margin="0,5,0,5"/>
                                             </ItemsPanelTemplate>
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
@@ -462,7 +479,7 @@
                                                     <ScrollViewer Name="PART_ItemsScroll" Style="{DynamicResource SecondaryScrollView}" CanContentScroll="True" Padding="{TemplateBinding Padding}"  ScrollChanged="Library_ScrollChanged" PreviewMouseWheel="Library_PreviewMouseWheel">
                                                         <ItemsPresenter Margin="5,0,5,0"/>
                                                     </ScrollViewer>
-                                                    <Border Style="{DynamicResource HoverEffect}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Visibility="{Binding ScrollToTopVisibility}" Background="{DynamicResource MahApps.Brushes.Accent2}" CornerRadius="5" Cursor="Hand" Width="50" Height="50" Margin="1800,0,15,15" Padding="18,20,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="ScrollToTop_Click">
+                                                    <Border Style="{DynamicResource HoverEffect}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Visibility="{Binding ScrollToTopVisibility}" Background="{DynamicResource MahApps.Brushes.Accent2}" CornerRadius="5" Cursor="Hand" Width="50" Height="50" Margin="0,0,15,15" Padding="18,20,0,0" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="ScrollToTop_Click">
                                                         <Path Data="{StaticResource IconLibraryScrollToTop}" Fill="{DynamicResource MahApps.Brushes.ThemeForeground}" RenderTransformOrigin="0.5,0.5">
                                                             <Path.RenderTransform>
                                                                 <ScaleTransform ScaleX="2" ScaleY="2"/>
@@ -480,7 +497,6 @@
                             </Border>
                         </StackPanel>
                     </Expander>
-                </Viewbox>
             </StackPanel>
         </ScrollViewer>
         <MediaElement x:Name="uiImgRandom" Volume="0" LoadedBehavior="Play" Panel.ZIndex="1000" Grid.Row="0" Grid.RowSpan="2" Visibility="Collapsed"/>

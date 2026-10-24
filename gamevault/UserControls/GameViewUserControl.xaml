@@ -45,11 +45,11 @@
         </Viewbox>
         <Grid Background="{DynamicResource GameVault.Brushes.Blur}"/>
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <Grid Width="{Binding ViewportWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer}}" MinWidth="1020">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="4*" />
+                    <ColumnDefinition MinWidth="170"/>
+                    <ColumnDefinition Width="4*" MinWidth="850"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 

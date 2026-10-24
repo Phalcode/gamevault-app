@@ -19,6 +19,7 @@ namespace gamevault.ViewModels
         private KeyValuePair<string, string> m_SelectedGameFilterSortBy { get; set; }
         private string filterCounter { get; set; } = string.Empty;
         private bool canLoadServerGames { get; set; } = true;
+        private int gameCardColumns = 10;
         #endregion
         public ObservableCollection<Game> GameCards
         {
@@ -79,6 +80,11 @@ namespace gamevault.ViewModels
         {
             get { return canLoadServerGames; }
             set { canLoadServerGames = value; OnPropertyChanged(); }
+        }
+        public int GameCardColumns
+        {
+            get { return gameCardColumns; }
+            set { gameCardColumns = value; OnPropertyChanged(); }
         }
     }
 }
