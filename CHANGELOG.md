@@ -1,5 +1,10 @@
 # GameVault App Changelog
 
+## 1.17.6
+Recommended Gamevault Server Version: `v17.1.1`
+### Changes
+- Bug fix: The rotated session token was not stored, so users who signed in via SSO had to authenticate again on every start.
+
 ## 1.17.5
 Recommended Gamevault Server Version: `v16.1.2`
 ### Changes

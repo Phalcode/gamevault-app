@@ -11,8 +11,8 @@ using System.Windows.Markup;
                                               //(used if a resource is not found in the page,
                                               // app, or any theme specific resource dictionaries)
 )]
-[assembly: AssemblyVersion("1.17.5.0")]
-[assembly: AssemblyCopyright("© Phalcode™. All Rights Reserved.")]
+[assembly: AssemblyVersion("1.17.6.0")]
+[assembly: AssemblyCopyright("ï¿½ Phalcodeï¿½. All Rights Reserved.")]
 #if DEBUG
 [assembly: XmlnsDefinition("debug-mode", "Namespace")]
 #endif

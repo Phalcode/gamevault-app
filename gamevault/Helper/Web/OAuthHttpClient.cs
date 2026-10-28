@@ -113,8 +113,31 @@ namespace gamevault.Helper
             _accessToken = json?.AccessToken;
             _refreshToken = json?.RefreshToken;
             nextTokenRefresh = GetNextTokenRefresh(_accessToken);
+            PersistRefreshToken();
             //Debug.WriteLine($"Token refreshed. Next refresh at: {nextTokenRefresh}");
             return true;
+        }
+
+        /// <summary>
+        /// Stores the rotated refresh token in the user profile.
+        /// The server invalidates the previous refresh token on every refresh, so
+        /// keeping the new one in memory only would leave the stored session dead
+        /// after the first refresh and force a new login on the next start.
+        /// </summary>
+        private void PersistRefreshToken()
+        {
+            try
+            {
+                string userConfigFile = LoginManager.Instance.GetUserProfile()?.UserConfigFile;
+                if (!string.IsNullOrWhiteSpace(_refreshToken) && !string.IsNullOrWhiteSpace(userConfigFile))
+                {
+                    Preferences.Set(AppConfigKey.SessionToken, _refreshToken, userConfigFile, true);
+                }
+            }
+            catch
+            {
+                // Never break a working session because persisting failed.
+            }
         }
         DateTimeOffset nextTokenRefresh;
         private bool IsTokenExpired()
