@@ -14,9 +14,14 @@
         <Expander x:Name="uiInstalledGames" Margin="10" mah:ExpanderHelper.HeaderDownStyle="{StaticResource CustomExpanderToggleButton}" BorderBrush="{x:Null}" Expanded="InstalledGames_Toggled" Collapsed="InstalledGames_Toggled">
             <Expander.Header>
                 <Grid Height="35">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
                     <TextBlock Text="{Binding Path=InstalledGames.Count,StringFormat='{}Installed Games ({0})'}" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" FontWeight="Bold" HorizontalAlignment="Left" FontSize="20" VerticalAlignment="Center"/>
-                    <TextBox HorizontalAlignment="Center" Width="376" Margin="0,4,44,4" Style="{DynamicResource SearchTextBox}" TextChanged="Search_TextChanged"/>
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,0,0">
+                    <TextBox Grid.Column="1" MaxWidth="376" Margin="20,4,20,4" Style="{DynamicResource SearchTextBox}" TextChanged="Search_TextChanged"/>
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,0,0">
                         <TextBlock Text="Rows" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" VerticalAlignment="Center" FontSize="15" Margin="0,0,10,0"/>
                         <mah:NumericUpDown x:Name="uiRowsUpDown" ButtonsAlignment="Opposite" Minimum="1" ValueChanged="Rows_ValueChanged" SwitchUpDownButtons="True" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}"/>
                         <mah:NumericUpDown Value="{Binding Path=InstalledGames.Count,Mode=OneWay}" ValueChanged="Collection_Updated" Visibility="Collapsed"/>

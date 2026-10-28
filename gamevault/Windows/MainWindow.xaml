@@ -155,9 +155,21 @@
 
 
         <Grid Panel.ZIndex="1">
-            <Viewbox>
-                <uc:TransitioningContentControlEx RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding Popup}" />
-            </Viewbox>
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Background="{x:Null}" Focusable="False">
+                <ScrollViewer.Style>
+                    <Style TargetType="ScrollViewer" BasedOn="{StaticResource {x:Type ScrollViewer}}">
+                        <Style.Triggers>
+                            <!--Without a popup the overlay must not swallow clicks meant for the page below-->
+                            <DataTrigger Binding="{Binding Popup}" Value="{x:Null}">
+                                <Setter Property="IsHitTestVisible" Value="False"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ScrollViewer.Style>
+                <Viewbox x:Name="uiPopupViewbox" Width="{Binding ViewportWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer}}" Height="{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
+                    <uc:TransitioningContentControlEx RestartTransitionOnContentChange="True" Transition="Left" Content="{Binding Popup}" SizeChanged="PopupContent_SizeChanged"/>
+                </Viewbox>
+            </ScrollViewer>
             <Grid.Style>
                 <Style TargetType="Grid">
                     <Setter Property="Background" Value="#7F000000"/>

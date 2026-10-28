@@ -483,6 +483,21 @@ namespace gamevault.UserControls
                 ViewModel.GameCards[index] = gameToRefreshParam;
             }
         }
+        #region RESPONSIVE LAYOUT
+        private const double GameCardSlotWidth = 200;
+        private void ServerGamesItemsControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (!e.WidthChanged)
+                return;
+            //Subtract the items presenter margin and the inner scrollbar, so the columns never overflow
+            ViewModel.GameCardColumns = Math.Max(1, (int)((e.NewSize.Width - 30) / GameCardSlotWidth));
+        }
+        private void uiMainScrollBar_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            //Keep the paginated server games list within the visible area, so its own scrollbar can be used to load more pages
+            uiServerGamesItemsControl.MaxHeight = Math.Max(300, e.NewSize.Height - 60);
+        }
+        #endregion
         #region PREVENT WEIRD AUTO SCROLL
         //The main scrollbar starts scrolling if i click in the server games section. Could not find a better solution for this Problem. Thats why this bad workaround.
         bool isProgrammaticScroll = false;
