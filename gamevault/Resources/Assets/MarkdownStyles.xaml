@@ -22,4 +22,18 @@ xmlns:markdig="clr-namespace:Markdig.Wpf;assembly=Markdig.Wpf"
         <Setter Property="FontWeight" Value="Light" />
         <Setter Property="TextDecorations" Value="Underline" />
     </Style>
+    <!-- Markdig.Wpf defaults code blocks and inline code to a light grey
+         background (#d3d3d3). On top of the theme foreground that is
+         unreadable in the dark theme, so keep both in the theme colors. -->
+    <Style TargetType="{x:Type Paragraph}" x:Key="{x:Static markdig:Styles.CodeBlockStyleKey}">
+        <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.ThemeBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.ThemeForeground}" />
+        <Setter Property="FontFamily" Value="Consolas, Lucida Sans Typewriter, Courier New" />
+        <Setter Property="Padding" Value="8" />
+    </Style>
+    <Style TargetType="{x:Type Run}" x:Key="{x:Static markdig:Styles.CodeStyleKey}">
+        <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.ThemeBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.ThemeForeground}" />
+        <Setter Property="FontFamily" Value="Consolas, Lucida Sans Typewriter, Courier New" />
+    </Style>
 </ResourceDictionary>

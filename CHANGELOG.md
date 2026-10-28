@@ -4,6 +4,7 @@
 Recommended Gamevault Server Version: `v17.1.1`
 ### Changes
 - Bug fix: The rotated session token was not stored, so users who signed in via SSO had to authenticate again on every start.
+- Bug fix: Code blocks and inline code in game descriptions and notes rendered with a light background and unreadable text on dark themes.
 
 ## 1.17.5
 Recommended Gamevault Server Version: `v16.1.2`
