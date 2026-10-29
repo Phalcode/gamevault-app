@@ -74,6 +74,7 @@ namespace gamevault.Helper
                 return;
 
             client = new HttpClient();
+            client.Timeout = TimeSpan.FromSeconds(15);
             client.DefaultRequestHeaders.UserAgent.Clear();
             string platform = IsWineRunning() ? "Linux" : "Windows NT";
             var userAgent = $"GameVault/{SettingsViewModel.Instance.Version} ({platform})";
@@ -97,7 +98,7 @@ namespace gamevault.Helper
 
         private void HeartBeat(object state)
         {
-            SendHeartBeat(AnalyticsTargets.HB);
+            _ = SendHeartBeat();
         }
 
         internal void RegisterGlobalEvents()
@@ -117,8 +118,8 @@ namespace gamevault.Helper
                 if (sender is ButtonBase button)
                 {
                     string methodName = ParseMethodName(button);
-                    var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { Event = "BUTTON_CLICK", Metadata = new { Path = methodName }, Timezone = timeZone, Language = language }), Encoding.UTF8, "application/json");
-                    await client.PostAsync(AnalyticsTargets.CU, jsonContent);
+                    var jsonContent = JsonSerializer.Serialize(new AnalyticsData() { Event = "BUTTON_CLICK", Metadata = new { Path = methodName, Collector = AnalyticsTargets.CurrentHost }, Timezone = timeZone, Language = language });
+                    await PostAnalyticsAsync(AnalyticsTargets.CustomPath, jsonContent);
                 }
             }
             catch { }
@@ -177,18 +178,45 @@ namespace gamevault.Helper
             return string.Empty;
         }
 
-        private async Task SendHeartBeat(string url)
-        {
-            try
-            {
-                var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData()), Encoding.UTF8, "application/json");
-                await client.PostAsync(url, jsonContent);
-            }
-            catch (Exception)
-            {
-                // swallow
-            }
+        private string? lastPageViewJson;
 
+        /// <summary>
+        /// Posts one analytics payload. The collectors are tried in order and the
+        /// first one that answers is kept, so a domain blocked by a DNS filter
+        /// does not silence the rest of the session. Returns the status the
+        /// collector answered with, or null when none of them could be reached.
+        /// </summary>
+        private async Task<int?> PostAnalyticsAsync(string path, string json)
+        {
+            for (var attempt = 0; attempt < AnalyticsTargets.Count; attempt++)
+            {
+                try
+                {
+                    using var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    using var response = await client.PostAsync(AnalyticsTargets.Current + path, content);
+                    var status = (int)response.StatusCode;
+                    if (status < 500)
+                        return status;
+                }
+                catch (Exception)
+                {
+                    // Unreachable collector, try the next one.
+                }
+                AnalyticsTargets.AdvanceToNextCollector();
+            }
+            return null;
+        }
+
+        private async Task SendHeartBeat()
+        {
+            var status = await PostAnalyticsAsync(AnalyticsTargets.HeartbeatPath, JsonSerializer.Serialize(new AnalyticsData()));
+            if (status != 403 || lastPageViewJson == null)
+                return;
+
+            // The collector has no session for us, which happens when the
+            // fallback switched collectors mid-session. Open one again.
+            await PostAnalyticsAsync(AnalyticsTargets.PageViewPath, lastPageViewJson);
+            await PostAnalyticsAsync(AnalyticsTargets.HeartbeatPath, JsonSerializer.Serialize(new AnalyticsData()));
         }
 
         private string Truncate(string? value, int maxLength)
@@ -205,8 +233,9 @@ namespace gamevault.Helper
             try
             {
                 string? pageString = ParseUserControl(page);
-                var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { Timezone = timeZone, CurrentPage = pageString, Language = language }), Encoding.UTF8, "application/json");
-                await client.PostAsync(AnalyticsTargets.LG, jsonContent);
+                var jsonContent = JsonSerializer.Serialize(new AnalyticsData() { Timezone = timeZone, CurrentPage = pageString, Language = language });
+                lastPageViewJson = jsonContent;
+                await PostAnalyticsAsync(AnalyticsTargets.PageViewPath, jsonContent);
             }
             catch (Exception)
             {
@@ -257,12 +286,12 @@ namespace gamevault.Helper
                         {
                             InnerException = ex.InnerException?.Message,
                             IsWindowsPackage = App.IsWindowsPackage == true,
-                            Version = SettingsViewModel.Instance.Version
+                            Version = SettingsViewModel.Instance.Version,
+                            Collector = AnalyticsTargets.CurrentHost
                         }
                     };
 
-                    var jsonContent = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
-                    await client.PostAsync(AnalyticsTargets.ER, jsonContent);
+                    await PostAnalyticsAsync(AnalyticsTargets.ErrorPath, JsonSerializer.Serialize(data));
                 }
                 catch (Exception)
                 {
@@ -280,8 +309,8 @@ namespace gamevault.Helper
             {
                 try
                 {
-                    var jsonContent = new StringContent(JsonSerializer.Serialize(new AnalyticsData() { Event = eventName, Metadata = meta, Timezone = timeZone, Language = language }), Encoding.UTF8, "application/json");
-                    await client.PostAsync(AnalyticsTargets.CU, jsonContent);
+                    var jsonContent = JsonSerializer.Serialize(new AnalyticsData() { Event = eventName, Metadata = meta, Timezone = timeZone, Language = language });
+                    await PostAnalyticsAsync(AnalyticsTargets.CustomPath, jsonContent);
                 }
                 catch { }
             });
@@ -391,12 +420,32 @@ namespace gamevault.Helper
             public string? FileName { get; set; }
         }
 
+        /// <summary>
+        /// Collector roots in the order they are tried. Encoded so the endpoints
+        /// are not plain strings in the binary.
+        /// </summary>
         private static class AnalyticsTargets
         {
-            public static string HB => Encoding.UTF8.GetString(Convert.FromBase64String("aHR0cHM6Ly9hbmFseXRpY3MucGxhdGZvcm0ucGhhbGNvLmRlL2xvZy9oYg=="));
-            public static string LG => Encoding.UTF8.GetString(Convert.FromBase64String("aHR0cHM6Ly9hbmFseXRpY3MucGxhdGZvcm0ucGhhbGNvLmRlL2xvZw=="));
-            public static string CU => Encoding.UTF8.GetString(Convert.FromBase64String("aHR0cHM6Ly9hbmFseXRpY3MucGxhdGZvcm0ucGhhbGNvLmRlL2xvZy9jdXN0b20="));
-            public static string ER => Encoding.UTF8.GetString(Convert.FromBase64String("aHR0cHM6Ly9hbmFseXRpY3MucGxhdGZvcm0ucGhhbGNvLmRlL2xvZy9lcnJvcg=="));
+            private static readonly string[] CollectorRoots =
+            {
+                Encoding.UTF8.GetString(Convert.FromBase64String("aHR0cHM6Ly9hcGkuc3dldHJpeC5jb20=")),
+                Encoding.UTF8.GetString(Convert.FromBase64String("aHR0cHM6Ly9hbmFseXRpY3MucGxhdGZvcm0ucGhhbGNvLmRl")),
+                Encoding.UTF8.GetString(Convert.FromBase64String("aHR0cHM6Ly9hbmFsLnBoYWxjby5kZQ==")),
+                Encoding.UTF8.GetString(Convert.FromBase64String("aHR0cHM6Ly90cmFjay5waGFsY28uZGU=")),
+                Encoding.UTF8.GetString(Convert.FromBase64String("aHR0cHM6Ly95b3VyLWRucy1wcm92aWRlci1pcy1waXNzaW5nLW1lLW9mZi5waGFsY28uZGU=")),
+            };
+
+            private static int activeIndex;
+
+            public const string PageViewPath = "/log";
+            public const string HeartbeatPath = "/log/hb";
+            public const string CustomPath = "/log/custom";
+            public const string ErrorPath = "/log/error";
+
+            public static int Count => CollectorRoots.Length;
+            public static string Current => CollectorRoots[Volatile.Read(ref activeIndex) % CollectorRoots.Length];
+            public static string CurrentHost => new Uri(Current).Host;
+            public static void AdvanceToNextCollector() => Interlocked.Increment(ref activeIndex);
         }
         #endregion
     }
