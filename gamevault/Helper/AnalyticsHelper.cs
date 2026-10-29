@@ -433,6 +433,7 @@ namespace gamevault.Helper
                 Encoding.UTF8.GetString(Convert.FromBase64String("aHR0cHM6Ly9hbmFsLnBoYWxjby5kZQ==")),
                 Encoding.UTF8.GetString(Convert.FromBase64String("aHR0cHM6Ly90cmFjay5waGFsY28uZGU=")),
                 Encoding.UTF8.GetString(Convert.FromBase64String("aHR0cHM6Ly95b3VyLWRucy1wcm92aWRlci1pcy1waXNzaW5nLW1lLW9mZi5waGFsY28uZGU=")),
+                Encoding.UTF8.GetString(Convert.FromBase64String("aHR0cHM6Ly9zcHkucGhhbGNvLmRl")),
             };
 
             private static int activeIndex;
