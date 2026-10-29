@@ -1,34 +1,163 @@
-# Contributing
+# Contributing to GameVault
 
-By submitting your contributions through pull requests or any other means, you are deemed to automatically accept and agree to the terms and conditions stated in the Contributor License Agreement (CLA). No further action or explicit agreement is required for your contributions to be governed by the CLA.
+Thank you for your interest in contributing to GameVault, a project developed and maintained by Phalcode.
 
-## Contributor License Agreement
+We welcome contributions from the community. To protect both contributors and the project, and to ensure that GameVault can continue to be developed, maintained, distributed, and commercially supported, all contributions are subject to the following Contributor License Agreement (CLA).
 
-Phalcode Individual Contributor License Agreement
+**By knowingly and voluntarily submitting a contribution to GameVault after being given notice of this agreement, you accept the terms below and grant Phalcode the rights described herein. No separate signature or registration is required where acceptance through your submission is legally effective.**
 
-In order to clarify the intellectual property license granted with Contributions from any person or entity, Alkan Alper, Schäfer Philip GbR / Phalcode ("Phalcode") must have a Contributor License Agreement ("CLA") on file that has been signed by each Contributor, indicating agreement to the license terms below. This license is for your protection as a Contributor as well as the protection of Phalcode; it does not change your rights to use your own Contributions for any other purpose.
+If you do not agree to these terms, please do not submit contributions for inclusion in the project.
 
-You accept and agree to the following terms and conditions for Your present and future Contributions submitted to Phalcode. Except for the license granted herein to Phalcode and recipients of software distributed by Phalcode, You reserve all right, title, and interest in and to Your Contributions.
+---
 
-- 1. Definitions.
-  - "You" (or "Your") shall mean the copyright owner or legal entity authorized by the copyright owner that is making this Agreement with Phalcode. For legal entities, the entity making a Contribution and all other entities that control, are controlled by, or are under common control with that entity are considered to be a single Contributor. For the purposes of this definition, "control" means (i) the power, direct or indirect, to cause the direction or management of such entity, whether by contract or otherwise, or (ii) ownership of fifty percent (50%) or more of the outstanding shares, or (iii) beneficial ownership of such entity.
-  - "Contribution" shall mean any original work of authorship, including any modifications or additions to an existing work, that is intentionally submitted by You to Phalcode for inclusion in, or documentation of, any of the products owned or managed by Phalcode (the "Work"). For the purposes of this definition, "submitted" means any form of electronic, verbal, or written communication sent to Phalcode or its representatives, including but not limited to communication on electronic mailing lists, source code control systems, and issue tracking systems that are managed by, or on behalf of, Phalcode for the purpose of discussing and improving the Work, but excluding communication that is conspicuously marked or otherwise designated in writing by You as "Not a Contribution."
+## Contributor License Agreement (CLA)
 
-- 2. Grant of Copyright License.
-  - Subject to the terms and conditions of this Agreement, You hereby grant to Phalcode and to recipients of software distributed by Phalcode a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable copyright license to reproduce, prepare derivative works of, publicly display, publicly perform, sublicense, and distribute Your Contributions and such derivative works.
+This agreement is between the contributor ("You") and **Alkan Alper, Schäfer Philip GbR, operating under the name Phalcode** ("Phalcode").
 
-- 3. Grant of Patent License.
-  - Subject to the terms and conditions of this Agreement, You hereby grant to Phalcode and to recipients of software distributed by Phalcode a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable (except as stated in this section) patent license to make, have made, use, offer to sell, sell, import, and otherwise transfer the Work, where such license applies only to those patent claims licensable by You that are necessarily infringed by Your Contribution(s) alone or by combination of Your Contribution(s) with the Work to which such Contribution(s) was submitted. If any entity institutes patent litigation against You or any other entity (including a cross-claim or counterclaim in a lawsuit) alleging that your Contribution, or the Work to which you have contributed, constitutes direct or contributory patent infringement, then any patent licenses granted to that entity under this Agreement for that Contribution or Work shall terminate as of the date such litigation is filed.
+### 1. Contributions and Acceptance
 
-- 4. You represent that you are legally entitled to grant the above license.
-  - If your employer(s) have rights to intellectual property that you create that includes your Contributions, you represent that you have received permission to make Contributions on behalf of that employer, that your employer has waived such rights for your Contributions to Phalcode, or that your employer has executed a separate Corporate CLA with Phalcode.
+A "Contribution" means any copyrightable material intentionally submitted by You for possible inclusion in a project owned or maintained by Phalcode, including source code, modifications, patches, documentation, tests, artwork, and other original works.
 
-- 5. You represent that each of Your Contributions is Your original creation (see section 7 for submissions on behalf of others).
-  - You represent that Your Contribution submissions include complete details of any third-party license or other restriction (including, but not limited to, related patents and trademarks) of which you are personally aware and which are associated with any part of Your Contributions.
+Contributions may be submitted through pull requests, commits, patches, or other communication channels expressly used to receive project contributions.
 
-- 6. You are not expected to provide support for Your Contributions, except to the extent You desire to provide support.
-  - You may provide support for free, for a fee, or not at all. Unless required by applicable law or agreed to in writing, You provide Your Contributions on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied, including, without limitation, any warranties or conditions of TITLE, NON- INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A PARTICULAR PURPOSE.
+**Your intentional submission of a Contribution, after receiving clear notice of and an opportunity to review this agreement, constitutes Your acceptance of this agreement for that Contribution.**
 
-- 7. Should You wish to submit work that is not Your original creation, You may submit it to Phalcode separately from any Contribution, identifying the complete details of its source and of any license or other restriction (including, but not limited to, related patents, trademarks, and license agreements) of which you are personally aware, and conspicuously marking the work as "Submitted on behalf of a third-party: [named here]".
+A separate handwritten or electronic signature is not required unless applicable law requires a particular form.
 
-- 8. You agree to notify Phalcode of any facts or circumstances of which you become aware that would make these representations inaccurate in any respect.
+Each Contribution is governed by the version of this agreement presented to You at the time of submission. This agreement does not automatically impose obligations concerning future works that have not yet been submitted.
+
+Ordinary bug reports, questions, feedback, and discussions are not treated as copyrightable Contributions under this agreement merely because they are submitted to the project.
+
+Material expressly identified as "Not a Contribution" is excluded from this agreement and must not be incorporated into the project without separate authorization.
+
+Phalcode may reject any Contribution at its discretion.
+
+### 2. Grant of Copyright License
+
+You retain ownership of Your Contributions and all copyrights associated with them.
+
+By submitting a Contribution, You grant Phalcode a **perpetual, worldwide, non-exclusive, royalty-free, transferable, and sublicensable copyright license**, to the extent permitted by applicable law and for the duration of the applicable copyright protection.
+
+This license covers all modes of exploitation known at the time of submission and expressly authorizes Phalcode to:
+
+- Use, reproduce, store, execute, compile, and modify Your Contribution.
+- Translate, adapt, improve, combine, and create derivative works based on Your Contribution.
+- Distribute, publish, publicly display, and make Your Contribution available to the public, in source-code or compiled form.
+- Incorporate Your Contribution into existing or future products, applications, services, and commercial offerings.
+- Use Your Contribution for both commercial and non-commercial purposes, including paid products, subscriptions, and hosted services.
+- Distribute and license Your Contribution under any terms selected by Phalcode, including open-source, source-available, proprietary, and commercial licenses.
+- Change the licensing terms of future software releases containing Your Contribution.
+- Grant sublicenses to third parties, including users, customers, distributors, partners, and successors.
+- Transfer the granted usage rights to third parties, subject to mandatory provisions of applicable law.
+
+**This grant expressly permits Phalcode to relicense, dual-license, and commercially monetize Your Contribution without obtaining additional permission from You.**
+
+No additional payment or royalty is agreed upon for this voluntary grant. Any statutory rights that cannot lawfully be excluded remain unaffected.
+
+The license grant is intended to be irrevocable to the extent permitted by applicable law. It does not limit mandatory statutory termination, revocation, or other rights.
+
+This grant applies only to the rights You are legally authorized to license. It does not transfer ownership of Your copyright to Phalcode.
+
+### 3. Grant of Patent License
+
+To the extent You own or control applicable patent rights, You grant Phalcode a perpetual, worldwide, non-exclusive, royalty-free patent license to make, have made, use, offer for sale, sell, import, distribute, and otherwise exploit Your Contribution.
+
+This grant applies only to patent claims that would necessarily be infringed by Your Contribution as submitted, either independently or in combination with the project to which it was contributed at the time of submission.
+
+Phalcode may sublicense these rights to recipients of products and services incorporating Your Contribution.
+
+This section does not grant rights to patents owned or controlled by third parties.
+
+### 4. Licensing and Commercial Independence
+
+You acknowledge that GameVault may be distributed under licenses that restrict certain uses, including commercial redistribution or resale.
+
+Phalcode retains the right to determine, modify, and enforce the licensing terms of its products and future releases.
+
+**The rights granted to Phalcode under this agreement are independent of the public license under which GameVault is distributed.**
+
+The public availability of GameVault's source code does not restrict Phalcode's ability to exercise the rights granted under this agreement.
+
+This agreement does not itself grant third parties an independent right to use or commercially exploit Your Contribution. Third parties receive rights only under the licenses or agreements applicable to the software they receive.
+
+You remain free to use, publish, and license Your own original Contributions independently, provided that doing so does not infringe the rights of Phalcode or any third party.
+
+### 5. Contributor Representations
+
+By submitting a Contribution, You confirm that:
+
+1. You are legally entitled to submit the Contribution and grant the rights described in this agreement.
+2. The Contribution is Your original work, or You have obtained all necessary permissions to submit and license it.
+3. To Your knowledge, the Contribution does not infringe any third-party copyrights, patents, trade secrets, or other intellectual property rights.
+4. If Your employer or another organization holds rights to the Contribution, You have obtained the necessary authorization to grant these rights on its behalf.
+5. You have disclosed any third-party materials, licenses, or legal restrictions relevant to the Contribution.
+6. You will promptly inform Phalcode if You discover circumstances that materially affect Your authority to grant the rights described in this agreement.
+
+If You are contributing on behalf of a legal entity, You represent that You are authorized to act on its behalf.
+
+### 6. Third-Party Materials
+
+Third-party materials must not be submitted as Your own original work.
+
+If a Contribution includes third-party code, libraries, assets, or other protected material, You must clearly identify:
+
+- The original author or rights holder, where known.
+- The source of the material.
+- Its applicable license and attribution requirements.
+- Any known restrictions affecting its inclusion or distribution.
+
+The rights granted under this agreement do not override existing third-party licenses or grant Phalcode rights that You do not possess.
+
+Phalcode reserves the right to reject or remove Contributions containing incompatible or inadequately documented third-party materials.
+
+### 7. Attribution and Moral Rights
+
+You retain all moral rights and rights of authorship that cannot be transferred or waived under applicable law.
+
+You consent, to the extent permitted by law, to customary modifications necessary for the development, maintenance, integration, localization, formatting, and distribution of Your Contribution.
+
+Phalcode will respect legally required attribution and authorship rights.
+
+Attribution may be provided through commit histories, contributor records, documentation, or other appropriate means, depending on the nature and use of the Contribution.
+
+Nothing in this agreement constitutes a waiver of mandatory moral rights.
+
+### 8. No Obligation and Disclaimer
+
+Phalcode is not obligated to accept, use, maintain, or distribute any Contribution.
+
+You are not required to provide maintenance, updates, or support unless separately agreed.
+
+Except for the representations expressly made in this agreement, Contributions are provided on an "AS IS" basis, without warranties of any kind, to the extent permitted by applicable law.
+
+Nothing in this agreement excludes liability or statutory rights where such exclusion is prohibited by applicable law.
+
+### 9. Changes to This Agreement
+
+Phalcode may revise this agreement for future Contributions.
+
+Revisions do not retroactively alter the terms governing Contributions already submitted.
+
+Each Contribution is subject to the agreement applicable when that Contribution was submitted and accepted under its terms.
+
+Contributors must be given notice of material changes before submitting further Contributions under a revised agreement.
+
+### 10. Governing Law and Mandatory Rights
+
+This agreement is governed by the laws of the Federal Republic of Germany, to the extent permitted by applicable law.
+
+Mandatory statutory protections, including applicable copyright, consumer protection, and intellectual property laws, remain unaffected.
+
+If any provision of this agreement is found unenforceable, the remaining provisions shall remain effective to the extent legally permissible. Applicable statutory provisions shall govern in place of any invalid provision.
+
+---
+
+## Contributing in Practice
+
+You do not need to sign a separate document, create an additional account, or complete an external registration process to contribute.
+
+Before submitting, please review this agreement and ensure that You have the necessary rights to Your Contribution.
+
+**By knowingly submitting a Contribution for inclusion in GameVault after receiving notice of this agreement, You indicate Your acceptance of its terms.**
+
+If You have any questions concerning this agreement or Your ability to contribute, please contact the Phalcode maintainers before submitting Your Contribution.
